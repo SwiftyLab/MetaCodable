@@ -76,10 +76,10 @@ Carthage/Checkouts
 Carthage/Build/
 
 # Add Xcode project related files required by Carthage
-DynamicCodableKit.xcodeproj/*
-!DynamicCodableKit.xcodeproj/*.pbxproj
-!DynamicCodableKit.xcodeproj/*.plist
-!DynamicCodableKit.xcodeproj/xcshareddata
+MetaCodable.xcodeproj/*
+!MetaCodable.xcodeproj/*.pbxproj
+!MetaCodable.xcodeproj/*.plist
+!MetaCodable.xcodeproj/xcshareddata
 
 # Accio dependency management
 Dependencies/

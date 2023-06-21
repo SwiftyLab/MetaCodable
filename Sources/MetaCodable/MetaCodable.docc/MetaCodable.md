@@ -20,7 +20,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 | Platform | Minimum Swift Version | Installation | Status |
 | --- | --- | --- | --- |
-| iOS 8.0+ / macOS 10.15+ / tvOS 9.0+ / watchOS 2.0+ | 5.9 | CocoaPods, Carthage, Swift Package Manager, Manual | Fully Tested |
+| iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ | 5.9 | Swift Package Manager | Fully Tested |
 | Linux | 5.9 | Swift Package Manager | Fully Tested |
 | Windows | 5.9 | Swift Package Manager | Fully Tested |
 

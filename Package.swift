@@ -5,10 +5,9 @@ import CompilerPluginSupport
 
 let macroDeps: [Target.Dependency] = [
     .product(name: "SwiftSyntax", package: "swift-syntax"),
+    .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+    .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
     .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-    .product(name: "SwiftOperators", package: "swift-syntax"),
-    .product(name: "SwiftParser", package: "swift-syntax"),
-    .product(name: "SwiftParserDiagnostics", package: "swift-syntax"),
     .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
     .product(name: "OrderedCollections", package: "swift-collections"),
 ]
@@ -21,10 +20,10 @@ let testDeps: [Target.Dependency] = [
 let package = Package(
     name: "MetaCodable",
     platforms: [
-        .iOS(.v8),
+        .iOS(.v13),
         .macOS(.v10_15),
-        .tvOS(.v9),
-        .watchOS(.v2),
+        .tvOS(.v13),
+        .watchOS(.v6),
         .macCatalyst(.v13),
     ],
     products: [
