@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "swift: Build All",
+			"detail": "swift build --build-tests",
+			"cwd": ".",
+			"type": "swift",
+			"args": [
+				"build",
+				"--build-tests"
+			],
+			"problemMatcher": [
+				"$swiftc"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "silent",
+				"panel": "shared",
+				"clear": true
+			}
+		}
+	]
+}

@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "sswg.swift-lang",
+        "vadimcn.vscode-lldb",
+        "ms-vscode-remote.vscode-remote-extensionpack"
+    ]
+}
