@@ -1,0 +1,107 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Create release
+        required: false
+        type: boolean
+      version:
+        description: New version to release
+        required: false
+        type: string
+
+concurrency:
+  group: ci/cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    if: github.event_name != 'workflow_dispatch'
+    uses: SwiftyLab/ci/.github/workflows/analyze.yml@main
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    with:
+      matrix: >
+        {
+          "include": [
+            {
+              "os": "ubuntu-latest",
+              "language": "swift",
+              "swift": "5.9"
+            },
+            {
+              "os": "macos-13",
+              "language": "swift",
+              "xcode": "15"
+            }
+          ]
+        }
+
+  # spell-check:
+  #   name: Run spell check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v3
+
+  #   - name: Spellcheck Action
+  #     uses: rojopolis/spellcheck-github-actions@0.24.0
+  #     with:
+  #       config_path: .github/config/spellcheck.yml
+
+  swift-package-test:
+    name: Swift Package
+    uses: SwiftyLab/ci/.github/workflows/swift-package.yml@main
+    secrets: inherit
+    with:
+      matrix: >
+        {
+          "include": [
+            {
+              "os": "ubuntu-latest",
+              "swift": "5.9"
+            },
+            {
+              "os": ""macos-13",
+              "xcode": "15"
+            }
+          ]
+        }
+      # {
+      #   "os": "windows-latest",
+      #   "swift": "5.9"
+      # }
+
+  ci:
+    name: CI
+    if: github.event_name == 'push'
+    needs: [analyze, swift-package-test]
+    uses: SwiftyLab/ci/.github/workflows/ci.yml@main
+
+  cd:
+    name: CD
+    if: |
+      (github.event_name == 'push' && needs.ci.outputs.release == 'true') ||
+      (always() &&
+       github.event_name == 'workflow_dispatch' &&
+       github.event.inputs.release == 'true' &&
+       needs.swift-package-test.result == 'success' &&
+       (needs.ci.result == 'success' || needs.ci.result == 'skipped') &&
+       (needs.analyze.result == 'success' || needs.analyze.result == 'skipped'))
+    needs: [analyze, swift-package-test, ci]
+    uses: SwiftyLab/ci/.github/workflows/cd.yml@main
+    with:
+      version: ${{ github.event.inputs.version }}
+    secrets:
+      COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
