@@ -50,7 +50,7 @@ public struct CodableData {
     let simulateWithoutArgumentWarning2: String?
 
     var mutable: String = "some"
-    var mutableOne = "any", mutableTwo, mutableThree: String
+    var mutableOne = "any", mutableTwo: String, mutableThree: Int = 9
     var mutableOptional: String? = "some"
 
     @CodablePath("customKey")
