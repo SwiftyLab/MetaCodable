@@ -48,6 +48,8 @@ public struct CodableData {
     let simulateWithoutArgumentWarning1: String?
     @CodablePath()
     let simulateWithoutArgumentWarning2: String?
+
+    var computedInt: Int { 9 }
 }
 
 struct PrimitiveCoder: ExternalHelperCoder {
