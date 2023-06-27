@@ -1,5 +1,9 @@
 # ``MetaCodable``
 
+@Metadata {
+    @Available(swift, introduced: "5.9")
+}
+
 Supercharge `Swift`'s `Codable` implementations with macros.
 
 ## Overview
@@ -16,31 +20,26 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Generates member-wise initializer considering the above default value syntax as well.
 - Allows to create custom decoding/encoding strategies with ``ExternalHelperCoder``. i.e. ``LossySequenceCoder`` etc.
 
-## Requirements
-
-| Platform | Minimum Swift Version | Installation | Status |
-| --- | --- | --- | --- |
-| iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ | 5.9 | Swift Package Manager | Fully Tested |
-| Linux | 5.9 | Swift Package Manager | Fully Tested |
-| Windows | 5.9 | Swift Package Manager | Fully Tested |
-
 ## Installation
 
-### Swift Package Manager
+@TabNavigator {
+    @Tab("Swift Package Manager") {
 
-The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler.
-
-Once you have your Swift package set up, adding `MetaCodable` as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
-
-```swift
-.package(url: "https://github.com/SwiftyLab/MetaCodable.git", from: "1.0.0"),
-```
-
-Then you can add the `MetaCodable` module product as dependency to the `target`s of your choosing, by adding it to the `dependencies` value of your `target`s.
-
-```swift
-.product(name: "MetaCodable", package: "MetaCodable"),
-```
+        The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler.
+        
+        Once you have your Swift package set up, adding `MetaCodable` as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
+        
+        ```swift
+        .package(url: "https://github.com/SwiftyLab/MetaCodable.git", from: "1.0.0"),
+        ```
+        
+        Then you can add the `MetaCodable` module product as dependency to the `target`s of your choosing, by adding it to the `dependencies` value of your `target`s.
+        
+        ```swift
+        .product(name: "MetaCodable", package: "MetaCodable"),
+        ```
+    }
+}
 
 ## Topics
 

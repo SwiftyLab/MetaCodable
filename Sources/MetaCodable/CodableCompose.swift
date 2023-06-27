@@ -60,6 +60,7 @@
 ///
 /// - Important: The field type must confirm to `Codable`.
 @attached(peer)
+@available(swift 5.9)
 public macro CodableCompose() = #externalMacro(
     module: "CodableMacroPlugin",
     type: "CodableFieldMacro"
@@ -90,6 +91,7 @@ public macro CodableCompose() = #externalMacro(
 ///              default value type `T` must be the same as
 ///              field type.
 @attached(peer)
+@available(swift 5.9)
 public macro CodableCompose<T>(
     default: T
 ) = #externalMacro(module: "CodableMacroPlugin", type: "CodableFieldMacro")
@@ -114,6 +116,7 @@ public macro CodableCompose<T>(
 /// - Important: The `helper`'s `T.Coded` associated type
 ///              must be the same as field type.
 @attached(peer)
+@available(swift 5.9)
 public macro CodableCompose<T: ExternalHelperCoder>(
     helper: T
 ) = #externalMacro(module: "CodableMacroPlugin", type: "CodableFieldMacro")
@@ -145,6 +148,7 @@ public macro CodableCompose<T: ExternalHelperCoder>(
 /// - Important: The `helper`'s `T.Coded` associated type
 ///              must be the same as field type.
 @attached(peer)
+@available(swift 5.9)
 public macro CodableCompose<T: ExternalHelperCoder>(
     default: T.Coded,
     helper: T

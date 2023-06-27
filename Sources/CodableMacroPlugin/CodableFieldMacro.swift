@@ -13,10 +13,10 @@ import SwiftSyntaxMacros
 /// to remove it.
 struct CodableFieldMacro: PeerMacro {
     /// The name of macro that allows `CodingKey`
-    /// path customizations
+    /// path customizations.
     static var path: String { "CodablePath" }
     /// The name of macro that allows
-    /// composition of decoding/encoding
+    /// composition of decoding/encoding.
     static var compose: String { "CodableCompose" }
 
     /// Argument label used to provide a default value
