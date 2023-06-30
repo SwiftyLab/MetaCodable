@@ -94,25 +94,30 @@ struct CodableMacro: ConformanceMacro, MemberMacro {
             else { return }
 
             // is a grouped property declaration
-            if decl.bindings.count > 1 {
-                var fields: [TokenSyntax] = []
-                var type: TypeSyntax!
+            if decl.initializableBindings.count > 1 {
+                var variables: [(TokenSyntax, TypeSyntax?)] = []
                 for binding in decl.initializableBindings
                 where binding.pattern.is(IdentifierPatternSyntax.self) {
-                    fields.append(
-                        binding.pattern
-                            .as(IdentifierPatternSyntax.self)!.identifier
-                    )
-
-                    guard let fType = binding.typeAnnotation?.type
-                    else { continue }
-                    type = fType
+                    variables.append((
+                        binding.pattern.as(IdentifierPatternSyntax.self)!
+                            .identifier,
+                        binding.typeAnnotation?.type
+                    ))
                 }
 
-                for field in fields where type != nil {
+                var datas: [Registrar.Node.Data] = []
+                datas.reserveCapacity(variables.count)
+
+                var latestType: TypeSyntax!
+                for (field, type) in variables.reversed() {
+                    if let type { latestType = type }
+                    datas.append(.init(field: field, type: latestType))
+                }
+
+                for data in datas.reversed() {
                     registrar.add(
-                        data: .init(field: field, type: type),
-                        keyPath: [field.asKey],
+                        data: data,
+                        keyPath: [data.field.asKey],
                         context: context
                     )
                 }

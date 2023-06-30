@@ -3,7 +3,7 @@ import MetaCodable
 
 @Codable
 public struct CodableData {
-    let groupedOne, groupedTwo, groupedThree: String
+    let groupedOne, groupedTwo: String, groupedThree: Int
 
     let optional: String?
     let genericOptional: Optional<String>
@@ -50,7 +50,7 @@ public struct CodableData {
     let simulateWithoutArgumentWarning2: String?
 
     var mutable: String = "some"
-    var mutableOne = "any", mutableTwo, mutableThree: String
+    var mutableOne = "any", mutableTwo: String, mutableThree: Int = 9
     var mutableOptional: String? = "some"
 
     @CodablePath("customKey")
