@@ -97,7 +97,7 @@ struct CodableMacro: ConformanceMacro, MemberMacro {
             if decl.bindings.count > 1 {
                 var fields: [TokenSyntax] = []
                 var type: TypeSyntax!
-                for binding in decl.bindings
+                for binding in decl.initializableBindings
                 where binding.pattern.is(IdentifierPatternSyntax.self) {
                     fields.append(
                         binding.pattern
@@ -121,9 +121,9 @@ struct CodableMacro: ConformanceMacro, MemberMacro {
 
             // is a single property declaration
             guard
-                let p = decl.bindings.first,
-                let type = p.typeAnnotation?.type,
-                let field = p.pattern
+                let binding = decl.initializableBindings.first,
+                let type = binding.typeAnnotation?.type,
+                let field = binding.pattern
                     .as(IdentifierPatternSyntax.self)?.identifier
             else { return }
 
@@ -222,9 +222,31 @@ fileprivate extension VariableDeclSyntax {
 
         return (attr: macro, default: def, helper: hlpr)
     }
+
+    /// Filters variables in variable declaration that can be initialized
+    /// first in parent type's Initializer.
+    ///
+    /// Filters variables that are not computed properties,
+    /// and if immutable not initialized already.
+    var initializableBindings: [PatternBindingSyntax] {
+        return self.bindings.filter { binding in
+            switch binding.accessor {
+            case .none:
+                self.bindingKeyword.tokenKind == .keyword(.var)
+                || binding.initializer == nil
+            // TODO: Reevaluate when init accessor is introduced
+            // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
+            // case .accessors(let block) where block.accessors
+            //         .contains { $0.accessorKind == .keyword(Keyword.`init`)}:
+            //     return true
+            default:
+                false
+            }
+        }
+    }
 }
 
-/// An extension that coverts field token syntax
+/// An extension that converts field token syntax
 /// to equivalent key token.
 extension TokenSyntax {
     /// Convert field token syntax

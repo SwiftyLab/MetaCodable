@@ -48,6 +48,15 @@ public struct CodableData {
     let simulateWithoutArgumentWarning1: String?
     @CodablePath()
     let simulateWithoutArgumentWarning2: String?
+
+    var mutable: String = "some"
+    var mutableOne = "any", mutableTwo, mutableThree: String
+    var mutableOptional: String? = "some"
+
+    @CodablePath("customKey")
+    var customMutableKeyValue: String
+
+    var computedInt: Int { 9 }
 }
 
 struct PrimitiveCoder: ExternalHelperCoder {
