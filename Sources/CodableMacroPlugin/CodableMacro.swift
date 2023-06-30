@@ -97,9 +97,8 @@ struct CodableMacro: ConformanceMacro, MemberMacro {
             if decl.bindings.count > 1 {
                 var fields: [TokenSyntax] = []
                 var type: TypeSyntax!
-                for binding in decl.bindings
-                where binding.allowedInInitializer &&
-                      binding.pattern.is(IdentifierPatternSyntax.self) {
+                for binding in decl.initializableBindings
+                where binding.pattern.is(IdentifierPatternSyntax.self) {
                     fields.append(
                         binding.pattern
                             .as(IdentifierPatternSyntax.self)!.identifier
@@ -122,8 +121,7 @@ struct CodableMacro: ConformanceMacro, MemberMacro {
 
             // is a single property declaration
             guard
-                let binding = decl.bindings.first,
-                binding.allowedInInitializer,
+                let binding = decl.initializableBindings.first,
                 let type = binding.typeAnnotation?.type,
                 let field = binding.pattern
                     .as(IdentifierPatternSyntax.self)?.identifier
@@ -224,27 +222,26 @@ fileprivate extension VariableDeclSyntax {
 
         return (attr: macro, default: def, helper: hlpr)
     }
-}
 
-/// An extension for validation of variable patterns.
-extension PatternBindingSyntax {
-    /// Checks whether a particular variable
-    /// in variable declaration can be initialized
+    /// Filters variables in variable declaration that can be initialized
     /// first in parent type's Initializer.
     ///
-    /// Checks whether variable is already initialized
-    /// before initializer invoked or a computed property.
-    var allowedInInitializer: Bool {
-        return switch self.accessor {
-        case .none:
-            self.initializer == nil
-        // TODO: Reevaluate when init accessor is introduced
-        // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
-        // case .accessors(let block) where block.accessors
-        //         .contains { $0.accessorKind == .keyword(Keyword.`init`)}:
-        //     return true
-        default:
-            false
+    /// Filters variables that are not computed properties,
+    /// and if immutable not initialized already.
+    var initializableBindings: [PatternBindingSyntax] {
+        return self.bindings.filter { binding in
+            switch binding.accessor {
+            case .none:
+                self.bindingKeyword.tokenKind == .keyword(.var)
+                || binding.initializer == nil
+            // TODO: Reevaluate when init accessor is introduced
+            // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
+            // case .accessors(let block) where block.accessors
+            //         .contains { $0.accessorKind == .keyword(Keyword.`init`)}:
+            //     return true
+            default:
+                false
+            }
         }
     }
 }
