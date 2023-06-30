@@ -3,7 +3,7 @@ import MetaCodable
 
 @Codable
 public struct CodableData {
-    let groupedOne, groupedTwo, groupedThree: String
+    let groupedOne, groupedTwo: String, groupedThree: Int
 
     let optional: String?
     let genericOptional: Optional<String>
