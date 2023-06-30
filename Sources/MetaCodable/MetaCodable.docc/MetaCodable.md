@@ -41,6 +41,13 @@ Supercharge `Swift`'s `Codable` implementations with macros.
     }
 }
 
+### Featured
+
+@Links(visualStyle: detailedGrid) {
+    - <doc:CodablePath>
+    - <doc:CodableCompose>
+}
+
 ## Topics
 
 ### Implementation

@@ -1,0 +1,61 @@
+@Tutorial(time: 5) {
+    @Intro(title: "Use composite pattern with Codable") {
+        This tutorial guides you to declare `Codable` types as composition of other common `Codable` types and to share basic `Codable` types across multiple derived `Codable` types.
+        
+        To have fallback value instead of failure during decoding you can provide an optional default value, or to completely customize decoding/encoding logic provide a helper instance to be delegated.
+        
+        @Image(source: <#file#>, alt: "<#accessible description#>")
+    }
+    
+    @Section(title: "Reuse Codable types") {
+        @ContentAndMedia {
+            Build your `Codable` types by mixing and matching the functionality of basic `Codable` types, allowing maximum reusability and flexibility. Use composite design pattern with automatic `Codable` implementation, to compose objects into tree structures and then decode/encode with these structures as if they were individual serialized data.
+            
+            @Image(source: search.png, alt: "Sample data for different search suggestion results")
+        }
+        
+        @Steps {
+            @Step {
+                Identify the common data that is shared across all the different variations.
+                
+                Given the different type of search results, identify the common data between all results.
+                
+                @Code(name: search.json, file: search.json) {
+                    @Image(source: search-base.png, alt: "Common data in search results")
+                }
+            }
+            
+            @Step {
+                Create this common data equivalent ``MetaCodable/Codable()`` macro attached type with the keys as field names and the values data types as field types.
+                
+                @Code(name: Suggestion.swift, file: Suggestion-01.swift) {
+                    @Image(source: search-base.png, alt: "Common data in search results")
+                }
+            }
+            
+            @Step {
+                Create ``MetaCodable/Codable()`` macro attached types for all the different variations containing only the uncommon data.
+                
+                @Code(name: Suggestion.swift, file: Suggestion-02.swift) {
+                    @Image(source: search-base.png, alt: "Common data in search results")
+                }
+            }
+            
+            @Step {
+                Add a variable for the common data attached with ``MetaCodable/CodableCompose()`` macro for all the variant types.
+                
+                @Code(name: Suggestion.swift, file: Suggestion-03.swift) {
+                    @Image(source: search-base.png, alt: "Common data in search results")
+                }
+            }
+            
+            @Step {
+                Provide default values to be assigned in case of decoding failure either due to missing data or type mismatch, using ``MetaCodable/CodableCompose(default:)`` macro.
+                
+                @Code(name: Suggestion.swift, file: Suggestion-04.swift) {
+                    @Image(source: search-base.png, alt: "Common data in search results")
+                }
+            }
+        }
+    }
+}

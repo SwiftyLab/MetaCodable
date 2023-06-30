@@ -1,0 +1,112 @@
+@Tutorial(time: 5) {
+    @Intro(title: "Add CodingKey customizations") {
+        This tutorial guides you through providing custom `CodingKey` for your `Codable` type's fields or an array of `CodingKey`s indicating decoding/encoding of nested data at the provided `CodingKey`s path.
+        
+        To have fallback value instead of failure during decoding you can provide an optional default value, or to completely customize decoding/encoding logic provide a helper instance to be delegated.
+
+        @Image(source: <#file#>, alt: "<#accessible description#>")
+    }
+
+    @Section(title: "Encode and Decode Automatically with Codable fields") {
+        @ContentAndMedia {
+            The simplest way to generate `Codable` implementation is to attach ``MetaCodable/Codable()`` macro to type definition, provided all its properties using types that are already `Codable`.
+            
+            These types include standard library types like `String`, `Int`, and `Double`; and `Foundation` types like `Date`, `Data`, and `URL`. Any type whose properties are `Codable` automatically conforms to `Codable` just by attaching this macro.
+
+            @Image(source: landmark.png, alt: "Landmark JSON representation")
+        }
+
+        @Steps {
+            @Step {
+                Create equivalent ``MetaCodable/Codable()`` macro attached type with the keys as field names and the values data types as field types.
+
+                @Code(name: Landmark.swift, file: Landmark-01.swift) {
+                    @Image(source: landmark.png, alt: "Landmark JSON representation")
+                }
+            }
+            
+            @Step {
+                Provide custom field names with key provided with ``MetaCodable/CodablePath(_:)`` macro attached to variables.
+                
+                @Code(name: Landmark.swift, file: Landmark-02.swift) {
+                    @Image(source: landmark.png, alt: "Landmark JSON representation")
+                }
+            }
+            
+            @Step {
+                Provide default values to be assigned in case of decoding failure either due to missing data or type mismatch, with ``MetaCodable/CodablePath(default:_:)`` macro.
+                
+                @Code(name: Landmark.swift, file: Landmark-03.swift) {
+                    @Image(source: landmark.png, alt: "Landmark JSON representation")
+                }
+            }
+            
+            @Step {
+                Decode nested data with array of keys representing levels of nesting provided to ``MetaCodable/CodablePath(_:)`` macro.
+                
+                @Code(name: Landmark.swift, file: Landmark-04.swift) {
+                    @Image(source: landmark-coordinate.png, alt: "Landmark Coordinate JSON representation")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Customize Encoding and Decoding for both Codable and non-Codable fields") {
+        @ContentAndMedia {
+            Use ``MetaCodable/ExternalHelperCoder`` confirmed instances for customizing decoding/encoding of `Codable` types or add decoding/encoding for non-`Codable` types.
+            
+            
+            @Image(source: landmark-metadata.png, alt: "Landmark JSON representation with variable metadata type")
+        }
+        
+        @Steps {
+            @Step {
+                Create equivalent ``MetaCodable/Codable()`` macro attached type with the keys as field names and the values data type as field type.
+                
+                @Code(name: Landmark.swift, file: Landmark-metadata-01.swift) {
+                    @Image(source: landmark-metadata.png, alt: "Landmark JSON representation with variable metadata type")
+                }
+            }
+            
+            @Step {
+                Create ``MetaCodable/ExternalHelperCoder`` confirmed type that will handle decoding/encoding of dictionary with keys of `String` type and `Any` value type.
+                
+                @Code(name: MetadataCoder.swift, file: MetadataCoder-01.swift)
+            }
+            
+            @Step {
+                Create custom `CodingKey` type to decode all the metadata keys. This type will support dynamic `CodingKey` values rather than some specific cases.
+                
+                @Code(name: MetadataCoder.swift, file: MetadataCoder-02.swift)
+            }
+            
+            @Step {
+                Implement decoding logic that decodes all the metadata keys and their values.
+                
+                @Code(name: MetadataCoder.swift, file: MetadataCoder-03.swift)
+            }
+            
+            @Step {
+                Implement encoding logic that encodes all the metadata keys and their values.
+                
+                @Code(name: MetadataCoder.swift, file: MetadataCoder-04.swift)
+            }
+            
+            @Step {
+                Provide the helper ``MetaCodable/ExternalHelperCoder`` instance using ``MetaCodable/CodablePath(helper:_:)`` macro attached to variable to be customized.
+                
+                @Code(name: Landmark.swift, file: Landmark-metadata-02.swift, previousFile: Landmark-metadata-01.swift) {
+                    @Image(source: metadata.png, alt: "Landmark metadata with variable type JSON representation")
+                }
+            }
+            
+            @Step {
+               Optionally provide default values to be assigned in case of decoding failure either due to missing data or type mismatch, with ``MetaCodable/CodablePath(default:helper:_:)`` macro.
+                
+                @Code(name: Landmark.swift, file: Landmark-metadata-03.swift) {
+                    @Image(source: metadata.png, alt: "Landmark metadata with variable type JSON representation")
+                }
+            }
+        }
+    }
+}

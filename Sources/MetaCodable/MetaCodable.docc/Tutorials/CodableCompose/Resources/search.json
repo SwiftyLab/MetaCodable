@@ -1,0 +1,30 @@
+[
+    {
+        "suggType": "",
+        "type": "WIDGET",
+        "value": "",
+        "refTag": "",
+        "strategyId": "",
+        "widgetId": "",
+        "template": "",
+        "metadata": {
+            "": ""
+        },
+        "widgetItems": [
+            {
+                "id": "",
+                "type": ""
+            }
+        ]
+    },
+    {
+        "suggType": "",
+        "type": "KEYWORD",
+        "value": "",
+        "refTag": "",
+        "strategyId": "",
+        "candidateSources": "",
+        "strategyApiType": "",
+        "prior": 0.0
+    }
+]

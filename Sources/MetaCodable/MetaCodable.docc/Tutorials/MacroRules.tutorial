@@ -1,0 +1,42 @@
+@Tutorials(name: "Discover MetaCodable") {
+    @Intro(title: "Discover MetaCodable") {
+        `MetaCodable` supercharges `Swift`'s `Codable` implementations with macros. Remove previous boiler-plate for `Codable` implementations and create `Codable` conformances faster than ever before.
+        
+        @Image(source: <#file#>, alt: "<#accessible description#>")
+    }
+
+    @Chapter(name: "MetaCodable for CodingKeys") {
+        Learn how to use `MetaCodable` to set up custom `CodingKey`s, create flattened model for nested data, provide default value for decoding failure and member-wise initializer, and build advanced customizations for the decoding/encoding aspect of any type.
+        
+        @Image(source: <#file#>, alt: "<#accessible description#>")
+        
+        @TutorialReference(tutorial: "doc:CodablePath")
+    }
+    
+    @Chapter(name: "Composition with Codable types") {
+        Discover how to use `MetaCodable` to create `Codable` types which is composition of other `Codable` types, provide default value for decoding failure and member-wise initializer, and build advanced customizations for the decoding/encoding aspect of composite types.
+        
+        @Image(source: <#file#>, alt: "<#accessible description#>")
+        
+        @TutorialReference(tutorial: "doc:CodableCompose")
+    }
+
+    @Resources {
+        Explore more resources for `MetaCodable` usage.
+        
+        @Documentation(destination: "https://swiftylab.github.io/MetaCodable/documentation/metacodable/") {
+            Browse and search detailed API documentation.
+            
+            - [Serialization fundamentals](https://developer.apple.com/documentation/foundation/archives_and_serialization)
+        }
+        
+        @Forums(destination: "https://github.com/SwiftyLab/MetaCodable/discussions") {
+            Discuss `MetaCodable` features and improvements with other developers.
+            
+            - [Submit issues or feature requests](https://github.com/SwiftyLab/MetaCodable/issues)
+        }
+        
+        @Downloads(destination: "https://www.swift.org/download/") {
+            Download Swift 5.9 or later to use `MetaCodable` macros.
+        }
+}
