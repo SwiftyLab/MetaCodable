@@ -31,6 +31,7 @@
 /// - Important: The attached declaration must be of a struct type.
 @attached(member, names: named(CodingKeys), named(init(from:)), named(encode(to:)), arbitrary)
 @attached(conformance)
+@available(swift 5.9)
 public macro Codable() = #externalMacro(
     module: "CodableMacroPlugin",
     type: "CodableMacro"

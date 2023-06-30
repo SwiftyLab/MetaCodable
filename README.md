@@ -35,7 +35,8 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ## Installation
 
-### Swift Package Manager
+<details>
+  <summary><h3>Swift Package Manager</h3></summary>
 
 The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler.
 
@@ -50,10 +51,132 @@ Then you can add the `MetaCodable` module product as dependency to the `target`s
 ```swift
 .product(name: "MetaCodable", package: "MetaCodable"),
 ```
+</details>
 
 ## Usage
 
-See the full [documentation](https://swiftylab.github.io/MetaCodable/documentation/metacodable/) for API details and articles on sample scenarios.
+`MetaCodable` allows to get rid of boiler plate that was often needed in some typical `Codable` implementations with features like:
+
+<details>
+  <summary>Custom `CodingKey` value declaration per variable, instead of requiring you to write for all fields.</summary>
+
+ i.e. in the official [docs](https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types#2904057), to define custom `CodingKey` for 2 fields of `Landmark` type you had to write:
+```swift
+struct Landmark: Codable {
+    var name: String
+    var foundingYear: Int
+    var location: Coordinate
+    var vantagePoints: [Coordinate]
+    
+    enum CodingKeys: String, CodingKey {
+        case name = "title"
+        case foundingYear = "founding_date"
+        case location
+        case vantagePoints
+    }
+}
+```
+But with `MetaCodable` all you have to write is this:
+```swift
+@Codable
+struct Landmark {
+    @CodablePath("title")
+    var name: String
+    @CodablePath("founding_date")
+    var foundingYear: Int
+
+    var location: Coordinate
+    var vantagePoints: [Coordinate]
+}
+```
+</details>
+
+<details>
+  <summary>Create flattened model for nested `CodingKey` values.</summary>
+
+i.e. in official [docs](https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types#2904058) to decode a JSON like this:
+```json
+{
+  "latitude": 0,
+  "longitude": 0,
+  "additionalInfo": {
+      "elevation": 0
+  }
+}
+```
+You had to write all these boilerplate: 
+```swift
+struct Coordinate {
+    var latitude: Double
+    var longitude: Double
+    var elevation: Double
+
+    enum CodingKeys: String, CodingKey {
+        case latitude
+        case longitude
+        case additionalInfo
+    }
+
+    enum AdditionalInfoKeys: String, CodingKey {
+        case elevation
+    }
+}
+
+extension Coordinate: Decodable {
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        latitude = try values.decode(Double.self, forKey: .latitude)
+        longitude = try values.decode(Double.self, forKey: .longitude)
+    
+        let additionalInfo = try values.nestedContainer(keyedBy: AdditionalInfoKeys.self, forKey: .additionalInfo)
+        elevation = try additionalInfo.decode(Double.self, forKey: .elevation)
+    }
+}
+
+extension Coordinate: Encodable {
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(latitude, forKey: .latitude)
+        try container.encode(longitude, forKey: .longitude)
+    
+        var additionalInfo = container.nestedContainer(keyedBy: AdditionalInfoKeys.self, forKey: .additionalInfo)
+        try additionalInfo.encode(elevation, forKey: .elevation)
+    }
+}
+```
+But with `MetaCodable` all you have to write is this:
+```swift
+@Codable
+struct Coordinate {
+    var latitude: Double
+    var longitude: Double
+    
+    @CodablePath("additionalInfo", "elevation")
+    var elevation: Double
+}
+```
+</details>
+
+<details>
+  <summary>Provide default value in case of decoding failures and member-wise initializer generated considers these default values.</summary>
+
+Instead of throwing error in case of missing data or type mismatch, you can provide a default value that will be assigned in this case. The memberwise initializer generated also uses this default value for the field. The following definition with `MetaCodable`:
+```swift
+@Codable
+struct CodableData {
+    @CodablePath(default: "some")
+    let field: String
+}
+```
+will not throw any error when empty JSON(`{}`) or JSON with type mismatch(`{ "field": 5 }`) is provided. The default value will be assigned in such case. Also, the memberwise initializer generated will look like this:
+```swift
+init(field: String = "some") {
+    self.field = field
+}
+```
+</details>
+
+See the full [documentation](https://swiftylab.github.io/MetaCodable/documentation/metacodable/) for API details and advanced use cases.
 
 ## Contributing
 

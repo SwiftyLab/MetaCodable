@@ -36,6 +36,7 @@
 ///
 /// - Important: The field type must confirm to `Codable`.
 @attached(peer)
+@available(swift 5.9)
 public macro CodablePath(
     _ path: StaticString...
 ) = #externalMacro(
@@ -77,6 +78,7 @@ public macro CodablePath(
 ///              default value type `T` must be the same as
 ///              field type.
 @attached(peer)
+@available(swift 5.9)
 public macro CodablePath<T>(
     default: T,
     _ path: StaticString...
@@ -105,6 +107,7 @@ public macro CodablePath<T>(
 /// - Important: The `helper`'s `T.Coded` associated type
 ///              must be the same as field type.
 @attached(peer)
+@available(swift 5.9)
 public macro CodablePath<T: ExternalHelperCoder>(
     helper: T,
     _ path: StaticString...
@@ -133,6 +136,7 @@ public macro CodablePath<T: ExternalHelperCoder>(
 /// - Important: The `helper`'s `T.Coded` associated type
 ///              must be the same as field type.
 @attached(peer)
+@available(swift 5.9)
 public macro CodablePath<T: ExternalHelperCoder>(
     default: T.Coded,
     helper: T,
