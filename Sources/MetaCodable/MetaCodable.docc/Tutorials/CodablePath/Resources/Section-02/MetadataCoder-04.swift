@@ -14,7 +14,7 @@ struct MetadataCoder: ExternalHelperCoder {
         let codableTypes: [Codable.Type] = [
             Bool.self,
             Int.self, Double.self,
-            String.self
+            String.self,
         ]
 
         let container = try decoder.container(keyedBy: AnyCodingKey.self)
@@ -34,7 +34,7 @@ struct MetadataCoder: ExternalHelperCoder {
         return result
     }
 
-    func encode(_ value: [String : Any], to encoder: Encoder) throws {
+    func encode(_ value: [String: Any], to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: AnyCodingKey.self)
         for (key, value) in value where value is Encodable {
             let codingKey = AnyCodingKey(stringValue: key)

@@ -15,7 +15,7 @@ struct MetadataCoder: ExternalHelperCoder {
         return result
     }
 
-    func encode(_ value: [String : Any], to encoder: Encoder) throws {
+    func encode(_ value: [String: Any], to encoder: Encoder) throws {
         //
     }
 }
