@@ -1,6 +1,6 @@
-import Foundation
 import SwiftSyntax
 import SwiftSyntaxMacros
+import OrderedCollections
 
 extension CodableMacro.Registrar {
     /// A map containing all the case names
@@ -42,9 +42,8 @@ extension CodableMacro.Registrar {
             /// The actual case name token syntax.
             var token: TokenSyntax {
                 switch self {
-                case .field(let token): fallthrough
-                case .nestedKeyField(let token): fallthrough
-                case .builtWithKey(let token):
+                case .field(let token), .nestedKeyField(let token),
+                    .builtWithKey(let token):
                     return token
                 }
             }
@@ -53,9 +52,8 @@ extension CodableMacro.Registrar {
             /// token syntax as a string.
             var name: String {
                 switch self {
-                case .field(let token): fallthrough
-                case .nestedKeyField(let token): fallthrough
-                case .builtWithKey(let token):
+                case .field(let token), .nestedKeyField(let token),
+                    .builtWithKey(let token):
                     return token.text
                 }
             }
@@ -72,7 +70,7 @@ extension CodableMacro.Registrar {
         /// Kept up-to-date by
         /// `add(forKeys:field:context:)`
         /// method.
-        private var data: [String: Case] = [:]
+        private var data: OrderedDictionary<String, Case> = [:]
 
         /// Generates case names for provided keys
         /// using the associated `field` and

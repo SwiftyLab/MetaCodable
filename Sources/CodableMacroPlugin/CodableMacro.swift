@@ -229,23 +229,27 @@ fileprivate extension VariableDeclSyntax {
     }
 
     /// Filters variables in variable declaration that can be initialized
-    /// first in parent type's Initializer.
+    /// in parent type's Initializer.
     ///
-    /// Filters variables that are not computed properties,
+    /// Filters variables that are not computed properties with getters,
     /// and if immutable not initialized already.
     var initializableBindings: [PatternBindingSyntax] {
         return self.bindings.filter { binding in
             switch binding.accessor {
-            case .none:
+            case .some(let block) where block.is(CodeBlockSyntax.self):
+                false
+            case .some(let block) where block.is(AccessorBlockSyntax.self):
+                !block.as(AccessorBlockSyntax.self)!.accessors.contains { decl in
+                    decl.accessorKind.tokenKind == .keyword(.get)
+                }
+                // TODO: Re-evaluate when init accessor is introduced
+                // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
+                // || block.as(AccessorBlockSyntax.self)!.accessors.contains { decl in
+                //     decl.accessorKind.tokenKind == .keyword(.`init`)
+                // }
+            default:
                 self.bindingKeyword.tokenKind == .keyword(.var)
                 || binding.initializer == nil
-            // TODO: Reevaluate when init accessor is introduced
-            // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
-            // case .accessors(let block) where block.accessors
-            //         .contains { $0.accessorKind == .keyword(Keyword.`init`)}:
-            //     return true
-            default:
-                false
             }
         }
     }
