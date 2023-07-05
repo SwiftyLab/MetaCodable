@@ -229,9 +229,9 @@ fileprivate extension VariableDeclSyntax {
     }
 
     /// Filters variables in variable declaration that can be initialized
-    /// first in parent type's Initializer.
+    /// in parent type's Initializer.
     ///
-    /// Filters variables that are not computed properties,
+    /// Filters variables that are not computed properties with getters,
     /// and if immutable not initialized already.
     var initializableBindings: [PatternBindingSyntax] {
         return self.bindings.filter { binding in
