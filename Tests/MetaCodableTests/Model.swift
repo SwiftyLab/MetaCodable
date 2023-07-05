@@ -54,9 +54,10 @@ public struct CodableData {
     var mutableOptional: String? = "some"
 
     @CodablePath("customKey")
-    var customMutableKeyValue: String
+    var customMutableKeyValue: String { willSet {} }
 
     var computedInt: Int { 9 }
+    var computedInt2: Int { get { 9 } set {} }
 }
 
 struct PrimitiveCoder: ExternalHelperCoder {

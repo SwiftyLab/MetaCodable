@@ -1,6 +1,6 @@
-import Foundation
 import SwiftSyntax
 import SwiftSyntaxMacros
+import OrderedCollections
 
 extension CodableMacro.Registrar {
     /// A map containing all the case names
@@ -72,7 +72,7 @@ extension CodableMacro.Registrar {
         /// Kept up-to-date by
         /// `add(forKeys:field:context:)`
         /// method.
-        private var data: [String: Case] = [:]
+        private var data: OrderedDictionary<String, Case> = [:]
 
         /// Generates case names for provided keys
         /// using the associated `field` and

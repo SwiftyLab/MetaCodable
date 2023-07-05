@@ -30,7 +30,7 @@ let package = Package(
         .library(name: "MetaCodable", targets: ["MetaCodable"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0-swift-5.9-DEVELOPMENT-SNAPSHOT-2023-04-25-b"),
+        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-06-17-a"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
     ],
     targets: [
