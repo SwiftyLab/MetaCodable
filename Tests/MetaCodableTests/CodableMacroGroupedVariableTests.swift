@@ -1,11 +1,7 @@
 import XCTest
-import SwiftSyntax
-import SwiftSyntaxBuilder
-import SwiftSyntaxMacros
-import SwiftSyntaxMacrosTestSupport
 @testable import CodableMacroPlugin
 
-class CodableMacroGroupedVariableTests: XCTestCase {
+final class CodableMacroGroupedVariableTests: XCTestCase {
     func testWithoutAnyCustomization() throws {
         assertMacroExpansion(
             """
@@ -43,12 +39,11 @@ class CodableMacroGroupedVariableTests: XCTestCase {
                 }
                 extension SomeCodable: Codable {
                 }
-                """,
-            macros: ["Codable": CodableMacro.self]
+                """
         )
     }
 
-    func testWithSomeInitialized() throws {
+    func testWithSomeInitializedWithExplicitTyping() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -81,10 +76,47 @@ class CodableMacroGroupedVariableTests: XCTestCase {
                 }
                 extension SomeCodable: Codable {
                 }
-                """,
-            macros: ["Codable": CodableMacro.self]
+                """
         )
     }
+
+    // func testWithSomeInitializedWithoutExplicitTyping() throws {
+    //     XCTExpectFailure("Requires explicit type declaration")
+    //     assertMacroExpansion(
+    //         """
+    //         @Codable
+    //         struct SomeCodable {
+    //             let one, two: String, three = ""
+    //         }
+    //         """,
+    //         expandedSource:
+    //             """
+    //             struct SomeCodable {
+    //                 let one, two: String, three = ""
+    //                 init(one: String, two: String) {
+    //                     self.one = one
+    //                     self.two = two
+    //                 }
+    //                 init(from decoder: Decoder) throws {
+    //                     let container = try decoder.container(keyedBy: CodingKeys.self)
+    //                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
+    //                     self.two = try container.decode(String.self, forKey: CodingKeys.two)
+    //                 }
+    //                 func encode(to encoder: Encoder) throws {
+    //                     var container = encoder.container(keyedBy: CodingKeys.self)
+    //                     try container.encode(self.one, forKey: CodingKeys.one)
+    //                     try container.encode(self.two, forKey: CodingKeys.two)
+    //                 }
+    //                 enum CodingKeys: String, CodingKey {
+    //                     case one = "one"
+    //                     case two = "two"
+    //                 }
+    //             }
+    //             extension SomeCodable: Codable {
+    //             }
+    //             """
+    //     )
+    // }
 
     func testMixedTypes() throws {
         assertMacroExpansion(
@@ -123,12 +155,11 @@ class CodableMacroGroupedVariableTests: XCTestCase {
                 }
                 extension SomeCodable: Codable {
                 }
-                """,
-            macros: ["Codable": CodableMacro.self]
+                """
         )
     }
 
-    func testMixedTypesWithSomeInitialized() throws {
+    func testMixedTypesWithSomeInitializedWithExplicitTyping() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -161,8 +192,44 @@ class CodableMacroGroupedVariableTests: XCTestCase {
                 }
                 extension SomeCodable: Codable {
                 }
-                """,
-            macros: ["Codable": CodableMacro.self]
+                """
+        )
+    }
+
+    func testMixedTypesWithSomeInitializedWithoutExplicitTyping() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            struct SomeCodable {
+                let one: String, two = "", three: Int
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let one: String, two = "", three: Int
+                    init(one: String, three: Int) {
+                        self.one = one
+                        self.three = three
+                    }
+                    init(from decoder: Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
+                        self.three = try container.decode(Int.self, forKey: CodingKeys.three)
+                    }
+                    func encode(to encoder: Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.one, forKey: CodingKeys.one)
+                        try container.encode(self.three, forKey: CodingKeys.three)
+                    }
+                    enum CodingKeys: String, CodingKey {
+                        case one = "one"
+                        case three = "three"
+                    }
+                }
+                extension SomeCodable: Codable {
+                }
+                """
         )
     }
 }

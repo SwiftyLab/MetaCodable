@@ -2,7 +2,7 @@ import SwiftSyntax
 import SwiftSyntaxMacros
 import SwiftSyntaxBuilder
 
-extension CodableMacro.Registrar {
+extension Registrar {
     /// A type containing key data.
     ///
     /// This type also provides key associated
