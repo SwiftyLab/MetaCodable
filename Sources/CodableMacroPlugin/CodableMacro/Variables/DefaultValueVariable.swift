@@ -52,10 +52,9 @@ struct DefaultValueVariable<V: Variable>: Variable {
     func initializing(
         in context: some MacroExpansionContext
     ) -> VariableInitialization {
-        return .required(
-            "\(name): \(type) = \(option.expr)",
-            "self.\(name) = \(name)"
-        )
+        return base
+            .initializing(in: context)
+            .update(param: "\(name): \(type) = \(option.expr)")
     }
 
     /// Provides the code syntax for decoding this variable

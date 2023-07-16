@@ -30,11 +30,28 @@ enum VariableInitialization {
     /// Converts initialization to optional
     /// from required initialization.
     var optionalize: Self {
-        switch self {
-        case .required(let funcParam, let expr):
-            return .optional(funcParam, expr)
+        return switch self {
+        case .required(let param, let expr):
+            .optional(param, expr)
         default:
-            return self
+            self
+        }
+    }
+    
+    /// Updates initialization type with the provided function parameter syntax.
+    ///
+    /// For ignored initialization type, update is ignored.
+    ///
+    /// - Parameter param: The function parameter for the initialization function.
+    /// - Returns: Updated initialization type.
+    func update(param: FunctionParameterSyntax) -> Self {
+        return switch self {
+        case .ignored:
+            self
+        case .required(_, let code):
+            .required(param, code)
+        case .optional(_, let code):
+            .optional(param, code)
         }
     }
 }
