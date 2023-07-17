@@ -9,11 +9,11 @@ import SwiftSyntaxBuilder
 /// * For initializing variable in case of decoding failure.
 /// * For providing default value to variable in member-wise initializer.
 struct DefaultValueVariable<V: Variable>: Variable {
-    /// The customization option for `DefaultValueVariable`.
+    /// The customization options for `DefaultValueVariable`.
     ///
     /// `DefaultValueVariable` uses the instance of this type,
     /// provided during initialization, for customizing code generation.
-    struct Option {
+    struct Options {
         /// The default expression used when decoding fails.
         ///
         /// This expression is provided during initialization
@@ -27,10 +27,10 @@ struct DefaultValueVariable<V: Variable>: Variable {
     /// The wrapped variable's type data is
     /// preserved and provided during initialization.
     let base: V
-    /// The option for customizations.
+    /// The options for customizations.
     ///
-    /// Option is provided during initialization.
-    let option: Option
+    /// Options is provided during initialization.
+    let options: Options
 
     /// The type of the variable.
     ///
@@ -54,7 +54,7 @@ struct DefaultValueVariable<V: Variable>: Variable {
     ) -> VariableInitialization {
         return base
             .initializing(in: context)
-            .update(param: "\(name): \(type) = \(option.expr)")
+            .update(param: "\(name): \(type) = \(options.expr)")
     }
 
     /// Provides the code syntax for decoding this variable
@@ -74,7 +74,7 @@ struct DefaultValueVariable<V: Variable>: Variable {
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         let catchClauses = CatchClauseListSyntax {
-            CatchClauseSyntax { "self.\(name) = \(option.expr)" }
+            CatchClauseSyntax { "self.\(name) = \(options.expr)" }
         }
         return CodeBlockItemListSyntax {
             DoStmtSyntax(catchClauses: catchClauses) {

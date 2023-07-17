@@ -8,11 +8,11 @@ import SwiftSyntaxBuilder
 /// encoding implementations, while customizing decoding and initialization
 /// implementations.
 struct InitializationVariable<V: Variable>: Variable {
-    /// The customization option for `InitializationVariable`.
+    /// The customization options for `InitializationVariable`.
     ///
     /// `InitializationVariable` uses the instance of this type,
     /// provided during initialization, for customizing code generation.
-    struct Option {
+    struct Options {
         /// Whether variable can be initialized.
         ///
         /// True for non-initialized stored variables,
@@ -31,10 +31,10 @@ struct InitializationVariable<V: Variable>: Variable {
     /// The wrapped variable's type data is
     /// preserved and provided during initialization.
     let base: V
-    /// The option for customizations.
+    /// The options for customizations.
     ///
-    /// Option is provided during initialization.
-    let option: Option
+    /// Options is provided during initialization.
+    let options: Options
 
     /// The name of the variable.
     ///
@@ -49,16 +49,16 @@ struct InitializationVariable<V: Variable>: Variable {
     ///
     /// If the variable can not be initialized
     /// then variable is ignored.
-    var canBeRegistered: Bool { option.`init` }
+    var canBeRegistered: Bool { options.`init` }
 
     /// Indicates the initialization type for this variable.
     ///
     /// Following checks are performed to determine initialization type:
     /// * Initialization is ignored if variable can't be initialized
-    ///   (i.e. `option.init` is `false`).
+    ///   (i.e. `options.init` is `false`).
     /// * Initialization is optional if variable is already initialized
-    ///   and can be initialized again (i.e both `option.initialized`
-    ///   and `option.init` is `true`)
+    ///   and can be initialized again (i.e both `options.initialized`
+    ///   and `options.init` is `true`)
     /// * Otherwise initialization type of the underlying variable value is used.
     ///
     /// - Parameter context: The context in which to perform
@@ -67,8 +67,8 @@ struct InitializationVariable<V: Variable>: Variable {
     func initializing(
         in context: some MacroExpansionContext
     ) -> VariableInitialization {
-        return if option.`init` {
-            if option.initialized {
+        return if options.`init` {
+            if options.initialized {
                 base.initializing(in: context).optionalize
             } else {
                 base.initializing(in: context)
@@ -83,7 +83,7 @@ struct InitializationVariable<V: Variable>: Variable {
     ///
     /// Provides code syntax for decoding of the underlying
     /// variable value if variable can be initialized
-    /// (i.e. `option.init` is `true`). Otherwise variable
+    /// (i.e. `options.init` is `true`). Otherwise variable
     /// ignored in decoding.
     ///
     /// - Parameters:
@@ -95,7 +95,7 @@ struct InitializationVariable<V: Variable>: Variable {
         in context: some MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
-        guard option.`init` else { return .init([]) }
+        guard options.`init` else { return .init([]) }
         return base.decoding(in: context, from: location)
     }
 

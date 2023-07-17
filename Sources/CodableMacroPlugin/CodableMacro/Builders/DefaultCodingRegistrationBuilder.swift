@@ -38,7 +38,7 @@ fileprivate extension Variable {
     /// - Parameter expr: The default expression to add.
     /// - Returns: Created variable data with default expression.
     func with(default expr: ExprSyntax) -> DefaultValueVariable<Self> {
-        return .init(base: self, option: .init(expr: expr))
+        return .init(base: self, options: .init(expr: expr))
     }
 }
 

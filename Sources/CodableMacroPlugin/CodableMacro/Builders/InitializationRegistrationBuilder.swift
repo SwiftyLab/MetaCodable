@@ -34,8 +34,8 @@ struct InitializationRegistrationBuilder<Input: Variable>: RegistrationBuilder {
         }
 
         let initialized = input.context.binding.initializer == nil
-        let option = Output.Option(init: canInit, initialized: initialized)
-        let newVariable = Output(base: input.variable, option: option)
+        let options = Output.Options(init: canInit, initialized: initialized)
+        let newVariable = Output(base: input.variable, options: options)
         return input.updating(with: newVariable)
     }
 }

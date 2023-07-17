@@ -41,7 +41,7 @@ fileprivate extension BasicVariable {
     /// - Parameter expr: The helper expression to add.
     /// - Returns: Created variable data with helper expression.
     func with(helper expr: ExprSyntax) -> HelperCodedVariable {
-        return .init(base: self, option: .init(expr: expr))
+        return .init(base: self, options: .init(expr: expr))
     }
 }
 

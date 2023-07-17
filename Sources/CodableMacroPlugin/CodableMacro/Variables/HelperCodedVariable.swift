@@ -7,11 +7,11 @@ import SwiftSyntaxBuilder
 /// The `HelperCodedVariable` customizes decoding and encoding
 /// by using the helper instance expression provided during initialization.
 struct HelperCodedVariable: Variable {
-    /// The customization option for `HelperCodedVariable`.
+    /// The customization options for `HelperCodedVariable`.
     ///
     /// `HelperCodedVariable` uses the instance of this type,
     /// provided during initialization, for customizing code generation.
-    struct Option {
+    struct Options {
         /// The helper expression used for decoding/encoding.
         ///
         /// This expression is provided during initialization and
@@ -25,10 +25,10 @@ struct HelperCodedVariable: Variable {
     /// `BasicVariable` can be wrapped
     /// by this instance.
     let base: BasicVariable
-    /// The option for customizations.
+    /// The options for customizations.
     ///
-    /// Option is provided during initialization.
-    let option: Option
+    /// Options is provided during initialization.
+    let options: Options
 
     /// The name of the variable.
     ///
@@ -64,14 +64,14 @@ struct HelperCodedVariable: Variable {
         case .coder(let decoder):
             return CodeBlockItemListSyntax {
                 """
-                self.\(name) = try \(option.expr).\(method)(from: \(decoder))
+                self.\(name) = try \(options.expr).\(method)(from: \(decoder))
                 """
             }
         case .container(let container, let key):
             let decoder: TokenSyntax = "\(container)_\(name.raw)Decoder"
             return CodeBlockItemListSyntax {
                 "let \(decoder) = try \(container).superDecoder(forKey: \(key))"
-                "self.\(name) = try \(option.expr).\(method)(from: \(decoder))"
+                "self.\(name) = try \(options.expr).\(method)(from: \(decoder))"
             }
         }
     }
@@ -101,14 +101,14 @@ struct HelperCodedVariable: Variable {
         case .coder(let encoder):
             return CodeBlockItemListSyntax {
                 """
-                try \(option.expr).\(method)(self.\(name), to: \(encoder))
+                try \(options.expr).\(method)(self.\(name), to: \(encoder))
                 """
             }
         case .container(let container, let key):
             let encoder: TokenSyntax = "\(container)_\(name.raw)Encoder"
             return CodeBlockItemListSyntax {
                 "let \(encoder) = \(container).superEncoder(forKey: \(key))"
-                "try \(option.expr).\(method)(self.\(name), to: \(encoder))"
+                "try \(options.expr).\(method)(self.\(name), to: \(encoder))"
             }
         }
     }
