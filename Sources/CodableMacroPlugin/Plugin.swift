@@ -13,8 +13,11 @@ struct MetaCodablePlugin: CompilerPlugin {
     ///
     /// New macro types should be added here.
     let providingMacros: [Macro.Type] = [
-        CodedPropertyMacro.self,
-        CodableMacro.self,
+        CodedAt.self,
+        CodedIn.self,
+        CodedBy.self,
+        Default.self,
+        Codable.self,
     ]
 }
 

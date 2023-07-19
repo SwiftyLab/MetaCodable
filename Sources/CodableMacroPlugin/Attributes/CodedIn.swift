@@ -2,15 +2,32 @@ import SwiftSyntax
 import SwiftDiagnostics
 import SwiftSyntaxMacros
 
-/// Attribute type for `CodedAt` macro-attribute.
+/// Attribute type for `CodedIn` macro-attribute.
 ///
-/// This type can validate`CodedAt` macro-attribute
+/// This type can validate`CodedIn` macro-attribute
 /// usage and extract data for `Codable` macro to
 /// generate implementation.
-struct CodedAt: Attribute {
+struct CodedIn: PropertyAttribute {
+    /// Represents whether initialized
+    /// without attribute syntax.
+    let inDefaultMode: Bool
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
+
+    /// The attribute types this attribute can't be combined with.
+    ///
+    /// If any of the attribute type that is covered in this is applied in the same
+    /// declaration as this attribute is attached, then diagnostics generated
+    /// to remove this attribute.
+    ///
+    /// - Note: This attribute can't be combined with `CodedAt`
+    ///         macro-attribute.
+    var cantBeCombinedWith: [PropertyAttribute.Type] {
+        return [
+            CodedAt.self
+        ]
+    }
     /// Creates a new instance with the provided node.
     ///
     /// The initializer fails to create new instance if the name
@@ -24,14 +41,26 @@ struct CodedAt: Attribute {
                 .description == Self.name
         else { return nil }
         self.node = node
+        self.inDefaultMode = false
+    }
+
+    /// Creates a new instance with default node.
+    ///
+    /// - Parameter node: The attribute syntax to create with.
+    /// - Returns: Newly created attribute instance.
+    init() {
+        self.node = .init("\(raw: Self.name)")
+        self.inDefaultMode = true
     }
 
     /// Validates this attribute is used properly with the declaration provided.
     ///
     /// The following conditions are checked for validations:
     /// * Attached declaration is a variable declaration.
-    /// * Attached declaration is not a grouped variable declaration.
-    /// * This attribute isn't used combined with `CodedIn` attribute.
+    /// * This attribute isn't used combined with `CodedAt` attribute.
+    ///
+    /// Warning is generated if this attribute is used without any arguments,
+    /// but validation is success for this scenario.
     ///
     /// - Parameters:
     ///   - declaration: The declaration this macro attribute is attached to.
@@ -46,23 +75,11 @@ struct CodedAt: Attribute {
     ) -> Bool {
         var diagnostics: [(MetaCodableMessage, [FixIt])] = []
 
-        if !declaration.is(VariableDeclSyntax.self) {
+        if node.argument?.as(TupleExprElementListSyntax.self)?.first == nil {
             let message = node.diagnostic(
-                message: "@\(name) only applicable to variable declarations",
-                id: misuseMessageID,
-                severity: .error
-            )
-            diagnostics.append((message, [message.fixItByRemove]))
-        }
-
-        if let declaration = declaration.as(VariableDeclSyntax.self),
-            declaration.bindings.count > 1
-        {
-            let message = node.diagnostic(
-                message:
-                    "@\(name) can't be used with grouped variable declarations",
-                id: misuseMessageID,
-                severity: .error
+                message: "Unnecessary use of @\(name) without arguments",
+                id: unusedMessageID,
+                severity: .warning
             )
             diagnostics.append((message, [message.fixItByRemove]))
         }
@@ -76,10 +93,7 @@ struct CodedAt: Attribute {
                 )
             )
         }
-
-        let notCodedIn =
-            UnsupportedCombination<Self, CodedIn>(from: node)?
-            .validate(declaration: declaration, in: context) ?? false
-        return notCodedIn && diagnostics.isEmpty
+        
+        return performBasicValidation(of: declaration, in: context)
     }
 }
