@@ -11,13 +11,9 @@
 ///     key path, with variable name as coding key.
 ///   * Use ``CodedAt(_:)`` with no path arguments, when type is composition
 ///     of multiple `Codable` types.
-///   * Use ``CodedAt(_:helper:)`` and ``CodedIn(_:helper:)``
-///     to provide custom decoding/encoding behavior for `Codable` types or
-///     implement decoding/encoding for non-`Codable` types.
-///   * Use ``CodedAt(_:default:)`` and ``CodedIn(_:default:)``
-///     to provide default value when decoding fails.
-///   * ``CodedAt(_:default:helper:)`` and ``CodedIn(_:default:helper:)``
-///     can be used to compose all the above behaviors described.
+///   * Use ``CodedBy(_:)`` to provide custom decoding/encoding behavior for
+///     `Codable` types or implement decoding/encoding for non-`Codable` types.
+///   * Use ``Default(_:)`` to provide default value when decoding fails.
 ///
 /// # Effect
 /// This macro composes two different kinds of macro expansion:
@@ -32,7 +28,5 @@
 @attached(member, names: named(CodingKeys), named(init(from:)), named(encode(to:)), arbitrary)
 @attached(conformance)
 @available(swift 5.9)
-public macro Codable() = #externalMacro(
-    module: "CodableMacroPlugin",
-    type: "CodableMacro"
-)
+public macro Codable()
+= #externalMacro(module: "CodableMacroPlugin", type: "Codable")

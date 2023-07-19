@@ -1,8 +1,7 @@
 /// A type that helps to decode and encode underlying ``Coded`` type
 /// from provided `decoder` and to provided `encoder` respectively.
 ///
-/// This type can be used with ``CodedAt(_:helper:)``,
-/// ``CodedIn(_:helper:)`` and their variations to allow
+/// This type can be used with ``CodedBy(_:)`` to allow
 /// decoding/encoding customizations or to provide decoding/encoding
 /// to non-`Codable` types.
 ///

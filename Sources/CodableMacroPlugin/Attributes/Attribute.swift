@@ -5,8 +5,9 @@ import SwiftSyntaxMacros
 /// A type indicating a macro-attribute.
 ///
 /// This type can check whether an `AttributeSyntax`
-/// is for this attribute and perform validation of this attribute usage.
-protocol Attribute {
+/// is for this attribute and perform validation and code generation
+/// for this attribute usage.
+protocol Attribute: AttachedMacro {
     /// The name of this attribute.
     static var name: String { get }
     /// The syntax used for this attribute instance.
@@ -60,4 +61,12 @@ extension Attribute {
     ///
     /// This attribute can be omitted in such scenario and the final result will still be the same.
     var unusedMessageID: MessageID { .messageID("\(id)-unused") }
+    
+    /// Checks whether this attribute is applied more than once to provided declaration.
+    ///
+    /// - Parameter declaration: The declaration this macro attribute is attached to.
+    /// - Returns: Whether this attribute is applied more than once.
+    func isDuplicated(in declaration: some SyntaxProtocol) -> Bool {
+        return declaration.attributes(for: Self.self).count > 1
+    }
 }

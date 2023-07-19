@@ -21,19 +21,19 @@ final class CodedInMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: CodedIn().misuseMessageID,
-                    message:
-                        "@CodedIn only applicable to variable declarations",
+                    id: CodedIn().unusedMessageID,
+                    message: "Unnecessary use of @CodedIn without arguments",
                     line: 2, column: 5,
+                    severity: .warning,
                     fixIts: [
                         .init(message: "Remove @CodedIn attribute")
                     ]
                 ),
                 .init(
-                    id: CodedIn().unusedMessageID,
-                    message: "Unnecessary use of @CodedIn without arguments",
+                    id: CodedIn().misuseMessageID,
+                    message:
+                        "@CodedIn only applicable to variable declarations",
                     line: 2, column: 5,
-                    severity: .warning,
                     fixIts: [
                         .init(message: "Remove @CodedIn attribute")
                     ]
@@ -92,7 +92,7 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn(default: "some")
+                @Default("some")
                 let value: String
             }
             """,
@@ -130,7 +130,7 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn(helper: LossySequenceCoder<[String]>())
+                @CodedBy(LossySequenceCoder<[String]>())
                 let value: [String]
             }
             """,
@@ -166,7 +166,8 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn(default: ["some"], helper: LossySequenceCoder())
+                @CodedBy(LossySequenceCoder<[String]>())
+                @Default(["some"])
                 let value: String
             }
             """,
@@ -181,7 +182,7 @@ final class CodedInMacroTests: XCTestCase {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         do {
                             let container_valueDecoder = try container.superDecoder(forKey: CodingKeys.value)
-                            self.value = try LossySequenceCoder().decode(from: container_valueDecoder)
+                            self.value = try LossySequenceCoder<[String]>().decode(from: container_valueDecoder)
                         } catch {
                             self.value = ["some"]
                         }
@@ -189,7 +190,7 @@ final class CodedInMacroTests: XCTestCase {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         let container_valueEncoder = container.superEncoder(forKey: CodingKeys.value)
-                        try LossySequenceCoder().encode(self.value, to: container_valueEncoder)
+                        try LossySequenceCoder<[String]>().encode(self.value, to: container_valueEncoder)
                     }
                     enum CodingKeys: String, CodingKey {
                         case value = "value"
@@ -243,7 +244,8 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn("nested", default: "some")
+                @Default("some")
+                @CodedIn("nested")
                 let value: String
             }
             """,
@@ -284,7 +286,8 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn("nested", helper: LossySequenceCoder<[String]>())
+                @CodedBy(LossySequenceCoder<[String]>())
+                @CodedIn("nested")
                 let value: [String]
             }
             """,
@@ -323,7 +326,9 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn("nested", default: ["some"], helper: LossySequenceCoder())
+                @Default(["some"])
+                @CodedBy(LossySequenceCoder<[String]>())
+                @CodedIn("nested")
                 let value: [String]
             }
             """,
@@ -339,7 +344,7 @@ final class CodedInMacroTests: XCTestCase {
                         let nested_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         do {
                             let nested_container_valueDecoder = try nested_container.superDecoder(forKey: CodingKeys.value)
-                            self.value = try LossySequenceCoder().decode(from: nested_container_valueDecoder)
+                            self.value = try LossySequenceCoder<[String]>().decode(from: nested_container_valueDecoder)
                         } catch {
                             self.value = ["some"]
                         }
@@ -348,7 +353,7 @@ final class CodedInMacroTests: XCTestCase {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var nested_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         let nested_container_valueEncoder = nested_container.superEncoder(forKey: CodingKeys.value)
-                        try LossySequenceCoder().encode(self.value, to: nested_container_valueEncoder)
+                        try LossySequenceCoder<[String]>().encode(self.value, to: nested_container_valueEncoder)
                     }
                     enum CodingKeys: String, CodingKey {
                         case value = "value"
@@ -406,7 +411,8 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn("deeply", "nested", default: "some")
+                @Default("some")
+                @CodedIn("deeply", "nested")
                 let value: String
             }
             """,
@@ -450,7 +456,8 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn("deeply", "nested", helper: LossySequenceCoder<[String]>())
+                @CodedBy(LossySequenceCoder<[String]>())
+                @CodedIn("deeply", "nested")
                 let value: String
             }
             """,
@@ -492,7 +499,9 @@ final class CodedInMacroTests: XCTestCase {
             """
             @Codable
             struct SomeCodable {
-                @CodedIn("deeply", "nested", default: ["some"], helper: LossySequenceCoder())
+                @Default(["some"])
+                @CodedBy(LossySequenceCoder<[String]>())
+                @CodedIn("deeply", "nested")
                 let value: [String]
             }
             """,
@@ -509,7 +518,7 @@ final class CodedInMacroTests: XCTestCase {
                         let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         do {
                             let nested_deeply_container_valueDecoder = try nested_deeply_container.superDecoder(forKey: CodingKeys.value)
-                            self.value = try LossySequenceCoder().decode(from: nested_deeply_container_valueDecoder)
+                            self.value = try LossySequenceCoder<[String]>().decode(from: nested_deeply_container_valueDecoder)
                         } catch {
                             self.value = ["some"]
                         }
@@ -519,7 +528,7 @@ final class CodedInMacroTests: XCTestCase {
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         let nested_deeply_container_valueEncoder = nested_deeply_container.superEncoder(forKey: CodingKeys.value)
-                        try LossySequenceCoder().encode(self.value, to: nested_deeply_container_valueEncoder)
+                        try LossySequenceCoder<[String]>().encode(self.value, to: nested_deeply_container_valueEncoder)
                     }
                     enum CodingKeys: String, CodingKey {
                         case value = "value"

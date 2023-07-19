@@ -16,9 +16,9 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows custom `CodingKey` value declaration per variable, instead of requiring you to write all the `CodingKey` values with ``CodedAt(_:)`` passing single argument.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
-- Allows to provide default value in case of decoding failures with ``CodedAt(_:default:)`` and ``CodedIn(_:default:)`` etc.
+- Allows to provide default value in case of decoding failures with ``Default(_:)``.
 - Generates member-wise initializer considering the above default value syntax as well.
-- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedAt(_:helper:)`` and ``CodedIn(_:helper:)``. i.e. ``LossySequenceCoder`` etc.
+- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
 
 ## Installation
 
@@ -50,13 +50,9 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 ### Strategies
 
 - ``CodedAt(_:)``
-- ``CodedAt(_:default:)``
-- ``CodedAt(_:helper:)``
-- ``CodedAt(_:default:helper:)``
 - ``CodedIn(_:)``
-- ``CodedIn(_:default:)``
-- ``CodedIn(_:helper:)``
-- ``CodedIn(_:default:helper:)``
+- ``Default(_:)``
+- ``CodedBy(_:)``
 
 ### Helpers
 

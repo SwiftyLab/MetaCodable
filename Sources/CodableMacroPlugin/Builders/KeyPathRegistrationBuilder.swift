@@ -41,25 +41,6 @@ extension KeyPathRegistrationBuilder {
         }
         return path
     }
-
-    /// Create a new instance from provided attached
-    /// variable declaration.
-    ///
-    /// This initialization will fail if this attribute not attached
-    /// to provided variable declaration
-    ///
-    /// - Parameter declaration: The attached variable
-    ///                          declaration.
-    /// - Returns: Created registration builder attribute.
-    init?(from declaration: VariableDeclSyntax) {
-        let attribute = declaration.attributes?.first { attribute in
-            guard case .attribute(let attribute) = attribute
-            else { return false }
-            return Self(from: attribute) != nil
-        }
-        guard case .attribute(let attribute) = attribute else { return nil }
-        self.init(from: attribute)
-    }
 }
 
 extension CodedAt: KeyPathRegistrationBuilder {
