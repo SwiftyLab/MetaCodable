@@ -108,6 +108,44 @@ final class CodedAtMacroTests: XCTestCase {
         )
     }
 
+    func testDuplicatedMisuse() throws {
+        assertMacroExpansion(
+            """
+            struct SomeCodable {
+                @CodedAt("two")
+                @CodedAt("three")
+                let one: String
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let one: String
+                }
+                """,
+            diagnostics: [
+                .init(
+                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    message:
+                        "@CodedAt can only be applied once per declaration",
+                    line: 2, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @CodedAt attribute")
+                    ]
+                ),
+                .init(
+                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    message:
+                        "@CodedAt can only be applied once per declaration",
+                    line: 3, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @CodedAt attribute")
+                    ]
+                ),
+            ]
+        )
+    }
+
     func testWithNoPath() throws {
         assertMacroExpansion(
             """

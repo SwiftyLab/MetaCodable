@@ -42,6 +42,44 @@ final class CodedInMacroTests: XCTestCase {
         )
     }
 
+    func testDuplicatedMisuse() throws {
+        assertMacroExpansion(
+            """
+            struct SomeCodable {
+                @CodedIn("two")
+                @CodedIn("three")
+                let one: String
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let one: String
+                }
+                """,
+            diagnostics: [
+                .init(
+                    id: CodedIn().misuseMessageID,
+                    message:
+                        "@CodedIn can only be applied once per declaration",
+                    line: 2, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @CodedIn attribute")
+                    ]
+                ),
+                .init(
+                    id: CodedIn().misuseMessageID,
+                    message:
+                        "@CodedIn can only be applied once per declaration",
+                    line: 3, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @CodedIn attribute")
+                    ]
+                ),
+            ]
+        )
+    }
+
     func testWithNoPath() throws {
         assertMacroExpansion(
             """
