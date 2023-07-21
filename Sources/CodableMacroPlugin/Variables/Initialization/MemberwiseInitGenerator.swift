@@ -95,7 +95,7 @@ struct MemberwiseInitGenerator {
     func add(_ item: Item) -> Self {
         guard !collections.isEmpty else { return self.update(with: [[item]]) }
         var collections = collections
-        for (index, _) in collections.enumerated() {
+        for index in collections.indices {
             collections[index].append(item)
         }
         return self.update(with: collections)
@@ -113,11 +113,10 @@ struct MemberwiseInitGenerator {
         guard !collections.isEmpty
         else { return self.update(with: [[], [item]]) }
 
-        var collections = collections
-        for (index, _) in self.collections.enumerated() {
-            var addedCollection = collections[index]
-            addedCollection.append(item)
-            collections.append(addedCollection)
+        var collections = self.collections
+        for var newCollection in self.collections {
+            newCollection.append(item)
+            collections.append(newCollection)
         }
         return self.update(with: collections)
     }
