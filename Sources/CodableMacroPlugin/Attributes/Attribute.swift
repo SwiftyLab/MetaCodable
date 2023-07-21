@@ -61,7 +61,7 @@ extension Attribute {
     ///
     /// This attribute can be omitted in such scenario and the final result will still be the same.
     var unusedMessageID: MessageID { .messageID("\(id)-unused") }
-    
+
     /// Checks whether this attribute is applied more than once to provided declaration.
     ///
     /// - Parameter declaration: The declaration this macro attribute is attached to.

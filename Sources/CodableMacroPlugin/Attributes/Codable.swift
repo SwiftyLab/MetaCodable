@@ -95,7 +95,7 @@ extension Codable: ConformanceMacro, MemberMacro {
             ("Codable", nil)
         ]
     }
-    
+
     /// Expand to produce `Codable` implementation members for attached struct.
     ///
     /// For all the variable declarations in the attached type registration is
@@ -119,15 +119,15 @@ extension Codable: ConformanceMacro, MemberMacro {
         // validate proper use
         guard Self(from: node)!.validate(declaration: declaration, in: context)
         else { return [] }
-        
+
         let options = Registrar.Options(modifiers: declaration.modifiers)
         var registrar = Registrar(options: options)
-        
+
         declaration.memberBlock.members.forEach { member in
             // is a variable declaration
             guard let decl = member.decl.as(VariableDeclSyntax.self)
             else { return }
-            
+
             // build
             let registrations = decl.registrations(node: node, in: context) {
                 ExhaustiveRegistrationBuilder(
@@ -138,14 +138,14 @@ extension Codable: ConformanceMacro, MemberMacro {
                 OptionalRegistrationBuilder(base: Default(from: decl))
                 InitializationRegistrationBuilder<AnyVariable>()
             }
-            
+
             // register
             for registration in registrations
             where registration.variable.canBeRegistered {
                 registrar.add(registration: registration, context: context)
             }
         }
-        
+
         // generate
         return [
             DeclSyntax(registrar.memberInit(in: context)),

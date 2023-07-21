@@ -93,7 +93,7 @@ struct CodedIn: PropertyAttribute {
                 )
             )
         }
-        
+
         return performBasicValidation(of: declaration, in: context)
     }
 }

@@ -29,7 +29,6 @@ protocol RegistrationBuilder<Input, Output> {
 /// final registration to be passed to`Registrar`.
 @resultBuilder
 struct VariableRegistrationBuilder {
-
     /// Builds a partial registration builder action from a single, first component.
     ///
     /// - Parameter first: The first `RegistrationBuilder` to accumulate.

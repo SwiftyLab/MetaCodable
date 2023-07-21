@@ -13,7 +13,7 @@ extension SyntaxProtocol {
     /// - Returns: All the attributes of provided type.
     func attributes<A: Attribute>(for type: A.Type) -> [A] {
         guard
-            case .choices(let choices) = DeclSyntax.structure
+            case .choices(let choices) = Self.structure
         else { return [] }
 
         let declSyntaxChoice = choices.first { choice in
