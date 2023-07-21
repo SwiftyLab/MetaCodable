@@ -4,7 +4,8 @@ import SwiftSyntax
 ///
 /// Checks whether variable can be initialized and whether variable has been already initialized
 /// from the current syntax and updates the registrations variable data accordingly.
-struct InitializationRegistrationBuilder<Input: Variable>: RegistrationBuilder {
+struct InitializationRegistrationBuilder<Input: Variable>: RegistrationBuilder
+where Input.Initialization == RequiredInitialization {
     /// The output registration variable type that handles initialization data.
     typealias Output = InitializationVariable<Input>
 
@@ -33,7 +34,7 @@ struct InitializationRegistrationBuilder<Input: Variable>: RegistrationBuilder {
             || input.context.binding.initializer == nil
         }
 
-        let initialized = input.context.binding.initializer == nil
+        let initialized = input.context.binding.initializer != nil
         let options = Output.Options(init: canInit, initialized: initialized)
         let newVariable = Output(base: input.variable, options: options)
         return input.updating(with: newVariable)

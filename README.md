@@ -21,7 +21,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
-- Generates member-wise initializer considering the above default value syntax as well.
+- Generates member-wise initializer(s) considering the above default value syntax as well.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
 
 ## Requirements
@@ -181,7 +181,7 @@ struct Coordinate {
 </details>
 
 <details>
-  <summary>Provide default value in case of decoding failures and member-wise initializer generated considers these default values.</summary>
+  <summary>Provide default value in case of decoding failures and member-wise initializer(s) generated considers these default values.</summary>
 
 Instead of throwing error in case of missing data or type mismatch, you can provide a default value that will be assigned in this case. The memberwise initializer generated also uses this default value for the field. The following definition with `MetaCodable`:
 

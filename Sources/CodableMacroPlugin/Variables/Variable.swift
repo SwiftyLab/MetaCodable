@@ -11,7 +11,13 @@ import SwiftSyntaxMacros
 /// This type also informs whether the variable
 /// is necessary to the generated code during
 /// the registration phase.
-protocol Variable {
+protocol Variable<Initialization> {
+    /// A type representing the initialization of this variable.
+    ///
+    /// Represents the initialization type of this variable, i.e whether
+    /// initialization is required, optional or can be ignored.
+    associatedtype Initialization = RequiredInitialization
+    where Initialization: VariableInitialization
     /// The name of the variable.
     ///
     /// For a declaration:
@@ -46,7 +52,7 @@ protocol Variable {
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: some MacroExpansionContext
-    ) -> VariableInitialization
+    ) -> Initialization
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
     ///
@@ -77,7 +83,7 @@ protocol Variable {
     ) -> CodeBlockItemListSyntax
 }
 
-extension Variable {
+extension Variable where Initialization == RequiredInitialization {
     /// Whether the variable is needed
     /// for final code generation.
     ///
@@ -102,12 +108,12 @@ extension Variable {
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: some MacroExpansionContext
-    ) -> VariableInitialization {
-        let funcParam: FunctionParameterSyntax = if type.isOptional {
+    ) -> Initialization {
+        let param: FunctionParameterSyntax = if type.isOptional {
             "\(name): \(type) = nil"
         } else {
             "\(name): \(type)"
         }
-        return .required(funcParam, "self.\(name) = \(name)")
+        return .init(param: param, code: "self.\(name) = \(name)")
     }
 }

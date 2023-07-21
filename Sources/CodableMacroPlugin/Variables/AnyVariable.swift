@@ -1,18 +1,17 @@
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-/// A type-erased variable value.
+/// A type-erased variable value only containing initialization type data.
 ///
-/// The `AnyVariable` type forwards `Variable`
-/// implementations to an underlying variable value,
-/// hiding the type of the wrapped value.
-struct AnyVariable: Variable {
+/// The `AnyVariable` type forwards `Variable` implementations to an underlying
+/// variable value, hiding the type of the wrapped value.
+struct AnyVariable<Initialization: VariableInitialization>: Variable {
     /// The value wrapped by this instance.
     ///
     /// The base property can be cast back
     /// to its original type using type casting
     /// operators (`as?`, `as!`, or `as`).
-    let base: Variable
+    let base: any Variable<Initialization>
 
     /// The name of the variable.
     ///
@@ -22,6 +21,11 @@ struct AnyVariable: Variable {
     ///
     /// Provides type of the underlying variable value.
     var type: TypeSyntax { base.type }
+    /// Whether the variable is needed for final code generation.
+    ///
+    /// Provides whether underlying variable value is needed
+    /// for final code generation.
+    var canBeRegistered: Bool { base.canBeRegistered }
 
     /// Indicates the initialization type for this variable.
     ///
@@ -32,7 +36,7 @@ struct AnyVariable: Variable {
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: some MacroExpansionContext
-    ) -> VariableInitialization {
+    ) -> Initialization {
         return base.initializing(in: context)
     }
 
