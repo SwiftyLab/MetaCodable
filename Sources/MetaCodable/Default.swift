@@ -1,5 +1,5 @@
 /// Provides a `default` value to be used when decoding fails and
-/// when not initialized explicitly in member-wise initializer.
+/// when not initialized explicitly in member-wise initializer(s).
 ///
 /// If the value is missing or has incorrect data type, the default value
 /// will be used instead of throwing error and terminating decoding.

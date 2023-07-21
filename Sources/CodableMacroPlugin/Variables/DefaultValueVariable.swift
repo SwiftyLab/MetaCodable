@@ -7,8 +7,9 @@ import SwiftSyntaxBuilder
 /// The `DefaultValueVariable` customizes decoding and initialization
 /// by using the default expression provided during initialization:
 /// * For initializing variable in case of decoding failure.
-/// * For providing default value to variable in member-wise initializer.
-struct DefaultValueVariable<V: Variable>: Variable {
+/// * For providing default value to variable in member-wise initializer(s).
+struct DefaultValueVariable<Var: Variable>: Variable
+where Var.Initialization == RequiredInitialization {
     /// The customization options for `DefaultValueVariable`.
     ///
     /// `DefaultValueVariable` uses the instance of this type,
@@ -26,7 +27,7 @@ struct DefaultValueVariable<V: Variable>: Variable {
     ///
     /// The wrapped variable's type data is
     /// preserved and provided during initialization.
-    let base: V
+    let base: Var
     /// The options for customizations.
     ///
     /// Options is provided during initialization.
@@ -51,7 +52,7 @@ struct DefaultValueVariable<V: Variable>: Variable {
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: some MacroExpansionContext
-    ) -> VariableInitialization {
+    ) -> RequiredInitialization {
         return base
             .initializing(in: context)
             .update(param: "\(name): \(type) = \(options.expr)")
