@@ -7,7 +7,8 @@ import SwiftSyntaxBuilder
 /// The `InitializationVariable` type forwards `Variable`
 /// encoding implementations, while customizing decoding and initialization
 /// implementations.
-struct InitializationVariable<V: Variable>: Variable {
+struct InitializationVariable<Var: Variable>: Variable
+where Var.Initialization == RequiredInitialization {
     /// The customization options for `InitializationVariable`.
     ///
     /// `InitializationVariable` uses the instance of this type,
@@ -30,7 +31,7 @@ struct InitializationVariable<V: Variable>: Variable {
     ///
     /// The wrapped variable's type data is
     /// preserved and provided during initialization.
-    let base: V
+    let base: Var
     /// The options for customizations.
     ///
     /// Options is provided during initialization.
@@ -66,15 +67,15 @@ struct InitializationVariable<V: Variable>: Variable {
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: some MacroExpansionContext
-    ) -> VariableInitialization {
+    ) -> AnyInitialization {
         return if options.`init` {
             if options.initialized {
-                base.initializing(in: context).optionalize
+                base.initializing(in: context).optionalize.any
             } else {
-                base.initializing(in: context)
+                base.initializing(in: context).any
             }
         } else {
-            .ignored
+            IgnoredInitialization().any
         }
     }
 

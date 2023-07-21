@@ -15,7 +15,7 @@ import SwiftSyntaxMacros
 ///     for the attached struct declaration named `CodingKeys` and use
 ///     this type for `Codable` implementation of both `init(from:)`
 ///     and `encode(to:)` methods by using `CodedPropertyMacro`
-///     declarations. Additionally member-wise initializer is also generated.
+///     declarations. Additionally member-wise initializer(s) also generated.
 struct Codable: Attribute {
     /// The node syntax provided
     /// during initialization.
@@ -110,7 +110,7 @@ extension Codable: ConformanceMacro, MemberMacro {
     ///
     /// - Returns: `CodingKeys` type and `init(from:)`, `encode(to:)`,
     ///             method declarations for `Codable` implementation along with
-    ///             member-wise initializer declaration.
+    ///             member-wise initializer declaration(s).
     static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
@@ -147,12 +147,7 @@ extension Codable: ConformanceMacro, MemberMacro {
         }
 
         // generate
-        return [
-            DeclSyntax(registrar.memberInit(in: context)),
-            DeclSyntax(registrar.decoding(in: context)),
-            DeclSyntax(registrar.encoding(in: context)),
-            DeclSyntax(registrar.codingKeys(in: context)),
-        ]
+        return registrar.memberDeclarations(in: context)
     }
 }
 

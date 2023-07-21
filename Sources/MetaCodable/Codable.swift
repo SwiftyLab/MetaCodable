@@ -22,7 +22,7 @@
 ///   * Member macro expansion, to generate custom `CodingKey` type for
 ///     the attached struct declaration named `CodingKeys` and use this type
 ///     for `Codable` implementation of both `init(from:)` and `encode(to:)`
-///     methods. Additionally member-wise initializer is also generated.
+///     methods. Additionally member-wise initializer(s) also generated.
 ///
 /// - Important: The attached declaration must be of a struct type.
 @attached(member, names: named(CodingKeys), named(init(from:)), named(encode(to:)), arbitrary)

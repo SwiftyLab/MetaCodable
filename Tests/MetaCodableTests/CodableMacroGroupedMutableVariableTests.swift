@@ -55,6 +55,10 @@ final class CodableMacroGroupedMutableVariableTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one, two: String, three: String = ""
+                    init(one: String, two: String) {
+                        self.one = one
+                        self.two = two
+                    }
                     init(one: String, two: String, three: String) {
                         self.one = one
                         self.two = two
@@ -179,6 +183,10 @@ final class CodableMacroGroupedMutableVariableTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String, two: String = "", three: Int
+                    init(one: String, three: Int) {
+                        self.one = one
+                        self.three = three
+                    }
                     init(one: String, two: String, three: Int) {
                         self.one = one
                         self.two = two
@@ -220,6 +228,10 @@ final class CodableMacroGroupedMutableVariableTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String, two = "", three: Int
+                    init(one: String, three: Int) {
+                        self.one = one
+                        self.three = three
+                    }
                     init(one: String, two: Int, three: Int) {
                         self.one = one
                         self.two = two

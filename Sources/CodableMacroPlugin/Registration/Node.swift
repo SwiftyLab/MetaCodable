@@ -53,7 +53,7 @@ extension Registrar {
             }
         }
         /// All the variables registered at this node.
-        private(set) var variables: [Variable]
+        private(set) var variables: [any Variable]
         /// Nested registration node associated with keys.
         private(set) var children: OrderedDictionary<Key, Self>
 
@@ -61,7 +61,7 @@ extension Registrar {
         ///
         /// Gets all variables at current node
         /// and children nodes.
-        var linkedVariables: [Variable] {
+        var linkedVariables: [any Variable] {
             return variables + children.flatMap { $1.linkedVariables }
         }
 
@@ -73,7 +73,7 @@ extension Registrar {
         ///
         /// - Returns: The newly created node instance.
         init(
-            variables: [Variable] = [],
+            variables: [any Variable] = [],
             children: OrderedDictionary<Key, Self> = [:]
         ) {
             self.variables = variables
@@ -90,7 +90,7 @@ extension Registrar {
         ///               additional macro metadata.
         ///   - keyPath: The `CodingKey` path where the value
         ///              will be decode/encoded.
-        mutating func register(variable: Variable, keyPath: [Key]) {
+        mutating func register(variable: any Variable, keyPath: [Key]) {
             guard !keyPath.isEmpty else { variables.append(variable); return }
 
             let key = keyPath.first!

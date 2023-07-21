@@ -19,6 +19,14 @@ struct Registrar {
         /// conformance implementation declarations.
         fileprivate let modifiers: ModifierListSyntax?
 
+        /// Member-wise initialization generator with provided options.
+        ///
+        /// Creates member-wise initialization generator by passing
+        /// the provided access modifiers.
+        var initGenerator: MemberwiseInitGenerator {
+            return .init(options: .init(modifiers: modifiers))
+        }
+
         /// Creates a new options instance with provided parameters.
         ///
         /// - Parameters:
@@ -82,6 +90,26 @@ struct Registrar {
         )
     }
 
+    /// Generates member declarations for `Codable` macro.
+    ///
+    /// From the variables registered by `Codable` macro,
+    /// member-wise initialization, `Codable` protocol conformance
+    /// and `CodingKey` declarations are generated.
+    ///
+    /// - Parameter context: The context in which to perform
+    ///                      the macro expansion.
+    ///
+    /// - Returns: The generated member declarations.
+    func memberDeclarations(
+        in context: some MacroExpansionContext
+    ) -> [DeclSyntax] {
+        var decls = memberInit(in: context).map { DeclSyntax($0) }
+        decls.append(DeclSyntax(decoding(in: context)))
+        decls.append(DeclSyntax(encoding(in: context)))
+        decls.append(DeclSyntax(codingKeys(in: context)))
+        return decls
+    }
+
     /// Provides the declaration of `CodingKey` type that is used
     /// for `Codable` implementation generation.
     ///
@@ -92,7 +120,7 @@ struct Registrar {
     ///                      the macro expansion.
     ///
     /// - Returns: The generated enum declaration.
-    func codingKeys(
+    private func codingKeys(
         in context: some MacroExpansionContext
     ) -> EnumDeclSyntax {
         return caseMap.decl(in: context)
@@ -105,7 +133,7 @@ struct Registrar {
     ///                      the macro expansion.
     ///
     /// - Returns: The generated initializer declaration.
-    func decoding(
+    private func decoding(
         in context: some MacroExpansionContext
     ) -> InitializerDeclSyntax {
         return InitializerDeclSyntax.decode(
@@ -125,7 +153,7 @@ struct Registrar {
     ///                      the macro expansion.
     ///
     /// - Returns: The generated function declaration.
-    func encoding(
+    private func encoding(
         in context: some MacroExpansionContext
     ) -> FunctionDeclSyntax {
         return FunctionDeclSyntax.encode(
@@ -138,43 +166,20 @@ struct Registrar {
         }
     }
 
-    /// Provides the member-wise initializer declaration.
+    /// Provides the member-wise initializer declaration(s).
     ///
     /// - Parameter context: The context in which to perform
     ///                      the macro expansion.
     ///
-    /// - Returns: The generated initializer declaration.
-    func memberInit(
+    /// - Returns: The generated initializer declarations.
+    private func memberInit(
         in context: some MacroExpansionContext
-    ) -> InitializerDeclSyntax {
-        let allVariables = root.linkedVariables
-        var params: [FunctionParameterSyntax] = []
-        var exprs: [CodeBlockItemSyntax] = []
-        params.reserveCapacity(allVariables.count)
-        exprs.reserveCapacity(allVariables.count)
-
-        allVariables.forEach { variable in
-            switch variable.initializing(in: context) {
-            case .ignored:
-                break
-            case .optional(let param, let expr),
-                .required(let param, let expr):
-                params.append(param)
-                exprs.append(expr)
-            }
+    ) -> [InitializerDeclSyntax] {
+        var generator = options.initGenerator
+        for variable in root.linkedVariables {
+            generator = variable.initializing(in: context).add(to: generator)
         }
-        return InitializerDeclSyntax(
-            modifiers: options.modifiers,
-            signature: .init(
-                input: .init(
-                    parameterList: .init {
-                        for param in params { param }
-                    }
-                )
-            )
-        ) {
-            for expr in exprs { expr }
-        }
+        return generator.declarations(in: context)
     }
 }
 

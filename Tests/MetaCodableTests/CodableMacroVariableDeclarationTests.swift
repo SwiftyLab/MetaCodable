@@ -42,6 +42,8 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var value: String = "some"
+                    init() {
+                    }
                     init(value: String) {
                         self.value = value
                     }
@@ -236,6 +238,14 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                     var value2: String = "some" {
                         willSet {
                         }
+                    }
+                    init() {
+                    }
+                    init(value1: String) {
+                        self.value1 = value1
+                    }
+                    init(value2: String) {
+                        self.value2 = value2
                     }
                     init(value1: String, value2: String) {
                         self.value1 = value1

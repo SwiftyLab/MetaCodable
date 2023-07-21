@@ -17,7 +17,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
-- Generates member-wise initializer considering the above default value syntax as well.
+- Generates member-wise initializer(s) considering the above default value syntax as well.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
 
 ## Installation
