@@ -37,7 +37,7 @@ enum VariableInitialization {
             self
         }
     }
-    
+
     /// Updates initialization type with the provided function parameter syntax.
     ///
     /// For ignored initialization type, update is ignored.

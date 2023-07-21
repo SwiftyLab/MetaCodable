@@ -11,7 +11,7 @@ where Builder: RegistrationBuilder {
     /// This will be used as underlying
     /// `build(with:)` implementation.
     let base: Builder?
-    
+
     /// Creates a new instance from the provided optional builder.
     ///
     /// The provided builder will be used as underlying `build(with:)`
