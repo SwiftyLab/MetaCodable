@@ -1,4 +1,4 @@
-/// An ``ExternalHelperCoder`` that helps decoding/encoding lossy sequence.
+/// An ``HelperCoder`` that helps decoding/encoding lossy sequence.
 ///
 /// This type tries to decode a sequence from provided decoder's container
 /// only accepting valid data and ignoring invalid/corrupt data instead of
@@ -8,7 +8,7 @@
 ///
 /// - Warning: If data in decoder is not of an unkeyed container format
 ///            ``decode(from:)`` can fail with error.
-public struct LossySequenceCoder<S: SequenceInitializable>: ExternalHelperCoder
+public struct LossySequenceCoder<S: SequenceInitializable>: HelperCoder
 where S: Codable, S.Element: Codable {
     /// The default value to use
     /// when no valid data decoded.

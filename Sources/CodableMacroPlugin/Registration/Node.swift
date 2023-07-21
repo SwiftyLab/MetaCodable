@@ -3,7 +3,7 @@ import SwiftSyntaxMacros
 import SwiftSyntaxBuilder
 import OrderedCollections
 
-extension CodableMacro.Registrar {
+extension Registrar {
     /// A type storing variable and `CodingKey`
     /// data using the "trie" tree algorithm.
     ///
@@ -14,57 +14,92 @@ extension CodableMacro.Registrar {
     /// See https://en.wikipedia.org/wiki/Trie
     /// for more information.
     struct Node {
-        /// All the field data registered at this node.
-        private(set) var datas: [Data]
+        /// Represents the location for decoding/encoding that the node needs to perform.
+        ///
+        /// Represents whether node needs to decode/encode directly
+        /// from/to the decoder/encoder respectively or at path of a container
+        enum CodingLocation {
+            /// Represents a top-level decoding/encoding location.
+            ///
+            /// The node needs to perform decoding/encoding directly
+            /// to the decoder/encoder provided, not nested at a `CodingKey`.
+            ///
+            /// - Parameters:
+            ///   - coder: The decoder/encoder for decoding/encoding.
+            ///   - keyType: The `CodingKey` type.
+            case coder(_ coder: TokenSyntax, keyType: ExprSyntax)
+            /// Represents decoding/encoding location at a `CodingKey`
+            /// for a container.
+            ///
+            /// The node needs to perform decoding/encoding at the
+            /// `CodingKey` inside the container provided.
+            ///
+            /// - Parameters:
+            ///   - container: The container for decoding/encoding.
+            ///   - key: The `CodingKey` inside the container.
+            case container(_ container: TokenSyntax, key: Key)
+
+            /// The decoding/encoding location for individual variables.
+            ///
+            /// Maps current decoding/encoding location to individual
+            /// variable decoding/encoding locations.
+            var forVariable: VariableCodingLocation {
+                switch self {
+                case .coder(let coder, keyType: _):
+                    return .coder(coder)
+                case .container(let container, key: let key):
+                    return .container(container, key: key.expr)
+                }
+            }
+        }
+        /// All the variables registered at this node.
+        private(set) var variables: [Variable]
         /// Nested registration node associated with keys.
         private(set) var children: OrderedDictionary<Key, Self>
 
-        /// List of all the `CodingKey` registered
-        /// at current node and children nodes.
-        var allCodableKeys: OrderedSet<Key> {
-            return OrderedSet(children.keys)
-                .union(children.flatMap { $1.allCodableKeys })
+        /// List of all the linked variables registered.
+        ///
+        /// Gets all variables at current node
+        /// and children nodes.
+        var linkedVariables: [Variable] {
+            return variables + children.flatMap { $1.linkedVariables }
         }
 
-        /// List of all the metadata registered
-        /// at current node and children nodes.
-        var allDatas: OrderedSet<Data> {
-            return OrderedSet(datas)
-                .union(children.flatMap { $1.allDatas })
-        }
-
-        /// Creates a new node with provided metadata list and and linked nodes.
+        /// Creates a new node with provided variables and and linked nodes.
         ///
         /// - Parameters:
-        ///   - datas: The list of metadata.
+        ///   - variables: The list of variables.
         ///   - children: The list of linked nodes associated with keys.
         ///
         /// - Returns: The newly created node instance.
-        init(datas: [Data] = [], children: OrderedDictionary<Key, Self> = [:]) {
-            self.datas = datas
+        init(
+            variables: [Variable] = [],
+            children: OrderedDictionary<Key, Self> = [:]
+        ) {
+            self.variables = variables
             self.children = children
         }
 
-        /// Register metadata for the provided `CodingKey` path.
+        /// Register variable for the provided `CodingKey` path.
         ///
         /// Create node at the `CodingKey` path if doesn't exist
-        /// and register the metadata at the node.
+        /// and register the variable at the node.
         ///
         /// - Parameters:
-        ///   - data: The metadata associated with field,
-        ///           i.e. field name, type and additional macro metadata.
+        ///   - variable: The variable data, i.e. name, type and
+        ///               additional macro metadata.
         ///   - keyPath: The `CodingKey` path where the value
         ///              will be decode/encoded.
-        mutating func register(data: Data, keyPath: [Key]) {
-            guard !keyPath.isEmpty else { datas.append(data); return }
+        mutating func register(variable: Variable, keyPath: [Key]) {
+            guard !keyPath.isEmpty else { variables.append(variable); return }
 
             let key = keyPath.first!
             if children[key] == nil {
-                children[key] = .init(datas: [], children: [:])
+                children[key] = .init(variables: [], children: [:])
             }
 
             children[key]!.register(
-                data: data,
+                variable: variable,
                 keyPath: Array(keyPath.dropFirst())
             )
         }
@@ -72,122 +107,98 @@ extension CodableMacro.Registrar {
 }
 
 // MARK: Decoding
-extension CodableMacro.Registrar.Node {
-    /// Provides the expression list syntax for decoding individual
-    /// fields using registered metadata at current and linked nodes.
+extension Registrar.Node {
+    /// Provides the code block list syntax for decoding individual
+    /// fields using registered variables at current and linked nodes.
     ///
     /// - Parameters:
     ///   - context: The context in which to perform the macro expansion.
-    ///   - container: The decoding container variable for the current node.
-    ///   - key: The `CodingKey` current node is associated with.
+    ///   - location: The decoding location for the current node.
     ///
-    /// - Returns: The generated expression list.
+    /// - Returns: The generated code block list.
     func decoding(
         in context: some MacroExpansionContext,
-        container: TokenSyntax,
-        key: CodableMacro.Registrar.Key
-    ) -> ExprListSyntax {
-        return ExprListSyntax {
-            for data in datas {
-                data.decoding(in: context, from: container, key: key.expr)
+        from location: CodingLocation
+    ) -> CodeBlockItemListSyntax {
+        return CodeBlockItemListSyntax {
+            for variable in variables {
+                variable.decoding(in: context, from: location.forVariable)
             }
-            self.nestedDecoding(in: context, container: container, key: key)
-        }
-    }
 
-    /// Provides the expression list syntax for decoding individual
-    /// fields using registered metadata at linked nodes.
-    ///
-    /// Creates variable for nested decoding container from current decoding
-    /// container and passes it to children nodes for generating decoding
-    /// expressions.
-    ///
-    /// - Parameters:
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - container: The decoding container variable for the current node.
-    ///   - key: The `CodingKey` current node is associated with.
-    ///
-    /// - Returns: The generated expression list.
-    func nestedDecoding(
-        in context: some MacroExpansionContext,
-        container: TokenSyntax,
-        key: CodableMacro.Registrar.Key
-    ) -> ExprListSyntax {
-        return ExprListSyntax {
-            let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"
-            for (cKey, node) in children {
-                """
-                let \(nestedContainer) = try \(container).nestedContainer(
-                    keyedBy: \(key.type),
-                    forKey: \(key.expr)
-                )
-                """ as ExprSyntax
-                node.decoding(
-                    in: context,
-                    container: nestedContainer,
-                    key: cKey
-                )
+            if !children.isEmpty {
+                switch location {
+                case .coder(let decoder, let type):
+                    let container: TokenSyntax = "container"
+                    """
+                    let \(container) = try \(decoder).container(keyedBy: \(type))
+                    """
+                    for (cKey, node) in children {
+                        node.decoding(
+                            in: context,
+                            from: .container(container, key: cKey)
+                        )
+                    }
+                case .container(let container, let key):
+                    let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"
+                    """
+                    let \(nestedContainer) = try \(container).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
+                    """
+                    for (cKey, node) in children {
+                        node.decoding(
+                            in: context,
+                            from: .container(nestedContainer, key: cKey)
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 // MARK: Encoding
-extension CodableMacro.Registrar.Node {
-    /// Provides the expression list syntax for encoding individual
+extension Registrar.Node {
+    /// Provides the code block list syntax for encoding individual
     /// fields using registered metadata at current and linked nodes.
     ///
     /// - Parameters:
     ///   - context: The context in which to perform the macro expansion.
-    ///   - container: The encoding container variable for the current node.
-    ///   - key: The `CodingKey` current node is associated with.
+    ///   - location: The encoding location for the current node.
     ///
-    /// - Returns: The generated expression list.
+    /// - Returns: The generated code block list.
     func encoding(
         in context: some MacroExpansionContext,
-        container: TokenSyntax,
-        key: CodableMacro.Registrar.Key
-    ) -> ExprListSyntax {
-        return ExprListSyntax {
-            for data in datas {
-                data.encoding(in: context, to: container, key: key.expr)
+        from location: CodingLocation
+    ) -> CodeBlockItemListSyntax {
+        return CodeBlockItemListSyntax {
+            for variable in variables {
+                variable.encoding(in: context, to: location.forVariable)
             }
-            self.nestedEncoding(in: context, container: container, key: key)
-        }
-    }
 
-    /// Provides the expression list syntax for encoding individual
-    /// fields using registered metadata at linked nodes.
-    ///
-    /// Creates variable for nested encoding container from current encoding
-    /// container and passes it to children nodes for generating encoding
-    /// expressions.
-    ///
-    /// - Parameters:
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - container: The decoding container variable for the current node.
-    ///   - key: The `CodingKey` current node is associated with.
-    ///
-    /// - Returns: The generated expression list.
-    func nestedEncoding(
-        in context: some MacroExpansionContext,
-        container: TokenSyntax,
-        key: CodableMacro.Registrar.Key
-    ) -> ExprListSyntax {
-        return ExprListSyntax {
-            let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"
-            for (cKey, node) in children {
-                """
-                var \(nestedContainer) = \(container).nestedContainer(
-                    keyedBy: \(key.type),
-                    forKey: \(key.expr)
-                )
-                """ as ExprSyntax
-                node.encoding(
-                    in: context,
-                    container: nestedContainer,
-                    key: cKey
-                )
+            if !children.isEmpty {
+                switch location {
+                case .coder(let encoder, let type):
+                    let container: TokenSyntax = "container"
+                    """
+                    var container = \(encoder).container(keyedBy: \(type))
+                    """
+                    for (cKey, node) in children {
+                        node.encoding(
+                            in: context,
+                            from: .container(container, key: cKey)
+                        )
+                    }
+                case .container(let container, let key):
+                    let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"
+                    """
+                    var \(nestedContainer) = \(container).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
+                    """
+                    for (cKey, node) in children {
+                        node.encoding(
+                            in: context,
+                            from: .container(nestedContainer, key: cKey)
+                        )
+                    }
+                }
             }
         }
     }

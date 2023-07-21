@@ -2,7 +2,7 @@ import SwiftSyntax
 import SwiftSyntaxMacros
 import OrderedCollections
 
-extension CodableMacro.Registrar {
+extension Registrar {
     /// A map containing all the case names
     /// for keys in a particular type.
     ///
@@ -84,7 +84,7 @@ extension CodableMacro.Registrar {
         ///   is of type `nestedKeyField` then field name passed
         ///   overrides the case name as well.
         /// * For last key in `keys` list, if associated case is of type `field`
-        ///   or `nestedKeyField`  with more than one `keys`
+        ///   or `nestedKeyField` with more than one `keys`
         ///   then case name is kept as it is.
         /// * For other keys, case name is constructed from key string
         ///   after formatting with these rules:

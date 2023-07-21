@@ -1,14 +1,13 @@
 /// A type that helps to decode and encode underlying ``Coded`` type
 /// from provided `decoder` and to provided `encoder` respectively.
 ///
-/// This type can be used with ``CodablePath(helper:_:)``,
-/// ``CodableCompose(helper:)`` and their variations to allow
+/// This type can be used with ``CodedBy(_:)`` to allow
 /// decoding/encoding customizations or to provide decoding/encoding
 /// to non-`Codable` types.
 ///
-/// - Tip: Use this type to refactor scenarios where `propertyWraaper`s
+/// - Tip: Use this type to refactor scenarios where `propertyWrapper`s
 ///      were used to have custom decoding/encoding functionality.
-public protocol ExternalHelperCoder {
+public protocol HelperCoder {
     /// The actual type of value that is going to be decoded/encoded.
     ///
     /// This type can be both `Codable` and non-`Codable` types.
@@ -58,29 +57,29 @@ public protocol ExternalHelperCoder {
     func encodeIfPresent(_ value: Coded?, to encoder: Encoder) throws
 }
 
-public extension ExternalHelperCoder {
-    /// Decodes an optional value of the ``ExternalHelperCoder/Coded``
+public extension HelperCoder {
+    /// Decodes an optional value of the ``HelperCoder/Coded``
     /// type from the given `decoder`, if present.
     ///
     /// Uses ``decode(from:)`` implementation to get value
     /// and returns `nil` if any error thrown.
     ///
     /// - Parameter decoder: The decoder to read data from.
-    /// - Returns: An optional value of the ``ExternalHelperCoder/Coded`` type.
+    /// - Returns: An optional value of the ``HelperCoder/Coded`` type.
     ///
     /// - Throws: If decoding fails due to corrupted or invalid data.
     func decodeIfPresent(from decoder: Decoder) throws -> Coded? {
         return try? self.decode(from: decoder)
     }
 
-    /// Encodes given value of the ``ExternalHelperCoder/Coded`` type
+    /// Encodes given value of the ``HelperCoder/Coded`` type
     /// to the provided `encoder`.
     ///
-    /// If the ``ExternalHelperCoder/Coded`` value confirms to `Encodable`,
+    /// If the ``HelperCoder/Coded`` value confirms to `Encodable`,
     /// then encoding is performed. Otherwise no data written to the encoder.
     ///
     /// - Parameters:
-    ///   - value: The ``ExternalHelperCoder/Coded`` value to encode.
+    ///   - value: The ``HelperCoder/Coded`` value to encode.
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
@@ -88,14 +87,14 @@ public extension ExternalHelperCoder {
         try (value as? Encodable)?.encode(to: encoder)
     }
 
-    /// Encodes given optional value of the ``ExternalHelperCoder/Coded`` type
+    /// Encodes given optional value of the ``HelperCoder/Coded`` type
     /// to the provided `encoder`, if it is not `nil`.
     ///
-    /// If the ``ExternalHelperCoder/Coded`` value confirms to `Encodable`,
+    /// If the ``HelperCoder/Coded`` value confirms to `Encodable`,
     /// then encoding is performed. Otherwise no data written to the encoder.
     ///
     /// - Parameters:
-    ///   - value: The optional ``ExternalHelperCoder/Coded`` value to encode.
+    ///   - value: The optional ``HelperCoder/Coded`` value to encode.
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
@@ -105,14 +104,14 @@ public extension ExternalHelperCoder {
     }
 }
 
-public extension ExternalHelperCoder where Coded: Encodable {
-    /// Encodes given value of the ``ExternalHelperCoder/Coded`` type
+public extension HelperCoder where Coded: Encodable {
+    /// Encodes given value of the ``HelperCoder/Coded`` type
     /// to the provided `encoder`.
     ///
-    /// The ``ExternalHelperCoder/Coded`` value is written to the encoder.
+    /// The ``HelperCoder/Coded`` value is written to the encoder.
     ///
     /// - Parameters:
-    ///   - value: The ``ExternalHelperCoder/Coded`` value to encode.
+    ///   - value: The ``HelperCoder/Coded`` value to encode.
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.

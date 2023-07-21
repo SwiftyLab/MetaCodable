@@ -1,6 +1,7 @@
-import SwiftCompilerPlugin
+import SwiftSyntax
 import SwiftDiagnostics
 import SwiftSyntaxMacros
+import SwiftCompilerPlugin
 
 /// The compiler plugin that exposes all the macro type defined.
 ///
@@ -12,8 +13,11 @@ struct MetaCodablePlugin: CompilerPlugin {
     ///
     /// New macro types should be added here.
     let providingMacros: [Macro.Type] = [
-        CodableFieldMacro.self,
-        CodableMacro.self,
+        CodedAt.self,
+        CodedIn.self,
+        CodedBy.self,
+        Default.self,
+        Codable.self,
     ]
 }
 
@@ -24,6 +28,9 @@ struct MetaCodablePlugin: CompilerPlugin {
 /// and errors due to the usage of macros from this package
 /// and to provide quick fixes to these.
 struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
+    /// The macro attribute this message
+    /// is generated for and showed at.
+    let macro: AttributeSyntax
     /// The diagnostic message or quick-fix message
     /// that should be displayed in the client.
     let message: String
@@ -59,21 +66,47 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     /// diagnostic or quick-fix messages respectively
     ///
     /// - Parameters:
+    ///   - macro: The macro attribute message shown at.
     ///   - message: The message to be shown.
     ///   - messageID: The id associated with message.
     ///   - severity: The severity of diagnostic.
     ///
     /// - Returns: The newly created message instance.
-    private init(
+    fileprivate init(
+        macro: AttributeSyntax,
         message: String,
         messageID: MessageID,
         severity: DiagnosticSeverity
     ) {
+        self.macro = macro
         self.message = message
         self.diagnosticID = messageID
         self.severity = severity
     }
 
+    /// Generate `FixIt` for removing
+    /// the provided `macro` attribute.
+    var fixItByRemove: FixIt {
+        let name = macro.attributeName
+            .as(SimpleTypeIdentifierSyntax.self)!.description
+        return .init(
+            message: macro.fixIt(
+                message: "Remove @\(name) attribute",
+                id: fixItID
+            ),
+            changes: [
+                .replace(
+                    oldNode: Syntax(macro),
+                    newNode: Syntax("" as DeclSyntax)
+                )
+            ]
+        )
+    }
+}
+
+/// An extension that manages diagnostic
+/// and fixes messages related to attributes.
+extension AttributeSyntax {
     /// Creates a new diagnostic message instance
     /// with provided message, id and severity.
     ///
@@ -83,12 +116,13 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     ///   - severity: The severity of diagnostic.
     ///
     /// - Returns: The newly created diagnostic message instance.
-    static func diagnostic(
+    func diagnostic(
         message: String,
         id: MessageID,
         severity: DiagnosticSeverity
-    ) -> Self {
+    ) -> MetaCodableMessage {
         return .init(
+            macro: self,
             message: message,
             messageID: id,
             severity: severity
@@ -103,8 +137,9 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     ///   - messageID: The id associated with the fix suggested.
     ///
     /// - Returns: The newly created fixit/quick-fix message instance.
-    static func fixIt(message: String, id: MessageID) -> Self {
+    func fixIt(message: String, id: MessageID) -> MetaCodableMessage {
         return .init(
+            macro: self,
             message: message,
             messageID: id,
             severity: .warning
