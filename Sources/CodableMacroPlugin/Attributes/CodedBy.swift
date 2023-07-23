@@ -24,4 +24,24 @@ struct CodedBy: PropertyAttribute {
         else { return nil }
         self.node = node
     }
+
+    /// Builds diagnoser that can validate this macro
+    /// attached declaration.
+    ///
+    /// The following conditions are checked by the
+    /// built diagnoser:
+    /// * Attached declaration is a variable declaration.
+    /// * Macro usage is not duplicated for the same
+    ///   declaration.
+    /// * This attribute isn't used combined with
+    ///   `IgnoreCoding` attribute.
+    ///
+    /// - Returns: The built diagnoser instance.
+    func diagnoser() -> DiagnosticProducer {
+        return AggregatedDiagnosticProducer {
+            expect(syntax: VariableDeclSyntax.self)
+            cantDuplicate()
+            cantBeCombined(with: IgnoreCoding.self)
+        }
+    }
 }

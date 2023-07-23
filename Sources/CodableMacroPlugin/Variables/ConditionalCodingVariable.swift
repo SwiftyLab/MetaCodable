@@ -1,29 +1,29 @@
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-/// A variable value containing initialization data.
+/// A variable value containing data whether to perform decoding/encoding.
 ///
-/// The `InitializationVariable` type forwards `Variable`
-/// encoding implementations, while customizing decoding and initialization
-/// implementations.
-struct InitializationVariable<Var: Variable>: Variable
-where Var.Initialization == RequiredInitialization {
-    /// The customization options for `InitializationVariable`.
+/// The `ConditionalCodingVariable` type forwards `Variable`
+/// decoding/encoding implementations based on condition satisfied otherwise
+/// no decoding/encoding code is generated, while customizing decoding.
+/// The initialization implementation is forwarded without any check.
+struct ConditionalCodingVariable<Var: Variable>: Variable {
+    /// The customization options for `ConditionalCodingVariable`.
     ///
-    /// `InitializationVariable` uses the instance of this type,
+    /// `ConditionalCodingVariable` uses the instance of this type,
     /// provided during initialization, for customizing code generation.
     struct Options {
-        /// Whether variable can be initialized.
+        /// Whether variable needs to be decoded.
         ///
-        /// True for non-initialized stored variables,
-        /// initialized mutable variables. False for
-        /// computed and initialized immutable variables.
-        let `init`: Bool
-        /// Whether variable has been initialized.
+        /// True for non-initialized stored variables.
+        /// False for variables with `@IgnoreCoding`
+        /// and `@IgnoreDecoding` attributes.
+        let decode: Bool
+        /// Whether variable should to be encoded.
         ///
-        /// True if variable has any initializing expression,
-        /// false otherwise.
-        let initialized: Bool
+        /// False for variables with `@IgnoreCoding`
+        /// and `@IgnoreEncoding` attributes.
+        let encode: Bool
     }
 
     /// The value wrapped by this instance.
@@ -47,45 +47,33 @@ where Var.Initialization == RequiredInitialization {
     /// Whether the variable is needed
     /// for final code generation.
     ///
-    /// If the variable can not be initialized
-    /// then variable is ignored.
-    var canBeRegistered: Bool { options.`init` }
+    /// Provides whether underlying variable value
+    /// is needed for final code generation or variable
+    /// was asked to be decoded/encoded explicitly.
+    var canBeRegistered: Bool {
+        return base.canBeRegistered || options.decode || options.encode
+    }
 
     /// Indicates the initialization type for this variable.
     ///
-    /// Following checks are performed to determine initialization type:
-    /// * Initialization is ignored if variable can't be initialized
-    ///   (i.e. `options.init` is `false`).
-    /// * Initialization is optional if variable is already initialized
-    ///   and can be initialized again (i.e both `options.initialized`
-    ///   and `options.init` is `true`)
-    /// * Otherwise initialization type of the underlying variable value
-    ///   is used.
+    /// Forwards implementation to underlying variable value.
     ///
     /// - Parameter context: The context in which to perform
     ///                      the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: some MacroExpansionContext
-    ) -> AnyInitialization {
-        return if options.`init` {
-            if options.initialized {
-                base.initializing(in: context).optionalize.any
-            } else {
-                base.initializing(in: context).any
-            }
-        } else {
-            IgnoredInitialization().any
-        }
+    ) -> Var.Initialization {
+        return base.initializing(in: context)
     }
 
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
     ///
     /// Provides code syntax for decoding of the underlying
-    /// variable value if variable can be initialized
-    /// (i.e. `options.init` is `true`). Otherwise variable
-    /// ignored in decoding.
+    /// variable value if variable is to be decoded
+    /// (i.e. `options.decode` is `true`). Otherwise
+    /// variable ignored in decoding.
     ///
     /// - Parameters:
     ///   - context: The context in which to perform the macro expansion.
@@ -96,7 +84,7 @@ where Var.Initialization == RequiredInitialization {
         in context: some MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
-        guard options.`init` else { return .init([]) }
+        guard options.decode else { return .init([]) }
         return base.decoding(in: context, from: location)
     }
 
@@ -104,7 +92,9 @@ where Var.Initialization == RequiredInitialization {
     /// at the provided location.
     ///
     /// Provides code syntax for encoding of the underlying
-    /// variable value.
+    /// variable value if variable is to be encoded
+    /// (i.e. `options.encode` is `true`). Otherwise
+    /// variable ignored in encoding.
     ///
     /// - Parameters:
     ///   - context: The context in which to perform the macro expansion.
@@ -115,6 +105,7 @@ where Var.Initialization == RequiredInitialization {
         in context: some MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
+        guard options.encode else { return .init([]) }
         return base.encoding(in: context, to: location)
     }
 }

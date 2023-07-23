@@ -29,7 +29,8 @@ protocol RegistrationBuilder<Input, Output> {
 /// final registration to be passed to`Registrar`.
 @resultBuilder
 struct VariableRegistrationBuilder {
-    /// Builds a partial registration builder action from a single, first component.
+    /// Builds a partial registration builder action from a single,
+    /// first component.
     ///
     /// - Parameter first: The first `RegistrationBuilder` to accumulate.
     /// - Returns: Building action of the passed builder.
@@ -39,14 +40,16 @@ struct VariableRegistrationBuilder {
         return first.build
     }
 
-    /// Builds a partial registration builder action by combining an accumulated registration builder actions
-    /// and a new `RegistrationBuilder`.
+    /// Builds a partial registration builder action by combining
+    /// an accumulated registration builder actions and
+    /// a new `RegistrationBuilder`.
     ///
     /// - Parameters:
     ///   - accumulated: The accumulated registration builder actions.
     ///   - next: The next `RegistrationBuilder` to accumulate.
     ///
-    /// - Returns: Building action of the passed builder chained after accumulated actions.
+    /// - Returns: Building action of the passed builder chained after
+    ///            accumulated actions.
     static func buildPartialBlock<Input, Builder: RegistrationBuilder>(
         accumulated: @escaping
         (Registration<Input>) -> Registration<Builder.Input>,
@@ -62,7 +65,8 @@ extension VariableDeclSyntax {
     /// Creates registrations for current variable declaration.
     ///
     /// Depending on whether variable declaration is single variable or grouped
-    /// variable declaration, single or multiple registrations are produced respectively.
+    /// variable declaration, single or multiple registrations are produced
+    /// respectively.
     ///
     /// In the builder action `RegistrationBuilder`s can be chained to produce
     /// final registrations.
@@ -74,9 +78,10 @@ extension VariableDeclSyntax {
     ///
     /// - Returns: The final registrations built by the action provided.
     ///
-    /// - Important: For single variable declaration type needs to be provided explicitly.
-    ///              For grouped variable declaration, if type for a variable is not the same
-    ///              as the next explicit type declaration, then type needs to be specified explicitly.
+    /// - Important: For single variable declaration type needs to be provided
+    ///              explicitly. For grouped variable declaration, if type for
+    ///              a variable is not the same as the next explicit type
+    ///              declaration, then type needs to be specified explicitly.
     func registrations<Output: Variable>(
         node: AttributeSyntax,
         in context: some MacroExpansionContext,

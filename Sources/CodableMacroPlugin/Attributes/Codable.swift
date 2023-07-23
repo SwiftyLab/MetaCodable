@@ -35,43 +35,19 @@ struct Codable: Attribute {
         self.node = node
     }
 
-    /// Validates this attribute is used properly with the declaration provided.
+    /// Builds diagnoser that can validate this macro
+    /// attached declaration.
     ///
-    /// The declaration has to be a `struct` declaration, otherwise validation fails
-    /// and diagnostics created with `misuseMessageID`.
+    /// Builds diagnoser that validates attached declaration
+    /// is `struct` declaration and macro usage is not
+    /// duplicated for the same declaration.
     ///
-    /// - Parameters:
-    ///   - declaration: The declaration this macro attribute is attached to.
-    ///   - context: The macro expansion context validation performed in.
-    ///
-    /// - Returns: True if attribute usage satisfies all conditions,
-    ///            false otherwise.
-    @discardableResult
-    func validate(
-        declaration: some SyntaxProtocol,
-        in context: some MacroExpansionContext
-    ) -> Bool {
-        var diagnostics: [(MetaCodableMessage, [FixIt])] = []
-
-        if !declaration.is(StructDeclSyntax.self) {
-            let message = node.diagnostic(
-                message: "@\(name) only works for struct declarations",
-                id: misuseMessageID,
-                severity: .error
-            )
-            diagnostics.append((message, [message.fixItByRemove]))
+    /// - Returns: The built diagnoser instance.
+    func diagnoser() -> DiagnosticProducer {
+        return AggregatedDiagnosticProducer {
+            expect(syntax: StructDeclSyntax.self)
+            cantDuplicate()
         }
-
-        for (message, fixes) in diagnostics {
-            context.diagnose(
-                .init(
-                    node: Syntax(node),
-                    message: message,
-                    fixIts: fixes
-                )
-            )
-        }
-        return diagnostics.isEmpty
     }
 }
 
@@ -117,7 +93,9 @@ extension Codable: ConformanceMacro, MemberMacro {
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         // validate proper use
-        guard Self(from: node)!.validate(declaration: declaration, in: context)
+        guard
+            !Self(from: node)!.diagnoser()
+                .produce(for: declaration, in: context)
         else { return [] }
 
         let options = Registrar.Options(modifiers: declaration.modifiers)
@@ -137,6 +115,9 @@ extension Codable: ConformanceMacro, MemberMacro {
                 OptionalRegistrationBuilder(base: CodedBy(from: decl))
                 OptionalRegistrationBuilder(base: Default(from: decl))
                 InitializationRegistrationBuilder<AnyVariable>()
+                ConditionalCodingBuilder<
+                    InitializationVariable<AnyVariable<RequiredInitialization>>
+                >()
             }
 
             // register

@@ -87,15 +87,6 @@ final class CodedAtMacroTests: XCTestCase {
                     ]
                 ),
                 .init(
-                    id: CodedIn().unusedMessageID,
-                    message: "Unnecessary use of @CodedIn without arguments",
-                    line: 3, column: 5,
-                    severity: .warning,
-                    fixIts: [
-                        .init(message: "Remove @CodedIn attribute")
-                    ]
-                ),
-                .init(
                     id: CodedIn().misuseMessageID,
                     message:
                         "@CodedIn can't be used in combination with @CodedAt",

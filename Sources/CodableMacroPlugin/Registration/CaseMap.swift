@@ -91,9 +91,9 @@ extension Registrar {
         ///     * Convert key to camelcase
         ///     * If after conversion, string begins with numbers,
         ///       `key` is prepended
-        ///     * If current cases in the `CaseMap` doesn't contain built string,
-        ///       and built string doesn't conflict with existing Swift keywords
-        ///       in `invalidCaseNames` then built string added as
+        ///     * If current cases in the `CaseMap` doesn't contain built
+        ///       string, and built string doesn't conflict with existing Swift
+        ///       keywords in `invalidCaseNames` then built string added as
         ///       case name for the key.
         ///     * If built string is already present as case name,
         ///       `MacroExpansionContext.makeUniqueName`
