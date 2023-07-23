@@ -8,7 +8,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ## Overview
 
-`MetaCodable` framework exposes custom macros which can be used to generate dynamic `Codable` implementations. The core of the framework is ``Codable()`` macro which generates the implementation aided by data provided with using other macros.
+`MetaCodable` framework exposes custom macros which can be used to generate dynamic `Codable` implementations. The core of the framework is ``Codable(ignoreInitialized:)`` macro which generates the implementation aided by data provided with using other macros.
 
 
 `MetaCodable` aims to supercharge your `Codable` implementations by providing these inbox features:
@@ -45,7 +45,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ### Implementation
 
-- ``Codable()``
+- ``Codable(ignoreInitialized:)``
 
 ### Strategies
 

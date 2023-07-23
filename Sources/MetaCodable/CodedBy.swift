@@ -10,8 +10,8 @@
 /// - Parameter helper: The value that performs decoding and encoding.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses this
-///         macro when generating final implementations.
+///         is a variable declaration. ``Codable(ignoreInitialized:)``
+///         macro uses this macro when generating final implementations.
 ///
 /// - Important: The `helper`'s ``HelperCoder/Coded``
 ///              associated type must be the same as field type.

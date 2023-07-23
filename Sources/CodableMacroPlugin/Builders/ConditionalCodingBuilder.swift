@@ -32,14 +32,19 @@ struct ConditionalCodingBuilder<Input: Variable>: RegistrationBuilder {
     /// - Returns: Newly built registration with conditional
     ///            decoding/encoding data.
     func build(with input: Registration<Input>) -> Registration<Output> {
-        let declaration = input.context.declaration
+        let context = input.context
+        let declaration = context.declaration
         let ignoreCoding = declaration.attributes(for: IgnoreCoding.self)
         let ignoreDecoding = declaration.attributes(for: IgnoreDecoding.self)
         let ignoreEncoding = declaration.attributes(for: IgnoreEncoding.self)
 
-        let code =
-            input.variable.canBeRegistered
-            || input.context.attributes.contains { $0 is CodingAttribute }
+        let explicit = context.attributes.contains { $0 is CodingAttribute }
+        let code = if context.binding.initializer != nil
+        && context.attr.options.ignoreInitialized {
+            explicit
+        } else {
+            input.variable.canBeRegistered || explicit
+        }
         let decode = ignoreCoding.isEmpty && ignoreDecoding.isEmpty && code
         let encode = ignoreCoding.isEmpty && ignoreEncoding.isEmpty && code
         let options = Output.Options(decode: decode, encode: encode)

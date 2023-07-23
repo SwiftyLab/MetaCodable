@@ -72,7 +72,7 @@ extension VariableDeclSyntax {
     /// final registrations.
     ///
     /// - Parameters:
-    ///   - node: The `@Codable` macro-attribute syntax.
+    ///   - attr: The `@Codable` macro-attribute.
     ///   - context: The context in which to perform the macro expansion.
     ///   - builder: The registration building action.
     ///
@@ -83,7 +83,7 @@ extension VariableDeclSyntax {
     ///              a variable is not the same as the next explicit type
     ///              declaration, then type needs to be specified explicitly.
     func registrations<Output: Variable>(
-        node: AttributeSyntax,
+        attr: Codable,
         in context: some MacroExpansionContext,
         @VariableRegistrationBuilder
         builder: () -> ((Registration<BasicVariable>) -> Registration<Output>)
@@ -113,7 +113,7 @@ extension VariableDeclSyntax {
             return builder()(
                 Registration(
                     variable: variable,
-                    expansion: context, node: node,
+                    expansion: context, attr: attr,
                     declaration: self, binding: binding
                 )
             )

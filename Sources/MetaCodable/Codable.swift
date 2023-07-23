@@ -16,6 +16,15 @@
 ///     `Codable` types or implement decoding/encoding for non-`Codable` types.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
 ///
+/// ## Options
+/// Following options can be used to customize generated implementations:
+/// - **ignoreInitialized**: Whether to ignore initialized properties in
+///   decoding and encoding. When set to `true`, initialized mutable
+///   variables are ignored from decoding and encoding unless explicitly
+///   asked with attached coding attributes, i.e. ``CodedIn(_:)``,
+///   ``CodedAt(_:)``, ``CodedBy(_:)``, ``Default(_:)`` etc.
+///   The default value for this option is `false`.
+///
 /// # Effect
 /// This macro composes two different kinds of macro expansion:
 ///   * Conformance macro expansion, to confirm to `Decodable`
@@ -25,9 +34,13 @@
 ///     for `Codable` implementation of both `init(from:)` and `encode(to:)`
 ///     methods. Additionally member-wise initializer(s) also generated.
 ///
+/// - Parameters:
+///   - ignoreInitialized: Whether to ignore initialized properties in decoding
+///                        and encoding.
+///
 /// - Important: The attached declaration must be of a struct type.
 @attached(member, names: named(CodingKeys), named(init(from:)), named(encode(to:)), arbitrary)
 @attached(conformance)
 @available(swift 5.9)
-public macro Codable()
+public macro Codable(ignoreInitialized: Bool = false)
 = #externalMacro(module: "CodableMacroPlugin", type: "Codable")
