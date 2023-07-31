@@ -9,7 +9,8 @@ struct OptionalInitialization: VariableInitialization {
     /// can be wrapped by this instance.
     let base: RequiredInitialization
 
-    /// Adds current initialization type to member-wise initialization generator.
+    /// Adds current initialization type to member-wise initialization
+    /// generator.
     ///
     /// New member-wise initialization generator is created after adding this
     /// initialization as optional and returned.

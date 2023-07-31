@@ -4,7 +4,8 @@
 /// or initialization is optional. `Variable`s can also ignore initialization
 /// if initialized already.
 protocol VariableInitialization {
-    /// Adds current initialization type to member-wise initialization generator.
+    /// Adds current initialization type to member-wise initialization
+    /// generator.
     ///
     /// New member-wise initialization generator is created after adding this
     /// initialization type and returned.

@@ -1,10 +1,10 @@
 import SwiftSyntax
 
-/// A specialized `RegistrationBuilder` that only updates `CodingKey` path data
-/// keeping variable data as is.
+/// A specialized `RegistrationBuilder` that only updates `CodingKey`
+/// path data keeping variable data as is.
 ///
-/// This type can represent attributes attached to variable declarations and hence has access
-/// to additional data to update registration with.
+/// This type can represent attributes attached to variable declarations and
+/// hence has access to additional data to update registration with.
 protocol KeyPathRegistrationBuilder: RegistrationBuilder, Attribute
 where Output == Input {
     /// Create a new instance from provided attached
@@ -49,11 +49,12 @@ extension CodedAt: KeyPathRegistrationBuilder {
 
     /// Build new registration with provided input registration.
     ///
-    /// New registration is updated with the provided `CodingKey` path in attribute,
-    /// overriding older `CodingKey` path data.
+    /// New registration is updated with the provided `CodingKey` path in
+    /// attribute, overriding older `CodingKey` path data.
     ///
     /// - Parameter input: The registration built so far.
-    /// - Returns: Newly built registration with additional `CodingKey` path data.
+    /// - Returns: Newly built registration with additional `CodingKey`
+    ///            path data.
     func build(with input: Registration<Input>) -> Registration<Input> {
         return input.adding(attribute: self).updating(with: providedPath)
     }
@@ -65,11 +66,12 @@ extension CodedIn: KeyPathRegistrationBuilder {
 
     /// Build new registration with provided input registration.
     ///
-    /// New registration is updated with the provided `CodingKey` path in attribute,
-    /// prepending older `CodingKey` path data.
+    /// New registration is updated with the provided `CodingKey` path
+    /// in attribute, prepending older `CodingKey` path data.
     ///
     /// - Parameter input: The registration built so far.
-    /// - Returns: Newly built registration with additional `CodingKey` path data.
+    /// - Returns: Newly built registration with additional `CodingKey`
+    ///            path data.
     func build(with input: Registration<Input>) -> Registration<Input> {
         var finalPath = providedPath
         finalPath.append(contentsOf: input.keyPath)

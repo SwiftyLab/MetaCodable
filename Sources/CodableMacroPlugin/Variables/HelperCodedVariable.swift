@@ -43,8 +43,8 @@ struct HelperCodedVariable: Variable {
     /// at the provided location.
     ///
     /// Uses helper expression provided, to generate implementation:
-    /// * For directly decoding from decoder, passes decoder directly to helper's
-    ///   `decode(from:)` (or `decodeIfPresent(from:)`
+    /// * For directly decoding from decoder, passes decoder directly to
+    ///   helper's `decode(from:)` (or `decodeIfPresent(from:)`
     ///   for optional types) method.
     /// * For decoding from container, passes super-decoder at container's
     ///   provided `CodingKey` to helper's `decode(from:)`

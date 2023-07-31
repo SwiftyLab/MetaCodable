@@ -2,8 +2,9 @@ import SwiftSyntax
 
 /// A registration builder updating initialization data for variable.
 ///
-/// Checks whether variable can be initialized and whether variable has been already initialized
-/// from the current syntax and updates the registrations variable data accordingly.
+/// Checks whether variable can be initialized and whether variable has been
+/// already initialized from the current syntax and updates the registrations
+/// variable data accordingly.
 struct InitializationRegistrationBuilder<Input: Variable>: RegistrationBuilder
 where Input.Initialization == RequiredInitialization {
     /// The output registration variable type that handles initialization data.
@@ -11,8 +12,9 @@ where Input.Initialization == RequiredInitialization {
 
     /// Build new registration with provided input registration.
     ///
-    /// New registration is updated with new variable data indicating whether variable can be initialized
-    /// and whether variable has been initialized before.
+    /// New registration is updated with new variable data indicating whether
+    /// variable can be initialized and whether variable has been initialized
+    /// before.
     ///
     /// - Parameter input: The registration built so far.
     /// - Returns: Newly built registration with initialization data.

@@ -6,9 +6,10 @@
 /// encoding and decoding. Following customization can be done on fields to
 /// provide custom decode and encode behavior:
 ///   * Use ``CodedAt(_:)`` providing single string value as custom coding key.
-///   * Use ``CodedAt(_:)`` providing multiple string value as nested coding key path
-///   * Use ``CodedIn(_:)`` with one or more string value as nested container coding
-///     key path, with variable name as coding key.
+///   * Use ``CodedAt(_:)`` providing multiple string value as nested coding
+///     key path.
+///   * Use ``CodedIn(_:)`` with one or more string value as nested container
+///     coding key path, with variable name as coding key.
 ///   * Use ``CodedAt(_:)`` with no path arguments, when type is composition
 ///     of multiple `Codable` types.
 ///   * Use ``CodedBy(_:)`` to provide custom decoding/encoding behavior for

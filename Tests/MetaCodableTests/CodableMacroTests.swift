@@ -24,7 +24,7 @@ final class CodableMacroTests: XCTestCase {
             diagnostics: [
                 .init(
                     id: Codable(from: .init("Codable"))!.misuseMessageID,
-                    message: "@Codable only works for struct declarations",
+                    message: "@Codable only applicable to struct declarations",
                     line: 1, column: 1,
                     fixIts: [
                         .init(message: "Remove @Codable attribute")
@@ -86,6 +86,9 @@ func assertMacroExpansion(
             "CodedAt": CodedAt.self,
             "CodedIn": CodedIn.self,
             "CodedBy": CodedBy.self,
+            "IgnoreCoding": IgnoreCoding.self,
+            "IgnoreDecoding": IgnoreDecoding.self,
+            "IgnoreEncoding": IgnoreEncoding.self,
             "Default": Default.self,
         ],
         testModuleName: testModuleName, testFileName: testFileName,

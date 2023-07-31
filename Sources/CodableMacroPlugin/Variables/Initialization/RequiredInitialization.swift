@@ -24,7 +24,8 @@ struct RequiredInitialization: VariableInitialization {
         return .init(base: self)
     }
 
-    /// Adds current initialization type to member-wise initialization generator.
+    /// Adds current initialization type to member-wise initialization
+    /// generator.
     ///
     /// New member-wise initialization generator is created after adding this
     /// initialization as required and returned.
@@ -37,7 +38,9 @@ struct RequiredInitialization: VariableInitialization {
 
     /// Updates initialization type with the provided function parameter syntax.
     ///
-    /// - Parameter param: The function parameter for the initialization function.
+    /// - Parameter param: The function parameter for the initialization
+    ///                    function.
+    ///
     /// - Returns: Updated initialization type.
     func update(param: FunctionParameterSyntax) -> Self {
         return .init(param: param, code: code)

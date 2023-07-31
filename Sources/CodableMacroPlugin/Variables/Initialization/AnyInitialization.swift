@@ -1,7 +1,8 @@
 /// A type-erased initialization type.
 ///
 /// The `AnyInitialization` type forwards `VariableInitialization`
-/// implementations to an underlying variable value, hiding the type of the wrapped value.
+/// implementations to an underlying variable value, hiding the type of
+/// the wrapped value.
 struct AnyInitialization: VariableInitialization {
     /// The value wrapped by this instance.
     ///
@@ -10,10 +11,11 @@ struct AnyInitialization: VariableInitialization {
     /// operators (`as?`, `as!`, or `as`).
     let base: VariableInitialization
 
-    /// Adds current initialization type to member-wise initialization generator.
+    /// Adds current initialization type to member-wise initialization
+    /// generator.
     ///
-    /// New member-wise initialization generator is created after adding underlying
-    /// initialization type and returned.
+    /// New member-wise initialization generator is created after adding
+    /// underlying initialization type and returned.
     ///
     /// - Parameter generator: The init-generator to add in.
     /// - Returns: The modified generator containing this initialization.
