@@ -83,7 +83,7 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
             }
 
             var msg = "@\(attr.name) can't be used with uninitialized variable"
-            if let varName = binding.as(IdentifierPatternSyntax.self)?
+            if let varName = binding.pattern.as(IdentifierPatternSyntax.self)?
                 .identifier.trimmed.text
             {
                 msg.append(" \(varName)")
