@@ -14,7 +14,8 @@ extension Registrar {
     /// See https://en.wikipedia.org/wiki/Trie
     /// for more information.
     struct Node {
-        /// Represents the location for decoding/encoding that the node needs to perform.
+        /// Represents the location for decoding/encoding that the node needs
+        /// to perform.
         ///
         /// Represents whether node needs to decode/encode directly
         /// from/to the decoder/encoder respectively or at path of a container

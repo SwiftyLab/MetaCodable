@@ -20,23 +20,17 @@ protocol Attribute: AttachedMacro {
     /// - Parameter node: The attribute syntax to create with.
     /// - Returns: Newly created attribute instance.
     init?(from node: AttributeSyntax)
-    /// Validates this attribute is used properly with the declaration provided.
+    /// Builds diagnoser that can validate this macro
+    /// attached declaration.
     ///
-    /// This type checks the attribute usage doesn't violate any conditions
-    /// and produces diagnostics for such violations in the macro expansion
-    /// context provided.
+    /// All the usage conditions are provided to built
+    /// diagnoser to check violations in attached
+    /// declaration in the macro expansion context
+    /// provided. Diagnostics are produced in case of
+    /// any violation.
     ///
-    /// - Parameters:
-    ///   - declaration: The declaration this macro attribute is attached to.
-    ///   - context: The macro expansion context validation performed in.
-    ///
-    /// - Returns: True if attribute usage satisfies all conditions,
-    ///            false otherwise.
-    @discardableResult
-    func validate(
-        declaration: some DeclSyntaxProtocol,
-        in context: some MacroExpansionContext
-    ) -> Bool
+    /// - Returns: The built diagnoser instance.
+    func diagnoser() -> DiagnosticProducer
 }
 
 extension Attribute {
@@ -55,16 +49,21 @@ extension Attribute {
 
     /// Message id for misuse of this attribute.
     ///
-    /// This attribute can must be removed or its usage condition must be satisfied.
+    /// This attribute can must be removed or its usage condition
+    /// must be satisfied.
     var misuseMessageID: MessageID { .messageID("\(id)-misuse") }
     /// Message id for unnecessary usage of this attribute.
     ///
-    /// This attribute can be omitted in such scenario and the final result will still be the same.
+    /// This attribute can be omitted in such scenario and the
+    /// final result will still be the same.
     var unusedMessageID: MessageID { .messageID("\(id)-unused") }
 
-    /// Checks whether this attribute is applied more than once to provided declaration.
+    /// Checks whether this attribute is applied more than once to
+    /// provided declaration.
     ///
-    /// - Parameter declaration: The declaration this macro attribute is attached to.
+    /// - Parameter declaration: The declaration this macro attribute
+    ///                          is attached to.
+    ///
     /// - Returns: Whether this attribute is applied more than once.
     func isDuplicated(in declaration: some SyntaxProtocol) -> Bool {
         return declaration.attributes(for: Self.self).count > 1

@@ -9,15 +9,16 @@ extension CodedBy: RegistrationBuilder {
 
     /// Build new registration with provided input registration.
     ///
-    /// New registration is updated with helper expression data that will be used
-    /// for decoding/encoding, if provided.
+    /// New registration is updated with helper expression data that will be
+    /// used for decoding/encoding, if provided.
     ///
     /// - Parameter input: The registration built so far.
     /// - Returns: Newly built registration with helper expression data.
     func build(with input: Registration<Input>) -> Registration<Output> {
         let expr = node.argument!
             .as(TupleExprElementListSyntax.self)!.first!.expression
-        return input.updating(with: input.variable.with(helper: expr))
+        let newVar = input.variable.with(helper: expr)
+        return input.adding(attribute: self).updating(with: newVar)
     }
 }
 

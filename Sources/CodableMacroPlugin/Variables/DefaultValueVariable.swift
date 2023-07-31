@@ -53,9 +53,8 @@ where Var.Initialization == RequiredInitialization {
     func initializing(
         in context: some MacroExpansionContext
     ) -> RequiredInitialization {
-        return base
-            .initializing(in: context)
-            .update(param: "\(name): \(type) = \(options.expr)")
+        let prm: FunctionParameterSyntax = "\(name): \(type) = \(options.expr)"
+        return base.initializing(in: context).update(param: prm)
     }
 
     /// Provides the code syntax for decoding this variable
