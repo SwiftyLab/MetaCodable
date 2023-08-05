@@ -83,7 +83,10 @@ struct Registrar {
     ) {
         let keyPath = registration.keyPath
         let variable = registration.variable
-        caseMap.add(forKeys: keyPath, field: variable.name, context: context)
+        if (variable.decode ?? true) || (variable.encode ?? true) {
+            let name = variable.name
+            caseMap.add(forKeys: keyPath, field: name, context: context)
+        }
         root.register(
             variable: variable,
             keyPath: keyPath.map { Key(value: $0, map: caseMap) }

@@ -21,7 +21,7 @@ final class CodedInMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: CodedIn().misuseMessageID,
+                    id: CodedIn.misuseID,
                     message:
                         "@CodedIn only applicable to variable declarations",
                     line: 2, column: 5,
@@ -50,7 +50,7 @@ final class CodedInMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: CodedIn().misuseMessageID,
+                    id: CodedIn.misuseID,
                     message:
                         "@CodedIn can only be applied once per declaration",
                     line: 2, column: 5,
@@ -59,7 +59,7 @@ final class CodedInMacroTests: XCTestCase {
                     ]
                 ),
                 .init(
-                    id: CodedIn().misuseMessageID,
+                    id: CodedIn.misuseID,
                     message:
                         "@CodedIn can only be applied once per declaration",
                     line: 3, column: 5,

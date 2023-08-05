@@ -2,17 +2,29 @@ import SwiftSyntax
 import SwiftDiagnostics
 import SwiftSyntaxMacros
 
+/// An `Attribute` type that generates "peer" declarations that
+/// sit alongside the attached declaration.
+///
+/// This macro doesn't perform any expansion rather `Codable` macro
+/// uses when performing expansion.
+///
+/// This macro verifies that macro usage condition is met by attached
+/// declaration by using the `diagnoser().produce(syntax:in:)`
+/// implementation. If verification fails, then this macro generates
+/// diagnostic to remove it.
+protocol PeerAttribute: Attribute, PeerMacro { }
+
 /// An `Attribute` type that can be applied to property declaration.
 ///
-/// This macro doesn't perform any expansion rather `CodableMacro`
+/// This macro doesn't perform any expansion rather `Codable` macro
 /// uses when performing expansion.
 ///
 /// This macro verifies that macro usage condition is met by attached
 /// declaration by using the `diagnoser().produce(syntax:in:)` implementation.
 /// If verification fails, then this macro generates diagnostic to remove it.
-protocol PropertyAttribute: Attribute, PeerMacro {}
+protocol PropertyAttribute: PeerAttribute {}
 
-extension PropertyAttribute {
+extension PeerAttribute {
     /// Create a new instance from provided attached
     /// variable declaration.
     ///
@@ -21,8 +33,8 @@ extension PropertyAttribute {
     ///
     /// - Parameter declaration: The attached variable
     ///                          declaration.
-    /// - Returns: Created registration builder attribute.
-    init?(from declaration: VariableDeclSyntax) {
+    /// - Returns: Newly created attribute instance.
+    init?(from declaration: some AttributableDeclSyntax) {
         let attribute = declaration.attributes?.first { attribute in
             guard case .attribute(let attribute) = attribute
             else { return false }
@@ -32,10 +44,10 @@ extension PropertyAttribute {
         self.init(from: attribute)
     }
 
-    /// Provide metadata to `CodableMacro` for final expansion
+    /// Provide metadata to `Codable` macro for final expansion
     /// and verify proper usage of this macro.
     ///
-    /// This macro doesn't perform any expansion rather `CodableMacro`
+    /// This macro doesn't perform any expansion rather `Codable` macro
     /// uses when performing expansion.
     ///
     /// This macro verifies that macro usage condition is met by attached

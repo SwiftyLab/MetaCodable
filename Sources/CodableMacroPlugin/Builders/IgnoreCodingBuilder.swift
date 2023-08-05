@@ -1,15 +1,13 @@
-/// A registration builder updating conditional decoding/encoding
+/// A registration builder updating ignoring decoding/encoding
 /// data for variable.
 ///
 /// Checks the following criteria to decide decoding/encoding
 /// condition for variable:
-/// * Enables encoding for computed and initialized immutable variables,
-///   if any `CodingAttribute` type macro-attribute attached.
 /// * Ignores for decoding, if `@IgnoreCoding` or `@IgnoreDecoding`
 ///   macro attached.
 /// * Ignores for encoding, if `@IgnoreCoding` or `@IgnoreEncoding`
 ///   macro attached.
-struct ConditionalCodingBuilder<Input: Variable>: RegistrationBuilder {
+struct IgnoreCodingBuilder<Input: Variable>: RegistrationBuilder {
     /// The output registration variable type that handles conditional
     /// decoding/encoding data.
     typealias Output = ConditionalCodingVariable<Input>
@@ -21,8 +19,6 @@ struct ConditionalCodingBuilder<Input: Variable>: RegistrationBuilder {
     ///
     /// Checks the following criteria to decide decoding/encoding condition
     /// for variable:
-    /// * Enables encoding for computed and initialized immutable variables,
-    ///   if any `CodingAttribute` type macro-attribute attached.
     /// * Ignores for decoding, if `@IgnoreCoding` or `@IgnoreDecoding`
     ///   macro attached.
     /// * Ignores for encoding, if `@IgnoreCoding` or `@IgnoreEncoding`
@@ -36,12 +32,8 @@ struct ConditionalCodingBuilder<Input: Variable>: RegistrationBuilder {
         let ignoreCoding = declaration.attributes(for: IgnoreCoding.self)
         let ignoreDecoding = declaration.attributes(for: IgnoreDecoding.self)
         let ignoreEncoding = declaration.attributes(for: IgnoreEncoding.self)
-
-        let code =
-            input.variable.canBeRegistered
-            || input.context.attributes.contains { $0 is CodingAttribute }
-        let decode = ignoreCoding.isEmpty && ignoreDecoding.isEmpty && code
-        let encode = ignoreCoding.isEmpty && ignoreEncoding.isEmpty && code
+        let decode = ignoreCoding.isEmpty && ignoreDecoding.isEmpty
+        let encode = ignoreCoding.isEmpty && ignoreEncoding.isEmpty
         let options = Output.Options(decode: decode, encode: encode)
         let newVariable = Output(base: input.variable, options: options)
         return input.updating(with: newVariable)

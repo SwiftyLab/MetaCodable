@@ -8,7 +8,7 @@ import SwiftSyntaxBuilder
 /// by using the default expression provided during initialization:
 /// * For initializing variable in case of decoding failure.
 /// * For providing default value to variable in member-wise initializer(s).
-struct DefaultValueVariable<Var: Variable>: Variable
+struct DefaultValueVariable<Var: Variable>: ComposedVariable
 where Var.Initialization == RequiredInitialization {
     /// The customization options for `DefaultValueVariable`.
     ///
@@ -33,14 +33,16 @@ where Var.Initialization == RequiredInitialization {
     /// Options is provided during initialization.
     let options: Options
 
-    /// The type of the variable.
+    /// Whether the variable is to
+    /// be decoded.
     ///
-    /// Provides type of the underlying variable value.
-    var name: TokenSyntax { base.name }
-    /// The name of the variable.
+    /// Always `true` for this type.
+    var decode: Bool? { true }
+    /// Whether the variable is to
+    /// be encoded.
     ///
-    /// Provides name of the underlying variable value.
-    var type: TypeSyntax { base.type }
+    /// Always `true` for this type.
+    var encode: Bool? { true }
 
     /// Indicates the initialization type for this variable.
     ///
@@ -51,10 +53,10 @@ where Var.Initialization == RequiredInitialization {
     ///                      the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
-        in context: some MacroExpansionContext
-    ) -> RequiredInitialization {
-        let prm: FunctionParameterSyntax = "\(name): \(type) = \(options.expr)"
-        return base.initializing(in: context).update(param: prm)
+        in context: MacroExpansionContext
+    ) -> RequiredInitializationWithDefaultValue {
+        let initialization = base.initializing(in: context)
+        return .init(base: initialization, expr: options.expr)
     }
 
     /// Provides the code syntax for decoding this variable
@@ -70,7 +72,7 @@ where Var.Initialization == RequiredInitialization {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: some MacroExpansionContext,
+        in context: MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         let catchClauses = CatchClauseListSyntax {
@@ -81,23 +83,5 @@ where Var.Initialization == RequiredInitialization {
                 base.decoding(in: context, from: location)
             }
         }
-    }
-
-    /// Provides the code syntax for encoding this variable
-    /// at the provided location.
-    ///
-    /// Provides code syntax for encoding of the underlying
-    /// variable value.
-    ///
-    /// - Parameters:
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - location: The encoding location for the variable.
-    ///
-    /// - Returns: The generated variable encoding code.
-    func encoding(
-        in context: some MacroExpansionContext,
-        to location: VariableCodingLocation
-    ) -> CodeBlockItemListSyntax {
-        return base.encoding(in: context, to: location)
     }
 }

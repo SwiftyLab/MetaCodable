@@ -1,13 +1,14 @@
 /// Represents initialization is optional for the variable.
 ///
 /// The variable must be mutable and initialized already.
-struct OptionalInitialization: VariableInitialization {
+struct OptionalInitialization<Wrapped>: VariableInitialization
+where Wrapped: RequiredVariableInitialization {
     /// The value wrapped by this instance.
     ///
-    /// Only function parameter and code block
-    /// provided with`RequiredInitialization`
+    /// Only function parameter and code block provided
+    /// with`RequiredVariableInitialization`
     /// can be wrapped by this instance.
-    let base: RequiredInitialization
+    let base: Wrapped
 
     /// Adds current initialization type to member-wise initialization
     /// generator.

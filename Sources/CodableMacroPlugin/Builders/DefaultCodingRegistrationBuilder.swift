@@ -1,12 +1,16 @@
 import SwiftSyntax
 
-extension Default: RegistrationBuilder {
-    /// The any variable data with required initialization
-    /// that input registration can have.
-    typealias Input = AnyVariable<RequiredInitialization>
+/// A registration builder updating default value expression data that
+/// will be used for decoding failure and member-wise initializer(s)
+/// data for variable.
+///
+/// New registration is updated with default expression data that will be
+/// used for decoding failure and member-wise initializer(s), if provided.
+struct DefaultCodingRegistrationBuilder<Input: Variable>: RegistrationBuilder
+where Input.Initialization == RequiredInitialization {
     /// The variable data with default expression
     /// that output registration will have.
-    typealias Output = DefaultValueVariable<Input>
+    typealias Output = AnyVariable<AnyRequiredVariableInitialization>
 
     /// Build new registration with provided input registration.
     ///
@@ -16,10 +20,10 @@ extension Default: RegistrationBuilder {
     /// - Parameter input: The registration built so far.
     /// - Returns: Newly built registration with default expression data.
     func build(with input: Registration<Input>) -> Registration<Output> {
-        let expr = node.argument!
-            .as(TupleExprElementListSyntax.self)!.first!.expression
-        let newVar = input.variable.with(default: expr)
-        return input.adding(attribute: self).updating(with: newVar)
+        guard let attr = Default(from: input.context.declaration)
+        else { return input.updating(with: input.variable.any) }
+        let newVar = input.variable.with(default: attr.expr)
+        return input.adding(attribute: attr).updating(with: newVar.any)
     }
 }
 
