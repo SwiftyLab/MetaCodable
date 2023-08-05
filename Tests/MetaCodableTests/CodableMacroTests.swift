@@ -1,5 +1,6 @@
 import XCTest
 import SwiftSyntax
+import SwiftDiagnostics
 import SwiftSyntaxMacrosTestSupport
 @testable import CodableMacroPlugin
 
@@ -23,7 +24,7 @@ final class CodableMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: Codable(from: .init("Codable"))!.misuseMessageID,
+                    id: Codable.misuseID,
                     message: "@Codable only applicable to struct declarations",
                     line: 1, column: 1,
                     fixIts: [
@@ -89,10 +90,17 @@ func assertMacroExpansion(
             "IgnoreCoding": IgnoreCoding.self,
             "IgnoreDecoding": IgnoreDecoding.self,
             "IgnoreEncoding": IgnoreEncoding.self,
+            "IgnoreCodingInitialized": IgnoreCodingInitialized.self,
             "Default": Default.self,
         ],
         testModuleName: testModuleName, testFileName: testFileName,
         indentationWidth: indentationWidth,
         file: file, line: line
     )
+}
+
+extension Attribute {
+    static var misuseID: MessageID {
+        return Self.init(from: .init(stringLiteral: Self.name))!.misuseMessageID
+    }
 }

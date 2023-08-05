@@ -122,11 +122,13 @@ extension Registrar.Node {
         from location: CodingLocation
     ) -> CodeBlockItemListSyntax {
         return CodeBlockItemListSyntax {
-            for variable in variables {
+            for variable in variables where variable.decode ?? true {
                 variable.decoding(in: context, from: location.forVariable)
             }
 
-            if !children.isEmpty {
+            let childrenDecodable = children
+                .contains { $1.linkedVariables.contains { $0.decode ?? true } }
+            if !children.isEmpty, childrenDecodable {
                 switch location {
                 case .coder(let decoder, let type):
                     let container: TokenSyntax = "container"
@@ -171,11 +173,13 @@ extension Registrar.Node {
         from location: CodingLocation
     ) -> CodeBlockItemListSyntax {
         return CodeBlockItemListSyntax {
-            for variable in variables {
+            for variable in variables where variable.encode ?? true {
                 variable.encoding(in: context, to: location.forVariable)
             }
 
-            if !children.isEmpty {
+            let childrenEncodable = children
+                .contains { $1.linkedVariables.contains { $0.encode ?? true } }
+            if !children.isEmpty, childrenEncodable {
                 switch location {
                 case .coder(let encoder, let type):
                     let container: TokenSyntax = "container"

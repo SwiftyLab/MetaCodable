@@ -36,14 +36,12 @@ final class IgnoreCodingMacroTests: XCTestCase {
                         self.two = two
                     }
                     init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
                     }
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.two, forKey: CodingKeys.two)
                     }
                     enum CodingKeys: String, CodingKey {
-                        case one = "one"
                         case two = "two"
                     }
                 }
@@ -52,7 +50,7 @@ final class IgnoreCodingMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: IgnoreCoding(from: .init("IgnoreCoding"))!.misuseMessageID,
+                    id: IgnoreCoding.misuseID,
                     message:
                         "@IgnoreCoding can't be used with uninitialized variable one",
                     line: 3, column: 5,
@@ -61,7 +59,7 @@ final class IgnoreCodingMacroTests: XCTestCase {
                     ]
                 ),
                 .init(
-                    id: IgnoreDecoding(from: .init("IgnoreDecoding"))!.misuseMessageID,
+                    id: IgnoreDecoding.misuseID,
                     message:
                         "@IgnoreDecoding can't be used with uninitialized variable two",
                     line: 5, column: 5,
@@ -104,7 +102,7 @@ final class IgnoreCodingMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: IgnoreCoding(from: .init("IgnoreCoding"))!.misuseMessageID,
+                    id: IgnoreCoding.misuseID,
                     message:
                         "@IgnoreCoding can't be used in combination with @CodedAt",
                     line: 3, column: 5,
@@ -113,7 +111,7 @@ final class IgnoreCodingMacroTests: XCTestCase {
                     ]
                 ),
                 .init(
-                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    id: CodedAt.misuseID,
                     message:
                         "@CodedAt can't be used in combination with @IgnoreCoding",
                     line: 4, column: 5,
@@ -144,13 +142,10 @@ final class IgnoreCodingMacroTests: XCTestCase {
                         self.one = one
                     }
                     init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
                     }
                     func encode(to encoder: Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
                     }
                     enum CodingKeys: String, CodingKey {
-                        case one = "one"
                     }
                 }
                 extension SomeCodable: Codable {
@@ -178,7 +173,6 @@ final class IgnoreCodingMacroTests: XCTestCase {
                         self.one = one
                     }
                     init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
                     }
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -223,7 +217,6 @@ final class IgnoreCodingMacroTests: XCTestCase {
                         self.two = try container.decode(String.self, forKey: CodingKeys.two)
                     }
                     func encode(to encoder: Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
                     }
                     enum CodingKeys: String, CodingKey {
                         case one = "one"

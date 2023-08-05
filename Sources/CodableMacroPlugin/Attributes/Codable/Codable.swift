@@ -17,13 +17,6 @@ struct Codable: Attribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
-    /// The options for customizations.
-    ///
-    /// Options is created during
-    /// initialization by reading
-    /// argument data from
-    /// macro-attribute syntax.
-    let options: Options
 
     /// Creates a new instance with the provided node
     ///
@@ -38,7 +31,6 @@ struct Codable: Attribute {
                 .description == Self.name
         else { return nil }
         self.node = node
-        self.options = .init(from: node)
     }
 
     /// Builds diagnoser that can validate this macro

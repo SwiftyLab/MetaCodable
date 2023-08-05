@@ -6,7 +6,7 @@ import SwiftSyntax
 /// already initialized from the current syntax and updates the registrations
 /// variable data accordingly.
 struct InitializationRegistrationBuilder<Input: Variable>: RegistrationBuilder
-where Input.Initialization == RequiredInitialization {
+where Input.Initialization: RequiredVariableInitialization {
     /// The output registration variable type that handles initialization data.
     typealias Output = InitializationVariable<Input>
 

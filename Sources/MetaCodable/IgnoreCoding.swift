@@ -13,8 +13,8 @@
 /// data will also not have any `field` key.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable(ignoreInitialized:)``
-///         macro uses this macro when generating final implementations.         
+///         is a variable declaration. ``Codable()`` macro uses
+///         this macro when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
 public macro IgnoreCoding()
@@ -35,8 +35,8 @@ public macro IgnoreCoding()
 /// encoded data will have `field` key.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable(ignoreInitialized:)``
-///         macro uses this macro when generating final implementations.
+///         is a variable declaration. ``Codable()`` macro uses
+///         this macro when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
 public macro IgnoreDecoding()
@@ -54,8 +54,8 @@ public macro IgnoreDecoding()
 /// But the encoded data will also not have any `field` key.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable(ignoreInitialized:)``
-///         macro uses this macro when generating final implementations.              
+///         is a variable declaration. ``Codable()`` macro uses
+///         this macro when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
 public macro IgnoreEncoding()

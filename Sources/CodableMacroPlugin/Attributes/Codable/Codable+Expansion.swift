@@ -57,23 +57,23 @@ extension Codable: ConformanceMacro, MemberMacro {
             guard let decl = member.decl.as(VariableDeclSyntax.self)
             else { return }
 
+            // builder
+            let builder = IgnoreCodingInitialized(from: declaration)
+            |> KeyPathRegistrationBuilder(
+                provider: CodedAt(from: decl)
+                ?? CodedIn(from: decl)
+                ?? CodedIn()
+            )
+            |> HelperCodingRegistrationBuilder()
+            |> DefaultCodingRegistrationBuilder()
+            |> InitializationRegistrationBuilder()
+            |> IgnoreCodingBuilder()
+
             // build
-            let registrations = decl.registrations(attr: self, in: context) {
-                ExhaustiveRegistrationBuilder(
-                    optional: CodedAt(from: decl),
-                    fallback: CodedIn(from: decl) ?? CodedIn()
-                )
-                OptionalRegistrationBuilder(base: CodedBy(from: decl))
-                OptionalRegistrationBuilder(base: Default(from: decl))
-                InitializationRegistrationBuilder<AnyVariable>()
-                ConditionalCodingBuilder<
-                    InitializationVariable<AnyVariable<RequiredInitialization>>
-                >()
-            }
+            let regs = decl.registrations(for: self, in: context, with: builder)
 
             // register
-            for registration in registrations
-            where registration.variable.canBeRegistered {
+            for registration in regs {
                 registrar.add(registration: registration, context: context)
             }
         }

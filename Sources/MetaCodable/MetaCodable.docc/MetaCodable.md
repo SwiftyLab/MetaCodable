@@ -8,7 +8,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ## Overview
 
-`MetaCodable` framework exposes custom macros which can be used to generate dynamic `Codable` implementations. The core of the framework is ``Codable(ignoreInitialized:)`` macro which generates the implementation aided by data provided with using other macros.
+`MetaCodable` framework exposes custom macros which can be used to generate dynamic `Codable` implementations. The core of the framework is ``Codable()`` macro which generates the implementation aided by data provided with using other macros.
 
 
 `MetaCodable` aims to supercharge your `Codable` implementations by providing these inbox features:
@@ -19,6 +19,9 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
 - Generates member-wise initializer(s) considering the above default value syntax as well.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
+- Allows to ignore specific properties from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``IgnoreEncoding()``.
+- Allows to ignore all initialized properties of a type from decoding/encoding with ``IgnoreCodingInitialized()`` unless explicitly asked to decode/encode by attaching any coding attributes, i.e. ``CodedIn(_:)``, ``CodedAt(_:)``,
+``CodedBy(_:)``, ``Default(_:)`` etc.
 
 ## Installation
 
@@ -45,7 +48,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ### Implementation
 
-- ``Codable(ignoreInitialized:)``
+- ``Codable()``
 
 ### Strategies
 
@@ -53,6 +56,10 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``CodedIn(_:)``
 - ``Default(_:)``
 - ``CodedBy(_:)``
+- ``IgnoreCoding()``
+- ``IgnoreDecoding()``
+- ``IgnoreEncoding()``
+- ``IgnoreCodingInitialized()``
 
 ### Helpers
 

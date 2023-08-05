@@ -21,7 +21,6 @@ final class ExplicitCodingMacroTests: XCTestCase {
                     init() {
                     }
                     init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
                     }
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -61,7 +60,6 @@ final class ExplicitCodingMacroTests: XCTestCase {
                     init() {
                     }
                     init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
                     }
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -99,7 +97,6 @@ final class ExplicitCodingMacroTests: XCTestCase {
                     init() {
                     }
                     init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
                     }
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
@@ -143,7 +140,6 @@ final class ExplicitCodingMacroTests: XCTestCase {
                     init() {
                     }
                     init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
                     }
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)

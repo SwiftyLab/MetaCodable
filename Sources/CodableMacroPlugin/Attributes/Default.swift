@@ -10,6 +10,12 @@ struct Default: PropertyAttribute {
     /// during initialization.
     let node: AttributeSyntax
 
+    /// The default value expression provided.
+    var expr: ExprSyntax {
+        return node.argument!
+            .as(TupleExprElementListSyntax.self)!.first!.expression
+    }
+
     /// Creates a new instance with the provided node.
     ///
     /// The initializer fails to create new instance if the name

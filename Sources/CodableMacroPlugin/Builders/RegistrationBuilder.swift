@@ -22,44 +22,6 @@ protocol RegistrationBuilder<Input, Output> {
     func build(with input: Registration<Input>) -> Registration<Output>
 }
 
-/// A result builder used to compose `RegistrationBuilder`s.
-///
-/// This [Result Builder](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/advancedoperators/#Result-Builders)
-/// chains any number of `RegistrationBuilder`s that can produce
-/// final registration to be passed to`Registrar`.
-@resultBuilder
-struct VariableRegistrationBuilder {
-    /// Builds a partial registration builder action from a single,
-    /// first component.
-    ///
-    /// - Parameter first: The first `RegistrationBuilder` to accumulate.
-    /// - Returns: Building action of the passed builder.
-    static func buildPartialBlock<Builder: RegistrationBuilder>(
-        first: Builder
-    ) -> ((Registration<Builder.Input>) -> Registration<Builder.Output>) {
-        return first.build
-    }
-
-    /// Builds a partial registration builder action by combining
-    /// an accumulated registration builder actions and
-    /// a new `RegistrationBuilder`.
-    ///
-    /// - Parameters:
-    ///   - accumulated: The accumulated registration builder actions.
-    ///   - next: The next `RegistrationBuilder` to accumulate.
-    ///
-    /// - Returns: Building action of the passed builder chained after
-    ///            accumulated actions.
-    static func buildPartialBlock<Input, Builder: RegistrationBuilder>(
-        accumulated: @escaping
-        (Registration<Input>) -> Registration<Builder.Input>,
-        next: Builder
-    ) -> ((Registration<Input>) -> Registration<Builder.Output>)
-    where Input: Variable {
-        return { next.build(with: accumulated($0)) }
-    }
-}
-
 /// An extension that handles registration creation.
 extension VariableDeclSyntax {
     /// Creates registrations for current variable declaration.
@@ -83,10 +45,9 @@ extension VariableDeclSyntax {
     ///              a variable is not the same as the next explicit type
     ///              declaration, then type needs to be specified explicitly.
     func registrations<Output: Variable>(
-        attr: Codable,
+        for attr: Codable,
         in context: some MacroExpansionContext,
-        @VariableRegistrationBuilder
-        builder: () -> ((Registration<BasicVariable>) -> Registration<Output>)
+        with builder: (Registration<BasicVariable>) -> Registration<Output>
     ) -> [Registration<Output>] {
         var variablesData = [(PatternBindingSyntax, TokenSyntax, TypeSyntax?)]()
         for binding in bindings
@@ -110,7 +71,7 @@ extension VariableDeclSyntax {
         }
 
         return variables.reversed().map { binding, variable in
-            return builder()(
+            return builder(
                 Registration(
                     variable: variable,
                     expansion: context, attr: attr,
@@ -119,4 +80,45 @@ extension VariableDeclSyntax {
             )
         }
     }
+}
+
+/// The chaining operator for `RegistrationBuilder`s.
+///
+/// Combines `RegistrationBuilder`s in the order
+/// provided to create final builder action to process
+/// and parse variable data.
+infix operator |> : AdditionPrecedence
+
+/// Builds a registration builder action by combining
+/// two `RegistrationBuilder`s.
+///
+/// - Parameters:
+///   - lhs: The first `RegistrationBuilder`.
+///   - rhs: The second `RegistrationBuilder`
+///          to accumulate.
+///
+/// - Returns: Building action of the passed builders chained in order.
+func |><L: RegistrationBuilder, R: RegistrationBuilder>(
+    lhs: L,
+    rhs: R
+) -> (Registration<L.Input>) -> Registration<R.Output>
+where L.Output == R.Input {
+    return { rhs.build(with: lhs.build(with: $0)) }
+}
+
+/// Builds a registration builder action by combining
+/// an accumulated registration builder action and
+/// a new `RegistrationBuilder`.
+///
+/// - Parameters:
+///   - accumulated: The accumulated registration builder action.
+///   - next: The next `RegistrationBuilder` to accumulate.
+///
+/// - Returns: Building action of the passed builder chained after
+///            accumulated actions.
+func |><I: Variable, R: RegistrationBuilder>(
+    accumulated: @escaping (Registration<I>) -> Registration<R.Input>,
+    next: R
+) -> (Registration<I>) -> Registration<R.Output> {
+    return { next.build(with: accumulated($0)) }
 }
