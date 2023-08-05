@@ -5,5 +5,8 @@
         "**/.docc-build": true,
         "**/node_modules": true,
         "Package.resolved": true
-    }
+    },
+    "editor.unicodeHighlight.allowedCharacters": {
+        "－": true
+    },
 }

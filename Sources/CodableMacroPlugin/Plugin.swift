@@ -19,6 +19,7 @@ struct MetaCodablePlugin: CompilerPlugin {
         IgnoreDecoding.self,
         IgnoreEncoding.self,
         Codable.self,
+        CodingKeys.self,
         IgnoreCodingInitialized.self,
     ]
 }

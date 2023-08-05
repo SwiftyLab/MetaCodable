@@ -195,32 +195,6 @@ extension Registrar {
     }
 }
 
-/// Helps converting any string to camel case
-///
-/// Picked up from:
-/// https://gist.github.com/reitzig/67b41e75176ddfd432cb09392a270218
-fileprivate extension String {
-    /// Makes the first letter lowercase.
-    var lowercasingFirst: String { prefix(1).lowercased() + dropFirst() }
-    /// Makes the first letter uppercase.
-    var uppercasingFirst: String { prefix(1).uppercased() + dropFirst() }
-
-    /// Convert any string to camel case
-    ///
-    /// Removes non-alphanumeric characters
-    /// and makes the letters just after these
-    /// characters uppercase.
-    ///
-    /// First letter is made lowercase.
-    var camelCased: String {
-        guard !isEmpty else { return "" }
-        let parts = components(separatedBy: .alphanumerics.inverted)
-        let first = parts.first!.lowercasingFirst
-        let rest = parts.dropFirst().map { $0.uppercasingFirst }
-        return ([first] + rest).joined()
-    }
-}
-
 /// Case names that can conflict with Swift keywords and cause build error.
 ///
 /// Picked up by filtering:

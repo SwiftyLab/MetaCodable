@@ -151,3 +151,20 @@ struct BasicVariable: BasicCodingVariable {
         }
     }
 }
+
+extension BasicVariable: DefaultOptionComposedVariable {
+    /// The value wrapped by this instance.
+    ///
+    /// Provides current variable as is.
+    var base: BasicVariable { self }
+
+    /// Creates a new instance from provided variable value.
+    ///
+    /// Uses the provided value as the newly created variable.
+    ///
+    /// - Parameter base: The underlying variable value.
+    /// - Returns: The newly created variable.
+    init(base: BasicVariable) {
+        self = base
+    }
+}
