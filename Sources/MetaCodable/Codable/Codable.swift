@@ -15,6 +15,12 @@
 ///   * Use ``CodedBy(_:)`` to provide custom decoding/encoding behavior for
 ///     `Codable` types or implement decoding/encoding for non-`Codable` types.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
+///   * Use ``IgnoreCoding()``, ``IgnoreDecoding()`` and
+///     ``IgnoreEncoding()`` to ignore specific properties from
+///     decoding/encoding or both.
+///   * Use ``CodingKeys(_:)`` to work with different case style `CodingKey`s.
+///   * Use ``IgnoreCodingInitialized()`` to ignore decoding and encoding
+///     all initialized properties.
 ///
 /// # Effect
 /// This macro composes two different kinds of macro expansion:

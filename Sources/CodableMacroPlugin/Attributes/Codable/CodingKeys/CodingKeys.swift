@@ -1,18 +1,25 @@
 import SwiftSyntax
 
-/// Attribute type for `IgnoreCodingInitialized` macro-attribute.
+/// Attribute type for `CodingKeys` macro-attribute.
 ///
-/// This type can validate`IgnoreCodingInitialized` macro-attribute
-/// usage and extract data for `Codable` macro to generate implementation.
+/// This type can validate`CodingKeys` macro-attribute
+/// usage and extract data for `Codable` macro to
+/// generate implementation.
 ///
-/// Attaching this macro to type declaration indicates all the initialized
-/// properties for the said type will be ignored from decoding and
-/// encoding unless explicitly asked with attached coding attributes,
-/// i.e. `CodedIn`, `CodedAt` etc.
-struct IgnoreCodingInitialized: PeerAttribute {
+/// Attaching this macro to type declaration indicates all the
+/// property names will be converted to `CodingKey` value
+/// using the strategy provided.
+struct CodingKeys: PeerAttribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
+
+    /// The key transformation strategy provided.
+    var strategy: Strategy {
+        let expr = node.argument!
+            .as(TupleExprElementListSyntax.self)!.first!.expression
+        return .init(with: expr)
+    }
 
     /// Creates a new instance with the provided node
     ///
@@ -40,7 +47,7 @@ struct IgnoreCodingInitialized: PeerAttribute {
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             mustBeCombined(with: Codable.self)
-            shouldNotDuplicate()
+            cantDuplicate()
         }
     }
 }
