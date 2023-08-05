@@ -58,7 +58,8 @@ extension Codable: ConformanceMacro, MemberMacro {
             else { return }
 
             // builder
-            let builder = IgnoreCodingInitialized(from: declaration)
+            let builder = CodingKeys(from: declaration)
+            |> IgnoreCodingInitialized(from: declaration)
             |> KeyPathRegistrationBuilder(
                 provider: CodedAt(from: decl)
                 ?? CodedIn(from: decl)

@@ -3,7 +3,7 @@
 /// The `ConditionalCodingVariable` type forwards `Variable`
 /// decoding/encoding, initialization implementations and only
 /// decoding/encoding condition are customized.
-struct ConditionalCodingVariable<Var: Variable>: DefaultOptionComposedVariable {
+struct ConditionalCodingVariable<Var: Variable>: ComposedVariable {
     /// The customization options for `ConditionalCodingVariable`.
     ///
     /// `ConditionalCodingVariable` uses the instance of this type,
@@ -37,33 +37,6 @@ struct ConditionalCodingVariable<Var: Variable>: DefaultOptionComposedVariable {
     /// Options is provided during initialization.
     let options: Options
 
-    /// Creates variable using provided options,
-    /// wrapping passed variable.
-    ///
-    /// The options are used to customize underlying
-    /// variable's decoding/encoding implementations.
-    ///
-    /// - Parameters:
-    ///   - base: The underlying variable.
-    ///   - options: The options to use.
-    ///
-    /// - Returns: Newly created variable.
-    init(base: Var, options: Options) {
-        self.base = base
-        self.options = options
-    }
-
-    /// Creates variable wrapping passed variable.
-    ///
-    /// Default options are used that allows direct usage
-    /// of underlying variable's decoding/encoding implementations.
-    ///
-    /// - Parameter base: The underlying variable.
-    /// - Returns: Newly created variable.
-    init(base: Var) {
-        self.init(base: base, options: .init(decode: true, encode: true))
-    }
-
     /// Whether the variable is to be decoded.
     ///
     /// Provides whether underlying variable value is to be decoded,
@@ -74,6 +47,19 @@ struct ConditionalCodingVariable<Var: Variable>: DefaultOptionComposedVariable {
     /// Provides whether underlying variable value is to be encoded,
     /// if provided encode option is set as `true` otherwise `false`.
     var encode: Bool? { options.encode ? base.encode : false }
+}
+
+extension ConditionalCodingVariable: DefaultOptionComposedVariable {
+    /// Creates variable wrapping passed variable.
+    ///
+    /// Default options are used that allows direct usage
+    /// of underlying variable's decoding/encoding implementations.
+    ///
+    /// - Parameter base: The underlying variable.
+    /// - Returns: Newly created variable.
+    init(base: Var) {
+        self.init(base: base, options: .init(decode: true, encode: true))
+    }
 }
 
 extension ConditionalCodingVariable: BasicCodingVariable
