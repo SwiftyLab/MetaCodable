@@ -1,13 +1,9 @@
-import SwiftSyntax
-import SwiftSyntaxMacros
-
 /// A variable value containing data whether to perform decoding/encoding.
 ///
 /// The `ConditionalCodingVariable` type forwards `Variable`
-/// decoding/encoding implementations based on condition satisfied otherwise
-/// no decoding/encoding code is generated, while customizing decoding.
-/// The initialization implementation is forwarded without any check.
-struct ConditionalCodingVariable<Var: Variable>: Variable {
+/// decoding/encoding, initialization implementations and only
+/// decoding/encoding condition are customized.
+struct ConditionalCodingVariable<Var: Variable>: DefaultOptionComposedVariable {
     /// The customization options for `ConditionalCodingVariable`.
     ///
     /// `ConditionalCodingVariable` uses the instance of this type,
@@ -15,8 +11,8 @@ struct ConditionalCodingVariable<Var: Variable>: Variable {
     struct Options {
         /// Whether variable needs to be decoded.
         ///
-        /// True for non-initialized stored variables.
-        /// False for variables with `@IgnoreCoding`
+        /// `True` for non-initialized stored variables.
+        /// `False` for variables with `@IgnoreCoding`
         /// and `@IgnoreDecoding` attributes.
         let decode: Bool
         /// Whether variable should to be encoded.
@@ -25,6 +21,11 @@ struct ConditionalCodingVariable<Var: Variable>: Variable {
         /// and `@IgnoreEncoding` attributes.
         let encode: Bool
     }
+
+    /// The initialization type of this variable.
+    ///
+    /// Initialization type is the same as underlying wrapped variable.
+    typealias Initialization = Var.Initialization
 
     /// The value wrapped by this instance.
     ///
@@ -36,76 +37,44 @@ struct ConditionalCodingVariable<Var: Variable>: Variable {
     /// Options is provided during initialization.
     let options: Options
 
-    /// The name of the variable.
+    /// Creates variable using provided options,
+    /// wrapping passed variable.
     ///
-    /// Provides name of the underlying variable value.
-    var name: TokenSyntax { base.name }
-    /// The type of the variable.
-    ///
-    /// Provides type of the underlying variable value.
-    var type: TypeSyntax { base.type }
-    /// Whether the variable is needed
-    /// for final code generation.
-    ///
-    /// Provides whether underlying variable value
-    /// is needed for final code generation or variable
-    /// was asked to be decoded/encoded explicitly.
-    var canBeRegistered: Bool {
-        return base.canBeRegistered || options.decode || options.encode
-    }
-
-    /// Indicates the initialization type for this variable.
-    ///
-    /// Forwards implementation to underlying variable value.
-    ///
-    /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
-    /// - Returns: The type of initialization for variable.
-    func initializing(
-        in context: some MacroExpansionContext
-    ) -> Var.Initialization {
-        return base.initializing(in: context)
-    }
-
-    /// Provides the code syntax for decoding this variable
-    /// at the provided location.
-    ///
-    /// Provides code syntax for decoding of the underlying
-    /// variable value if variable is to be decoded
-    /// (i.e. `options.decode` is `true`). Otherwise
-    /// variable ignored in decoding.
+    /// The options are used to customize underlying
+    /// variable's decoding/encoding implementations.
     ///
     /// - Parameters:
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - location: The decoding location for the variable.
+    ///   - base: The underlying variable.
+    ///   - options: The options to use.
     ///
-    /// - Returns: The generated variable decoding code.
-    func decoding(
-        in context: some MacroExpansionContext,
-        from location: VariableCodingLocation
-    ) -> CodeBlockItemListSyntax {
-        guard options.decode else { return .init([]) }
-        return base.decoding(in: context, from: location)
+    /// - Returns: Newly created variable.
+    init(base: Var, options: Options) {
+        self.base = base
+        self.options = options
     }
 
-    /// Provides the code syntax for encoding this variable
-    /// at the provided location.
+    /// Creates variable wrapping passed variable.
     ///
-    /// Provides code syntax for encoding of the underlying
-    /// variable value if variable is to be encoded
-    /// (i.e. `options.encode` is `true`). Otherwise
-    /// variable ignored in encoding.
+    /// Default options are used that allows direct usage
+    /// of underlying variable's decoding/encoding implementations.
     ///
-    /// - Parameters:
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - location: The encoding location for the variable.
-    ///
-    /// - Returns: The generated variable encoding code.
-    func encoding(
-        in context: some MacroExpansionContext,
-        to location: VariableCodingLocation
-    ) -> CodeBlockItemListSyntax {
-        guard options.encode else { return .init([]) }
-        return base.encoding(in: context, to: location)
+    /// - Parameter base: The underlying variable.
+    /// - Returns: Newly created variable.
+    init(base: Var) {
+        self.init(base: base, options: .init(decode: true, encode: true))
     }
+
+    /// Whether the variable is to be decoded.
+    ///
+    /// Provides whether underlying variable value is to be decoded,
+    /// if provided decode option is set as `true` otherwise `false`.
+    var decode: Bool? { options.decode ? base.decode : false }
+    /// Whether the variable is to be encoded.
+    ///
+    /// Provides whether underlying variable value is to be encoded,
+    /// if provided encode option is set as `true` otherwise `false`.
+    var encode: Bool? { options.encode ? base.encode : false }
 }
+
+extension ConditionalCodingVariable: BasicCodingVariable
+where Var: BasicCodingVariable {}

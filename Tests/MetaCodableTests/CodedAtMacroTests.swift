@@ -21,7 +21,7 @@ final class CodedAtMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    id: CodedAt.misuseID,
                     message:
                         "@CodedAt only applicable to variable declarations",
                     line: 2, column: 5,
@@ -49,7 +49,7 @@ final class CodedAtMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    id: CodedAt.misuseID,
                     message:
                         "@CodedAt can't be used with grouped variables declaration",
                     line: 2, column: 5,
@@ -78,7 +78,7 @@ final class CodedAtMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    id: CodedAt.misuseID,
                     message:
                         "@CodedAt can't be used in combination with @CodedIn",
                     line: 2, column: 5,
@@ -87,7 +87,7 @@ final class CodedAtMacroTests: XCTestCase {
                     ]
                 ),
                 .init(
-                    id: CodedIn().misuseMessageID,
+                    id: CodedIn.misuseID,
                     message:
                         "@CodedIn can't be used in combination with @CodedAt",
                     line: 3, column: 5,
@@ -116,7 +116,7 @@ final class CodedAtMacroTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
-                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    id: CodedAt.misuseID,
                     message:
                         "@CodedAt can only be applied once per declaration",
                     line: 2, column: 5,
@@ -125,7 +125,7 @@ final class CodedAtMacroTests: XCTestCase {
                     ]
                 ),
                 .init(
-                    id: CodedAt(from: .init("CodedAt"))!.misuseMessageID,
+                    id: CodedAt.misuseID,
                     message:
                         "@CodedAt can only be applied once per declaration",
                     line: 3, column: 5,

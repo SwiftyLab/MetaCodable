@@ -7,7 +7,7 @@ import SwiftSyntaxBuilder
 /// The `BasicVariable` type provides default
 /// decoding/encoding implementations similar to
 /// standard library generated implementations.
-struct BasicVariable: Variable {
+struct BasicVariable: BasicCodingVariable {
     /// The name of this variable.
     ///
     /// The name is provided during
@@ -18,6 +18,66 @@ struct BasicVariable: Variable {
     /// The type is provided during
     /// initialization of this variable.
     let type: TypeSyntax
+
+    /// Whether the variable is to
+    /// be decoded.
+    ///
+    /// By default set as `nil`,
+    /// unless value passed explicitly
+    /// during initialization.
+    let decode: Bool?
+    /// Whether the variable is to
+    /// be encoded.
+    ///
+    /// By default set as `nil`,
+    /// unless value passed explicitly
+    /// during initialization.
+    let encode: Bool?
+
+    /// Creates a new variable with provided data.
+    ///
+    /// Basic implementation for this variable provided
+    /// matching Swift standard library generated code.
+    ///
+    /// - Parameters:
+    ///   - name: The name of this variable.
+    ///   - type: The type of the variable.
+    ///   - decode: Whether to decode explicitly.
+    ///   - encode: Whether to encode explicitly.
+    ///
+    /// - Returns: Newly created variable.
+    init(
+        name: TokenSyntax, type: TypeSyntax,
+        decode: Bool? = nil, encode: Bool? = nil
+    ) {
+        self.name = name
+        self.type = type
+        self.decode = decode
+        self.encode = encode
+    }
+
+    /// Indicates the initialization type for this variable.
+    ///
+    /// Indicates whether initialization is required, optional
+    /// or needs to be skipped. Also, provides default
+    /// initialization data if applicable.
+    ///
+    /// By default, only optional variables are provided
+    /// with default initialization value `nil`.
+    ///
+    /// - Parameter context: The context in which to perform
+    ///                      the macro expansion.
+    /// - Returns: The type of initialization for variable.
+    func initializing(
+        in context: MacroExpansionContext
+    ) -> RequiredInitialization {
+        let param: FunctionParameterSyntax = if type.isOptional {
+            "\(name): \(type) = nil"
+        } else {
+            "\(name): \(type)"
+        }
+        return .init(param: param, code: "self.\(name) = \(name)")
+    }
 
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
@@ -35,7 +95,7 @@ struct BasicVariable: Variable {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: some MacroExpansionContext,
+        in context: MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         switch location {
@@ -71,7 +131,7 @@ struct BasicVariable: Variable {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: some MacroExpansionContext,
+        in context: MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         switch location {

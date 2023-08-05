@@ -18,8 +18,8 @@
 /// - Parameter default: The default value to use.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses this
-///         macro when generating final implementations.
+///         is a variable declaration. ``Codable()`` macro uses
+///         this macro when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable` and
 ///              default value type `T` must be the same as

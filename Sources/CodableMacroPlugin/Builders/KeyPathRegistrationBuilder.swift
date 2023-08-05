@@ -1,82 +1,36 @@
 import SwiftSyntax
 
-/// A specialized `RegistrationBuilder` that only updates `CodingKey`
-/// path data keeping variable data as is.
+/// A registration builder updating explicit decoding/encoding
+/// and `CodingKey` path data for variable.
 ///
-/// This type can represent attributes attached to variable declarations and
-/// hence has access to additional data to update registration with.
-protocol KeyPathRegistrationBuilder: RegistrationBuilder, Attribute
-where Output == Input {
-    /// Create a new instance from provided attached
-    /// variable declaration.
-    ///
-    /// This initialization can fail if this attribute not attached
-    /// to provided variable declaration
-    ///
-    /// - Parameter declaration: The attached variable
-    ///                          declaration.
-    /// - Returns: Created registration builder attribute.
-    init?(from declaration: VariableDeclSyntax)
-}
+/// The `CodingKey` path is updated using the provided builder
+/// and explicit decoding/encoding is indicated if provider is
+/// `provided` with explicit data.
+struct KeyPathRegistrationBuilder<Input: Variable>: RegistrationBuilder {
+    /// The output registration variable data handling
+    /// whether variable is asked to explicitly decode/encode
+    /// using `CodedAt` or `CodedIn` macro.
+    typealias Output = KeyedVariable<Input>
 
-extension KeyPathRegistrationBuilder {
-    /// Returns `CodingKey` path
-    /// provided in this attribute.
+    /// The `CodingKey` path provider.
     ///
-    /// The path components are provided
-    /// as variadic arguments without any labels.
-    ///
-    /// - Important: The path components must be string literals
-    ///              with single segment (i.e no interpolation,
-    ///              no string combinations).
-    var providedPath: [String] {
-        guard let exprs = node.argument?.as(TupleExprElementListSyntax.self)
-        else { return [] }
-
-        let path: [String] = exprs.compactMap { expr in
-            guard expr.label == nil else { return nil }
-            return expr.expression.as(StringLiteralExprSyntax.self)?
-                .segments.first?.as(StringSegmentSyntax.self)?
-                .content.text
-        }
-        return path
-    }
-}
-
-extension CodedAt: KeyPathRegistrationBuilder {
-    /// The basic variable data that input registration can have.
-    typealias Input = BasicVariable
+    /// Current `CodingKey` path is
+    /// updated by this provider.
+    let provider: KeyPathProvider
 
     /// Build new registration with provided input registration.
     ///
-    /// New registration is updated with the provided `CodingKey` path in
-    /// attribute, overriding older `CodingKey` path data.
+    /// New registration is updated with the provided `CodingKey` path from provider,
+    /// updating current `CodingKey` path data.
     ///
     /// - Parameter input: The registration built so far.
-    /// - Returns: Newly built registration with additional `CodingKey`
-    ///            path data.
-    func build(with input: Registration<Input>) -> Registration<Input> {
-        return input.adding(attribute: self).updating(with: providedPath)
-    }
-}
-
-extension CodedIn: KeyPathRegistrationBuilder {
-    /// The basic variable data that input registration can have.
-    typealias Input = BasicVariable
-
-    /// Build new registration with provided input registration.
-    ///
-    /// New registration is updated with the provided `CodingKey` path
-    /// in attribute, prepending older `CodingKey` path data.
-    ///
-    /// - Parameter input: The registration built so far.
-    /// - Returns: Newly built registration with additional `CodingKey`
-    ///            path data.
-    func build(with input: Registration<Input>) -> Registration<Input> {
-        var finalPath = providedPath
-        finalPath.append(contentsOf: input.keyPath)
-        guard !self.inDefaultMode
-        else { return input.updating(with: finalPath) }
-        return input.adding(attribute: self).updating(with: finalPath)
+    /// - Returns: Newly built registration with additional `CodingKey` path data.
+    func build(with input: Registration<Input>) -> Registration<Output> {
+        let options = Output.Options(code: provider.provided)
+        let newVar = Output(base: input.variable, options: options)
+        let output = input.updating(with: newVar)
+        guard provider.provided else { return output }
+        return output.adding(attribute: provider)
+            .updating(with: provider.keyPath(withExisting: input.keyPath))
     }
 }

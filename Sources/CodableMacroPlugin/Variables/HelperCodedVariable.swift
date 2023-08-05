@@ -6,7 +6,7 @@ import SwiftSyntaxBuilder
 ///
 /// The `HelperCodedVariable` customizes decoding and encoding
 /// by using the helper instance expression provided during initialization.
-struct HelperCodedVariable: Variable {
+struct HelperCodedVariable<Var: BasicCodingVariable>: ComposedVariable {
     /// The customization options for `HelperCodedVariable`.
     ///
     /// `HelperCodedVariable` uses the instance of this type,
@@ -19,25 +19,32 @@ struct HelperCodedVariable: Variable {
         let expr: ExprSyntax
     }
 
+    /// The initialization type of this variable.
+    ///
+    /// Initialization type is the same as underlying wrapped variable.
+    typealias Initialization = Var.Initialization
+
     /// The value wrapped by this instance.
     ///
     /// Only default implementation provided with
     /// `BasicVariable` can be wrapped
     /// by this instance.
-    let base: BasicVariable
+    let base: Var
     /// The options for customizations.
     ///
     /// Options is provided during initialization.
     let options: Options
 
-    /// The name of the variable.
+    /// Whether the variable is to
+    /// be decoded.
     ///
-    /// Provides name of the underlying variable value.
-    var name: TokenSyntax { base.name }
-    /// The type of the variable.
+    /// Always `true` for this type.
+    var decode: Bool? { true }
+    /// Whether the variable is to
+    /// be encoded.
     ///
-    /// Provides type of the underlying variable value.
-    var type: TypeSyntax { base.type }
+    /// Always `true` for this type.
+    var encode: Bool? { true }
 
     /// Provides the code syntax for encoding this variable
     /// at the provided location.
@@ -56,7 +63,7 @@ struct HelperCodedVariable: Variable {
     ///
     /// - Returns: The generated variable encoding code.
     func decoding(
-        in context: some MacroExpansionContext,
+        in context: MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         let (_, method) = type.codingTypeMethod(forMethod: "decode")
@@ -93,7 +100,7 @@ struct HelperCodedVariable: Variable {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: some MacroExpansionContext,
+        in context: MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         let (_, method) = type.codingTypeMethod(forMethod: "encode")
@@ -113,3 +120,14 @@ struct HelperCodedVariable: Variable {
         }
     }
 }
+
+/// A `Variable` type representing that doesn't customize
+/// decoding/encoding implementation.
+///
+/// `BasicVariable` confirms to this type since it doesn't customize
+/// decoding/encoding implementation from Swift standard library.
+///
+/// `ComposedVariable`'s may confirm to this if no decoding/encoding
+/// customization added on top of underlying variable and wrapped variable
+/// also confirms to this type.
+protocol BasicCodingVariable: Variable {}
