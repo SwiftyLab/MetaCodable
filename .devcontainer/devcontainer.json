@@ -1,5 +1,5 @@
 {
-	"name": "Swift",
+    "name": "Swift",
     "image": "swiftlang/swift:nightly-5.9-jammy",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
@@ -30,16 +30,18 @@
             // Add the IDs of extensions you want installed when the container is created.
             "extensions": [
                 "sswg.swift-lang",
-                "vadimcn.vscode-lldb"
+                "vadimcn.vscode-lldb",
+                "eamodio.gitlens",
+                "github.vscode-github-actions"
             ]
         }
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
-    "forwardPorts": [8080],
-
+    "forwardPorts": [
+        8080
+    ],
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "swift --version",
-
     // Set `remoteUser` to `root` to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "vscode"
 }
