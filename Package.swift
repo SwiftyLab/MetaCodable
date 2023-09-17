@@ -30,8 +30,9 @@ let package = Package(
         .library(name: "MetaCodable", targets: ["MetaCodable"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-07-09-a"),
+        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     ],
     targets: [
         .macro(name: "CodableMacroPlugin", dependencies: macroDeps),
