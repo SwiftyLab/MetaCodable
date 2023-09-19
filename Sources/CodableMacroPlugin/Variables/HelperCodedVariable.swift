@@ -1,6 +1,6 @@
 import SwiftSyntax
-import SwiftSyntaxMacros
 import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 /// A variable value containing helper expression for decoding/encoding.
 ///

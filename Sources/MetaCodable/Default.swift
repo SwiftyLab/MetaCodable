@@ -1,5 +1,5 @@
 /// Provides a `default` value to be used when decoding fails and
-/// when not initialized explicitly in member-wise initializer(s).
+/// when not initialized explicitly in memberwise initializer(s).
 ///
 /// If the value is missing or has incorrect data type, the default value
 /// will be used instead of throwing error and terminating decoding.
@@ -18,13 +18,12 @@
 /// - Parameter default: The default value to use.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable` and
-///              default value type `T` must be the same as
-///              field type.
+///   default value type `T` must be the same as field type.
 @attached(peer)
 @available(swift 5.9)
-public macro Default<T>(_ default: T)
-= #externalMacro(module: "CodableMacroPlugin", type: "Default")
+public macro Default<T>(_ default: T) =
+    #externalMacro(module: "CodableMacroPlugin", type: "Default")

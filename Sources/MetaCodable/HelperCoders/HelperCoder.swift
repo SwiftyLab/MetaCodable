@@ -6,7 +6,7 @@
 /// to non-`Codable` types.
 ///
 /// - Tip: Use this type to refactor scenarios where `propertyWrapper`s
-///      were used to have custom decoding/encoding functionality.
+///   were used to have custom decoding/encoding functionality.
 public protocol HelperCoder {
     /// The actual type of value that is going to be decoded/encoded.
     ///

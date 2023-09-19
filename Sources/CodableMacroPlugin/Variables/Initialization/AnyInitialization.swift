@@ -11,10 +11,10 @@ struct AnyInitialization: VariableInitialization {
     /// operators (`as?`, `as!`, or `as`).
     let base: VariableInitialization
 
-    /// Adds current initialization type to member-wise initialization
+    /// Adds current initialization type to memberwise initialization
     /// generator.
     ///
-    /// New member-wise initialization generator is created after adding
+    /// New memberwise initialization generator is created after adding
     /// underlying initialization type and returned.
     ///
     /// - Parameter generator: The init-generator to add in.

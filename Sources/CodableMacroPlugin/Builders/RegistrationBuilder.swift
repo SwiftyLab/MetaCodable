@@ -34,18 +34,18 @@ extension VariableDeclSyntax {
     /// final registrations.
     ///
     /// - Parameters:
-    ///   - attr: The `@Codable` macro-attribute.
+    ///   - attr: The macro-attribute being expanded.
     ///   - context: The context in which to perform the macro expansion.
     ///   - builder: The registration building action.
     ///
     /// - Returns: The final registrations built by the action provided.
     ///
-    /// - Important: For single variable declaration type needs to be provided
-    ///              explicitly. For grouped variable declaration, if type for
-    ///              a variable is not the same as the next explicit type
-    ///              declaration, then type needs to be specified explicitly.
+    /// - Important: For single variable declaration type needs to be
+    ///   provided explicitly. For grouped variable declaration, if type for
+    ///   a variable is not the same as the next explicit type declaration,
+    ///   then type needs to be specified explicitly.
     func registrations<Output: Variable>(
-        for attr: Codable,
+        for attr: some RegistrationAttribute,
         in context: some MacroExpansionContext,
         with builder: (Registration<BasicVariable>) -> Registration<Output>
     ) -> [Registration<Output>] {
@@ -94,11 +94,10 @@ infix operator |> : AdditionPrecedence
 ///
 /// - Parameters:
 ///   - lhs: The first `RegistrationBuilder`.
-///   - rhs: The second `RegistrationBuilder`
-///          to accumulate.
+///   - rhs: The second `RegistrationBuilder` to accumulate.
 ///
 /// - Returns: Building action of the passed builders chained in order.
-func |><L: RegistrationBuilder, R: RegistrationBuilder>(
+func |> <L: RegistrationBuilder, R: RegistrationBuilder>(
     lhs: L,
     rhs: R
 ) -> (Registration<L.Input>) -> Registration<R.Output>
@@ -115,8 +114,8 @@ where L.Output == R.Input {
 ///   - next: The next `RegistrationBuilder` to accumulate.
 ///
 /// - Returns: Building action of the passed builder chained after
-///            accumulated actions.
-func |><I: Variable, R: RegistrationBuilder>(
+///   accumulated actions.
+func |> <I: Variable, R: RegistrationBuilder>(
     accumulated: @escaping (Registration<I>) -> Registration<R.Input>,
     next: R
 ) -> (Registration<I>) -> Registration<R.Output> {

@@ -1,7 +1,9 @@
+import SwiftDiagnostics
 import XCTest
+
 @testable import CodableMacroPlugin
 
-final class CodedAtMacroTests: XCTestCase {
+final class CodedAtTests: XCTestCase {
 
     func testMisuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
@@ -48,6 +50,7 @@ final class CodedAtMacroTests: XCTestCase {
                 }
                 """,
             diagnostics: [
+                .multiBinding(line: 2, column: 5),
                 .init(
                     id: CodedAt.misuseID,
                     message:
@@ -56,7 +59,7 @@ final class CodedAtMacroTests: XCTestCase {
                     fixIts: [
                         .init(message: "Remove @CodedAt attribute")
                     ]
-                )
+                ),
             ]
         )
     }
@@ -141,6 +144,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @CodedAt
                 let value: String
@@ -150,19 +154,27 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String
+
                     init(value: String) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         self.value = try String(from: decoder)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         try self.value.encode(to: encoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -172,6 +184,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @Default("some")
                 @CodedAt
@@ -182,9 +195,13 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String
+
                     init(value: String = "some") {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         do {
                             self.value = try String(from: decoder)
@@ -192,13 +209,17 @@ final class CodedAtMacroTests: XCTestCase {
                             self.value = "some"
                         }
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         try self.value.encode(to: encoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -208,6 +229,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @CodedBy(LossySequenceCoder<[String]>())
                 @CodedAt
@@ -218,19 +240,27 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: [String]
+
                     init(value: [String]) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         self.value = try LossySequenceCoder<[String]>().decode(from: decoder)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         try LossySequenceCoder<[String]>().encode(self.value, to: encoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -240,6 +270,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @Default(["some"])
                 @CodedBy(LossySequenceCoder<[String]>())
@@ -251,9 +282,13 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: [String]
+
                     init(value: [String] = ["some"]) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         do {
                             self.value = try LossySequenceCoder<[String]>().decode(from: decoder)
@@ -261,13 +296,17 @@ final class CodedAtMacroTests: XCTestCase {
                             self.value = ["some"]
                         }
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         try LossySequenceCoder<[String]>().encode(self.value, to: encoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -277,6 +316,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @CodedAt("key")
                 let value: String
@@ -286,22 +326,30 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String
+
                     init(value: String) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decode(String.self, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -311,6 +359,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @Default("some")
                 @CodedAt("key")
@@ -321,9 +370,13 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String
+
                     init(value: String = "some") {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         do {
@@ -332,15 +385,19 @@ final class CodedAtMacroTests: XCTestCase {
                             self.value = "some"
                         }
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -350,6 +407,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @CodedBy(LossySequenceCoder<[String]>())
                 @CodedAt("key")
@@ -360,24 +418,32 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: [String]
+
                     init(value: [String]) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let container_valueDecoder = try container.superDecoder(forKey: CodingKeys.value)
                         self.value = try LossySequenceCoder<[String]>().decode(from: container_valueDecoder)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         let container_valueEncoder = container.superEncoder(forKey: CodingKeys.value)
                         try LossySequenceCoder<[String]>().encode(self.value, to: container_valueEncoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -387,6 +453,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @Default(["some"])
                 @CodedBy(LossySequenceCoder<[String]>())
@@ -398,9 +465,13 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: [String]
+
                     init(value: [String] = ["some"]) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         do {
@@ -410,16 +481,20 @@ final class CodedAtMacroTests: XCTestCase {
                             self.value = ["some"]
                         }
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         let container_valueEncoder = container.superEncoder(forKey: CodingKeys.value)
                         try LossySequenceCoder<[String]>().encode(self.value, to: container_valueEncoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -429,6 +504,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @CodedAt("deeply", "nested", "key")
                 let value: String
@@ -438,28 +514,36 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String
+
                     init(value: String) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         self.value = try nested_deeply_container.decode(String.self, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         try nested_deeply_container.encode(self.value, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                         case deeply = "deeply"
                         case nested = "nested"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -469,6 +553,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @Default("some")
                 @CodedAt("deeply", "nested", "key")
@@ -479,9 +564,13 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String
+
                     init(value: String = "some") {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
@@ -492,19 +581,23 @@ final class CodedAtMacroTests: XCTestCase {
                             self.value = "some"
                         }
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         try nested_deeply_container.encode(self.value, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                         case deeply = "deeply"
                         case nested = "nested"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -514,6 +607,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @CodedBy(LossySequenceCoder<[String]>())
                 @CodedAt("deeply", "nested", "key")
@@ -524,9 +618,13 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: [String]
+
                     init(value: [String]) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
@@ -534,6 +632,9 @@ final class CodedAtMacroTests: XCTestCase {
                         let nested_deeply_container_valueDecoder = try nested_deeply_container.superDecoder(forKey: CodingKeys.value)
                         self.value = try LossySequenceCoder<[String]>().decode(from: nested_deeply_container_valueDecoder)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
@@ -541,13 +642,14 @@ final class CodedAtMacroTests: XCTestCase {
                         let nested_deeply_container_valueEncoder = nested_deeply_container.superEncoder(forKey: CodingKeys.value)
                         try LossySequenceCoder<[String]>().encode(self.value, to: nested_deeply_container_valueEncoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                         case deeply = "deeply"
                         case nested = "nested"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -557,6 +659,7 @@ final class CodedAtMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 @Default(["some"])
                 @CodedBy(LossySequenceCoder<[String]>())
@@ -568,9 +671,13 @@ final class CodedAtMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: [String]
+
                     init(value: [String] = ["some"]) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
@@ -582,6 +689,9 @@ final class CodedAtMacroTests: XCTestCase {
                             self.value = ["some"]
                         }
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
@@ -589,13 +699,14 @@ final class CodedAtMacroTests: XCTestCase {
                         let nested_deeply_container_valueEncoder = nested_deeply_container.superEncoder(forKey: CodingKeys.value)
                         try LossySequenceCoder<[String]>().encode(self.value, to: nested_deeply_container_valueEncoder)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "key"
                         case deeply = "deeply"
                         case nested = "nested"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )

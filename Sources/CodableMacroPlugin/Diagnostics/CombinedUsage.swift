@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate macro-attributes
@@ -59,8 +59,8 @@ where Attr: Attribute, Comb: Attribute {
     ///   - syntax: The syntax to validate and produce diagnostics for.
     ///   - context: The macro expansion context diagnostics produced in.
     ///
-    /// - Returns: True if syntax fails validation and severity is set to error,
-    ///            false otherwise.
+    /// - Returns: `True` if syntax fails validation and severity is set
+    ///   to error, `false` otherwise.
     @discardableResult
     func produce(
         for syntax: some SyntaxProtocol,
@@ -69,14 +69,16 @@ where Attr: Attribute, Comb: Attribute {
         guard syntax.attributes(for: type).first == nil
         else { return false }
 
-        let verb = switch severity {
-        case .error:
-            "must"
-        default:
-            "should"
-        }
+        let verb =
+            switch severity {
+            case .error:
+                "must"
+            default:
+                "should"
+            }
         let message = attr.node.diagnostic(
-            message: "@\(attr.name) \(verb) be used in combination with @\(Comb.name)",
+            message:
+                "@\(attr.name) \(verb) be used in combination with @\(Comb.name)",
             id: attr.misuseMessageID,
             severity: severity
         )
@@ -94,8 +96,8 @@ extension Attribute {
     ///
     /// - Parameter type: The combination attribute type.
     /// - Returns: Attribute combination usage validation
-    ///            diagnostic producer.
-    func mustBeCombined< Comb: Attribute>(
+    ///   diagnostic producer.
+    func mustBeCombined<Comb: Attribute>(
         with type: Comb.Type
     ) -> CombinedUsage<Self, Comb> {
         return .init(self, cantBeCombinedWith: type)
@@ -109,8 +111,8 @@ extension Attribute {
     ///
     /// - Parameter type: The unsupported attribute type.
     /// - Returns: Attribute combination usage validation
-    ///            diagnostic producer.
-    func shouldBeCombined< Comb: Attribute>(
+    ///   diagnostic producer.
+    func shouldBeCombined<Comb: Attribute>(
         with type: Comb.Type
     ) -> CombinedUsage<Self, Comb> {
         return .init(self, cantBeCombinedWith: type, severity: .warning)

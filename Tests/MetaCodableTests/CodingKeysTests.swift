@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import CodableMacroPlugin
 
 final class CodingKeysTests: XCTestCase {
@@ -55,30 +56,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "ProductName"
                         case productCost = "ProductCost"
                         case description = "Description"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """,
             diagnostics: [
@@ -125,30 +128,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "ProductName"
                         case productCost = "ProductCost"
                         case description = "Description"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -171,30 +176,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "product_name"
                         case productCost = "product_cost"
                         case description = "description"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -217,30 +224,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "product_Name"
                         case productCost = "product_Cost"
                         case description = "description"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -263,30 +272,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "PRODUCT_NAME"
                         case productCost = "PRODUCT_COST"
                         case description = "DESCRIPTION"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -309,30 +320,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "product-name"
                         case productCost = "product-cost"
                         case description = "description"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -355,30 +368,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "PRODUCT-NAME"
                         case productCost = "PRODUCT-COST"
                         case description = "DESCRIPTION"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -401,30 +416,32 @@ final class CodingKeysTests: XCTestCase {
                     let productName: String
                     let productCost: String
                     let description: String
-                    init(productName: String, productCost: String, description: String) {
-                        self.productName = productName
-                        self.productCost = productCost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                         self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.productName, forKey: CodingKeys.productName)
                         try container.encode(self.productCost, forKey: CodingKeys.productCost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case productName = "Product-Name"
                         case productCost = "Product-Cost"
                         case description = "Description"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -447,30 +464,32 @@ final class CodingKeysTests: XCTestCase {
                     let product_name: String
                     let product_cost: String
                     let description: String
-                    init(product_name: String, product_cost: String, description: String) {
-                        self.product_name = product_name
-                        self.product_cost = product_cost
-                        self.description = description
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.product_name = try container.decode(String.self, forKey: CodingKeys.product_name)
                         self.product_cost = try container.decode(String.self, forKey: CodingKeys.product_cost)
                         self.description = try container.decode(String.self, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.product_name, forKey: CodingKeys.product_name)
                         try container.encode(self.product_cost, forKey: CodingKeys.product_cost)
                         try container.encode(self.description, forKey: CodingKeys.description)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case product_name = "productName"
                         case product_cost = "productCost"
                         case description = "description"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )

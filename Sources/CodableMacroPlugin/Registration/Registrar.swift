@@ -1,6 +1,6 @@
 import SwiftSyntax
-import SwiftSyntaxMacros
 import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 /// A type managing registrations of variable and `CodingKey` data.
 ///
@@ -17,11 +17,11 @@ struct Registrar {
     struct Options {
         /// The default list of modifiers to be applied to generated
         /// conformance implementation declarations.
-        fileprivate let modifiers: ModifierListSyntax?
+        fileprivate let modifiers: DeclModifierListSyntax
 
-        /// Member-wise initialization generator with provided options.
+        /// Memberwise initialization generator with provided options.
         ///
-        /// Creates member-wise initialization generator by passing
+        /// Creates memberwise initialization generator by passing
         /// the provided access modifiers.
         var initGenerator: MemberwiseInitGenerator {
             return .init(options: .init(modifiers: modifiers))
@@ -31,10 +31,10 @@ struct Registrar {
         ///
         /// - Parameters:
         ///   - modifiers: List of modifiers need to be applied
-        ///                to generated declarations.
+        ///     to generated declarations.
         ///
         /// - Returns: The newly created options.
-        init(modifiers: ModifierListSyntax? = nil) {
+        init(modifiers: DeclModifierListSyntax = []) {
             self.modifiers = modifiers
         }
     }
@@ -75,7 +75,7 @@ struct Registrar {
     ///
     /// - Parameters:
     ///   - registration: The variable metadata and `CodingKey`
-    ///                   path to be added.
+    ///     path to be added.
     ///   - context: The context in which to perform the macro expansion.
     mutating func add(
         registration: Registration<some Variable>,
@@ -93,24 +93,131 @@ struct Registrar {
         )
     }
 
-    /// Generates member declarations for `Codable` macro.
+    /// Generates extension declarations for `Codable` macro.
     ///
     /// From the variables registered by `Codable` macro,
-    /// member-wise initialization, `Codable` protocol conformance
-    /// and `CodingKey` declarations are generated.
+    /// `Codable` protocol conformance and `CodingKey` type
+    /// declarations are generated in separate extensions.
     ///
-    /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
+    /// - Parameters:
+    ///   - type: The type for which extensions provided.
+    ///   - protocols: The list of `Codable` protocols to add
+    ///     conformances to. These will always be either `Decodable`
+    ///     or `Encodable`.
+    ///   - context: The context in which to perform the macro expansion.
     ///
-    /// - Returns: The generated member declarations.
-    func memberDeclarations(
+    /// - Returns: The generated extension declarations.
+    func codableExpansion(
+        for type: some TypeSyntaxProtocol,
+        to protocols: [TypeSyntax],
         in context: some MacroExpansionContext
-    ) -> [DeclSyntax] {
-        var decls = memberInit(in: context).map { DeclSyntax($0) }
-        decls.append(DeclSyntax(decoding(in: context)))
-        decls.append(DeclSyntax(encoding(in: context)))
-        decls.append(DeclSyntax(codingKeys(in: context)))
-        return decls
+    ) -> [ExtensionDeclSyntax] {
+        var extensions: [ExtensionDeclSyntax] = []
+
+        let decodable: TypeSyntax?
+        let encodable: TypeSyntax?
+
+        // check conformances to be generated
+        if let conf = protocols.first(
+            where: { $0.trimmed.description == "Decodable" }
+        ) {
+            decodable = conf
+        } else if protocols.contains(
+            where: { $0.description.contains("Decodable") }
+        ) {
+            decodable = "Decodable"
+        } else {
+            decodable = nil
+        }
+
+        if let conf = protocols.first(
+            where: { $0.trimmed.description == "Encodable" }
+        ) {
+            encodable = conf
+        } else if protocols.contains(
+            where: { $0.description.contains("Encodable") }
+        ) {
+            encodable = "Encodable"
+        } else {
+            encodable = nil
+        }
+
+        // generate Decodable
+        if let decodable {
+            let ext = decoding(type: type, conformingTo: decodable, in: context)
+            extensions.append(ext)
+        }
+
+        // generate Encodable
+        if let encodable {
+            let ext = encoding(type: type, conformingTo: encodable, in: context)
+            extensions.append(ext)
+        }
+
+        // generate CodingKeys
+        if decodable != nil || encodable != nil {
+            extensions.append(codingKeys(for: type, in: context))
+        }
+
+        return extensions
+    }
+
+    /// Provides the `Decodable` extension declaration.
+    ///
+    /// The extension declaration contains conformance to `Decodable`
+    /// with initialization declaration `init(from:)` for `Decodable`
+    /// conformance implementation.
+    ///
+    /// - Parameters:
+    ///   - type: The type for which extensions provided.
+    ///   - protocol: The`Decodable` protocol type syntax.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: The generated extension declaration.
+    func decoding(
+        type: some TypeSyntaxProtocol,
+        conformingTo protocol: TypeSyntax = "Decodable",
+        in context: some MacroExpansionContext
+    ) -> ExtensionDeclSyntax {
+        return .init(
+            extendedType: type,
+            inheritanceClause: .init { .init(type: `protocol`) }
+        ) {
+            InitializerDeclSyntax.decode(
+                modifiers: options.modifiers
+            ) { decoder in
+                let type = caseMap.type
+                root.decoding(in: context, from: .coder(decoder, keyType: type))
+            }
+        }
+    }
+
+    /// Provides the `Encodable` extension declaration.
+    ///
+    /// The extension declaration contains conformance to `Encodable`
+    /// with method declaration `encode(to:)` for `Encodable`
+    /// conformance implementation.
+    ///
+    /// - Parameters:
+    ///   - type: The type for which extensions provided.
+    ///   - protocol: The`Encodable` protocol type syntax.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: The generated extension declaration.
+    func encoding(
+        type: some TypeSyntaxProtocol,
+        conformingTo protocol: TypeSyntax = "Encodable",
+        in context: some MacroExpansionContext
+    ) -> ExtensionDeclSyntax {
+        return .init(
+            extendedType: type,
+            inheritanceClause: .init { .init(type: `protocol`) }
+        ) {
+            FunctionDeclSyntax.encode(modifiers: options.modifiers) { encoder in
+                let type = caseMap.type
+                root.encoding(in: context, from: .coder(encoder, keyType: type))
+            }
+        }
     }
 
     /// Provides the declaration of `CodingKey` type that is used
@@ -119,63 +226,26 @@ struct Registrar {
     /// This registrar asks `caseMap` to generate `CodingKey`
     /// declaration based on current keys registrations.
     ///
-    /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
+    /// - Parameters:
+    ///   - type: The type for which extensions provided.
+    ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: The generated enum declaration.
-    private func codingKeys(
+    func codingKeys(
+        for type: some TypeSyntaxProtocol,
         in context: some MacroExpansionContext
-    ) -> EnumDeclSyntax {
-        return caseMap.decl(in: context)
-    }
-
-    /// Provides the initialization declaration `init(from:)`
-    /// for `Decodable` conformance implementation.
-    ///
-    /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
-    ///
-    /// - Returns: The generated initializer declaration.
-    private func decoding(
-        in context: some MacroExpansionContext
-    ) -> InitializerDeclSyntax {
-        return InitializerDeclSyntax.decode(
-            modifiers: options.modifiers
-        ) { decoder in
-            root.decoding(
-                in: context,
-                from: .coder(decoder, keyType: caseMap.type)
-            )
+    ) -> ExtensionDeclSyntax {
+        return .init(extendedType: type) {
+            caseMap.decl(in: context)
         }
     }
 
-    /// Provides the method declaration `encode(to:)`
-    /// for `Encodable` conformance implementation.
+    /// Provides the memberwise initializer declaration(s).
     ///
     /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
-    ///
-    /// - Returns: The generated function declaration.
-    private func encoding(
-        in context: some MacroExpansionContext
-    ) -> FunctionDeclSyntax {
-        return FunctionDeclSyntax.encode(
-            modifiers: options.modifiers
-        ) { encoder in
-            root.encoding(
-                in: context,
-                from: .coder(encoder, keyType: caseMap.type)
-            )
-        }
-    }
-
-    /// Provides the member-wise initializer declaration(s).
-    ///
-    /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
-    ///
+    ///   the macro expansion.
     /// - Returns: The generated initializer declarations.
-    private func memberInit(
+    func memberInit(
         in context: some MacroExpansionContext
     ) -> [InitializerDeclSyntax] {
         var generator = options.initGenerator
@@ -198,22 +268,22 @@ fileprivate extension InitializerDeclSyntax {
     /// - Parameters:
     ///   - modifiers: The modifiers to apply to the declaration.
     ///   - itemsBuilder: The result builder that builds expressions
-    ///                   in the declaration.
+    ///     in the declaration.
     ///
     /// - Returns: The generated initializer declaration.
     static func decode(
-        modifiers: ModifierListSyntax?,
+        modifiers: DeclModifierListSyntax,
         @CodeBlockItemListBuilder
         itemsBuilder: (TokenSyntax) throws -> CodeBlockItemListSyntax
     ) rethrows -> Self {
         let decoder: TokenSyntax = "decoder"
         let param = FunctionParameterSyntax(
             firstName: "from", secondName: decoder,
-            type: SimpleTypeIdentifierSyntax(name: "Decoder")
+            type: IdentifierTypeSyntax(name: "Decoder")
         )
 
         let signature = FunctionSignatureSyntax(
-            input: .init(parameterList: .init([param])),
+            parameterClause: .init(parameters: .init([param])),
             effectSpecifiers: .init(throwsSpecifier: .keyword(.throws))
         )
 
@@ -238,28 +308,28 @@ fileprivate extension FunctionDeclSyntax {
     /// - Parameters:
     ///   - modifiers: The modifiers to apply to the declaration.
     ///   - itemsBuilder: The result builder that builds expressions
-    ///                   in the declaration.
+    ///     in the declaration.
     ///
     /// - Returns: The generated method declaration.
     static func encode(
-        modifiers: ModifierListSyntax?,
+        modifiers: DeclModifierListSyntax,
         @CodeBlockItemListBuilder
         itemsBuilder: (TokenSyntax) throws -> CodeBlockItemListSyntax
     ) rethrows -> Self {
         let encoder: TokenSyntax = "encoder"
         let param = FunctionParameterSyntax(
             firstName: "to", secondName: encoder,
-            type: SimpleTypeIdentifierSyntax(name: "Encoder")
+            type: IdentifierTypeSyntax(name: "Encoder")
         )
 
         let signature = FunctionSignatureSyntax(
-            input: .init(parameterList: .init([param])),
+            parameterClause: .init(parameters: .init([param])),
             effectSpecifiers: .init(throwsSpecifier: .keyword(.throws))
         )
 
         return try FunctionDeclSyntax(
             modifiers: modifiers,
-            identifier: "encode",
+            name: "encode",
             signature: signature
         ) {
             for expr in try itemsBuilder(encoder) { expr }

@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 
 /// A message type used as `DiagnosticMessage` and `FixItMessage`
 /// for this macro plugin.
@@ -68,7 +68,7 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     /// the provided `macro` attribute.
     var fixItByRemove: FixIt {
         let name = macro.attributeName
-            .as(SimpleTypeIdentifierSyntax.self)!.description
+            .as(IdentifierTypeSyntax.self)!.description
         return .init(
             message: macro.fixIt(
                 message: "Remove @\(name) attribute",
@@ -133,6 +133,7 @@ extension MessageID {
     /// Creates a new message id in current package domain.
     ///
     /// - Parameters id: The message id.
+    /// - Returns: Created message id.
     static func messageID(_ id: String) -> Self {
         return .init(
             domain: "com.SwiftyLab.MetaCodable",

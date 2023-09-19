@@ -3,20 +3,6 @@
 import PackageDescription
 import CompilerPluginSupport
 
-let macroDeps: [Target.Dependency] = [
-    .product(name: "SwiftSyntax", package: "swift-syntax"),
-    .product(name: "SwiftDiagnostics", package: "swift-syntax"),
-    .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
-    .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
-    .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
-    .product(name: "OrderedCollections", package: "swift-collections"),
-]
-
-let testDeps: [Target.Dependency] = [
-    "CodableMacroPlugin", "MetaCodable",
-    .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
-]
-
 let package = Package(
     name: "MetaCodable",
     platforms: [
@@ -32,11 +18,28 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
+        .package(url: "https://github.com/apple/swift-format", from: "509.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
     ],
     targets: [
-        .macro(name: "CodableMacroPlugin", dependencies: macroDeps),
+        .macro(
+            name: "CodableMacroPlugin",
+            dependencies: [
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+                .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+                .product(name: "OrderedCollections", package: "swift-collections"),
+            ]
+        ),
         .target(name: "MetaCodable", dependencies: ["CodableMacroPlugin"]),
-        .testTarget(name: "MetaCodableTests", dependencies: testDeps),
+        .testTarget(
+            name: "MetaCodableTests",
+            dependencies: [
+                "CodableMacroPlugin", "MetaCodable",
+                .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+            ]
+        ),
     ]
 )

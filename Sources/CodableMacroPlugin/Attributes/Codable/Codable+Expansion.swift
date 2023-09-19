@@ -2,85 +2,43 @@ import Foundation
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-extension Codable: ConformanceMacro, MemberMacro {
-    /// Expand to produce `Codable` conformance.
+extension Codable: ExtensionMacro {
+    /// Expand to produce extensions with `Codable` implementation
+    /// members for attached struct.
     ///
-    /// - Parameters:
-    ///   - node: The attribute describing this macro.
-    ///   - declaration: The declaration this macro attribute is attached to.
-    ///   - context: The context in which to perform the macro expansion.
-    ///
-    /// - Returns: `Codable` type to allow conformance to both
-    ///            `Decodable` and `Encodable` protocols
-    ///            without any where clause.
-    static func expansion(
-        of node: AttributeSyntax,
-        providingConformancesOf declaration: some DeclGroupSyntax,
-        in context: some MacroExpansionContext
-    ) throws -> [(TypeSyntax, GenericWhereClauseSyntax?)] {
-        return [
-            ("Codable", nil)
-        ]
-    }
-
-    /// Expand to produce `Codable` implementation members for attached struct.
+    /// Depending on whether attached type already conforms to `Decodable`
+    /// or `Encodable` extension for `Decodable` or `Encodable` conformance
+    /// implementation is skipped.Entire macro expansion is skipped if attached type
+    /// already conforms to both `Decodable` and`Encodable`.
     ///
     /// For all the variable declarations in the attached type registration is
-    /// done via `Registrar` instance with optional `CodedPropertyMacro`
+    /// done via `Registrar` instance with optional `PeerAttribute`
     /// metadata. The `Registrar` instance provides declarations based on
     /// all the registrations.
     ///
     /// - Parameters:
-    ///   - node: The attribute describing this macro.
+    ///   - node: The custom attribute describing this attached macro.
     ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - type: The type to provide extensions of.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
     ///   - context: The context in which to perform the macro expansion.
     ///
-    /// - Returns: `CodingKeys` type and `init(from:)`, `encode(to:)`,
-    ///             method declarations for `Codable` implementation along with
-    ///             member-wise initializer declaration(s).
+    /// - Returns:  Extensions with `CodingKeys` type, `Decodable`
+    ///   conformance with `init(from:)` implementation and `Encodable`
+    ///   conformance with `encode(to:)` implementation depending on already
+    ///   declared conformances of type.
     static func expansion(
         of node: AttributeSyntax,
-        providingMembersOf declaration: some DeclGroupSyntax,
+        attachedTo declaration: some DeclGroupSyntax,
+        providingExtensionsOf type: some TypeSyntaxProtocol,
+        conformingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
-    ) throws -> [DeclSyntax] {
-        // validate proper use
-        guard
-            let self = Self(from: node),
-            !self.diagnoser().produce(for: declaration, in: context)
-        else { return [] }
-
-        let options = Registrar.Options(modifiers: declaration.modifiers)
-        var registrar = Registrar(options: options)
-
-        declaration.memberBlock.members.forEach { member in
-            // is a variable declaration
-            guard let decl = member.decl.as(VariableDeclSyntax.self)
-            else { return }
-
-            // builder
-            let builder = CodingKeys(from: declaration)
-            |> IgnoreCodingInitialized(from: declaration)
-            |> KeyPathRegistrationBuilder(
-                provider: CodedAt(from: decl)
-                ?? CodedIn(from: decl)
-                ?? CodedIn()
-            )
-            |> HelperCodingRegistrationBuilder()
-            |> DefaultCodingRegistrationBuilder()
-            |> InitializationRegistrationBuilder()
-            |> IgnoreCodingBuilder()
-
-            // build
-            let regs = decl.registrations(for: self, in: context, with: builder)
-
-            // register
-            for registration in regs {
-                registrar.add(registration: registration, context: context)
-            }
-        }
-
-        // generate
-        return registrar.memberDeclarations(in: context)
+    ) throws -> [ExtensionDeclSyntax] {
+        let registrar = registrar(for: declaration, node: node, in: context)
+        guard let registrar else { return [] }
+        return registrar.codableExpansion(for: type, to: protocols, in: context)
     }
 }
 

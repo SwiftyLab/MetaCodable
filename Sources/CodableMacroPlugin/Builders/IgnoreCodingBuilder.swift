@@ -26,7 +26,7 @@ struct IgnoreCodingBuilder<Input: Variable>: RegistrationBuilder {
     ///
     /// - Parameter input: The registration built so far.
     /// - Returns: Newly built registration with conditional
-    ///            decoding/encoding data.
+    ///   decoding/encoding data.
     func build(with input: Registration<Input>) -> Registration<Output> {
         let declaration = input.context.declaration
         let ignoreCoding = declaration.attributes(for: IgnoreCoding.self)

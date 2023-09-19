@@ -1,6 +1,6 @@
 import SwiftSyntax
-import SwiftSyntaxMacros
 import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 extension Registrar {
     /// A type containing key data.

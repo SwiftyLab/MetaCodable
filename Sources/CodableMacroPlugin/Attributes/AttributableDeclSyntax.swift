@@ -32,10 +32,10 @@ extension SyntaxProtocol {
             let declaration = declaration as? AttributableDeclSyntax
         else { return [] }
 
-        return declaration.attributes?.compactMap { attribute in
+        return declaration.attributes.compactMap { attribute in
             guard case .attribute(let attribute) = attribute else { return nil }
             return type.init(from: attribute)
-        } ?? []
+        }
     }
 }
 
@@ -45,12 +45,12 @@ extension SyntaxProtocol {
 /// is for this attribute and perform validation of this attribute usage.
 protocol AttributableDeclSyntax: DeclSyntaxProtocol {
     /// The list of attributes attached to this declaration.
-    var attributes: AttributeListSyntax? { get }
+    var attributes: AttributeListSyntax { get }
 }
 
 extension AccessorDeclSyntax: AttributableDeclSyntax {}
 extension ActorDeclSyntax: AttributableDeclSyntax {}
-extension AssociatedtypeDeclSyntax: AttributableDeclSyntax {}
+extension AssociatedTypeDeclSyntax: AttributableDeclSyntax {}
 extension ClassDeclSyntax: AttributableDeclSyntax {}
 extension DeinitializerDeclSyntax: AttributableDeclSyntax {}
 extension EditorPlaceholderDeclSyntax: AttributableDeclSyntax {}
@@ -63,10 +63,9 @@ extension InitializerDeclSyntax: AttributableDeclSyntax {}
 extension MacroDeclSyntax: AttributableDeclSyntax {}
 extension MacroExpansionDeclSyntax: AttributableDeclSyntax {}
 extension MissingDeclSyntax: AttributableDeclSyntax {}
-extension OperatorDeclSyntax: AttributableDeclSyntax {}
 extension PrecedenceGroupDeclSyntax: AttributableDeclSyntax {}
 extension ProtocolDeclSyntax: AttributableDeclSyntax {}
 extension StructDeclSyntax: AttributableDeclSyntax {}
 extension SubscriptDeclSyntax: AttributableDeclSyntax {}
-extension TypealiasDeclSyntax: AttributableDeclSyntax {}
+extension TypeAliasDeclSyntax: AttributableDeclSyntax {}
 extension VariableDeclSyntax: AttributableDeclSyntax {}

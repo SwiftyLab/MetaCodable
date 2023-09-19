@@ -1,12 +1,15 @@
 import XCTest
+
 @testable import MetaCodable
 
 final class LossySequenceTests: XCTestCase {
 
     func testInvalidDataType() throws {
-        XCTExpectFailure("Invalid data type instead of array")
-        let json = #"{"data":1}"#.data(using: .utf8)!
-        let _ = try JSONDecoder().decode(Container.self, from: json)
+        do {
+            let json = #"{"data":1}"#.data(using: .utf8)!
+            let _ = try JSONDecoder().decode(Container.self, from: json)
+            XCTFail("Invalid data type instead of array")
+        } catch {}
     }
 
     func testEmptyData() throws {
@@ -89,6 +92,7 @@ struct Container {
 }
 
 @Codable
+@MemberInit
 struct DefaultContainer {
     @Default(["some"])
     @CodedBy(LossySequenceCoder<[String]>())

@@ -8,8 +8,8 @@ import SwiftSyntaxMacros
 /// initialized variable declarations.
 ///
 /// - Note: This producer also validates passed syntax is of variable
-///         declaration type. No need to pass additional diagnostic producer
-///         to validate this.
+///   declaration type. No need to pass additional diagnostic producer
+///   to validate this.
 struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
     /// The attribute for which
     /// validation performed.
@@ -35,8 +35,7 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
     /// performs validation.
     ///
     /// - Parameter attr: The attribute for which
-    ///                   validation performed.
-    ///
+    ///   validation performed.
     /// - Returns: Newly created diagnostic producer.
     init(_ attr: Attr) {
         self.attr = attr
@@ -64,13 +63,12 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
 
         var result = false
         for binding in syntax.as(VariableDeclSyntax.self)!.bindings {
-            switch binding.accessor {
-            case .some(let block) where block.is(CodeBlockSyntax.self):
+            switch binding.accessorBlock?.accessors {
+            case .getter:
                 continue
-            case .some(let block) where block.is(AccessorBlockSyntax.self):
-                let accessors = block.as(AccessorBlockSyntax.self)!.accessors
+            case .accessors(let accessors):
                 let computed = accessors.contains { decl in
-                    decl.accessorKind.tokenKind == .keyword(.get)
+                    decl.accessorSpecifier.tokenKind == .keyword(.get)
                 }
                 // TODO: Re-evaluate when init accessor is introduced
                 // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
@@ -109,7 +107,7 @@ extension PropertyAttribute {
     /// declarations.
     ///
     /// - Returns: Uninitialized variable declaration validation diagnostic
-    ///            producer.
+    ///   producer.
     func attachedToInitializedVariable() -> UninitializedVariableDecl<Self> {
         return .init(self)
     }

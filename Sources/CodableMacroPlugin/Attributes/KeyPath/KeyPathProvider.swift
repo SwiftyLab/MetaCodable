@@ -33,10 +33,9 @@ extension KeyPathProvider {
     /// as variadic arguments without any labels.
     ///
     /// - Important: The path components must be string literals
-    ///              with single segment (i.e no interpolation,
-    ///              no string combinations).
+    ///   with single segment (i.e no interpolation, no string combinations).
     var providedPath: [String] {
-        guard let exprs = node.argument?.as(TupleExprElementListSyntax.self)
+        guard let exprs = node.arguments?.as(LabeledExprListSyntax.self)
         else { return [] }
 
         let path: [String] = exprs.compactMap { expr in

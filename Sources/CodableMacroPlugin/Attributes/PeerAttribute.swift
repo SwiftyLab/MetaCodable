@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// An `Attribute` type that generates "peer" declarations that
@@ -12,7 +12,7 @@ import SwiftSyntaxMacros
 /// declaration by using the `diagnoser().produce(syntax:in:)`
 /// implementation. If verification fails, then this macro generates
 /// diagnostic to remove it.
-protocol PeerAttribute: Attribute, PeerMacro { }
+protocol PeerAttribute: Attribute, PeerMacro {}
 
 /// An `Attribute` type that can be applied to property declaration.
 ///
@@ -32,10 +32,10 @@ extension PeerAttribute {
     /// to provided variable declaration
     ///
     /// - Parameter declaration: The attached variable
-    ///                          declaration.
+    ///   declaration.
     /// - Returns: Newly created attribute instance.
     init?(from declaration: some AttributableDeclSyntax) {
-        let attribute = declaration.attributes?.first { attribute in
+        let attribute = declaration.attributes.first { attribute in
             guard case .attribute(let attribute) = attribute
             else { return false }
             return Self(from: attribute) != nil

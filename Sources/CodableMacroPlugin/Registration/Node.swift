@@ -1,7 +1,7 @@
-import SwiftSyntax
-import SwiftSyntaxMacros
-import SwiftSyntaxBuilder
 import OrderedCollections
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 extension Registrar {
     /// A type storing variable and `CodingKey`
@@ -126,7 +126,8 @@ extension Registrar.Node {
                 variable.decoding(in: context, from: location.forVariable)
             }
 
-            let childrenDecodable = children
+            let childrenDecodable =
+                children
                 .contains { $1.linkedVariables.contains { $0.decode ?? true } }
             if !children.isEmpty, childrenDecodable {
                 switch location {
@@ -177,7 +178,8 @@ extension Registrar.Node {
                 variable.encoding(in: context, to: location.forVariable)
             }
 
-            let childrenEncodable = children
+            let childrenEncodable =
+                children
                 .contains { $1.linkedVariables.contains { $0.encode ?? true } }
             if !children.isEmpty, childrenEncodable {
                 switch location {

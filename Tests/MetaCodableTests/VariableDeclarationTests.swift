@@ -1,12 +1,14 @@
 import XCTest
+
 @testable import CodableMacroPlugin
 
-final class CodableMacroVariableDeclarationTests: XCTestCase {
+final class VariableDeclarationTests: XCTestCase {
 
     func testInitializedImmutableVariable() throws {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 let value: String = "some"
             }
@@ -15,16 +17,24 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String = "some"
+
                     init() {
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -34,6 +44,7 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 var value: String = "some"
             }
@@ -42,24 +53,33 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var value: String = "some"
+
                     init() {
                     }
+
                     init(value: String) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decode(String.self, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "value"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -69,6 +89,7 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 var value: String { "some" }
             }
@@ -76,19 +97,25 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
             expandedSource:
                 """
                 struct SomeCodable {
-                    var value: String {
-                        "some"
-                    }
+                    var value: String { "some" }
+
                     init() {
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -98,6 +125,7 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 var value: String {
                     get {
@@ -114,16 +142,24 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                             "some"
                         }
                     }
+
                     init() {
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -133,6 +169,7 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 var value: String {
                     let val = "Val"
@@ -147,16 +184,24 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                         let val = "Val"
                         return "some\\(val)"
                     }
+
                     init() {
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -166,11 +211,13 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 var value1: String {
                     didSet {
                     }
                 }
+
                 var value2: String {
                     willSet {
                     }
@@ -184,30 +231,39 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                         didSet {
                         }
                     }
+
                     var value2: String {
                         willSet {
                         }
                     }
+
                     init(value1: String, value2: String) {
                         self.value1 = value1
                         self.value2 = value2
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
                         self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value1, forKey: CodingKeys.value1)
                         try container.encode(self.value2, forKey: CodingKeys.value2)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value1 = "value1"
                         case value2 = "value2"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -217,11 +273,13 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 var value1: String = "some" {
                     didSet {
                     }
                 }
+
                 var value2: String = "some" {
                     willSet {
                     }
@@ -235,38 +293,50 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                         didSet {
                         }
                     }
+
                     var value2: String = "some" {
                         willSet {
                         }
                     }
+
                     init() {
                     }
+
                     init(value1: String) {
                         self.value1 = value1
                     }
+
                     init(value2: String) {
                         self.value2 = value2
                     }
+
                     init(value1: String, value2: String) {
                         self.value1 = value1
                         self.value2 = value2
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
                         self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value1, forKey: CodingKeys.value1)
                         try container.encode(self.value2, forKey: CodingKeys.value2)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value1 = "value1"
                         case value2 = "value2"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -276,6 +346,7 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 var value: String {
                     get {
@@ -296,16 +367,24 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                         set {
                         }
                     }
+
                     init() {
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -315,6 +394,7 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 let value: String?
             }
@@ -323,22 +403,30 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: String?
+
                     init(value: String? = nil) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "value"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -348,6 +436,7 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
+            @MemberInit
             struct SomeCodable {
                 let value: Optional<String>
             }
@@ -356,22 +445,30 @@ final class CodableMacroVariableDeclarationTests: XCTestCase {
                 """
                 struct SomeCodable {
                     let value: Optional<String>
+
                     init(value: Optional<String> = nil) {
                         self.value = value
                     }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case value = "value"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )

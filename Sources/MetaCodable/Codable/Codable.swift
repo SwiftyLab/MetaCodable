@@ -23,17 +23,23 @@
 ///     all initialized properties.
 ///
 /// # Effect
-/// This macro composes two different kinds of macro expansion:
-///   * Conformance macro expansion, to confirm to `Decodable`
-///     and `Encodable` protocols.
-///   * Member macro expansion, to generate custom `CodingKey` type for
-///     the attached struct declaration named `CodingKeys` and use this type
-///     for `Codable` implementation of both `init(from:)` and `encode(to:)`
-///     methods. Additionally member-wise initializer(s) also generated.
+/// This macro composes extension macro expansion depending on `Codable`
+/// conformance of type:
+///   * Extension macro expansion, to confirm to `Decodable` or `Encodable`
+///     protocols depending on whether type doesn't already conform to `Decodable`
+///     or `Encodable` respectively.
+///   * Extension macro expansion, to generate custom `CodingKey` type for
+///     the attached declaration named `CodingKeys` and use this type for
+///     `Codable` implementation of both `init(from:)` and `encode(to:)`
+///     methods.
+///   * If attached declaration already conforms to `Codable` this macro expansion
+///     is skipped.
 ///
 /// - Important: The attached declaration must be of a struct type.
-@attached(member, names: named(CodingKeys), named(init(from:)), named(encode(to:)), arbitrary)
-@attached(conformance)
+@attached(
+    extension, conformances: Decodable, Encodable,
+    names: named(CodingKeys), named(init(from:)), named(encode(to:))
+)
 @available(swift 5.9)
-public macro Codable()
-= #externalMacro(module: "CodableMacroPlugin", type: "Codable")
+public macro Codable() =
+    #externalMacro(module: "CodableMacroPlugin", type: "Codable")

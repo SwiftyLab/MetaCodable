@@ -1,11 +1,11 @@
 import SwiftSyntax
 
 /// A registration builder updating default value expression data that
-/// will be used for decoding failure and member-wise initializer(s)
+/// will be used for decoding failure and memberwise initializer(s)
 /// data for variable.
 ///
 /// New registration is updated with default expression data that will be
-/// used for decoding failure and member-wise initializer(s), if provided.
+/// used for decoding failure and memberwise initializer(s), if provided.
 struct DefaultCodingRegistrationBuilder<Input: Variable>: RegistrationBuilder
 where Input.Initialization == RequiredInitialization {
     /// The variable data with default expression
@@ -15,7 +15,7 @@ where Input.Initialization == RequiredInitialization {
     /// Build new registration with provided input registration.
     ///
     /// New registration is updated with default expression data that will be
-    /// used for decoding failure and member-wise initializer(s), if provided.
+    /// used for decoding failure and memberwise initializer(s), if provided.
     ///
     /// - Parameter input: The registration built so far.
     /// - Returns: Newly built registration with default expression data.

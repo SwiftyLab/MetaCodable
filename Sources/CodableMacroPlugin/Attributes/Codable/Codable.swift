@@ -5,15 +5,18 @@ import SwiftSyntax
 /// Describes a macro that validates `Codable` macro usage
 /// and generates `Codable` conformances and implementations.
 ///
-/// This macro performs two different kinds of expansion:
-///   * Conformance macro expansion, to confirm to `Decodable`
-///     and `Encodable` protocols.
-///   * Member macro expansion, to generate custom `CodingKey` type
-///     for the attached struct declaration named `CodingKeys` and use
-///     this type for `Codable` implementation of both `init(from:)`
-///     and `encode(to:)` methods by using `CodedPropertyMacro`
-///     declarations. Additionally member-wise initializer(s) also generated.
-struct Codable: Attribute {
+/// This macro performs extension macro expansion depending on `Codable`
+/// conformance of type:
+///   * Extension macro expansion, to confirm to `Decodable` or `Encodable`
+///     protocols depending on whether type doesn't already conform to `Decodable`
+///     or `Encodable` respectively.
+///   * Extension macro expansion, to generate custom `CodingKey` type for
+///     the attached declaration named `CodingKeys` and use this type for
+///     `Codable` implementation of both `init(from:)` and `encode(to:)`
+///     methods.
+///   * If attached declaration already conforms to `Codable` this macro expansion
+///     is skipped.
+struct Codable: RegistrationAttribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
@@ -27,7 +30,7 @@ struct Codable: Attribute {
     /// - Returns: Newly created attribute instance.
     init?(from node: AttributeSyntax) {
         guard
-            node.attributeName.as(SimpleTypeIdentifierSyntax.self)!
+            node.attributeName.as(IdentifierTypeSyntax.self)!
                 .description == Self.name
         else { return nil }
         self.node = node

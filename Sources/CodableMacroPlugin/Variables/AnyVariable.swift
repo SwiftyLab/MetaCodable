@@ -58,8 +58,10 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     /// - Parameter base: The underlying variable value.
     /// - Returns: Newly created variable.
     init<Var: Variable>(base: Var)
-    where Var.Initialization: RequiredVariableInitialization,
-    Initialization == AnyRequiredVariableInitialization {
+    where
+        Var.Initialization: RequiredVariableInitialization,
+        Initialization == AnyRequiredVariableInitialization
+    {
         self.base = base
         self.initialization = { .init(base: base.initializing(in: $0)) }
     }
@@ -130,7 +132,7 @@ extension Variable where Initialization: RequiredVariableInitialization {
     /// Wraps this variable in an `AnyVariable` instance and the initialization
     /// type in `AnyRequiredVariableInitialization`. The implementation
     /// stays unchanged while type is erased.
-    var any: AnyVariable<AnyRequiredVariableInitialization>  {
+    var any: AnyVariable<AnyRequiredVariableInitialization> {
         return .init(base: self)
     }
 }

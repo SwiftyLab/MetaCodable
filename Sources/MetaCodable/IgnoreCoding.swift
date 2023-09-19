@@ -13,12 +13,12 @@
 /// data will also not have any `field` key.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
-public macro IgnoreCoding()
-= #externalMacro(module: "CodableMacroPlugin", type: "IgnoreCoding")
+public macro IgnoreCoding() =
+    #externalMacro(module: "CodableMacroPlugin", type: "IgnoreCoding")
 
 /// Indicates the field needs to ignored from decoding.
 ///
@@ -35,12 +35,12 @@ public macro IgnoreCoding()
 /// encoded data will have `field` key.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
-public macro IgnoreDecoding()
-= #externalMacro(module: "CodableMacroPlugin", type: "IgnoreDecoding")
+public macro IgnoreDecoding() =
+    #externalMacro(module: "CodableMacroPlugin", type: "IgnoreDecoding")
 
 /// Indicates the field needs to ignored from encoding.
 ///
@@ -54,9 +54,9 @@ public macro IgnoreDecoding()
 /// But the encoded data will also not have any `field` key.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
-public macro IgnoreEncoding()
-= #externalMacro(module: "CodableMacroPlugin", type: "IgnoreEncoding")
+public macro IgnoreEncoding() =
+    #externalMacro(module: "CodableMacroPlugin", type: "IgnoreEncoding")

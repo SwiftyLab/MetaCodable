@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate invalid combination between
@@ -60,8 +60,8 @@ where Attr: Attribute, Comb: Attribute {
     ///   - syntax: The syntax to validate and produce diagnostics for.
     ///   - context: The macro expansion context diagnostics produced in.
     ///
-    /// - Returns: True if syntax fails validation and severity is set to error,
-    ///            false otherwise.
+    /// - Returns: `True` if syntax fails validation and severity
+    ///   is set to error, `false` otherwise.
     @discardableResult
     func produce(
         for syntax: some SyntaxProtocol,
@@ -70,14 +70,16 @@ where Attr: Attribute, Comb: Attribute {
         guard let uAttr = syntax.attributes(for: type).first
         else { return false }
 
-        let verb = switch severity {
-        case .error:
-            "can't"
-        default:
-            "needn't"
-        }
+        let verb =
+            switch severity {
+            case .error:
+                "can't"
+            default:
+                "needn't"
+            }
         let message = attr.node.diagnostic(
-            message: "@\(attr.name) \(verb) be used in combination with @\(uAttr.name)",
+            message:
+                "@\(attr.name) \(verb) be used in combination with @\(uAttr.name)",
             id: attr.misuseMessageID,
             severity: severity
         )
@@ -95,8 +97,8 @@ extension Attribute {
     ///
     /// - Parameter type: The unsupported attribute type.
     /// - Returns: Invalid attribute combination validation
-    ///            diagnostic producer.
-    func cantBeCombined< Comb: Attribute>(
+    ///   diagnostic producer.
+    func cantBeCombined<Comb: Attribute>(
         with type: Comb.Type
     ) -> InvalidCombination<Self, Comb> {
         return .init(self, cantBeCombinedWith: type)
@@ -110,8 +112,8 @@ extension Attribute {
     ///
     /// - Parameter type: The unsupported attribute type.
     /// - Returns: Invalid attribute combination validation
-    ///            diagnostic producer.
-    func shouldNotBeCombined< Comb: Attribute>(
+    ///   diagnostic producer.
+    func shouldNotBeCombined<Comb: Attribute>(
         with type: Comb.Type
     ) -> InvalidCombination<Self, Comb> {
         return .init(self, cantBeCombinedWith: type, severity: .warning)

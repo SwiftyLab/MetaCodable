@@ -31,16 +31,16 @@
 /// - Parameter path: The `CodingKey` path of container value located in.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 ///
 /// - Note: Providing no arguments has the same effect as not applying
-///         the macro entirely. Warning is generated with diagnostic id
-///         `codedin-unused` in such case to either remove
-///         attribute or provide arguments.
+///   the macro entirely. Warning is generated with diagnostic id
+///   `codedin-unused` in such case to either remove attribute or
+///   provide arguments.
 ///
 /// - Important: The field type must confirm to `Codable`.
 @attached(peer)
 @available(swift 5.9)
-public macro CodedIn(_ path: StaticString...)
-= #externalMacro(module: "CodableMacroPlugin", type: "CodedIn")
+public macro CodedIn(_ path: StaticString...) =
+    #externalMacro(module: "CodableMacroPlugin", type: "CodedIn")

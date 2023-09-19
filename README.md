@@ -21,7 +21,6 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
-- Generates member-wise initializer(s) considering the above default value syntax as well.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
 - Allows to ignore specific properties from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``@IgnoreEncoding()``.
 - Allows to use camel-case names for variables according to [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/#general-conventions), while enabling a type to work with different case style keys with ``CodingKeys(_:)``.
@@ -185,9 +184,9 @@ struct Coordinate {
 </details>
 
 <details>
-  <summary>Provide default value in case of decoding failures and member-wise initializer(s) generated considers these default values.</summary>
+  <summary>Provide default value in case of decoding failures.</summary>
 
-Instead of throwing error in case of missing data or type mismatch, you can provide a default value that will be assigned in this case. The memberwise initializer generated also uses this default value for the field. The following definition with `MetaCodable`:
+Instead of throwing error in case of missing data or type mismatch, you can provide a default value that will be assigned in this case. The following definition with `MetaCodable`:
 
 ```swift
 @Codable
@@ -197,7 +196,20 @@ struct CodableData {
 }
 ```
 
-will not throw any error when empty JSON(`{}`) or JSON with type mismatch(`{ "field": 5 }`) is provided. The default value will be assigned in such case. Also, the memberwise initializer generated will look like this:
+will not throw any error when empty JSON(`{}`) or JSON with type mismatch(`{ "field": 5 }`) is provided. The default value will be assigned in such case.
+
+Also, memberwise initializer can be generated that uses this default value for the field.
+
+```swift
+@Codable
+@MemberInit
+struct CodableData {
+    @Default("some")
+    let field: String
+}
+```
+
+The memberwise initializer generated will look like this:
 
 ```swift
 init(field: String = "some") {

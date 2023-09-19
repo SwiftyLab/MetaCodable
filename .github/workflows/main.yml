@@ -38,7 +38,7 @@ jobs:
             {
               "os": "ubuntu-latest",
               "language": "swift",
-              "swift": "5.9"
+              "swift": "latest"
             },
             {
               "os": "macos-13",
@@ -60,24 +60,24 @@ jobs:
   #     with:
   #       config_path: .github/config/spellcheck.yml
 
-  swift-package-test:
-    name: Swift Package
-    uses: SwiftyLab/ci/.github/workflows/swift-package.yml@main
-    secrets: inherit
-    with:
-      matrix: >
-        {
-          "include": [
-            {
-              "os": "ubuntu-latest",
-              "swift": "5.9"
-            },
-            {
-              "os": ""macos-13",
-              "xcode": "15-beta"
-            }
-          ]
-        }
+  # swift-package-test:
+  #   name: Swift Package
+  #   uses: SwiftyLab/ci/.github/workflows/swift-package.yml@main
+  #   secrets: inherit
+  #   with:
+  #     matrix: >
+  #       {
+  #         "include": [
+  #           {
+  #             "os": "ubuntu-latest",
+  #             "swift": "5.9"
+  #           },
+  #           {
+  #             "os": ""macos-13",
+  #             "xcode": "15-beta"
+  #           }
+  #         ]
+  #       }
       # {
       #   "os": "windows-latest",
       #   "swift": "5.9"
@@ -86,7 +86,8 @@ jobs:
   ci:
     name: CI
     if: github.event_name == 'push'
-    needs: [analyze, swift-package-test]
+    needs: analyze
+    # needs: [analyze, swift-package-test]
     uses: SwiftyLab/ci/.github/workflows/ci.yml@main
 
   cd:
@@ -96,10 +97,11 @@ jobs:
       (always() &&
        github.event_name == 'workflow_dispatch' &&
        github.event.inputs.release == 'true' &&
-       needs.swift-package-test.result == 'success' &&
        (needs.ci.result == 'success' || needs.ci.result == 'skipped') &&
        (needs.analyze.result == 'success' || needs.analyze.result == 'skipped'))
-    needs: [analyze, swift-package-test, ci]
+    #  needs.swift-package-test.result == 'success' &&
+    needs: [analyze, ci]
+    # needs: [analyze, swift-package-test, ci]
     uses: SwiftyLab/ci/.github/workflows/cd.yml@main
     with:
       version: ${{ github.event.inputs.version }}

@@ -79,11 +79,11 @@
 /// - Parameter path: The `CodingKey` path value located at.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable`.
 @attached(peer)
 @available(swift 5.9)
-public macro CodedAt(_ path: StaticString...)
-= #externalMacro(module: "CodableMacroPlugin", type: "CodedAt")
+public macro CodedAt(_ path: StaticString...) =
+    #externalMacro(module: "CodableMacroPlugin", type: "CodedAt")

@@ -12,8 +12,8 @@ struct Default: PropertyAttribute {
 
     /// The default value expression provided.
     var expr: ExprSyntax {
-        return node.argument!
-            .as(TupleExprElementListSyntax.self)!.first!.expression
+        return node.arguments!
+            .as(LabeledExprListSyntax.self)!.first!.expression
     }
 
     /// Creates a new instance with the provided node.
@@ -25,7 +25,7 @@ struct Default: PropertyAttribute {
     /// - Returns: Newly created attribute instance.
     init?(from node: AttributeSyntax) {
         guard
-            node.attributeName.as(SimpleTypeIdentifierSyntax.self)!
+            node.attributeName.as(IdentifierTypeSyntax.self)!
                 .description == Self.name
         else { return nil }
         self.node = node

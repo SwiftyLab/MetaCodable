@@ -12,7 +12,7 @@ extension TypeSyntax {
     var isOptional: Bool {
         if self.is(OptionalTypeSyntax.self) {
             return true
-        } else if let type = self.as(SimpleTypeIdentifierSyntax.self),
+        } else if let type = self.as(IdentifierTypeSyntax.self),
             type.name.text == "Optional",
             let gArgs = type.genericArgumentClause?.arguments,
             gArgs.count == 1
@@ -33,7 +33,7 @@ extension TypeSyntax {
     ///
     /// - Parameter method: The default method name.
     /// - Returns: The type and method expression
-    ///            for decoding/encoding.
+    ///   for decoding/encoding.
     func codingTypeMethod(
         forMethod method: TokenSyntax
     ) -> (TypeSyntax, TokenSyntax) {
@@ -41,11 +41,11 @@ extension TypeSyntax {
         if let type = self.as(OptionalTypeSyntax.self) {
             dType = type.wrappedType
             dMethod = "\(method)IfPresent"
-        } else if let type = self.as(SimpleTypeIdentifierSyntax.self),
+        } else if let type = self.as(IdentifierTypeSyntax.self),
             type.name.text == "Optional",
             let gArgs = type.genericArgumentClause?.arguments,
             gArgs.count == 1,
-            let type = gArgs.first?.argumentType
+            let type = gArgs.first?.argument
         {
             dType = type
             dMethod = "\(method)IfPresent"

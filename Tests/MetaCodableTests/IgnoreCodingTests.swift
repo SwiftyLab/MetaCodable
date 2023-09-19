@@ -1,7 +1,8 @@
 import XCTest
+
 @testable import CodableMacroPlugin
 
-final class IgnoreCodingMacroTests: XCTestCase {
+final class IgnoreCodingTests: XCTestCase {
 
     func testMisuseOnUninitializedVariable() throws {
         assertMacroExpansion(
@@ -23,29 +24,26 @@ final class IgnoreCodingMacroTests: XCTestCase {
                 struct SomeCodable {
                     var one: String
                     var two: String
-                    var three: String {
-                        "some"
-                    }
-                    var four: String {
-                        get {
-                            "some"
-                        }
-                    }
-                    init(one: String, two: String) {
-                        self.one = one
-                        self.two = two
-                    }
+                    var three: String { "some" }
+                    var four: String { get { "some" } }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.two, forKey: CodingKeys.two)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case two = "two"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """,
             diagnostics: [
@@ -85,19 +83,21 @@ final class IgnoreCodingMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """,
             diagnostics: [
@@ -136,19 +136,21 @@ final class IgnoreCodingMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -167,22 +169,24 @@ final class IgnoreCodingMacroTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.one, forKey: CodingKeys.one)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case one = "one"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -204,26 +208,26 @@ final class IgnoreCodingMacroTests: XCTestCase {
                 struct SomeCodable {
                     var one: String = "some"
                     var two: String
-                    init(two: String) {
-                        self.two = two
-                    }
-                    init(one: String, two: String) {
-                        self.one = one
-                        self.two = two
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.one = try container.decode(String.self, forKey: CodingKeys.one)
                         self.two = try container.decode(String.self, forKey: CodingKeys.two)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case one = "one"
                         case two = "two"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -255,70 +259,9 @@ final class IgnoreCodingMacroTests: XCTestCase {
                     var two: String = "some"
                     var three: String = "some"
                     var four: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
-                    init(two: String) {
-                        self.two = two
-                    }
-                    init(one: String, two: String) {
-                        self.one = one
-                        self.two = two
-                    }
-                    init(four: String) {
-                        self.four = four
-                    }
-                    init(one: String, four: String) {
-                        self.one = one
-                        self.four = four
-                    }
-                    init(two: String, four: String) {
-                        self.two = two
-                        self.four = four
-                    }
-                    init(one: String, two: String, four: String) {
-                        self.one = one
-                        self.two = two
-                        self.four = four
-                    }
-                    init(three: String) {
-                        self.three = three
-                    }
-                    init(one: String, three: String) {
-                        self.one = one
-                        self.three = three
-                    }
-                    init(two: String, three: String) {
-                        self.two = two
-                        self.three = three
-                    }
-                    init(one: String, two: String, three: String) {
-                        self.one = one
-                        self.two = two
-                        self.three = three
-                    }
-                    init(four: String, three: String) {
-                        self.four = four
-                        self.three = three
-                    }
-                    init(one: String, four: String, three: String) {
-                        self.one = one
-                        self.four = four
-                        self.three = three
-                    }
-                    init(two: String, four: String, three: String) {
-                        self.two = two
-                        self.four = four
-                        self.three = three
-                    }
-                    init(one: String, two: String, four: String, three: String) {
-                        self.one = one
-                        self.two = two
-                        self.four = four
-                        self.three = three
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
@@ -326,6 +269,9 @@ final class IgnoreCodingMacroTests: XCTestCase {
                         self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
                         self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
@@ -333,6 +279,9 @@ final class IgnoreCodingMacroTests: XCTestCase {
                         try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
                         try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case one = "one"
                         case deeply = "deeply"
@@ -340,8 +289,6 @@ final class IgnoreCodingMacroTests: XCTestCase {
                         case two = "key"
                         case three = "three"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )

@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// A type producing diagnostics for the passed syntax
@@ -19,7 +19,7 @@ protocol DiagnosticProducer {
     ///   - context: The macro expansion context diagnostics produced in.
     ///
     /// - Returns: True if syntax fails validation and error diagnostics is
-    ///            produced, false otherwise.
+    ///   produced, false otherwise.
     @discardableResult
     func produce(
         for syntax: some SyntaxProtocol,

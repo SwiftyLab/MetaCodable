@@ -7,7 +7,7 @@
 /// If no valid data could be decoded, provided default sequence is used.
 ///
 /// - Warning: If data in decoder is not of an unkeyed container format
-///            ``decode(from:)`` can fail with error.
+///   ``decode(from:)`` can fail with error.
 public struct LossySequenceCoder<S: SequenceInitializable>: HelperCoder
 where S: Codable, S.Element: Codable {
     /// The default value to use
@@ -38,7 +38,7 @@ where S: Codable, S.Element: Codable {
     /// - Returns: The lossy sequence decoded.
     ///
     /// - Throws: `DecodingError.typeMismatch` if the encountered
-    ///           stored value is not an unkeyed container.
+    ///   stored value is not an unkeyed container.
     public func decode(from decoder: Decoder) throws -> S {
         var container = try decoder.unkeyedContainer()
         var result = Array<S.Element>()
