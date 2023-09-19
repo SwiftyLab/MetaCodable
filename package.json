@@ -21,6 +21,7 @@
   "scripts": {
     "build": "npm exec --package=swiftylab-ci -- build.js",
     "test": "npm exec --package=swiftylab-ci -- test.js",
+    "pod-lint": "npm exec --package=swiftylab-ci -- pod-lint.js",
     "preview-doc": "npm exec --package=swiftylab-ci -- preview-doc.js MetaCodable",
     "build-doc": "npm exec --package=swiftylab-ci -- build-doc.js MetaCodable",
     "serve-doc": "npm exec --package=swiftylab-ci -- serve-doc.js MetaCodable"
