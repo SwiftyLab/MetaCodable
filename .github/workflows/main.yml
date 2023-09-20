@@ -23,30 +23,54 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  analyze:
-    name: Analyze
-    if: github.event_name != 'workflow_dispatch'
-    uses: SwiftyLab/ci/.github/workflows/analyze.yml@main
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    with:
-      matrix: >
-        {
-          "include": [
-            {
-              "os": "ubuntu-latest",
-              "language": "swift",
-              "swift": "latest"
-            },
-            {
-              "os": "macos-13",
-              "language": "swift",
-              "xcode": "15-beta"
-            }
-          ]
-        }
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+        - os: ubuntu-latest
+          swift: latest
+        - os: macos-13
+          xcode: 15-beta
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup repository
+      uses: SwiftyLab/ci/actions/setup@main
+      with:
+        swift: ${{ matrix.swift }}
+        xcode: ${{ matrix.xcode }}
+
+    - name: Build package products
+      run: swift build --build-tests
+
+  # analyze:
+  #   name: Analyze
+  #   if: github.event_name != 'workflow_dispatch'
+  #   uses: SwiftyLab/ci/.github/workflows/analyze.yml@main
+  #   permissions:
+  #     actions: read
+  #     contents: read
+  #     security-events: write
+  #   with:
+  #     matrix: >
+  #       {
+  #         "include": [
+  #           {
+  #             "os": "ubuntu-latest",
+  #             "language": "swift",
+  #             "swift": "latest"
+  #           },
+  #           {
+  #             "os": "macos-13",
+  #             "language": "swift",
+  #             "xcode": "15-beta"
+  #           }
+  #         ]
+  #       }
 
   # spell-check:
   #   name: Run spell check
@@ -86,7 +110,7 @@ jobs:
   ci:
     name: CI
     if: github.event_name == 'push'
-    needs: analyze
+    needs: build
     # needs: [analyze, swift-package-test]
     uses: SwiftyLab/ci/.github/workflows/ci.yml@main
 
@@ -98,9 +122,9 @@ jobs:
        github.event_name == 'workflow_dispatch' &&
        github.event.inputs.release == 'true' &&
        (needs.ci.result == 'success' || needs.ci.result == 'skipped') &&
-       (needs.analyze.result == 'success' || needs.analyze.result == 'skipped'))
+       (needs.build.result == 'success' || needs.build.result == 'skipped'))
     #  needs.swift-package-test.result == 'success' &&
-    needs: [analyze, ci]
+    needs: [build, ci]
     # needs: [analyze, swift-package-test, ci]
     uses: SwiftyLab/ci/.github/workflows/cd.yml@main
     with:
