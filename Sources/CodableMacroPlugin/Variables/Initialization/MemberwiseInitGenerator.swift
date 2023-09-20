@@ -1,8 +1,8 @@
 import SwiftSyntax
-import SwiftSyntaxMacros
 import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
-/// A type responsible for generating member-wise
+/// A type responsible for generating memberwise
 /// initialization declarations for `Codable` macro.
 ///
 /// This type tracks required and optional initializations
@@ -18,7 +18,7 @@ struct MemberwiseInitGenerator {
     struct Options {
         /// The default list of modifiers to be applied to generated
         /// initialization declarations.
-        let modifiers: ModifierListSyntax?
+        let modifiers: DeclModifierListSyntax
     }
 
     /// A type representing initialization of single variable.
@@ -53,8 +53,7 @@ struct MemberwiseInitGenerator {
     /// initialization collection.
     ///
     /// - Parameter options: The options to use when
-    ///                      generating declarations.
-    ///
+    ///   generating declarations.
     /// - Returns: The newly created generator.
     init(options: Options) {
         self.options = options
@@ -77,8 +76,7 @@ struct MemberwiseInitGenerator {
     /// Updates generator with provided initialization items collections.
     ///
     /// - Parameter collections: The initialization items collections
-    ///                          to update with.
-    ///
+    ///   to update with.
     /// - Returns: The newly created generator with provided
     ///            initialization items collections.
     func update(with collections: [[Item]]) -> Self {
@@ -121,14 +119,13 @@ struct MemberwiseInitGenerator {
         return self.update(with: collections)
     }
 
-    /// Provides the member-wise initializer declaration(s).
+    /// Provides the memberwise initializer declaration(s).
     ///
     /// For each initialization item collection, one declaration
     /// is generated.
     ///
     /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
-    ///
+    ///   the macro expansion.
     /// - Returns: The generated initializer declarations.
     func declarations(
         in context: some MacroExpansionContext
@@ -137,8 +134,8 @@ struct MemberwiseInitGenerator {
             return InitializerDeclSyntax(
                 modifiers: options.modifiers,
                 signature: .init(
-                    input: .init(
-                        parameterList: .init {
+                    parameterClause: .init(
+                        parameters: .init {
                             for param in items.map(\.param) { param }
                         }
                     )

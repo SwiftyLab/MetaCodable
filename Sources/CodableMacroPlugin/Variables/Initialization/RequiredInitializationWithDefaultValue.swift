@@ -31,17 +31,17 @@ struct RequiredInitializationWithDefaultValue: RequiredVariableInitialization {
     /// Provides code block syntax of underlying initialization.
     var code: CodeBlockItemSyntax { base.code }
 
-    /// Adds current initialization type to member-wise initialization
+    /// Adds current initialization type to memberwise initialization
     /// generator.
     ///
-    /// New member-wise initialization generator is created after adding this
+    /// New memberwise initialization generator is created after adding this
     /// initialization as required with default value and returned.
     ///
     /// - Parameter generator: The init-generator to add in.
     /// - Returns: The modified generator containing this initialization.
     func add(to generator: MemberwiseInitGenerator) -> MemberwiseInitGenerator {
         var param = base.param
-        param.defaultArgument = .init(value: expr)
+        param.defaultValue = .init(value: expr)
         return generator.add(.init(param: param, code: base.code))
     }
 }

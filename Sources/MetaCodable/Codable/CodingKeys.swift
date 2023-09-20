@@ -30,14 +30,13 @@
 ///
 /// - Parameter strategy: The case strategy `CodingKey`.
 ///
-/// - Note: The case strategy is only used to trasform field names to
-///         `CodingKey`s. `CodingKey`s provided with
-///         ``CodedIn(_:)``, ``CodedAt(_:)`` will remain
-///         unchanged.
+/// - Note: The case strategy is only used to transform field names to
+///   `CodingKey`s. `CodingKey`s provided with ``CodedIn(_:)``,
+///   ``CodedAt(_:)`` will remain unchanged.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 ///
 /// - Important: This attribute must be used combined with ``Codable()``.
 ///
@@ -45,8 +44,8 @@
 /// https://www.swift.org/documentation/api-design-guidelines/#general-conventions
 @attached(peer)
 @available(swift 5.9)
-public macro CodingKeys(_ strategy: CodingKeyNameStrategy)
-= #externalMacro(module: "CodableMacroPlugin", type: "CodingKeys")
+public macro CodingKeys(_ strategy: CodingKeyNameStrategy) =
+    #externalMacro(module: "CodableMacroPlugin", type: "CodingKeys")
 
 /// The values that determine the equivalent
 /// `CodingKey` value for a property name.

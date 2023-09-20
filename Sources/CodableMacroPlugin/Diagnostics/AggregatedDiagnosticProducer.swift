@@ -25,7 +25,7 @@ struct AggregatedDiagnosticProducer: DiagnosticProducer {
     ///   - context: The macro expansion context diagnostics produced in.
     ///
     /// - Returns: True if syntax fails validation and error diagnostics is
-    ///            produced by any of the producers, false otherwise.
+    ///   produced by any of the producers, false otherwise.
     @discardableResult
     func produce(
         for syntax: some SyntaxProtocol,

@@ -22,10 +22,7 @@ struct CodingKeyTransformer {
         guard !key.isEmpty else { return key }
 
         let interimKey: String
-        if #available(
-            macOS 13, iOS 16, macCatalyst 16,
-            tvOS 16, watchOS 9, *
-        ) {
+        if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
             let regex = #/([a-z0-9])([A-Z])/#
             interimKey = key.replacing(regex) { match in
                 let (_, first, second) = match.output
@@ -163,5 +160,19 @@ extension String {
     /// First letter is made lowercase.
     var camelCased: String {
         return CodingKeyTransformer(strategy: .camelCase).transform(key: self)
+    }
+
+    /// Check if begins with number.
+    ///
+    /// Checks whether key name begins with number.
+    var beginsWithNumber: Bool {
+        if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
+            return try! #/^[0-9]+[a-zA-Z0-9]*/#.wholeMatch(in: self) != nil
+        } else {
+            return self.range(
+                of: "^[0-9]+[a-zA-Z0-9]*",
+                options: .regularExpression
+            ) != nil
+        }
     }
 }

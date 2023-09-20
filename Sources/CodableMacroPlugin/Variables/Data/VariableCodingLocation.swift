@@ -11,7 +11,7 @@ enum VariableCodingLocation {
     /// decoder/encoder provided, not nested at a `CodingKey`.
     ///
     /// - Parameter coder: The decoder/encoder
-    ///                    for decoding/encoding.
+    ///   for decoding/encoding.
     case coder(_ coder: TokenSyntax)
     /// Represents decoding/encoding location at a `CodingKey`
     /// for a container.

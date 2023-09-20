@@ -1,7 +1,8 @@
 import XCTest
+
 @testable import CodableMacroPlugin
 
-final class CodableMacroIgnoreInitializedTests: XCTestCase {
+final class IgnoreInitializedTests: XCTestCase {
 
     func testMisuse() throws {
         assertMacroExpansion(
@@ -46,19 +47,21 @@ final class CodableMacroIgnoreInitializedTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -78,24 +81,26 @@ final class CodableMacroIgnoreInitializedTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.one, forKey: CodingKeys.one)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case one = "one"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -116,22 +121,24 @@ final class CodableMacroIgnoreInitializedTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.one, forKey: CodingKeys.one)
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case one = "one"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )
@@ -152,22 +159,24 @@ final class CodableMacroIgnoreInitializedTests: XCTestCase {
                 """
                 struct SomeCodable {
                     var one: String = "some"
-                    init() {
-                    }
-                    init(one: String) {
-                        self.one = one
-                    }
+                }
+
+                extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     }
+                }
+
+                extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                     }
+                }
+
+                extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case one = "one"
                     }
-                }
-                extension SomeCodable: Codable {
                 }
                 """
         )

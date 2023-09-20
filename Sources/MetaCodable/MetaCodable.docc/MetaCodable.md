@@ -17,7 +17,6 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
-- Generates member-wise initializer(s) considering the above default value syntax as well.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
 - Allows to ignore specific properties from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``IgnoreEncoding()``.
 - Allows to use camel-case names for variables according to [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/#general-conventions), while enabling a type to work with different case style keys with ``CodingKeys(_:)``.
@@ -47,9 +46,10 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ## Topics
 
-### Implementation
+### Macros
 
 - ``Codable()``
+- ``MemberInit()``
 
 ### Strategies
 

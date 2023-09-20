@@ -16,8 +16,8 @@ struct CodingKeys: PeerAttribute {
 
     /// The key transformation strategy provided.
     var strategy: Strategy {
-        let expr = node.argument!
-            .as(TupleExprElementListSyntax.self)!.first!.expression
+        let expr = node.arguments!
+            .as(LabeledExprListSyntax.self)!.first!.expression
         return .init(with: expr)
     }
 
@@ -30,7 +30,7 @@ struct CodingKeys: PeerAttribute {
     /// - Returns: Newly created attribute instance.
     init?(from node: AttributeSyntax) {
         guard
-            node.attributeName.as(SimpleTypeIdentifierSyntax.self)!
+            node.attributeName.as(IdentifierTypeSyntax.self)!
                 .description == Self.name
         else { return nil }
         self.node = node

@@ -1,6 +1,6 @@
+import OrderedCollections
 import SwiftSyntax
 import SwiftSyntaxMacros
-import OrderedCollections
 
 extension Registrar {
     /// A map containing all the case names
@@ -128,21 +128,7 @@ extension Registrar {
 
             for key in keys.dropLast() where data[key] == nil {
                 var fieldName = key.camelCased
-                let shouldAddKey: Bool
-                if #available(
-                    macOS 13, iOS 16, macCatalyst 16,
-                    tvOS 16, watchOS 9, *
-                ) {
-                    shouldAddKey = try! #/^[0-9]+[a-zA-Z0-9]*/#
-                        .wholeMatch(in: fieldName) != nil
-                } else {
-                    shouldAddKey =
-                        fieldName.range(
-                            of: "^[0-9]+[a-zA-Z0-9]*",
-                            options: .regularExpression
-                        ) != nil
-                }
-                if shouldAddKey { fieldName = "key\(fieldName)" }
+                if fieldName.beginsWithNumber { fieldName = "key\(fieldName)" }
 
                 let currentCases = data.values.map(\.name)
                 data[key] = {
@@ -162,10 +148,10 @@ extension Registrar {
         ///
         /// - Parameter key: The key to look up against.
         /// - Returns: The token syntax for case name stored against
-        ///            a key if exists. Otherwise `nil` returned.
+        ///   a key if exists. Otherwise `nil` returned.
         ///
         /// - Note: Should only be used after case names generated
-        ///         for all the keys for a particular type.
+        ///   or all the keys for a particular type.
         func `case`(forKey key: String) -> TokenSyntax? {
             return data[key]?.token
         }
@@ -179,14 +165,11 @@ extension Registrar {
         /// - Parameter context: The macro expansion context.
         /// - Returns: The generated enum declaration syntax.
         func decl(in context: some MacroExpansionContext) -> EnumDeclSyntax {
-            let clause = TypeInheritanceClauseSyntax {
-                InheritedTypeSyntax(typeName: "String" as TypeSyntax)
-                InheritedTypeSyntax(typeName: "CodingKey" as TypeSyntax)
+            let clause = InheritanceClauseSyntax {
+                InheritedTypeSyntax(type: "String" as TypeSyntax)
+                InheritedTypeSyntax(type: "CodingKey" as TypeSyntax)
             }
-            return EnumDeclSyntax(
-                identifier: typeName,
-                inheritanceClause: clause
-            ) {
+            return EnumDeclSyntax(name: typeName, inheritanceClause: clause) {
                 for (key, `case`) in data {
                     "case \(`case`.token) = \(literal: key)" as DeclSyntax
                 }

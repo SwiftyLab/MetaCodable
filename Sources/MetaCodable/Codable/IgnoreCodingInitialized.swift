@@ -31,11 +31,13 @@
 /// while `initialized` is ignored from decoding and encoding.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///         is a variable declaration. ``Codable()`` macro uses
-///         this macro when generating final implementations.
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
 ///
 /// - Important: This attribute must be used combined with ``Codable()``.
 @attached(peer)
 @available(swift 5.9)
-public macro IgnoreCodingInitialized()
-= #externalMacro(module: "CodableMacroPlugin", type: "IgnoreCodingInitialized")
+public macro IgnoreCodingInitialized() =
+    #externalMacro(
+        module: "CodableMacroPlugin", type: "IgnoreCodingInitialized"
+    )

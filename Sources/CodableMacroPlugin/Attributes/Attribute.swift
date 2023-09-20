@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// A type indicating a macro-attribute.
@@ -62,8 +62,7 @@ extension Attribute {
     /// provided declaration.
     ///
     /// - Parameter declaration: The declaration this macro attribute
-    ///                          is attached to.
-    ///
+    ///   is attached to.
     /// - Returns: Whether this attribute is applied more than once.
     func isDuplicated(in declaration: some SyntaxProtocol) -> Bool {
         return declaration.attributes(for: Self.self).count > 1

@@ -16,8 +16,8 @@ struct Registration<Var: Variable> {
     struct Context {
         /// The context in which to perform the macro expansion.
         let expansion: MacroExpansionContext
-        /// The current `@Codable` macro-attribute.
-        let attr: Codable
+        /// The macro-attribute currently expanded.
+        let attr: any RegistrationAttribute
         /// The variable declaration associated with this context.
         let declaration: VariableDeclSyntax
         /// The single variable pattern associated with this context.
@@ -32,15 +32,15 @@ struct Registration<Var: Variable> {
         ///
         /// - Parameters:
         ///   - expansion: The context in which to perform the macro expansion.
-        ///   - attr: The `@Codable` macro-attribute.
+        ///   - attr: The macro-attribute being expanded.
         ///   - declaration: The variable declaration.
         ///   - binding: The variable pattern.
         ///   - attributes: The attributes to track.
         ///
         /// - Returns: Newly created context.
         fileprivate init(
-            expansion: MacroExpansionContext,
-            attr: Codable,
+            expansion: some MacroExpansionContext,
+            attr: some RegistrationAttribute,
             declaration: VariableDeclSyntax,
             binding: PatternBindingSyntax,
             attributes: [Attribute] = []
@@ -123,7 +123,7 @@ struct Registration<Var: Variable> {
     /// - Parameters:
     ///   - variable: The variable data.
     ///   - expansion: The context in which to perform the macro expansion.
-    ///   - attr: The `@Codable` macro-attribute.
+    ///   - attr: The macro-attribute being expanded.
     ///   - declaration: The variable declaration.
     ///   - binding: The variable pattern.
     ///   - attributes: The attributes to track.
@@ -131,7 +131,7 @@ struct Registration<Var: Variable> {
     /// - Returns: Created registration.
     init(
         variable: Var,
-        expansion: MacroExpansionContext, attr: Codable,
+        expansion: some MacroExpansionContext, attr: some RegistrationAttribute,
         declaration: VariableDeclSyntax, binding: PatternBindingSyntax,
         attributes: [Attribute] = []
     ) {
@@ -151,7 +151,7 @@ struct Registration<Var: Variable> {
     ///
     /// - Parameter attribute: The attribute to add.
     /// - Returns: Created registration with the added
-    ///            attribute in the context.
+    ///   attribute in the context.
     func adding(attribute: Attribute) -> Self {
         return .init(
             keyPath: keyPath, variable: variable,
@@ -167,7 +167,7 @@ struct Registration<Var: Variable> {
     ///
     /// - Parameter keyPath: The new `CodingKey` path.
     /// - Returns: Newly created registration with updated
-    ///            `CodingKey` path.
+    ///   `CodingKey` path.
     func updating(with keyPath: [String]) -> Self {
         return .init(keyPath: keyPath, variable: variable, context: context)
     }

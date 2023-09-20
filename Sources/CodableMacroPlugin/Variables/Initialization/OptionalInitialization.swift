@@ -10,10 +10,10 @@ where Wrapped: RequiredVariableInitialization {
     /// can be wrapped by this instance.
     let base: Wrapped
 
-    /// Adds current initialization type to member-wise initialization
+    /// Adds current initialization type to memberwise initialization
     /// generator.
     ///
-    /// New member-wise initialization generator is created after adding this
+    /// New memberwise initialization generator is created after adding this
     /// initialization as optional and returned.
     ///
     /// - Parameter generator: The init-generator to add in.

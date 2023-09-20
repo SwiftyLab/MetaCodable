@@ -21,10 +21,10 @@ struct AnyRequiredVariableInitialization: RequiredVariableInitialization {
     /// Provides code block syntax of underlying initialization.
     var code: CodeBlockItemSyntax { base.code }
 
-    /// Adds current initialization type to member-wise initialization
+    /// Adds current initialization type to memberwise initialization
     /// generator.
     ///
-    /// New member-wise initialization generator is created after adding this
+    /// New memberwise initialization generator is created after adding this
     /// initialization as required and returned.
     ///
     /// - Parameter generator: The init-generator to add in.

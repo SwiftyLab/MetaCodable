@@ -45,8 +45,8 @@ struct UsedWithoutArgs<Attr: Attribute>: DiagnosticProducer {
         in context: some MacroExpansionContext
     ) -> Bool {
         guard
-            attr.node.argument?
-                .as(TupleExprElementListSyntax.self)?.first == nil
+            attr.node.arguments?
+                .as(LabeledExprListSyntax.self)?.first == nil
         else { return false }
 
         let message = attr.node.diagnostic(

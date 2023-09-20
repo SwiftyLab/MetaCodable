@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate duplicate usage of
@@ -45,22 +45,24 @@ struct DuplicateUsage<Attr: Attribute>: DiagnosticProducer {
     ///   - syntax: The syntax to validate and produce diagnostics for.
     ///   - context: The macro expansion context diagnostics produced in.
     ///
-    /// - Returns: True if syntax fails validation and severity is set to error,
-    ///            false otherwise.
+    /// - Returns: `True` if syntax fails validation and severity is set
+    ///   to error, `false` otherwise.
     @discardableResult
     func produce(
         for syntax: some SyntaxProtocol,
         in context: some MacroExpansionContext
     ) -> Bool {
         guard attr.isDuplicated(in: syntax) else { return false }
-        let verb = switch severity {
-        case .error:
-            "can"
-        default:
-            "should"
-        }
+        let verb =
+            switch severity {
+            case .error:
+                "can"
+            default:
+                "should"
+            }
         let message = attr.node.diagnostic(
-            message: "@\(attr.name) \(verb) only be applied once per declaration",
+            message:
+                "@\(attr.name) \(verb) only be applied once per declaration",
             id: attr.misuseMessageID,
             severity: severity
         )

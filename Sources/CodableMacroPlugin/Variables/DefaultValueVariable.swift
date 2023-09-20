@@ -1,13 +1,13 @@
 import SwiftSyntax
-import SwiftSyntaxMacros
 import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 /// A variable value containing default expression for decoding failure.
 ///
 /// The `DefaultValueVariable` customizes decoding and initialization
 /// by using the default expression provided during initialization:
 /// * For initializing variable in case of decoding failure.
-/// * For providing default value to variable in member-wise initializer(s).
+/// * For providing default value to variable in memberwise initializer(s).
 struct DefaultValueVariable<Var: Variable>: ComposedVariable
 where Var.Initialization == RequiredInitialization {
     /// The customization options for `DefaultValueVariable`.
@@ -50,7 +50,7 @@ where Var.Initialization == RequiredInitialization {
     /// function parameter.
     ///
     /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
+    ///   the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: MacroExpansionContext

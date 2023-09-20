@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// Attribute type for `CodedIn` macro-attribute.
@@ -24,7 +24,7 @@ struct CodedIn: PropertyAttribute {
     /// - Returns: Newly created attribute instance.
     init?(from node: AttributeSyntax) {
         guard
-            node.attributeName.as(SimpleTypeIdentifierSyntax.self)!
+            node.attributeName.as(IdentifierTypeSyntax.self)!
                 .description == Self.name
         else { return nil }
         self.node = node

@@ -17,10 +17,10 @@ struct RequiredInitialization: RequiredVariableInitialization {
     /// generating initializer.
     let code: CodeBlockItemSyntax
 
-    /// Adds current initialization type to member-wise initialization
+    /// Adds current initialization type to memberwise initialization
     /// generator.
     ///
-    /// New member-wise initialization generator is created after adding this
+    /// New memberwise initialization generator is created after adding this
     /// initialization as required and returned.
     ///
     /// - Parameter generator: The init-generator to add in.
@@ -32,8 +32,7 @@ struct RequiredInitialization: RequiredVariableInitialization {
     /// Updates initialization type with the provided function parameter syntax.
     ///
     /// - Parameter param: The function parameter for the initialization
-    ///                    function.
-    ///
+    ///   function.
     /// - Returns: Updated initialization type.
     func update(param: FunctionParameterSyntax) -> Self {
         return .init(param: param, code: code)

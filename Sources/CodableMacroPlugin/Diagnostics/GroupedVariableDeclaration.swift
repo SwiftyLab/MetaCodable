@@ -1,5 +1,5 @@
-import SwiftSyntax
 import SwiftDiagnostics
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate passed syntax is not a grouped
@@ -9,8 +9,8 @@ import SwiftSyntaxMacros
 /// single variable declarations.
 ///
 /// - Note: This producer also validates passed syntax is of variable
-///         declaration type. No need to pass additional diagnostic
-///         producer to validate this.
+///   declaration type. No need to pass additional diagnostic producer
+///   to validate this.
 struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     /// The attribute for which
     /// validation performed.
@@ -35,8 +35,7 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     /// performs validation.
     ///
     /// - Parameter attr: The attribute for which
-    ///                   validation performed.
-    ///
+    ///   validation performed.
     /// - Returns: Newly created diagnostic producer.
     init(_ attr: Attr) {
         self.attr = attr

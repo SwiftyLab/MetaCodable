@@ -23,7 +23,7 @@ struct IgnoreCodingInitialized: PeerAttribute {
     /// - Returns: Newly created attribute instance.
     init?(from node: AttributeSyntax) {
         guard
-            node.attributeName.as(SimpleTypeIdentifierSyntax.self)!
+            node.attributeName.as(IdentifierTypeSyntax.self)!
                 .description == Self.name
         else { return nil }
         self.node = node

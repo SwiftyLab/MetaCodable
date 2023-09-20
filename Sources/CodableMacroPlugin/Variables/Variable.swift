@@ -50,7 +50,7 @@ protocol Variable<Initialization> {
     /// initialization data if applicable.
     ///
     /// - Parameter context: The context in which to perform
-    ///                      the macro expansion.
+    ///   the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
         in context: MacroExpansionContext
