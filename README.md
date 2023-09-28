@@ -4,7 +4,7 @@
 [![Swift Package Manager Compatible](https://img.shields.io/github/v/tag/SwiftyLab/MetaCodable?label=SPM&color=orange)](https://badge.fury.io/gh/SwiftyLab%2FMetaCodable)
 [![Swift](https://img.shields.io/badge/Swift-5.9+-orange)](https://img.shields.io/badge/Swift-5-DE5D43)
 [![Platforms](https://img.shields.io/badge/Platforms-all-sucess)](https://img.shields.io/badge/Platforms-all-sucess)
-[![CI/CD](https://github.com/SwiftyLab/MetaCodable/actions/workflows/main.yml/badge.svg?event=push)](https://github.com/SwiftyLab/MetaCodable/actions/workflows/main.yml)
+[![CI/CD](https://github.com/SwiftyLab/MetaCodable/actions/workflows/main.yml/badge.svg)](https://github.com/SwiftyLab/MetaCodable/actions/workflows/main.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/swiftylab/metacodable/badge)](https://www.codefactor.io/repository/github/swiftylab/metacodable)
 [![codecov](https://codecov.io/gh/SwiftyLab/MetaCodable/branch/main/graph/badge.svg?token=jKxMv5oFeA)](https://codecov.io/gh/SwiftyLab/MetaCodable)
 <!-- [![CodeQL](https://github.com/SwiftyLab/MetaCodable/actions/workflows/codeql-analysis.yml/badge.svg?event=schedule)](https://github.com/SwiftyLab/MetaCodable/actions/workflows/codeql-analysis.yml) -->

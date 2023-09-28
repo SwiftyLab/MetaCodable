@@ -32,7 +32,7 @@ jobs:
         - os: ubuntu-latest
           swift: latest
         - os: macos-13
-          xcode: 15-beta
+          xcode: 15
 
     steps:
     - name: Checkout repository
@@ -67,7 +67,7 @@ jobs:
   #           {
   #             "os": "macos-13",
   #             "language": "swift",
-  #             "xcode": "15-beta"
+  #             "xcode": "15"
   #           }
   #         ]
   #       }
@@ -98,7 +98,7 @@ jobs:
   #           },
   #           {
   #             "os": ""macos-13",
-  #             "xcode": "15-beta"
+  #             "xcode": "15"
   #           }
   #         ]
   #       }
