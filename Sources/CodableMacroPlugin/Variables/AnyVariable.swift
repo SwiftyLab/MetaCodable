@@ -38,6 +38,17 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     /// is to be encoded.
     var encode: Bool? { base.encode }
 
+    /// Whether the variable type requires `Decodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Decodable` conformance.
+    var requireDecodable: Bool? { base.requireDecodable }
+    /// Whether the variable type requires `Encodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Encodable` conformance.
+    var requireEncodable: Bool? { base.requireEncodable }
+
     /// Wraps the provided variable erasing its type and
     /// initialization type.
     ///

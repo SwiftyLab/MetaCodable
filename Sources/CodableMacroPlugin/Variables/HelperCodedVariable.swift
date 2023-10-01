@@ -46,6 +46,15 @@ struct HelperCodedVariable<Var: BasicCodingVariable>: ComposedVariable {
     /// Always `true` for this type.
     var encode: Bool? { true }
 
+    /// Whether the variable type requires `Decodable` conformance.
+    ///
+    /// Always `false` for this type.
+    var requireDecodable: Bool? { false }
+    /// Whether the variable type requires `Encodable` conformance.
+    ///
+    /// Always `false` for this type.
+    var requireEncodable: Bool? { false }
+
     /// Provides the code syntax for encoding this variable
     /// at the provided location.
     ///

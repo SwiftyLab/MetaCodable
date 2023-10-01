@@ -43,6 +43,25 @@ protocol Variable<Initialization> {
     /// is encoded by default.
     var encode: Bool? { get }
 
+    /// Whether the variable type requires
+    /// `Decodable` conformance.
+    ///
+    /// Used for generic where clause, for
+    /// `Decodable` conformance generation.
+    ///
+    /// If `nil` is returned, variable is used in
+    /// generic where clause by default.
+    var requireDecodable: Bool? { get }
+    /// Whether the variable type requires
+    /// `Encodable` conformance.
+    ///
+    /// Used for generic where clause, for
+    /// `Encodable` conformance generation.
+    ///
+    /// If `nil` is returned, variable is used in
+    /// generic where clause by default.
+    var requireEncodable: Bool? { get }
+
     /// Indicates the initialization type for this variable.
     ///
     /// Indicates whether initialization is required, optional

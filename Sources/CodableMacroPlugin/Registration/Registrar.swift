@@ -18,6 +18,8 @@ struct Registrar {
         /// The default list of modifiers to be applied to generated
         /// conformance implementation declarations.
         fileprivate let modifiers: DeclModifierListSyntax
+        /// The where clause generator for generic type arguments.
+        fileprivate let constraintGenerator: ConstraintGenerator
 
         /// Memberwise initialization generator with provided options.
         ///
@@ -27,15 +29,15 @@ struct Registrar {
             return .init(options: .init(modifiers: modifiers))
         }
 
-        /// Creates a new options instance with provided parameters.
+        /// Creates a new options instance with provided declaration group.
         ///
         /// - Parameters:
-        ///   - modifiers: List of modifiers need to be applied
-        ///     to generated declarations.
+        ///   - decl: The declaration group options will be applied to.
         ///
         /// - Returns: The newly created options.
-        init(modifiers: DeclModifierListSyntax = []) {
-            self.modifiers = modifiers
+        init(decl: DeclGroupSyntax) {
+            self.modifiers = decl.modifiers
+            self.constraintGenerator = .init(decl: decl)
         }
     }
 
@@ -176,12 +178,16 @@ struct Registrar {
     /// - Returns: The generated extension declaration.
     func decoding(
         type: some TypeSyntaxProtocol,
-        conformingTo protocol: TypeSyntax = "Decodable",
+        conformingTo protocol: TypeSyntax,
         in context: some MacroExpansionContext
     ) -> ExtensionDeclSyntax {
         return .init(
             extendedType: type,
-            inheritanceClause: .init { .init(type: `protocol`) }
+            inheritanceClause: .init { .init(type: `protocol`) },
+            genericWhereClause: options.constraintGenerator.decodingClause(
+                withVariables: root.linkedVariables,
+                conformingTo: `protocol`
+            )
         ) {
             InitializerDeclSyntax.decode(
                 modifiers: options.modifiers
@@ -206,12 +212,16 @@ struct Registrar {
     /// - Returns: The generated extension declaration.
     func encoding(
         type: some TypeSyntaxProtocol,
-        conformingTo protocol: TypeSyntax = "Encodable",
+        conformingTo protocol: TypeSyntax,
         in context: some MacroExpansionContext
     ) -> ExtensionDeclSyntax {
         return .init(
             extendedType: type,
-            inheritanceClause: .init { .init(type: `protocol`) }
+            inheritanceClause: .init { .init(type: `protocol`) },
+            genericWhereClause: options.constraintGenerator.encodingClause(
+                withVariables: root.linkedVariables,
+                conformingTo: `protocol`
+            )
         ) {
             FunctionDeclSyntax.encode(modifiers: options.modifiers) { encoder in
                 let type = caseMap.type

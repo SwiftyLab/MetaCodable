@@ -47,6 +47,23 @@ struct ConditionalCodingVariable<Var: Variable>: ComposedVariable {
     /// Provides whether underlying variable value is to be encoded,
     /// if provided encode option is set as `true` otherwise `false`.
     var encode: Bool? { options.encode ? base.encode : false }
+
+    /// Whether the variable type requires `Decodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Decodable` conformance, if provided decode
+    /// option is set as `true` otherwise `false`.
+    var requireDecodable: Bool? {
+        return options.decode ? base.requireDecodable : false
+    }
+    /// Whether the variable type requires `Encodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Encodable` conformance, if provided encode
+    /// option is set as `true` otherwise `false`.
+    var requireEncodable: Bool? {
+        return options.encode ? base.requireEncodable : false
+    }
 }
 
 extension ConditionalCodingVariable: DefaultOptionComposedVariable {

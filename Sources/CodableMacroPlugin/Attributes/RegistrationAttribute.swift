@@ -34,7 +34,7 @@ extension RegistrationAttribute {
             !self.diagnoser().produce(for: declaration, in: context)
         else { return nil }
 
-        let options = Registrar.Options(modifiers: declaration.modifiers)
+        let options = Registrar.Options(decl: declaration)
         var registrar = Registrar(options: options)
 
         declaration.memberBlock.members.forEach { member in
