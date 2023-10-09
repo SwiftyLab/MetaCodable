@@ -21,12 +21,12 @@ final class ExplicitCodingTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
@@ -65,12 +65,12 @@ final class ExplicitCodingTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
@@ -107,12 +107,12 @@ final class ExplicitCodingTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
@@ -155,12 +155,12 @@ final class ExplicitCodingTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }

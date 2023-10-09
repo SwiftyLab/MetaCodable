@@ -24,12 +24,12 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                     }
                 }
 
@@ -64,14 +64,14 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decode(String.self, forKey: CodingKeys.value)
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
@@ -105,12 +105,12 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                     }
                 }
 
@@ -149,12 +149,12 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                     }
                 }
 
@@ -191,12 +191,12 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                     }
                 }
 
@@ -245,7 +245,7 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
                         self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
@@ -253,7 +253,7 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value1, forKey: CodingKeys.value1)
                         try container.encode(self.value2, forKey: CodingKeys.value2)
@@ -318,7 +318,7 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
                         self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
@@ -326,7 +326,7 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value1, forKey: CodingKeys.value1)
                         try container.encode(self.value2, forKey: CodingKeys.value2)
@@ -374,12 +374,12 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                     }
                 }
 
@@ -411,14 +411,14 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
                     }
@@ -453,14 +453,14 @@ final class VariableDeclarationTests: XCTestCase {
                 }
 
                 extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
                     }
                 }
 
                 extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
                     }
