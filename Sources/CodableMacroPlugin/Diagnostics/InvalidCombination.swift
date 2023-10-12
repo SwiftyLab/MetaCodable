@@ -103,7 +103,7 @@ extension Attribute {
     func cantBeCombined<Comb: Attribute>(
         with type: Comb.Type
     ) -> InvalidCombination<Self, Comb> {
-        return .init(self, cantBeCombinedWith: type)
+        .init(self, cantBeCombinedWith: type)
     }
 
     /// Indicates this macro shouldn't be used together with
@@ -118,6 +118,6 @@ extension Attribute {
     func shouldNotBeCombined<Comb: Attribute>(
         with type: Comb.Type
     ) -> InvalidCombination<Self, Comb> {
-        return .init(self, cantBeCombinedWith: type, severity: .warning)
+        .init(self, cantBeCombinedWith: type, severity: .warning)
     }
 }

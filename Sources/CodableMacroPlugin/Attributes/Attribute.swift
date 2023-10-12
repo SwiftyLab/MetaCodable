@@ -65,6 +65,6 @@ extension Attribute {
     ///   is attached to.
     /// - Returns: Whether this attribute is applied more than once.
     func isDuplicated(in declaration: some SyntaxProtocol) -> Bool {
-        return declaration.attributes(for: Self.self).count > 1
+        declaration.attributes(for: Self.self).count > 1
     }
 }

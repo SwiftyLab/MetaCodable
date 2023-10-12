@@ -67,6 +67,6 @@ extension Attribute {
     ///
     /// - Returns: Argument(s) validation diagnostic producer.
     func shouldNotBeUsedWithoutArgs() -> UsedWithoutArgs<Self> {
-        return .init(self)
+        .init(self)
     }
 }

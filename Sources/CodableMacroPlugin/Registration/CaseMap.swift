@@ -44,7 +44,7 @@ extension Registrar {
                 switch self {
                 case let .field(token), let .nestedKeyField(token),
                      let .builtWithKey(token):
-                    return token
+                    token
                 }
             }
 
@@ -54,7 +54,7 @@ extension Registrar {
                 switch self {
                 case let .field(token), let .nestedKeyField(token),
                      let .builtWithKey(token):
-                    return token.text
+                    token.text
                 }
             }
         }
@@ -153,7 +153,7 @@ extension Registrar {
         /// - Note: Should only be used after case names generated
         ///   or all the keys for a particular type.
         func `case`(forKey key: String) -> TokenSyntax? {
-            return data[key]?.token
+            data[key]?.token
         }
 
         /// Creates an enum declaration from the current maps of cases

@@ -38,7 +38,7 @@ struct IgnoreCodingInitialized: PeerAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> any DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             mustBeCombined(with: Codable.self)
             shouldNotDuplicate()
         }

@@ -76,7 +76,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     func initializing(
         in context: any MacroExpansionContext
     ) -> Initialization {
-        return initialization(context)
+        initialization(context)
     }
 
     /// Provides the code syntax for decoding this variable
@@ -94,7 +94,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
         in context: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
-        return base.decoding(in: context, from: location)
+        base.decoding(in: context, from: location)
     }
 
     /// Provides the code syntax for encoding this variable
@@ -112,7 +112,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
         in context: any MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
-        return base.encoding(in: context, to: location)
+        base.encoding(in: context, to: location)
     }
 }
 
@@ -122,7 +122,7 @@ extension Variable {
     /// Wraps this variable in an `AnyVariable` instance.
     /// The implementation stays unchanged while type is erased.
     var any: AnyVariable<Self.Initialization> {
-        return .init(base: self)
+        .init(base: self)
     }
 }
 
@@ -133,6 +133,6 @@ extension Variable where Initialization: RequiredVariableInitialization {
     /// type in `AnyRequiredVariableInitialization`. The implementation
     /// stays unchanged while type is erased.
     var any: AnyVariable<AnyRequiredVariableInitialization> {
-        return .init(base: self)
+        .init(base: self)
     }
 }

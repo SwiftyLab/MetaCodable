@@ -38,7 +38,7 @@ struct MemberInit: RegistrationAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> any DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(syntax: StructDeclSyntax.self)
             cantDuplicate()
         }

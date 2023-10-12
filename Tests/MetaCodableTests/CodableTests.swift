@@ -210,13 +210,13 @@ func assertMacroExpansion(
 
 extension Attribute {
     static var misuseID: MessageID {
-        return Self(from: .init(stringLiteral: name))!.misuseMessageID
+        Self(from: .init(stringLiteral: name))!.misuseMessageID
     }
 }
 
 extension DiagnosticSpec {
     static func multiBinding(line: Int, column: Int) -> Self {
-        return .init(
+        .init(
             id: MessageID(
                 domain: "SwiftSyntaxMacroExpansion",
                 id: "accessorMacroOnVariableWithMultipleBindings"

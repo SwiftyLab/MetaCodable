@@ -101,7 +101,7 @@ extension AttributeSyntax {
         id: MessageID,
         severity: DiagnosticSeverity
     ) -> MetaCodableMessage {
-        return .init(
+        .init(
             macro: self,
             message: message,
             messageID: id,
@@ -118,7 +118,7 @@ extension AttributeSyntax {
     ///
     /// - Returns: The newly created fixit/quick-fix message instance.
     func fixIt(message: String, id: MessageID) -> MetaCodableMessage {
-        return .init(
+        .init(
             macro: self,
             message: message,
             messageID: id,
@@ -135,7 +135,7 @@ extension MessageID {
     /// - Parameters id: The message id.
     /// - Returns: Created message id.
     static func messageID(_ id: String) -> Self {
-        return .init(
+        .init(
             domain: "com.SwiftyLab.MetaCodable",
             id: id
         )

@@ -82,6 +82,6 @@ extension PropertyAttribute {
     ///
     /// - Returns: Grouped variable declaration validation diagnostic producer.
     func attachedToUngroupedVariable() -> GroupedVariableDeclaration<Self> {
-        return .init(self)
+        .init(self)
     }
 }

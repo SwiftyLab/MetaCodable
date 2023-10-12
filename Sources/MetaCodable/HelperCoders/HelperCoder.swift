@@ -69,7 +69,7 @@ public extension HelperCoder {
     ///
     /// - Throws: If decoding fails due to corrupted or invalid data.
     func decodeIfPresent(from decoder: any Decoder) throws -> Coded? {
-        return try? decode(from: decoder)
+        try? decode(from: decoder)
     }
 
     /// Encodes given value of the ``HelperCoder/Coded`` type

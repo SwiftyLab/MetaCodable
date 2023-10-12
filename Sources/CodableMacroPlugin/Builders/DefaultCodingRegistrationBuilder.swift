@@ -37,6 +37,6 @@ private extension Variable where Initialization == RequiredInitialization {
     /// - Parameter expr: The default expression to add.
     /// - Returns: Created variable data with default expression.
     func with(default expr: ExprSyntax) -> DefaultValueVariable<Self> {
-        return .init(base: self, options: .init(expr: expr))
+        .init(base: self, options: .init(expr: expr))
     }
 }

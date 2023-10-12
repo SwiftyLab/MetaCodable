@@ -13,7 +13,7 @@ struct CodedBy: PropertyAttribute {
     /// The helper coding instance
     /// expression provided.
     var expr: ExprSyntax {
-        return node.arguments!
+        node.arguments!
             .as(LabeledExprListSyntax.self)!.first!.expression
     }
 
@@ -45,7 +45,7 @@ struct CodedBy: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> any DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(syntax: VariableDeclSyntax.self)
             cantDuplicate()
             cantBeCombined(with: IgnoreCoding.self)

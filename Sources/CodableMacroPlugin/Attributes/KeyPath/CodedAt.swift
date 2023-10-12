@@ -42,7 +42,7 @@ struct CodedAt: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> any DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             attachedToUngroupedVariable()
             cantDuplicate()
             cantBeCombined(with: CodedIn.self)

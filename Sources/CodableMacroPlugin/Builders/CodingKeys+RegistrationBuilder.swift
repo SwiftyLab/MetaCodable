@@ -14,6 +14,6 @@ extension CodingKeys: RegistrationBuilder {
     /// - Parameter input: The registration built so far.
     /// - Returns: Newly built registration with transformed `CodingKey` path data.
     func build(with input: Registration<Input>) -> Registration<Output> {
-        return input.updating(with: strategy.transform(keyPath: input.keyPath))
+        input.updating(with: strategy.transform(keyPath: input.keyPath))
     }
 }

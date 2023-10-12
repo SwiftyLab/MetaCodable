@@ -66,7 +66,7 @@ struct InitializationVariable<Wrapped: Variable>: ComposedVariable
     func initializing(
         in context: any MacroExpansionContext
     ) -> AnyInitialization {
-        return if options.`init` {
+        if options.`init` {
             if options.initialized {
                 base.initializing(in: context).optionalize.any
             } else {

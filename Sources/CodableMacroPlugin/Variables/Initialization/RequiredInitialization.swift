@@ -35,6 +35,6 @@ struct RequiredInitialization: RequiredVariableInitialization {
     ///   function.
     /// - Returns: Updated initialization type.
     func update(param: FunctionParameterSyntax) -> Self {
-        return .init(param: param, code: code)
+        .init(param: param, code: code)
     }
 }

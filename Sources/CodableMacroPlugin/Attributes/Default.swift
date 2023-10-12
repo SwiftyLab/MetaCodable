@@ -12,7 +12,7 @@ struct Default: PropertyAttribute {
 
     /// The default value expression provided.
     var expr: ExprSyntax {
-        return node.arguments!
+        node.arguments!
             .as(LabeledExprListSyntax.self)!.first!.expression
     }
 
@@ -44,7 +44,7 @@ struct Default: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> any DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(syntax: VariableDeclSyntax.self)
             cantDuplicate()
             cantBeCombined(with: IgnoreCoding.self)

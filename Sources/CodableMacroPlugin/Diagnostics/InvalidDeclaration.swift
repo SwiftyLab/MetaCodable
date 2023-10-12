@@ -82,7 +82,7 @@ extension Attribute {
     func expect<Expect: NamedSyntax>(
         syntax type: Expect.Type
     ) -> InvalidDeclaration<Self, Expect> {
-        return .init(self, expect: type)
+        .init(self, expect: type)
     }
 }
 

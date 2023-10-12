@@ -54,11 +54,11 @@ private extension CodingKeys.Strategy {
     var separator: String {
         switch self {
         case .camelCase, .PascalCase:
-            return ""
+            ""
         case .snake_case, .camel_Snake_Case, .SCREAMING_SNAKE_CASE:
-            return "_"
+            "_"
         case .kebab－case, .Train－Case, .SCREAMING－KEBAB－CASE:
-            return "-"
+            "-"
         }
     }
 }
@@ -113,10 +113,10 @@ private extension CodingKeys.Strategy {
             case .lower:
                 return parts.map { $0.lowercased() }
             case .all:
-                return parts.map { $0.uppercasingFirst }
+                return parts.map(\.uppercasingFirst)
             case .exceptFirst:
                 let first = parts.first!.lowercasingFirst
-                let rest = parts.dropFirst().map { $0.uppercasingFirst }
+                let rest = parts.dropFirst().map(\.uppercasingFirst)
                 return [first] + rest
             }
         }
@@ -130,13 +130,13 @@ private extension CodingKeys.Strategy {
     var capitalization: Capitalization {
         switch self {
         case .camelCase, .camel_Snake_Case:
-            return .exceptFirst
+            .exceptFirst
         case .snake_case, .kebab－case:
-            return .lower
+            .lower
         case .SCREAMING_SNAKE_CASE, .SCREAMING－KEBAB－CASE:
-            return .upper
+            .upper
         case .PascalCase, .Train－Case:
-            return .all
+            .all
         }
     }
 }
@@ -159,7 +159,7 @@ extension String {
     ///
     /// First letter is made lowercase.
     var camelCased: String {
-        return CodingKeyTransformer(strategy: .camelCase).transform(key: self)
+        CodingKeyTransformer(strategy: .camelCase).transform(key: self)
     }
 
     /// Check if begins with number.
@@ -167,9 +167,9 @@ extension String {
     /// Checks whether key name begins with number.
     var beginsWithNumber: Bool {
         if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
-            return try! #/^[0-9]+[a-zA-Z0-9]*/#.wholeMatch(in: self) != nil
+            try! #/^[0-9]+[a-zA-Z0-9]*/#.wholeMatch(in: self) != nil
         } else {
-            return range(
+            range(
                 of: "^[0-9]+[a-zA-Z0-9]*",
                 options: .regularExpression
             ) != nil

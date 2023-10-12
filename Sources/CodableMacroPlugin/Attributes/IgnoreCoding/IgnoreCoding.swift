@@ -42,7 +42,7 @@ struct IgnoreCoding: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> any DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             attachedToInitializedVariable()
             cantBeCombined(with: CodedIn.self)
             cantBeCombined(with: CodedAt.self)

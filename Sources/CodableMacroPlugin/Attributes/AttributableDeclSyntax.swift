@@ -18,10 +18,10 @@ extension SyntaxProtocol {
 
         let declSyntaxChoice = choices.first { choice in
             if case let .node(type) = choice {
-                return type is any AttributableDeclSyntax.Type
+                type is any AttributableDeclSyntax.Type
                     && self.is(type)
             } else {
-                return false
+                false
             }
         }
 

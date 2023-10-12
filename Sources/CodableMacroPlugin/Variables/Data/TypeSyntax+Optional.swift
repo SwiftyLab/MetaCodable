@@ -11,15 +11,15 @@ extension TypeSyntax {
     /// generic optional syntax (i.e. `Optional<Type>`).
     var isOptional: Bool {
         if self.is(OptionalTypeSyntax.self) {
-            return true
+            true
         } else if let type = self.as(IdentifierTypeSyntax.self),
                   type.name.text == "Optional",
                   let gArgs = type.genericArgumentClause?.arguments,
                   gArgs.count == 1
         {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 

@@ -59,7 +59,7 @@ struct Registration<Var: Variable> {
         ///
         /// - Parameter context: The context to create from.
         /// - Returns: Newly created context.
-        fileprivate init<V: Variable>(from context: Registration<V>.Context) {
+        fileprivate init(from context: Registration<some Variable>.Context) {
             self.init(
                 expansion: context.expansion, attr: context.attr,
                 declaration: context.declaration, binding: context.binding,
@@ -153,7 +153,7 @@ struct Registration<Var: Variable> {
     /// - Returns: Created registration with the added
     ///   attribute in the context.
     func adding(attribute: any Attribute) -> Self {
-        return .init(
+        .init(
             keyPath: keyPath, variable: variable,
             context: context.adding(attribute: attribute)
         )
@@ -169,7 +169,7 @@ struct Registration<Var: Variable> {
     /// - Returns: Newly created registration with updated
     ///   `CodingKey` path.
     func updating(with keyPath: [String]) -> Self {
-        return .init(keyPath: keyPath, variable: variable, context: context)
+        .init(keyPath: keyPath, variable: variable, context: context)
     }
 
     /// Update the variable data in this registration with provided data.
@@ -180,7 +180,7 @@ struct Registration<Var: Variable> {
     /// - Parameter variable: The new variable data.
     /// - Returns: Newly created registration with updated variable data.
     func updating<V: Variable>(with variable: V) -> Registration<V> {
-        return .init(
+        .init(
             keyPath: keyPath, variable: variable,
             context: .init(from: context)
         )

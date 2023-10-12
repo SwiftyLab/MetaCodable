@@ -57,6 +57,6 @@ enum DiagnosticsBuilder {
     static func buildBlock(
         _ producers: any DiagnosticProducer...
     ) -> [any DiagnosticProducer] {
-        return producers
+        producers
     }
 }

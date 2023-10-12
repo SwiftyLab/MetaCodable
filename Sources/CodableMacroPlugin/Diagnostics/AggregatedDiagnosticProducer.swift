@@ -31,7 +31,7 @@ struct AggregatedDiagnosticProducer: DiagnosticProducer {
         for syntax: some SyntaxProtocol,
         in context: some MacroExpansionContext
     ) -> Bool {
-        return producers.reduce(false) { partialResult, producer in
+        producers.reduce(false) { partialResult, producer in
             /// `producer.produce(for:in:)` should be invoked first to avoid
             /// diagnostic evaluation termination due to short-circuit
             /// evaluation.

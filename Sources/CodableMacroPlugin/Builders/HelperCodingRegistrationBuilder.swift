@@ -36,6 +36,6 @@ private extension BasicCodingVariable {
     /// - Parameter expr: The helper expression to add.
     /// - Returns: Created variable data with helper expression.
     func with(helper expr: ExprSyntax) -> HelperCodedVariable<Self> {
-        return .init(base: self, options: .init(expr: expr))
+        .init(base: self, options: .init(expr: expr))
     }
 }

@@ -47,9 +47,9 @@ extension Registrar {
             var forVariable: VariableCodingLocation {
                 switch self {
                 case .coder(let coder, keyType: _):
-                    return .coder(coder)
+                    .coder(coder)
                 case let .container(container, key: key):
-                    return .container(container, key: key.expr)
+                    .container(container, key: key.expr)
                 }
             }
         }
@@ -64,7 +64,7 @@ extension Registrar {
         /// Gets all variables at current node
         /// and children nodes.
         var linkedVariables: [any Variable] {
-            return variables + children.flatMap { $1.linkedVariables }
+            variables + children.flatMap { $1.linkedVariables }
         }
 
         /// Creates a new node with provided variables and and linked nodes.
@@ -123,7 +123,7 @@ extension Registrar.Node {
         in context: some MacroExpansionContext,
         from location: CodingLocation
     ) -> CodeBlockItemListSyntax {
-        return CodeBlockItemListSyntax {
+        CodeBlockItemListSyntax {
             for variable in variables where variable.decode ?? true {
                 variable.decoding(in: context, from: location.forVariable)
             }
@@ -176,7 +176,7 @@ extension Registrar.Node {
         in context: some MacroExpansionContext,
         from location: CodingLocation
     ) -> CodeBlockItemListSyntax {
-        return CodeBlockItemListSyntax {
+        CodeBlockItemListSyntax {
             for variable in variables where variable.encode ?? true {
                 variable.encoding(in: context, to: location.forVariable)
             }

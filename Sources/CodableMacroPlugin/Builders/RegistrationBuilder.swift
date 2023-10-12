@@ -104,7 +104,7 @@ func |> <L: RegistrationBuilder, R: RegistrationBuilder>(
 ) -> (Registration<L.Input>) -> Registration<R.Output>
     where L.Output == R.Input
 {
-    return { rhs.build(with: lhs.build(with: $0)) }
+    { rhs.build(with: lhs.build(with: $0)) }
 }
 
 /// Builds a registration builder action by combining
@@ -121,5 +121,5 @@ func |> <I: Variable, R: RegistrationBuilder>(
     accumulated: @escaping (Registration<I>) -> Registration<R.Input>,
     next: R
 ) -> (Registration<I>) -> Registration<R.Output> {
-    return { next.build(with: accumulated($0)) }
+    { next.build(with: accumulated($0)) }
 }

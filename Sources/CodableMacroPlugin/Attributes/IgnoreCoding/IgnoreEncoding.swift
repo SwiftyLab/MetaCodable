@@ -41,7 +41,7 @@ struct IgnoreEncoding: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> any DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(syntax: VariableDeclSyntax.self)
             shouldNotDuplicate()
             shouldNotBeCombined(with: IgnoreCoding.self)

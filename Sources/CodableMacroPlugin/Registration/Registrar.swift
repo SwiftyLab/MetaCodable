@@ -24,7 +24,7 @@ struct Registrar {
         /// Creates memberwise initialization generator by passing
         /// the provided access modifiers.
         var initGenerator: MemberwiseInitGenerator {
-            return .init(options: .init(modifiers: modifiers))
+            .init(options: .init(modifiers: modifiers))
         }
 
         /// Creates a new options instance with provided parameters.
@@ -179,7 +179,7 @@ struct Registrar {
         conformingTo protocol: TypeSyntax = "Decodable",
         in context: some MacroExpansionContext
     ) -> ExtensionDeclSyntax {
-        return .init(
+        .init(
             extendedType: type,
             inheritanceClause: .init { .init(type: `protocol`) }
         ) {
@@ -209,7 +209,7 @@ struct Registrar {
         conformingTo protocol: TypeSyntax = "Encodable",
         in context: some MacroExpansionContext
     ) -> ExtensionDeclSyntax {
-        return .init(
+        .init(
             extendedType: type,
             inheritanceClause: .init { .init(type: `protocol`) }
         ) {
@@ -235,7 +235,7 @@ struct Registrar {
         for type: some TypeSyntaxProtocol,
         in context: some MacroExpansionContext
     ) -> ExtensionDeclSyntax {
-        return .init(extendedType: type) {
+        .init(extendedType: type) {
             caseMap.decl(in: context)
         }
     }
