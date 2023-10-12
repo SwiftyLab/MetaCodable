@@ -63,18 +63,18 @@ struct HelperCodedVariable<Var: BasicCodingVariable>: ComposedVariable {
     ///
     /// - Returns: The generated variable encoding code.
     func decoding(
-        in context: MacroExpansionContext,
+        in _: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         let (_, method) = type.codingTypeMethod(forMethod: "decode")
         switch location {
-        case .coder(let decoder):
+        case let .coder(decoder):
             return CodeBlockItemListSyntax {
                 """
                 self.\(name) = try \(options.expr).\(method)(from: \(decoder))
                 """
             }
-        case .container(let container, let key):
+        case let .container(container, key):
             let decoder: TokenSyntax = "\(container)_\(name.raw)Decoder"
             return CodeBlockItemListSyntax {
                 "let \(decoder) = try \(container).superDecoder(forKey: \(key))"
@@ -100,18 +100,18 @@ struct HelperCodedVariable<Var: BasicCodingVariable>: ComposedVariable {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: MacroExpansionContext,
+        in _: any MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         let (_, method) = type.codingTypeMethod(forMethod: "encode")
         switch location {
-        case .coder(let encoder):
+        case let .coder(encoder):
             return CodeBlockItemListSyntax {
                 """
                 try \(options.expr).\(method)(self.\(name), to: \(encoder))
                 """
             }
-        case .container(let container, let key):
+        case let .container(container, key):
             let encoder: TokenSyntax = "\(container)_\(name.raw)Encoder"
             return CodeBlockItemListSyntax {
                 "let \(encoder) = \(container).superEncoder(forKey: \(key))"

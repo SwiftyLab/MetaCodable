@@ -2,7 +2,8 @@
 ///
 /// The variable must be mutable and initialized already.
 struct OptionalInitialization<Wrapped>: VariableInitialization
-where Wrapped: RequiredVariableInitialization {
+    where Wrapped: RequiredVariableInitialization
+{
     /// The value wrapped by this instance.
     ///
     /// Only function parameter and code block provided

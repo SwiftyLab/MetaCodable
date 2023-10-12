@@ -6,7 +6,8 @@ import SwiftSyntax
 /// already initialized from the current syntax and updates the registrations
 /// variable data accordingly.
 struct InitializationRegistrationBuilder<Input: Variable>: RegistrationBuilder
-where Input.Initialization: RequiredVariableInitialization {
+    where Input.Initialization: RequiredVariableInitialization
+{
     /// The output registration variable type that handles initialization data.
     typealias Output = InitializationVariable<Input>
 
@@ -20,23 +21,24 @@ where Input.Initialization: RequiredVariableInitialization {
     /// - Returns: Newly built registration with initialization data.
     func build(with input: Registration<Input>) -> Registration<Output> {
         let canInit =
-            switch input.context.binding.accessorBlock?.accessors {
-            case .getter:
-                false
-            case .accessors(let accessors):
-                !accessors.contains { decl in
-                    decl.accessorSpecifier.tokenKind == .keyword(.get)
-                }
-            // TODO: Re-evaluate when init accessor is introduced
-            // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
-            // || block.as(AccessorBlockSyntax.self)!.accessors.contains { decl in
-            //     decl.accessorKind.tokenKind == .keyword(.`init`)
-            // }
-            default:
-                input.context.declaration.bindingSpecifier.tokenKind
-                    == .keyword(.var)
-                    || input.context.binding.initializer == nil
+            switch input.context.binding.accessorBlock?.accessors
+        {
+        case .getter:
+            false
+        case let .accessors(accessors):
+            !accessors.contains { decl in
+                decl.accessorSpecifier.tokenKind == .keyword(.get)
             }
+        // TODO: Re-evaluate when init accessor is introduced
+        // https://github.com/apple/swift-evolution/blob/main/proposals/0400-init-accessors.md
+        // || block.as(AccessorBlockSyntax.self)!.accessors.contains { decl in
+        //     decl.accessorKind.tokenKind == .keyword(.`init`)
+        // }
+        default:
+            input.context.declaration.bindingSpecifier.tokenKind
+                == .keyword(.var)
+                || input.context.binding.initializer == nil
+        }
 
         let initialized = input.context.binding.initializer != nil
         let options = Output.Options(init: canInit, initialized: initialized)

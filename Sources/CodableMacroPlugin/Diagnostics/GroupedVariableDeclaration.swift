@@ -39,7 +39,7 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     /// - Returns: Newly created diagnostic producer.
     init(_ attr: Attr) {
         self.attr = attr
-        self.base = .init(attr, expect: VariableDeclSyntax.self)
+        base = .init(attr, expect: VariableDeclSyntax.self)
     }
 
     /// Validates and produces diagnostics for the passed syntax
@@ -64,7 +64,7 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
         else { return false }
         let message = attr.node.diagnostic(
             message:
-                "@\(attr.name) can't be used with grouped variables declaration",
+            "@\(attr.name) can't be used with grouped variables declaration",
             id: attr.misuseMessageID,
             severity: .error
         )

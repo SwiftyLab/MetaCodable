@@ -22,7 +22,7 @@ struct CodedAt: PropertyAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+            .description == Self.name
         else { return nil }
         self.node = node
     }
@@ -41,7 +41,7 @@ struct CodedAt: PropertyAttribute {
     ///   and `IgnoreCoding` attribute.
     ///
     /// - Returns: The built diagnoser instance.
-    func diagnoser() -> DiagnosticProducer {
+    func diagnoser() -> any DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             attachedToUngroupedVariable()
             cantDuplicate()

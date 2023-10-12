@@ -6,7 +6,8 @@ import SwiftSyntax
 /// New registration is updated with helper expression data that will be
 /// used for decoding/encoding, if provided.
 struct HelperCodingRegistrationBuilder<Input>: RegistrationBuilder
-where Input: BasicCodingVariable {
+    where Input: BasicCodingVariable
+{
     /// The optional variable data with helper expression
     /// that output registration will have.
     typealias Output = AnyVariable<Input.Initialization>
@@ -26,7 +27,7 @@ where Input: BasicCodingVariable {
     }
 }
 
-fileprivate extension BasicCodingVariable {
+private extension BasicCodingVariable {
     /// Update variable data with the helper instance expression provided.
     ///
     /// `HelperCodedVariable` is created with this variable as base

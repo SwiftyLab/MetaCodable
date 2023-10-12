@@ -25,10 +25,10 @@ struct CodedIn: PropertyAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+            .description == Self.name
         else { return nil }
         self.node = node
-        self.inDefaultMode = false
+        inDefaultMode = false
     }
 
     /// Creates a new instance with default node.
@@ -36,8 +36,8 @@ struct CodedIn: PropertyAttribute {
     /// - Parameter node: The attribute syntax to create with.
     /// - Returns: Newly created attribute instance.
     init() {
-        self.node = .init("\(raw: Self.name)")
-        self.inDefaultMode = true
+        node = .init("\(raw: Self.name)")
+        inDefaultMode = true
     }
 
     /// Builds diagnoser that can validate this macro
@@ -52,7 +52,7 @@ struct CodedIn: PropertyAttribute {
     ///   and `IgnoreCoding` attribute.
     ///
     /// - Returns: The built diagnoser instance.
-    func diagnoser() -> DiagnosticProducer {
+    func diagnoser() -> any DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             expect(syntax: VariableDeclSyntax.self)
             cantDuplicate()

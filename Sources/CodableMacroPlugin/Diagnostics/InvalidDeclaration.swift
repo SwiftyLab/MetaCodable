@@ -6,7 +6,8 @@ import SwiftSyntaxMacros
 /// This producer can be used for macro-attributes that require attached syntax
 /// should be of specific type.
 struct InvalidDeclaration<Attr, Expect>: DiagnosticProducer
-where Attr: Attribute, Expect: NamedSyntax {
+    where Attr: Attribute, Expect: NamedSyntax
+{
     /// The attribute for which
     /// validation performed.
     ///

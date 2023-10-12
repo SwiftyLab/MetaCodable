@@ -7,7 +7,8 @@ import SwiftSyntax
 /// New registration is updated with default expression data that will be
 /// used for decoding failure and memberwise initializer(s), if provided.
 struct DefaultCodingRegistrationBuilder<Input: Variable>: RegistrationBuilder
-where Input.Initialization == RequiredInitialization {
+    where Input.Initialization == RequiredInitialization
+{
     /// The variable data with default expression
     /// that output registration will have.
     typealias Output = AnyVariable<AnyRequiredVariableInitialization>
@@ -27,7 +28,7 @@ where Input.Initialization == RequiredInitialization {
     }
 }
 
-fileprivate extension Variable where Initialization == RequiredInitialization {
+private extension Variable where Initialization == RequiredInitialization {
     /// Update variable data with the default value expression provided.
     ///
     /// `DefaultValueVariable` is created with this variable as base

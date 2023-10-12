@@ -63,4 +63,4 @@ extension ConditionalCodingVariable: DefaultOptionComposedVariable {
 }
 
 extension ConditionalCodingVariable: BasicCodingVariable
-where Var: BasicCodingVariable {}
+    where Var: BasicCodingVariable {}

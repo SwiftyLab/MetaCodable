@@ -16,7 +16,7 @@ struct KeyPathRegistrationBuilder<Input: Variable>: RegistrationBuilder {
     ///
     /// Current `CodingKey` path is
     /// updated by this provider.
-    let provider: KeyPathProvider
+    let provider: any KeyPathProvider
 
     /// Build new registration with provided input registration.
     ///

@@ -30,7 +30,7 @@ protocol Attribute: AttachedMacro {
     /// any violation.
     ///
     /// - Returns: The built diagnoser instance.
-    func diagnoser() -> DiagnosticProducer
+    func diagnoser() -> any DiagnosticProducer
 }
 
 extension Attribute {

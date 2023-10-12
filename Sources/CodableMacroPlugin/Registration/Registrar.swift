@@ -258,7 +258,7 @@ struct Registrar {
 
 /// An extension that handles `init(from:)`
 /// implementation for `Decodable`.
-fileprivate extension InitializerDeclSyntax {
+private extension InitializerDeclSyntax {
     /// Generates the initialization declaration `init(from:)`
     /// for `Decodable` conformance implementation.
     ///
@@ -273,13 +273,12 @@ fileprivate extension InitializerDeclSyntax {
     /// - Returns: The generated initializer declaration.
     static func decode(
         modifiers: DeclModifierListSyntax,
-        @CodeBlockItemListBuilder
-        itemsBuilder: (TokenSyntax) throws -> CodeBlockItemListSyntax
+        @CodeBlockItemListBuilder itemsBuilder: (TokenSyntax) throws -> CodeBlockItemListSyntax
     ) rethrows -> Self {
         let decoder: TokenSyntax = "decoder"
         let param = FunctionParameterSyntax(
             firstName: "from", secondName: decoder,
-            type: IdentifierTypeSyntax(name: "Decoder")
+            type: IdentifierTypeSyntax(name: "any Decoder")
         )
 
         let signature = FunctionSignatureSyntax(
@@ -298,7 +297,7 @@ fileprivate extension InitializerDeclSyntax {
 
 /// An extension that handles `encode(to:)`
 /// implementation for `Encodable`.
-fileprivate extension FunctionDeclSyntax {
+private extension FunctionDeclSyntax {
     /// Generates the method declaration `encode(to:)`
     /// for `Encodable` conformance implementation.
     ///
@@ -313,13 +312,12 @@ fileprivate extension FunctionDeclSyntax {
     /// - Returns: The generated method declaration.
     static func encode(
         modifiers: DeclModifierListSyntax,
-        @CodeBlockItemListBuilder
-        itemsBuilder: (TokenSyntax) throws -> CodeBlockItemListSyntax
+        @CodeBlockItemListBuilder itemsBuilder: (TokenSyntax) throws -> CodeBlockItemListSyntax
     ) rethrows -> Self {
         let encoder: TokenSyntax = "encoder"
         let param = FunctionParameterSyntax(
             firstName: "to", secondName: encoder,
-            type: IdentifierTypeSyntax(name: "Encoder")
+            type: IdentifierTypeSyntax(name: "any Encoder")
         )
 
         let signature = FunctionSignatureSyntax(

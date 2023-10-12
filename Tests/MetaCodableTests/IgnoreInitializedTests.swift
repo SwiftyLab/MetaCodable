@@ -3,7 +3,6 @@ import XCTest
 @testable import CodableMacroPlugin
 
 final class IgnoreInitializedTests: XCTestCase {
-
     func testMisuse() throws {
         assertMacroExpansion(
             """
@@ -13,23 +12,23 @@ final class IgnoreInitializedTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable {
-                    var one: String = "some"
-                }
-                """,
+            """
+            struct SomeCodable {
+                var one: String = "some"
+            }
+            """,
             diagnostics: [
                 .init(
                     id: IgnoreCodingInitialized.misuseID,
                     message:
-                        "@IgnoreCodingInitialized must be used in combination with @Codable",
+                    "@IgnoreCodingInitialized must be used in combination with @Codable",
                     line: 1, column: 1,
                     fixIts: [
                         .init(
                             message: "Remove @IgnoreCodingInitialized attribute"
-                        )
+                        ),
                     ]
-                )
+                ),
             ]
         )
     }
@@ -44,26 +43,26 @@ final class IgnoreInitializedTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable {
-                    var one: String = "some"
-                }
+            """
+            struct SomeCodable {
+                var one: String = "some"
+            }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
-                    }
+            extension SomeCodable: Decodable {
+                init(from decoder: Decoder) throws {
                 }
+            }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
-                    }
+            extension SomeCodable: Encodable {
+                func encode(to encoder: Encoder) throws {
                 }
+            }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                    }
+            extension SomeCodable {
+                enum CodingKeys: String, CodingKey {
                 }
-                """
+            }
+            """
         )
     }
 
@@ -78,31 +77,31 @@ final class IgnoreInitializedTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable {
-                    var one: String = "some"
-                }
+            """
+            struct SomeCodable {
+                var one: String = "some"
+            }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
-                    }
+            extension SomeCodable: Decodable {
+                init(from decoder: Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    self.one = try container.decode(String.self, forKey: CodingKeys.one)
                 }
+            }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.one, forKey: CodingKeys.one)
-                    }
+            extension SomeCodable: Encodable {
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    try container.encode(self.one, forKey: CodingKeys.one)
                 }
+            }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                    }
+            extension SomeCodable {
+                enum CodingKeys: String, CodingKey {
+                    case one = "one"
                 }
-                """
+            }
+            """
         )
     }
 
@@ -118,29 +117,29 @@ final class IgnoreInitializedTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable {
-                    var one: String = "some"
-                }
+            """
+            struct SomeCodable {
+                var one: String = "some"
+            }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
-                    }
+            extension SomeCodable: Decodable {
+                init(from decoder: Decoder) throws {
                 }
+            }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.one, forKey: CodingKeys.one)
-                    }
+            extension SomeCodable: Encodable {
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    try container.encode(self.one, forKey: CodingKeys.one)
                 }
+            }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                    }
+            extension SomeCodable {
+                enum CodingKeys: String, CodingKey {
+                    case one = "one"
                 }
-                """
+            }
+            """
         )
     }
 
@@ -156,29 +155,29 @@ final class IgnoreInitializedTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable {
-                    var one: String = "some"
-                }
+            """
+            struct SomeCodable {
+                var one: String = "some"
+            }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
-                    }
+            extension SomeCodable: Decodable {
+                init(from decoder: Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    self.one = try container.decode(String.self, forKey: CodingKeys.one)
                 }
+            }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
-                    }
+            extension SomeCodable: Encodable {
+                func encode(to encoder: Encoder) throws {
                 }
+            }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                    }
+            extension SomeCodable {
+                enum CodingKeys: String, CodingKey {
+                    case one = "one"
                 }
-                """
+            }
+            """
         )
     }
 }

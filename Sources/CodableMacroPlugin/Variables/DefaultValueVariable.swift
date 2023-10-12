@@ -9,7 +9,8 @@ import SwiftSyntaxMacros
 /// * For initializing variable in case of decoding failure.
 /// * For providing default value to variable in memberwise initializer(s).
 struct DefaultValueVariable<Var: Variable>: ComposedVariable
-where Var.Initialization == RequiredInitialization {
+    where Var.Initialization == RequiredInitialization
+{
     /// The customization options for `DefaultValueVariable`.
     ///
     /// `DefaultValueVariable` uses the instance of this type,
@@ -53,7 +54,7 @@ where Var.Initialization == RequiredInitialization {
     ///   the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
-        in context: MacroExpansionContext
+        in context: any MacroExpansionContext
     ) -> RequiredInitializationWithDefaultValue {
         let initialization = base.initializing(in: context)
         return .init(base: initialization, expr: options.expr)
@@ -72,7 +73,7 @@ where Var.Initialization == RequiredInitialization {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         let catchClauses = CatchClauseListSyntax {

@@ -8,7 +8,8 @@ import SwiftSyntaxMacros
 /// This producer can be used for macro-attributes that may cause invalid
 /// behavior when not combined with specific other macro-attributes.
 struct CombinedUsage<Attr, Comb>: DiagnosticProducer
-where Attr: Attribute, Comb: Attribute {
+    where Attr: Attribute, Comb: Attribute
+{
     /// The attribute to validate.
     ///
     /// Diagnostics is generated at
@@ -70,15 +71,16 @@ where Attr: Attribute, Comb: Attribute {
         else { return false }
 
         let verb =
-            switch severity {
-            case .error:
-                "must"
-            default:
-                "should"
-            }
+            switch severity
+        {
+        case .error:
+            "must"
+        default:
+            "should"
+        }
         let message = attr.node.diagnostic(
             message:
-                "@\(attr.name) \(verb) be used in combination with @\(Comb.name)",
+            "@\(attr.name) \(verb) be used in combination with @\(Comb.name)",
             id: attr.misuseMessageID,
             severity: severity
         )

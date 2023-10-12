@@ -48,11 +48,12 @@ extension Registrar {
                 switch self {
                 case .coder(let coder, keyType: _):
                     return .coder(coder)
-                case .container(let container, key: let key):
+                case let .container(container, key: key):
                     return .container(container, key: key.expr)
                 }
             }
         }
+
         /// All the variables registered at this node.
         private(set) var variables: [any Variable]
         /// Nested registration node associated with keys.
@@ -108,6 +109,7 @@ extension Registrar {
 }
 
 // MARK: Decoding
+
 extension Registrar.Node {
     /// Provides the code block list syntax for decoding individual
     /// fields using registered variables at current and linked nodes.
@@ -128,10 +130,10 @@ extension Registrar.Node {
 
             let childrenDecodable =
                 children
-                .contains { $1.linkedVariables.contains { $0.decode ?? true } }
+                    .contains { $1.linkedVariables.contains { $0.decode ?? true } }
             if !children.isEmpty, childrenDecodable {
                 switch location {
-                case .coder(let decoder, let type):
+                case let .coder(decoder, type):
                     let container: TokenSyntax = "container"
                     """
                     let \(container) = try \(decoder).container(keyedBy: \(type))
@@ -142,7 +144,7 @@ extension Registrar.Node {
                             from: .container(container, key: cKey)
                         )
                     }
-                case .container(let container, let key):
+                case let .container(container, key):
                     let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"
                     """
                     let \(nestedContainer) = try \(container).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
@@ -160,6 +162,7 @@ extension Registrar.Node {
 }
 
 // MARK: Encoding
+
 extension Registrar.Node {
     /// Provides the code block list syntax for encoding individual
     /// fields using registered metadata at current and linked nodes.
@@ -180,10 +183,10 @@ extension Registrar.Node {
 
             let childrenEncodable =
                 children
-                .contains { $1.linkedVariables.contains { $0.encode ?? true } }
+                    .contains { $1.linkedVariables.contains { $0.encode ?? true } }
             if !children.isEmpty, childrenEncodable {
                 switch location {
-                case .coder(let encoder, let type):
+                case let .coder(encoder, type):
                     let container: TokenSyntax = "container"
                     """
                     var container = \(encoder).container(keyedBy: \(type))
@@ -194,7 +197,7 @@ extension Registrar.Node {
                             from: .container(container, key: cKey)
                         )
                     }
-                case .container(let container, let key):
+                case let .container(container, key):
                     let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"
                     """
                     var \(nestedContainer) = \(container).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))

@@ -16,7 +16,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     ///
     /// By default, set as the underlying variable initialization
     /// type is provided by this handler unless changed in initializer.
-    let initialization: (MacroExpansionContext) -> Initialization
+    let initialization: (any MacroExpansionContext) -> Initialization
 
     /// The name of the variable.
     ///
@@ -48,7 +48,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     /// - Returns: Newly created variable.
     init(base: some Variable<Initialization>) {
         self.base = base
-        self.initialization = base.initializing(in:)
+        initialization = base.initializing(in:)
     }
 
     /// Wraps the provided variable erasing its type.
@@ -58,12 +58,12 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     /// - Parameter base: The underlying variable value.
     /// - Returns: Newly created variable.
     init<Var: Variable>(base: Var)
-    where
+        where
         Var.Initialization: RequiredVariableInitialization,
         Initialization == AnyRequiredVariableInitialization
     {
         self.base = base
-        self.initialization = { .init(base: base.initializing(in: $0)) }
+        initialization = { .init(base: base.initializing(in: $0)) }
     }
 
     /// Indicates the initialization type for this variable.
@@ -74,7 +74,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     ///                      the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
-        in context: MacroExpansionContext
+        in context: any MacroExpansionContext
     ) -> Initialization {
         return initialization(context)
     }
@@ -91,7 +91,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         return base.decoding(in: context, from: location)
@@ -109,7 +109,7 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         return base.encoding(in: context, to: location)

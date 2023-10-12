@@ -51,7 +51,8 @@ extension VariableDeclSyntax {
     ) -> [Registration<Output>] {
         var variablesData = [(PatternBindingSyntax, TokenSyntax, TypeSyntax?)]()
         for binding in bindings
-        where binding.pattern.is(IdentifierPatternSyntax.self) {
+            where binding.pattern.is(IdentifierPatternSyntax.self)
+        {
             variablesData.append(
                 (
                     binding,
@@ -71,7 +72,7 @@ extension VariableDeclSyntax {
         }
 
         return variables.reversed().map { binding, variable in
-            return builder(
+            builder(
                 Registration(
                     variable: variable,
                     expansion: context, attr: attr,
@@ -87,7 +88,7 @@ extension VariableDeclSyntax {
 /// Combines `RegistrationBuilder`s in the order
 /// provided to create final builder action to process
 /// and parse variable data.
-infix operator |> : AdditionPrecedence
+infix operator |>: AdditionPrecedence
 
 /// Builds a registration builder action by combining
 /// two `RegistrationBuilder`s.
@@ -101,7 +102,8 @@ func |> <L: RegistrationBuilder, R: RegistrationBuilder>(
     lhs: L,
     rhs: R
 ) -> (Registration<L.Input>) -> Registration<R.Output>
-where L.Output == R.Input {
+    where L.Output == R.Input
+{
     return { rhs.build(with: lhs.build(with: $0)) }
 }
 

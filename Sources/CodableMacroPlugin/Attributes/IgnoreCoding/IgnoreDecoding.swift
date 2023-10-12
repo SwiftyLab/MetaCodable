@@ -22,7 +22,7 @@ struct IgnoreDecoding: PropertyAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+            .description == Self.name
         else { return nil }
         self.node = node
     }
@@ -42,7 +42,7 @@ struct IgnoreDecoding: PropertyAttribute {
     ///   attribute.
     ///
     /// - Returns: The built diagnoser instance.
-    func diagnoser() -> DiagnosticProducer {
+    func diagnoser() -> any DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             attachedToInitializedVariable()
             shouldNotDuplicate()

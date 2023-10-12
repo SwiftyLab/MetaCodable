@@ -3,7 +3,6 @@ import XCTest
 @testable import MetaCodable
 
 final class LossySequenceTests: XCTestCase {
-
     func testInvalidDataType() throws {
         do {
             let json = #"{"data":1}"#.data(using: .utf8)!

@@ -41,12 +41,12 @@ struct UsedWithoutArgs<Attr: Attribute>: DiagnosticProducer {
     /// - Returns: True if syntax fails validation, false otherwise.
     @discardableResult
     func produce(
-        for syntax: some SyntaxProtocol,
+        for _: some SyntaxProtocol,
         in context: some MacroExpansionContext
     ) -> Bool {
         guard
             attr.node.arguments?
-                .as(LabeledExprListSyntax.self)?.first == nil
+            .as(LabeledExprListSyntax.self)?.first == nil
         else { return false }
 
         let message = attr.node.diagnostic(

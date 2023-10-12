@@ -1,7 +1,7 @@
 // swift-tools-version: 5.9
 
-import PackageDescription
 import CompilerPluginSupport
+import PackageDescription
 
 let package = Package(
     name: "MetaCodable",
@@ -31,14 +31,26 @@ let package = Package(
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
                 .product(name: "OrderedCollections", package: "swift-collections"),
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("ExistentialAny"),
             ]
         ),
-        .target(name: "MetaCodable", dependencies: ["CodableMacroPlugin"]),
+        .target(
+            name: "MetaCodable",
+            dependencies: ["CodableMacroPlugin"],
+            swiftSettings: [
+                .enableUpcomingFeature("ExistentialAny"),
+            ]
+        ),
         .testTarget(
             name: "MetaCodableTests",
             dependencies: [
                 "CodableMacroPlugin", "MetaCodable",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+            ],
+            swiftSettings: [
+                .enableUpcomingFeature("ExistentialAny"),
             ]
         ),
     ]

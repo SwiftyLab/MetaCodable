@@ -53,7 +53,7 @@ protocol Variable<Initialization> {
     ///   the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
-        in context: MacroExpansionContext
+        in context: any MacroExpansionContext
     ) -> Initialization
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
@@ -66,7 +66,7 @@ protocol Variable<Initialization> {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax
     /// Provides the code syntax for encoding this variable
@@ -80,7 +80,7 @@ protocol Variable<Initialization> {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax
 }

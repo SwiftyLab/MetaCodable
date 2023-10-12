@@ -45,16 +45,16 @@ extension RegistrationAttribute {
             // builder
             let builder =
                 CodingKeys(from: declaration)
-                |> IgnoreCodingInitialized(from: declaration)
-                |> KeyPathRegistrationBuilder(
-                    provider: CodedAt(from: decl)
-                        ?? CodedIn(from: decl)
-                        ?? CodedIn()
-                )
-                |> HelperCodingRegistrationBuilder()
-                |> DefaultCodingRegistrationBuilder()
-                |> InitializationRegistrationBuilder()
-                |> IgnoreCodingBuilder()
+                    |> IgnoreCodingInitialized(from: declaration)
+                    |> KeyPathRegistrationBuilder(
+                        provider: CodedAt(from: decl)
+                            ?? CodedIn(from: decl)
+                            ?? CodedIn()
+                    )
+                    |> HelperCodingRegistrationBuilder()
+                    |> DefaultCodingRegistrationBuilder()
+                    |> InitializationRegistrationBuilder()
+                    |> IgnoreCodingBuilder()
 
             // build
             let regs = decl.registrations(for: self, in: context, with: builder)

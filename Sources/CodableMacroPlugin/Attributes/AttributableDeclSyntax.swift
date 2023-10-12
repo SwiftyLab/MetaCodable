@@ -13,12 +13,12 @@ extension SyntaxProtocol {
     /// - Returns: All the attributes of provided type.
     func attributes<A: Attribute>(for type: A.Type) -> [A] {
         guard
-            case .choices(let choices) = DeclSyntax.structure
+            case let .choices(choices) = DeclSyntax.structure
         else { return [] }
 
         let declSyntaxChoice = choices.first { choice in
-            if case .node(let type) = choice {
-                return type is AttributableDeclSyntax.Type
+            if case let .node(type) = choice {
+                return type is any AttributableDeclSyntax.Type
                     && self.is(type)
             } else {
                 return false
@@ -27,13 +27,13 @@ extension SyntaxProtocol {
 
         guard
             let declSyntaxChoice,
-            case .node(let declSyntaxType) = declSyntaxChoice,
+            case let .node(declSyntaxType) = declSyntaxChoice,
             let declaration = self.as(declSyntaxType),
-            let declaration = declaration as? AttributableDeclSyntax
+            let declaration = declaration as? (any AttributableDeclSyntax)
         else { return [] }
 
         return declaration.attributes.compactMap { attribute in
-            guard case .attribute(let attribute) = attribute else { return nil }
+            guard case let .attribute(attribute) = attribute else { return nil }
             return type.init(from: attribute)
         }
     }

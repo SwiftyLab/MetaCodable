@@ -42,8 +42,8 @@ extension Registrar {
             /// The actual case name token syntax.
             var token: TokenSyntax {
                 switch self {
-                case .field(let token), .nestedKeyField(let token),
-                    .builtWithKey(let token):
+                case let .field(token), let .nestedKeyField(token),
+                     let .builtWithKey(token):
                     return token
                 }
             }
@@ -52,8 +52,8 @@ extension Registrar {
             /// token syntax as a string.
             var name: String {
                 switch self {
-                case .field(let token), .nestedKeyField(let token),
-                    .builtWithKey(let token):
+                case let .field(token), let .nestedKeyField(token),
+                     let .builtWithKey(token):
                     return token.text
                 }
             }
@@ -132,7 +132,7 @@ extension Registrar {
 
                 let currentCases = data.values.map(\.name)
                 data[key] = {
-                    if !currentCases.contains(fieldName) && !fieldName.isEmpty {
+                    if !currentCases.contains(fieldName), !fieldName.isEmpty {
                         if !invalidCaseNames.contains(fieldName) {
                             return .builtWithKey(.identifier(fieldName))
                         } else if !currentCases.contains("`\(fieldName)`") {
@@ -164,7 +164,7 @@ extension Registrar {
         ///
         /// - Parameter context: The macro expansion context.
         /// - Returns: The generated enum declaration syntax.
-        func decl(in context: some MacroExpansionContext) -> EnumDeclSyntax {
+        func decl(in _: some MacroExpansionContext) -> EnumDeclSyntax {
             let clause = InheritanceClauseSyntax {
                 InheritedTypeSyntax(type: "String" as TypeSyntax)
                 InheritedTypeSyntax(type: "CodingKey" as TypeSyntax)

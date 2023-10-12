@@ -9,7 +9,7 @@ struct AnyInitialization: VariableInitialization {
     /// The base property can be cast back
     /// to its original type using type casting
     /// operators (`as?`, `as!`, or `as`).
-    let base: VariableInitialization
+    let base: any VariableInitialization
 
     /// Adds current initialization type to memberwise initialization
     /// generator.

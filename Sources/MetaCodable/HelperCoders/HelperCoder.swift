@@ -19,7 +19,7 @@ public protocol HelperCoder {
     /// - Returns: A value of the ``Coded`` type.
     ///
     /// - Throws: If decoding fails due to corrupted or invalid data.
-    func decode(from decoder: Decoder) throws -> Coded
+    func decode(from decoder: any Decoder) throws -> Coded
     /// Decodes an optional value of the ``Coded`` type from
     /// the given `decoder`, if present.
     ///
@@ -30,7 +30,7 @@ public protocol HelperCoder {
     /// - Returns: An optional value of the ``Coded`` type.
     ///
     /// - Throws: If decoding fails due to corrupted or invalid data.
-    func decodeIfPresent(from decoder: Decoder) throws -> Coded?
+    func decodeIfPresent(from decoder: any Decoder) throws -> Coded?
 
     /// Encodes given value of the ``Coded`` type to the provided `encoder`.
     ///
@@ -42,7 +42,7 @@ public protocol HelperCoder {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
-    func encode(_ value: Coded, to encoder: Encoder) throws
+    func encode(_ value: Coded, to encoder: any Encoder) throws
     /// Encodes given optional value of the ``Coded`` type to the provided
     /// `encoder` if it is not `nil`.
     ///
@@ -54,7 +54,7 @@ public protocol HelperCoder {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
-    func encodeIfPresent(_ value: Coded?, to encoder: Encoder) throws
+    func encodeIfPresent(_ value: Coded?, to encoder: any Encoder) throws
 }
 
 public extension HelperCoder {
@@ -68,8 +68,8 @@ public extension HelperCoder {
     /// - Returns: An optional value of the ``HelperCoder/Coded`` type.
     ///
     /// - Throws: If decoding fails due to corrupted or invalid data.
-    func decodeIfPresent(from decoder: Decoder) throws -> Coded? {
-        return try? self.decode(from: decoder)
+    func decodeIfPresent(from decoder: any Decoder) throws -> Coded? {
+        return try? decode(from: decoder)
     }
 
     /// Encodes given value of the ``HelperCoder/Coded`` type
@@ -83,8 +83,8 @@ public extension HelperCoder {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
-    func encode(_ value: Coded, to encoder: Encoder) throws {
-        try (value as? Encodable)?.encode(to: encoder)
+    func encode(_ value: Coded, to encoder: any Encoder) throws {
+        try (value as? (any Encodable))?.encode(to: encoder)
     }
 
     /// Encodes given optional value of the ``HelperCoder/Coded`` type
@@ -98,9 +98,9 @@ public extension HelperCoder {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
-    func encodeIfPresent(_ value: Coded?, to encoder: Encoder) throws {
+    func encodeIfPresent(_ value: Coded?, to encoder: any Encoder) throws {
         guard let value else { return }
-        try self.encode(value, to: encoder)
+        try encode(value, to: encoder)
     }
 }
 
@@ -115,7 +115,7 @@ public extension HelperCoder where Coded: Encodable {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
-    func encode(_ value: Coded, to encoder: Encoder) throws {
+    func encode(_ value: Coded, to encoder: any Encoder) throws {
         try value.encode(to: encoder)
     }
 }

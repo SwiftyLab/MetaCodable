@@ -10,7 +10,7 @@ struct AnyRequiredVariableInitialization: RequiredVariableInitialization {
     ///
     /// This function parameter and code block
     /// syntax is fetched from this value.
-    let base: RequiredVariableInitialization
+    let base: any RequiredVariableInitialization
 
     /// The function parameter for the initialization function.
     ///

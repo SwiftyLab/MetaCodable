@@ -45,7 +45,7 @@ struct CodingKeyTransformer {
     }
 }
 
-fileprivate extension CodingKeys.Strategy {
+private extension CodingKeys.Strategy {
     /// The separator being used by current case style.
     ///
     /// There might not be any separator for current case style,
@@ -63,7 +63,7 @@ fileprivate extension CodingKeys.Strategy {
     }
 }
 
-fileprivate extension CodingKeys.Strategy {
+private extension CodingKeys.Strategy {
     /// Represents capitalization style
     /// of each token in a casing style.
     ///
@@ -169,7 +169,7 @@ extension String {
         if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
             return try! #/^[0-9]+[a-zA-Z0-9]*/#.wholeMatch(in: self) != nil
         } else {
-            return self.range(
+            return range(
                 of: "^[0-9]+[a-zA-Z0-9]*",
                 options: .regularExpression
             ) != nil

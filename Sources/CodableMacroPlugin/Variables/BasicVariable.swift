@@ -69,14 +69,15 @@ struct BasicVariable: BasicCodingVariable {
     ///                      the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
-        in context: MacroExpansionContext
+        in _: any MacroExpansionContext
     ) -> RequiredInitialization {
         let param: FunctionParameterSyntax =
-            if type.isOptional {
-                "\(name): \(type) = nil"
-            } else {
-                "\(name): \(type)"
-            }
+            if type.isOptional
+        {
+            "\(name): \(type) = nil"
+        } else {
+            "\(name): \(type)"
+        }
         return .init(param: param, code: "self.\(name) = \(name)")
     }
 
@@ -96,17 +97,17 @@ struct BasicVariable: BasicCodingVariable {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: MacroExpansionContext,
+        in _: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         switch location {
-        case .coder(let decoder):
+        case let .coder(decoder):
             return CodeBlockItemListSyntax {
                 """
                 self.\(name) = try \(type)(from: \(decoder))
                 """
             }
-        case .container(let container, let key):
+        case let .container(container, key):
             let (type, method) = type.codingTypeMethod(forMethod: "decode")
             return CodeBlockItemListSyntax {
                 """
@@ -132,17 +133,17 @@ struct BasicVariable: BasicCodingVariable {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: MacroExpansionContext,
+        in _: any MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         switch location {
-        case .coder(let encoder):
+        case let .coder(encoder):
             return CodeBlockItemListSyntax {
                 """
                 try self.\(name).encode(to: \(encoder))
                 """
             }
-        case .container(let container, let key):
+        case let .container(container, key):
             let (_, method) = type.codingTypeMethod(forMethod: "encode")
             return CodeBlockItemListSyntax {
                 """

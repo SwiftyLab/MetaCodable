@@ -15,7 +15,7 @@ struct Registration<Var: Variable> {
     /// attached to variables and pass data to downstream.
     struct Context {
         /// The context in which to perform the macro expansion.
-        let expansion: MacroExpansionContext
+        let expansion: any MacroExpansionContext
         /// The macro-attribute currently expanded.
         let attr: any RegistrationAttribute
         /// The variable declaration associated with this context.
@@ -26,7 +26,7 @@ struct Registration<Var: Variable> {
         ///
         /// Tracks all the attributes, that are attached
         /// to variable declaration of this context.
-        let attributes: [Attribute]
+        let attributes: [any Attribute]
 
         /// Creates a new context with provided parameters.
         ///
@@ -43,7 +43,7 @@ struct Registration<Var: Variable> {
             attr: some RegistrationAttribute,
             declaration: VariableDeclSyntax,
             binding: PatternBindingSyntax,
-            attributes: [Attribute] = []
+            attributes: [any Attribute] = []
         ) {
             self.expansion = expansion
             self.attr = attr
@@ -73,7 +73,7 @@ struct Registration<Var: Variable> {
         ///
         /// - Parameter attribute: The attribute to add.
         /// - Returns: Created context with the added attribute.
-        fileprivate func adding(attribute: Attribute) -> Self {
+        fileprivate func adding(attribute: any Attribute) -> Self {
             var attributes = attributes
             attributes.append(attribute)
             return .init(
@@ -133,11 +133,11 @@ struct Registration<Var: Variable> {
         variable: Var,
         expansion: some MacroExpansionContext, attr: some RegistrationAttribute,
         declaration: VariableDeclSyntax, binding: PatternBindingSyntax,
-        attributes: [Attribute] = []
+        attributes: [any Attribute] = []
     ) {
-        self.keyPath = [variable.name.asKey]
+        keyPath = [variable.name.asKey]
         self.variable = variable
-        self.context = .init(
+        context = .init(
             expansion: expansion, attr: attr,
             declaration: declaration, binding: binding,
             attributes: attributes
@@ -152,7 +152,7 @@ struct Registration<Var: Variable> {
     /// - Parameter attribute: The attribute to add.
     /// - Returns: Created registration with the added
     ///   attribute in the context.
-    func adding(attribute: Attribute) -> Self {
+    func adding(attribute: any Attribute) -> Self {
         return .init(
             keyPath: keyPath, variable: variable,
             context: context.adding(attribute: attribute)

@@ -36,11 +36,11 @@ extension PeerAttribute {
     /// - Returns: Newly created attribute instance.
     init?(from declaration: some AttributableDeclSyntax) {
         let attribute = declaration.attributes.first { attribute in
-            guard case .attribute(let attribute) = attribute
+            guard case let .attribute(attribute) = attribute
             else { return false }
             return Self(from: attribute) != nil
         }
-        guard case .attribute(let attribute) = attribute else { return nil }
+        guard case let .attribute(attribute) = attribute else { return nil }
         self.init(from: attribute)
     }
 
@@ -53,7 +53,7 @@ extension PeerAttribute {
     /// - Parameter decl: The attached grouped declaration.
     /// - Returns: Newly created attribute instance.
     init?(from decl: some DeclGroupSyntax) {
-        guard let decl = decl as? AttributableDeclSyntax else { return nil }
+        guard let decl = decl as? (any AttributableDeclSyntax) else { return nil }
         self.init(from: decl)
     }
 

@@ -48,7 +48,7 @@ extension ComposedVariable {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         return base.decoding(in: context, from: location)
@@ -66,7 +66,7 @@ extension ComposedVariable {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         to location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         return base.encoding(in: context, to: location)
@@ -81,7 +81,7 @@ extension ComposedVariable where Initialization == Wrapped.Initialization {
     /// - Parameter context: The context in which to perform
     ///                      the macro expansion.
     /// - Returns: The type of initialization for variable.
-    func initializing(in context: MacroExpansionContext) -> Initialization {
+    func initializing(in context: any MacroExpansionContext) -> Initialization {
         return base.initializing(in: context)
     }
 }

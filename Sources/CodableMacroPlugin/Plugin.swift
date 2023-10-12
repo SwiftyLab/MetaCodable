@@ -10,7 +10,7 @@ struct MetaCodablePlugin: CompilerPlugin {
     /// All the macros provided by this macro plugin.
     ///
     /// New macro types should be added here.
-    let providingMacros: [Macro.Type] = [
+    let providingMacros: [any Macro.Type] = [
         CodedAt.self,
         CodedIn.self,
         CodedBy.self,

@@ -39,7 +39,7 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
     /// - Returns: Newly created diagnostic producer.
     init(_ attr: Attr) {
         self.attr = attr
-        self.base = .init(attr, expect: VariableDeclSyntax.self)
+        base = .init(attr, expect: VariableDeclSyntax.self)
     }
 
     /// Validates and produces diagnostics for the passed syntax
@@ -66,7 +66,7 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
             switch binding.accessorBlock?.accessors {
             case .getter:
                 continue
-            case .accessors(let accessors):
+            case let .accessors(accessors):
                 let computed = accessors.contains { decl in
                     decl.accessorSpecifier.tokenKind == .keyword(.get)
                 }

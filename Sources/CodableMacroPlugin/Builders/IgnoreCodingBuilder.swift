@@ -45,7 +45,7 @@ struct IgnoreCodingBuilder<Input: Variable>: RegistrationBuilder {
 ///
 /// Attaching attributes of this type to computed properties or initialized
 /// immutable properties indicates this variable should be encoded for the type.
-fileprivate protocol CodingAttribute: PropertyAttribute {}
+private protocol CodingAttribute: PropertyAttribute {}
 extension CodedIn: CodingAttribute {}
 extension CodedAt: CodingAttribute {}
 extension CodedBy: CodingAttribute {}

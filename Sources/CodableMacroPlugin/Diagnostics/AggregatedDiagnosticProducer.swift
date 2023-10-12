@@ -12,7 +12,7 @@ struct AggregatedDiagnosticProducer: DiagnosticProducer {
     ///
     /// These diagnostic producers are used to
     /// perform validation and produce diagnostics.
-    let producers: [DiagnosticProducer]
+    let producers: [any DiagnosticProducer]
 
     /// Validates and produces diagnostics for the passed syntax
     /// in the macro expansion context provided.
@@ -35,7 +35,7 @@ struct AggregatedDiagnosticProducer: DiagnosticProducer {
             /// `producer.produce(for:in:)` should be invoked first to avoid
             /// diagnostic evaluation termination due to short-circuit
             /// evaluation.
-            return producer.produce(for: syntax, in: context) || partialResult
+            producer.produce(for: syntax, in: context) || partialResult
         }
     }
 }
@@ -48,7 +48,7 @@ extension AggregatedDiagnosticProducer {
     ///
     /// - Parameter builder: The action that creates diagnostic producers.
     /// - Returns: Newly created diagnostic producer.
-    init(@DiagnosticsBuilder builder: () -> [DiagnosticProducer]) {
+    init(@DiagnosticsBuilder builder: () -> [any DiagnosticProducer]) {
         self.init(producers: builder())
     }
 }

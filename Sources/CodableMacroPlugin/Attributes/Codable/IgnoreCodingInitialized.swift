@@ -24,7 +24,7 @@ struct IgnoreCodingInitialized: PeerAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+            .description == Self.name
         else { return nil }
         self.node = node
     }
@@ -37,7 +37,7 @@ struct IgnoreCodingInitialized: PeerAttribute {
     /// is not duplicated for the same declaration.
     ///
     /// - Returns: The built diagnoser instance.
-    func diagnoser() -> DiagnosticProducer {
+    func diagnoser() -> any DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             mustBeCombined(with: Codable.self)
             shouldNotDuplicate()

@@ -6,7 +6,6 @@ import XCTest
 @testable import CodableMacroPlugin
 
 final class CodableTests: XCTestCase {
-
     func testMisuseOnNonStructDeclaration() throws {
         assertMacroExpansion(
             """
@@ -16,20 +15,20 @@ final class CodableTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                enum SomeCodable: String {
-                    case value
-                }
-                """,
+            """
+            enum SomeCodable: String {
+                case value
+            }
+            """,
             diagnostics: [
                 .init(
                     id: Codable.misuseID,
                     message: "@Codable only applicable to struct declarations",
                     line: 1, column: 1,
                     fixIts: [
-                        .init(message: "Remove @Codable attribute")
+                        .init(message: "Remove @Codable attribute"),
                     ]
-                )
+                ),
             ]
         )
     }
@@ -43,31 +42,31 @@ final class CodableTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable {
-                    let value: String
-                }
+            """
+            struct SomeCodable {
+                let value: String
+            }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
-                    }
+            extension SomeCodable: Decodable {
+                init(from decoder: Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    self.value = try container.decode(String.self, forKey: CodingKeys.value)
                 }
+            }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value, forKey: CodingKeys.value)
-                    }
+            extension SomeCodable: Encodable {
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    try container.encode(self.value, forKey: CodingKeys.value)
                 }
+            }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
-                    }
+            extension SomeCodable {
+                enum CodingKeys: String, CodingKey {
+                    case value = "value"
                 }
-                """
+            }
+            """
         )
     }
 
@@ -83,27 +82,27 @@ final class CodableTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable: Encodable {
-                    let value: String
+            """
+            struct SomeCodable: Encodable {
+                let value: String
 
-                    func encode(to encoder: Encoder) throws {
-                    }
+                func encode(to encoder: Encoder) throws {
                 }
+            }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
-                    }
+            extension SomeCodable: Decodable {
+                init(from decoder: Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    self.value = try container.decode(String.self, forKey: CodingKeys.value)
                 }
+            }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
-                    }
+            extension SomeCodable {
+                enum CodingKeys: String, CodingKey {
+                    case value = "value"
                 }
-                """
+            }
+            """
         )
     }
 
@@ -120,28 +119,28 @@ final class CodableTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable: Decodable {
-                    let value: String
+            """
+            struct SomeCodable: Decodable {
+                let value: String
 
-                    init(from decoder: Decoder) throws {
-                        self.value = "some"
-                    }
+                init(from decoder: Decoder) throws {
+                    self.value = "some"
                 }
+            }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value, forKey: CodingKeys.value)
-                    }
+            extension SomeCodable: Encodable {
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    try container.encode(self.value, forKey: CodingKeys.value)
                 }
+            }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
-                    }
+            extension SomeCodable {
+                enum CodingKeys: String, CodingKey {
+                    case value = "value"
                 }
-                """
+            }
+            """
         )
     }
 
@@ -161,18 +160,18 @@ final class CodableTests: XCTestCase {
             }
             """,
             expandedSource:
-                """
-                struct SomeCodable: Codable {
-                    let value: String
+            """
+            struct SomeCodable: Codable {
+                let value: String
 
-                    init(from decoder: Decoder) throws {
-                        self.value = "some"
-                    }
-
-                    func encode(to encoder: Encoder) throws {
-                    }
+                init(from decoder: Decoder) throws {
+                    self.value = "some"
                 }
-                """
+
+                func encode(to encoder: Encoder) throws {
+                }
+            }
+            """
         )
     }
 }
@@ -211,7 +210,7 @@ func assertMacroExpansion(
 
 extension Attribute {
     static var misuseID: MessageID {
-        return Self.init(from: .init(stringLiteral: Self.name))!.misuseMessageID
+        return Self(from: .init(stringLiteral: name))!.misuseMessageID
     }
 }
 
@@ -223,7 +222,7 @@ extension DiagnosticSpec {
                 id: "accessorMacroOnVariableWithMultipleBindings"
             ),
             message:
-                "swift-syntax applies macros syntactically and"
+            "swift-syntax applies macros syntactically and"
                 + " there is no way to represent a variable declaration"
                 + " with multiple bindings that have accessors syntactically."
                 + " While the compiler allows this expansion,"

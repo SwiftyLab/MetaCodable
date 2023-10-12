@@ -5,7 +5,7 @@
 /// current syntax. If optional registration not provided, input registration
 /// is passed with default output options.
 extension Optional: RegistrationBuilder
-where
+    where
     Wrapped: RegistrationBuilder,
     Wrapped.Output: DefaultOptionComposedVariable,
     Wrapped.Input == Wrapped.Output.Wrapped
@@ -29,7 +29,7 @@ where
         case .none:
             let newVar = Wrapped.Output(base: input.variable)
             return input.updating(with: newVar)
-        case .some(let wrapped):
+        case let .some(wrapped):
             return wrapped.build(with: input)
         }
     }

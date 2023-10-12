@@ -31,7 +31,7 @@ struct Codable: RegistrationAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+            .description == Self.name
         else { return nil }
         self.node = node
     }
@@ -44,7 +44,7 @@ struct Codable: RegistrationAttribute {
     /// duplicated for the same declaration.
     ///
     /// - Returns: The built diagnoser instance.
-    func diagnoser() -> DiagnosticProducer {
+    func diagnoser() -> any DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             expect(syntax: StructDeclSyntax.self)
             cantDuplicate()

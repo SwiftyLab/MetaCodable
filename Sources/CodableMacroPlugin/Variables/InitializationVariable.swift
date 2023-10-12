@@ -7,7 +7,8 @@ import SwiftSyntaxMacros
 /// encoding implementations, while customizing decoding and initialization
 /// implementations.
 struct InitializationVariable<Wrapped: Variable>: ComposedVariable
-where Wrapped.Initialization: RequiredVariableInitialization {
+    where Wrapped.Initialization: RequiredVariableInitialization
+{
     /// The customization options for `InitializationVariable`.
     ///
     /// `InitializationVariable` uses the instance of this type,
@@ -63,7 +64,7 @@ where Wrapped.Initialization: RequiredVariableInitialization {
     ///   the macro expansion.
     /// - Returns: The type of initialization for variable.
     func initializing(
-        in context: MacroExpansionContext
+        in context: any MacroExpansionContext
     ) -> AnyInitialization {
         return if options.`init` {
             if options.initialized {
@@ -90,7 +91,7 @@ where Wrapped.Initialization: RequiredVariableInitialization {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: MacroExpansionContext,
+        in context: any MacroExpansionContext,
         from location: VariableCodingLocation
     ) -> CodeBlockItemListSyntax {
         guard options.`init` else { return .init([]) }

@@ -57,7 +57,7 @@ struct MemberwiseInitGenerator {
     /// - Returns: The newly created generator.
     init(options: Options) {
         self.options = options
-        self.collections = [[]]
+        collections = [[]]
     }
 
     /// Creates a new generator with provided options, and initialization
@@ -91,12 +91,12 @@ struct MemberwiseInitGenerator {
     /// - Parameter item: The required initialization item to add.
     /// - Returns: The newly created generator with initialization item added.
     func add(_ item: Item) -> Self {
-        guard !collections.isEmpty else { return self.update(with: [[item]]) }
+        guard !collections.isEmpty else { return update(with: [[item]]) }
         var collections = collections
         for index in collections.indices {
             collections[index].append(item)
         }
-        return self.update(with: collections)
+        return update(with: collections)
     }
 
     /// Adds the provided optional initialization item to generator.
@@ -109,14 +109,14 @@ struct MemberwiseInitGenerator {
     /// - Returns: The newly created generator with initialization item added.
     func add(optional item: Item) -> Self {
         guard !collections.isEmpty
-        else { return self.update(with: [[], [item]]) }
+        else { return update(with: [[], [item]]) }
 
         var collections = self.collections
         for var newCollection in self.collections {
             newCollection.append(item)
             collections.append(newCollection)
         }
-        return self.update(with: collections)
+        return update(with: collections)
     }
 
     /// Provides the memberwise initializer declaration(s).
@@ -128,10 +128,10 @@ struct MemberwiseInitGenerator {
     ///   the macro expansion.
     /// - Returns: The generated initializer declarations.
     func declarations(
-        in context: some MacroExpansionContext
+        in _: some MacroExpansionContext
     ) -> [InitializerDeclSyntax] {
         return collections.map { items in
-            return InitializerDeclSyntax(
+            InitializerDeclSyntax(
                 modifiers: options.modifiers,
                 signature: .init(
                     parameterClause: .init(

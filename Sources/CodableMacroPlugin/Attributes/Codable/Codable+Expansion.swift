@@ -49,13 +49,13 @@ extension TokenSyntax {
     /// to equivalent key token
     /// string by trimming \`s`.
     var asKey: String {
-        self.text.trimmingCharacters(in: .swiftVariableExtra)
+        text.trimmingCharacters(in: .swiftVariableExtra)
     }
 
     /// Convert field token syntax
     /// to equivalent key token
     /// by trimming \`s`.
-    var raw: TokenSyntax { .identifier(self.asKey) }
+    var raw: TokenSyntax { .identifier(asKey) }
 }
 
 /// An extension that manages

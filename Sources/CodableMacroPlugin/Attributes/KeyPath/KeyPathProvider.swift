@@ -61,7 +61,7 @@ extension CodedAt: KeyPathProvider {
     ///
     /// - Parameter path: Current `CodingKey` path.
     /// - Returns: Updated `CodingKey` path.
-    func keyPath(withExisting path: [String]) -> [String] { providedPath }
+    func keyPath(withExisting _: [String]) -> [String] { providedPath }
 }
 
 extension CodedIn: KeyPathProvider {

@@ -49,14 +49,14 @@ extension MacroExpansionContext {
 /// combines any number of `DiagnosticProducer`s that can produce
 /// diagnostics for a common provided declaration.
 @resultBuilder
-struct DiagnosticsBuilder {
+enum DiagnosticsBuilder {
     /// Builds `DiagnosticProducer`s combination from provided data.
     ///
     /// - Parameter producers: The `DiagnosticProducer`s to combine.
     /// - Returns: Combined `DiagnosticProducer`s.
     static func buildBlock(
-        _ producers: DiagnosticProducer...
-    ) -> [DiagnosticProducer] {
+        _ producers: any DiagnosticProducer...
+    ) -> [any DiagnosticProducer] {
         return producers
     }
 }

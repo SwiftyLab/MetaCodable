@@ -13,9 +13,9 @@ extension TypeSyntax {
         if self.is(OptionalTypeSyntax.self) {
             return true
         } else if let type = self.as(IdentifierTypeSyntax.self),
-            type.name.text == "Optional",
-            let gArgs = type.genericArgumentClause?.arguments,
-            gArgs.count == 1
+                  type.name.text == "Optional",
+                  let gArgs = type.genericArgumentClause?.arguments,
+                  gArgs.count == 1
         {
             return true
         } else {
@@ -42,10 +42,10 @@ extension TypeSyntax {
             dType = type.wrappedType
             dMethod = "\(method)IfPresent"
         } else if let type = self.as(IdentifierTypeSyntax.self),
-            type.name.text == "Optional",
-            let gArgs = type.genericArgumentClause?.arguments,
-            gArgs.count == 1,
-            let type = gArgs.first?.argument
+                  type.name.text == "Optional",
+                  let gArgs = type.genericArgumentClause?.arguments,
+                  gArgs.count == 1,
+                  let type = gArgs.first?.argument
         {
             dType = type
             dMethod = "\(method)IfPresent"

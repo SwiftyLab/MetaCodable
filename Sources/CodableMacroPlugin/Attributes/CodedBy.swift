@@ -27,7 +27,7 @@ struct CodedBy: PropertyAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+            .description == Self.name
         else { return nil }
         self.node = node
     }
@@ -44,7 +44,7 @@ struct CodedBy: PropertyAttribute {
     ///   `IgnoreCoding` attribute.
     ///
     /// - Returns: The built diagnoser instance.
-    func diagnoser() -> DiagnosticProducer {
+    func diagnoser() -> any DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             expect(syntax: VariableDeclSyntax.self)
             cantDuplicate()

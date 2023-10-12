@@ -45,4 +45,4 @@ struct KeyedVariable<Var: Variable>: ComposedVariable {
 }
 
 extension KeyedVariable: BasicCodingVariable
-where Var: BasicCodingVariable {}
+    where Var: BasicCodingVariable {}
