@@ -28,12 +28,12 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.two, forKey: CodingKeys.two)
                 }
@@ -85,12 +85,12 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
 
@@ -138,12 +138,12 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
 
@@ -171,12 +171,12 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                 }
@@ -210,7 +210,7 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     self.two = try container.decode(String.self, forKey: CodingKeys.two)
@@ -218,7 +218,7 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
 
@@ -261,7 +261,7 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                     let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
@@ -271,7 +271,7 @@ final class IgnoreCodingTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                     var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)

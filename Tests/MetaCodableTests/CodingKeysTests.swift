@@ -58,7 +58,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -67,7 +67,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -130,7 +130,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -139,7 +139,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -178,7 +178,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -187,7 +187,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -226,7 +226,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -235,7 +235,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -274,7 +274,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -283,7 +283,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -322,7 +322,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -331,7 +331,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -370,7 +370,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -379,7 +379,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -418,7 +418,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
                     self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
@@ -427,7 +427,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.productName, forKey: CodingKeys.productName)
                     try container.encode(self.productCost, forKey: CodingKeys.productCost)
@@ -466,7 +466,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.product_name = try container.decode(String.self, forKey: CodingKeys.product_name)
                     self.product_cost = try container.decode(String.self, forKey: CodingKeys.product_cost)
@@ -475,7 +475,7 @@ final class CodingKeysTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.product_name, forKey: CodingKeys.product_name)
                     try container.encode(self.product_cost, forKey: CodingKeys.product_cost)

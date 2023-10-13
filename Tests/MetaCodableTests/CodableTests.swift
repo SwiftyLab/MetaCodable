@@ -48,14 +48,14 @@ final class CodableTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.value = try container.decode(String.self, forKey: CodingKeys.value)
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.value, forKey: CodingKeys.value)
                 }
@@ -77,7 +77,7 @@ final class CodableTests: XCTestCase {
             struct SomeCodable: Encodable {
                 let value: String
 
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
             """,
@@ -86,12 +86,12 @@ final class CodableTests: XCTestCase {
             struct SomeCodable: Encodable {
                 let value: String
 
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.value = try container.decode(String.self, forKey: CodingKeys.value)
                 }
@@ -113,7 +113,7 @@ final class CodableTests: XCTestCase {
             struct SomeCodable: Decodable {
                 let value: String
 
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     self.value = "some"
                 }
             }
@@ -123,13 +123,13 @@ final class CodableTests: XCTestCase {
             struct SomeCodable: Decodable {
                 let value: String
 
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     self.value = "some"
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.value, forKey: CodingKeys.value)
                 }
@@ -151,11 +151,11 @@ final class CodableTests: XCTestCase {
             struct SomeCodable: Codable {
                 let value: String
 
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     self.value = "some"
                 }
 
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
             """,
@@ -164,11 +164,11 @@ final class CodableTests: XCTestCase {
             struct SomeCodable: Codable {
                 let value: String
 
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     self.value = "some"
                 }
 
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
             """

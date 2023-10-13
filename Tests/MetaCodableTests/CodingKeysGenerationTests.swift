@@ -18,14 +18,14 @@ final class CodingKeysGenerationTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.`internal` = try container.decode(String.self, forKey: CodingKeys.`internal`)
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.`internal`, forKey: CodingKeys.`internal`)
                 }
@@ -59,7 +59,7 @@ final class CodingKeysGenerationTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     let associatedtype_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.`associatedtype`)
                     self.val1 = try associatedtype_container.decode(String.self, forKey: CodingKeys.val1)
@@ -69,7 +69,7 @@ final class CodingKeysGenerationTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     var associatedtype_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.`associatedtype`)
                     try associatedtype_container.encode(self.val1, forKey: CodingKeys.val1)
@@ -106,7 +106,7 @@ final class CodingKeysGenerationTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     let key1val_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.key1val)
                     self.val = try key1val_container.decode(String.self, forKey: CodingKeys.val)
@@ -114,7 +114,7 @@ final class CodingKeysGenerationTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     var key1val_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.key1val)
                     try key1val_container.encode(self.val, forKey: CodingKeys.val)
@@ -153,7 +153,7 @@ final class CodingKeysGenerationTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     let nested_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                     self.val1 = try nested_container.decode(String.self, forKey: CodingKeys.val1)
@@ -163,7 +163,7 @@ final class CodingKeysGenerationTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     var nested_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                     try nested_container.encode(self.val1, forKey: CodingKeys.val1)

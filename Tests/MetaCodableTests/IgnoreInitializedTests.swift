@@ -49,12 +49,12 @@ final class IgnoreInitializedTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
 
@@ -83,14 +83,14 @@ final class IgnoreInitializedTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                 }
@@ -123,12 +123,12 @@ final class IgnoreInitializedTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                 }
@@ -161,14 +161,14 @@ final class IgnoreInitializedTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                 }
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                 }
             }
 

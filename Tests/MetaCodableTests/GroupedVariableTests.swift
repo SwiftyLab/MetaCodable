@@ -25,7 +25,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     self.two = try container.decode(String.self, forKey: CodingKeys.two)
@@ -34,7 +34,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                     try container.encode(self.two, forKey: CodingKeys.two)
@@ -75,7 +75,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     self.two = try container.decode(String.self, forKey: CodingKeys.two)
@@ -83,7 +83,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                     try container.encode(self.two, forKey: CodingKeys.two)
@@ -118,12 +118,12 @@ final class GroupedVariableTests: XCTestCase {
     //                     self.one = one
     //                     self.two = two
     //                 }
-    //                 init(from decoder: Decoder) throws {
+    //                 init(from decoder: any Decoder) throws {
     //                     let container = try decoder.container(keyedBy: CodingKeys.self)
     //                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
     //                     self.two = try container.decode(String.self, forKey: CodingKeys.two)
     //                 }
-    //                 func encode(to encoder: Encoder) throws {
+    //                 func encode(to encoder: any Encoder) throws {
     //                     var container = encoder.container(keyedBy: CodingKeys.self)
     //                     try container.encode(self.one, forKey: CodingKeys.one)
     //                     try container.encode(self.two, forKey: CodingKeys.two)
@@ -161,7 +161,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     self.two = try container.decode(String.self, forKey: CodingKeys.two)
@@ -170,7 +170,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                     try container.encode(self.two, forKey: CodingKeys.two)
@@ -211,7 +211,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     self.three = try container.decode(Int.self, forKey: CodingKeys.three)
@@ -219,7 +219,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                     try container.encode(self.three, forKey: CodingKeys.three)
@@ -258,7 +258,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Decodable {
-                init(from decoder: Decoder) throws {
+                init(from decoder: any Decoder) throws {
                     let container = try decoder.container(keyedBy: CodingKeys.self)
                     self.one = try container.decode(String.self, forKey: CodingKeys.one)
                     self.three = try container.decode(Int.self, forKey: CodingKeys.three)
@@ -266,7 +266,7 @@ final class GroupedVariableTests: XCTestCase {
             }
 
             extension SomeCodable: Encodable {
-                func encode(to encoder: Encoder) throws {
+                func encode(to encoder: any Encoder) throws {
                     var container = encoder.container(keyedBy: CodingKeys.self)
                     try container.encode(self.one, forKey: CodingKeys.one)
                     try container.encode(self.three, forKey: CodingKeys.three)
