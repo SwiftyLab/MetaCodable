@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 /// Represents the location for decoding/encoding for `Variable`s.
 ///

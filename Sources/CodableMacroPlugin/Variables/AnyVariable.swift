@@ -1,5 +1,5 @@
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// A type-erased variable value only containing initialization type data.
 ///

@@ -1,6 +1,5 @@
+import MetaCodable
 import XCTest
-
-@testable import MetaCodable
 
 final class LossySequenceTests: XCTestCase {
 

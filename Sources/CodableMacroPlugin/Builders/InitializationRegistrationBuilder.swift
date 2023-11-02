@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 /// A registration builder updating initialization data for variable.
 ///

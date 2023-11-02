@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 /// An extension that manages fetching attributes
 /// attached to declarations.

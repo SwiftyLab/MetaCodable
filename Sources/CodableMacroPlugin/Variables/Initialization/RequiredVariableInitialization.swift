@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 /// Represents required initialization type for `Variable`s inside
 /// type declarations.

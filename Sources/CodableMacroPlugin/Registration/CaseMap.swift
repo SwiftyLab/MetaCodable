@@ -1,6 +1,6 @@
-import OrderedCollections
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import OrderedCollections
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 extension Registrar {
     /// A map containing all the case names
@@ -205,7 +205,7 @@ private let invalidCaseNames: [String] = [
     "func",
     "guard",
     "if",
-    "import",
+    "@_implementationOnly import",
     "in",
     "init",
     "inout",

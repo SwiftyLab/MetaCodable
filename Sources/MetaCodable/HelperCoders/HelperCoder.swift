@@ -68,6 +68,7 @@ public extension HelperCoder {
     /// - Returns: An optional value of the ``HelperCoder/Coded`` type.
     ///
     /// - Throws: If decoding fails due to corrupted or invalid data.
+    @inlinable
     func decodeIfPresent(from decoder: Decoder) throws -> Coded? {
         return try? self.decode(from: decoder)
     }
@@ -83,6 +84,7 @@ public extension HelperCoder {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
+    @inlinable
     func encode(_ value: Coded, to encoder: Encoder) throws {
         try (value as? Encodable)?.encode(to: encoder)
     }
@@ -98,6 +100,7 @@ public extension HelperCoder {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
+    @inlinable
     func encodeIfPresent(_ value: Coded?, to encoder: Encoder) throws {
         guard let value else { return }
         try self.encode(value, to: encoder)
@@ -115,6 +118,7 @@ public extension HelperCoder where Coded: Encodable {
     ///   - encoder: The encoder to write data to.
     ///
     /// - Throws: If any values are invalid for the given encoder’s format.
+    @inlinable
     func encode(_ value: Coded, to encoder: Encoder) throws {
         try value.encode(to: encoder)
     }

@@ -33,7 +33,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 | --- | --- | --- | --- |
 | iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ | 5.9 | Swift Package Manager | Fully Tested |
 | Linux | 5.9 | Swift Package Manager | Fully Tested |
-| Windows | 5.9 | Swift Package Manager | Fully Tested |
+| Windows | 5.9.1 | Swift Package Manager | Fully Tested |
 
 ## Installation
 

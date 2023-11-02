@@ -6,6 +6,7 @@
         "**/node_modules": true,
         "Package.resolved": true
     },
+    "editor.inlayHints.enabled": "offUnlessPressed",
     "editor.unicodeHighlight.allowedCharacters": {
         "－": true
     },

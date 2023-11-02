@@ -1,5 +1,5 @@
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate passed syntax is not an
 /// uninitialized variable declaration.

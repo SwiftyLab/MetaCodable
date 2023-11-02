@@ -1,6 +1,6 @@
-import SwiftDiagnostics
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftDiagnostics
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate macro-attributes
 /// that is used in combination with other macro-attribute types.

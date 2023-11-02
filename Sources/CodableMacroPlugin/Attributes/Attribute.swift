@@ -1,6 +1,6 @@
-import SwiftDiagnostics
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftDiagnostics
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// A type indicating a macro-attribute.
 ///

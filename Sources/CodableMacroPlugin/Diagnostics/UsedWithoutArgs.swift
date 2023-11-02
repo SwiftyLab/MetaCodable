@@ -1,5 +1,5 @@
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate whether macro-attribute
 /// is used without any provided argument(s).

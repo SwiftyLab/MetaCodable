@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 /// A registration builder updating helper expression data that
 /// will be used for decoding/encoding for variable.

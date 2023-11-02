@@ -1,5 +1,5 @@
-import SwiftCompilerPlugin
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftCompilerPlugin
+@_implementationOnly import SwiftSyntaxMacros
 
 /// The compiler plugin that exposes all the macro type defined.
 ///

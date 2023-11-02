@@ -23,30 +23,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-        - os: ubuntu-latest
-          swift: latest
-        - os: macos-13
-          xcode: 15
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Setup repository
-      uses: SwiftyLab/ci/actions/setup@main
-      with:
-        swift: ${{ matrix.swift }}
-        xcode: ${{ matrix.xcode }}
-
-    - name: Build package products
-      run: swift build --build-tests
-
   # analyze:
   #   name: Analyze
   #   if: github.event_name != 'workflow_dispatch'
@@ -84,47 +60,41 @@ jobs:
   #     with:
   #       config_path: .github/config/spellcheck.yml
 
-  # swift-package-test:
-  #   name: Swift Package
-  #   uses: SwiftyLab/ci/.github/workflows/swift-package.yml@main
-  #   secrets: inherit
-  #   with:
-  #     matrix: >
-  #       {
-  #         "include": [
-  #           {
-  #             "os": "ubuntu-latest",
-  #             "swift": "5.9"
-  #           },
-  #           {
-  #             "os": ""macos-13",
-  #             "xcode": "15"
-  #           }
-  #         ]
-  #       }
-      # {
-      #   "os": "windows-latest",
-      #   "swift": "5.9"
-      # }
+  swift-package-test:
+    name: Swift Package
+    uses: SwiftyLab/ci/.github/workflows/swift-package.yml@main
+    secrets: inherit
+    with:
+      matrix: >
+        {
+          "include": [
+            {
+              "os": "ubuntu-latest",
+              "swift": "latest"
+            },
+            {
+              "os": "macos-13",
+              "xcode": "latest"
+            }
+          ]
+        }
 
   ci:
     name: CI
     if: github.event_name == 'push'
-    needs: build
+    needs: swift-package-test
     # needs: [analyze, swift-package-test]
     uses: SwiftyLab/ci/.github/workflows/ci.yml@main
 
   cd:
     name: CD
     if: |
-      (github.event_name == 'push' && needs.ci.outputs.release == 'true') ||
-      (always() &&
+      always() &&
        github.event_name == 'workflow_dispatch' &&
        github.event.inputs.release == 'true' &&
        (needs.ci.result == 'success' || needs.ci.result == 'skipped') &&
-       (needs.build.result == 'success' || needs.build.result == 'skipped'))
-    #  needs.swift-package-test.result == 'success' &&
-    needs: [build, ci]
+       (needs.swift-package-test.result == 'success' || needs.swift-package-test.result == 'skipped')
+    needs: [swift-package-test, ci]
     # needs: [analyze, swift-package-test, ci]
     uses: SwiftyLab/ci/.github/workflows/cd.yml@main
     with:

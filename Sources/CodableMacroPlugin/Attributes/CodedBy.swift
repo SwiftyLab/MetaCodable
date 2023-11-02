@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 /// Attribute type for `CodedBy` macro-attribute.
 ///
