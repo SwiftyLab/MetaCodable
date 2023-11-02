@@ -13,6 +13,7 @@ Level up ``/MetaCodable``'s generated implementations with helpers assisting com
 - Decoding basic data type (i.e `Bool`, `Int`, `String`) from any other basic data types (i.e `Bool`, `Int`, `String`).
 - Custom `Date` decoding/encoding approach, i.e. converting from UNIX timestamp, text formatted date etc.
 - Custom `Data` decoding/encoding approach, i.e. converting from base64 text etc.
+- Decoding/encoding non-confirming floats with text based infinity and not-a-number representations.
 
 ## Installation
 
