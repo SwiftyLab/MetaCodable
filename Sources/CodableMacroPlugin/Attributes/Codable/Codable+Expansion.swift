@@ -1,6 +1,6 @@
-import Foundation
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import Foundation
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 extension Codable: ExtensionMacro {
     /// Expand to produce extensions with `Codable` implementation

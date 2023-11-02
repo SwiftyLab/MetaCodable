@@ -1,6 +1,6 @@
-import SwiftDiagnostics
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftDiagnostics
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// Attribute type for `IgnoreEncoding` macro-attribute.
 ///

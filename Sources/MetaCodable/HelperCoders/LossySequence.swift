@@ -14,7 +14,7 @@ where S: Codable, S.Element: Codable {
     /// when no valid data decoded.
     private let `default`: S
 
-    /// Creates a new instance of helper coder that decodes
+    /// Creates a new instance of ``HelperCoder`` that decodes
     /// lossy sequence of provided type and with given
     /// default values.
     ///

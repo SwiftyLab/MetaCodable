@@ -1,5 +1,5 @@
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// An `Attribute` type that generates declarations for the attached
 /// declaration by performing registration of each member variables.

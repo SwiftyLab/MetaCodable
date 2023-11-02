@@ -1,4 +1,4 @@
-import Foundation
+@_implementationOnly import Foundation
 
 /// A type performing transformation on provided `CodingKey`.
 ///

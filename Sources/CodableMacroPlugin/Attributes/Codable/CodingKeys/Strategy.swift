@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 extension CodingKeys {
     /// The values that determine the equivalent

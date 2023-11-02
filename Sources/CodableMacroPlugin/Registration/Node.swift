@@ -1,7 +1,7 @@
-import OrderedCollections
-import SwiftSyntax
-import SwiftSyntaxBuilder
-import SwiftSyntaxMacros
+@_implementationOnly import OrderedCollections
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxBuilder
+@_implementationOnly import SwiftSyntaxMacros
 
 extension Registrar {
     /// A type storing variable and `CodingKey`

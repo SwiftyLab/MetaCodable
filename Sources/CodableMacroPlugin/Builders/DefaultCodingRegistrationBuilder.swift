@@ -1,4 +1,4 @@
-import SwiftSyntax
+@_implementationOnly import SwiftSyntax
 
 /// A registration builder updating default value expression data that
 /// will be used for decoding failure and memberwise initializer(s)

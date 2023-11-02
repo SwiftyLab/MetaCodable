@@ -1,6 +1,6 @@
-import SwiftDiagnostics
-import SwiftSyntax
-import SwiftSyntaxMacros
+@_implementationOnly import SwiftDiagnostics
+@_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
 /// A type producing diagnostics for the passed syntax
 /// in the macro expansion context provided.

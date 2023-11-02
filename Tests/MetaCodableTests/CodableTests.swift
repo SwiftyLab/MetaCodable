@@ -1,3 +1,4 @@
+#if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
 import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxMacrosTestSupport
@@ -232,3 +233,4 @@ extension DiagnosticSpec {
         )
     }
 }
+#endif

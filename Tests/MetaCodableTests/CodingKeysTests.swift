@@ -1,3 +1,4 @@
+#if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
 import XCTest
 
 @testable import CodableMacroPlugin
@@ -495,3 +496,4 @@ final class CodingKeysTests: XCTestCase {
         )
     }
 }
+#endif
