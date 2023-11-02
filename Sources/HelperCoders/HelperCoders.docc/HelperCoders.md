@@ -11,6 +11,7 @@ Level up ``/MetaCodable``'s generated implementations with helpers assisting com
 `HelperCoders` aims to provide collection of helpers that can be used for common decoding/encoding tasks, reducing boilerplate. Some of the examples include:
 
 - Decoding basic data type (i.e `Bool`, `Int`, `String`) from any other basic data types (i.e `Bool`, `Int`, `String`).
+- Custom `Date` decoding/encoding approach, i.e. converting from UNIX timestamp, text formatted date etc.
 
 ## Installation
 
@@ -40,3 +41,10 @@ Level up ``/MetaCodable``'s generated implementations with helpers assisting com
 - ``ValueCoder``
 - ``ValueCodingStrategy``
 - ``NonConformingCoder``
+
+### Date
+
+- ``Since1970DateCoder``
+- ``DateCoder``
+- ``ISO8601DateCoder``
+- ``DateFormatConverter``
