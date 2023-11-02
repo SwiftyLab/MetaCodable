@@ -14,6 +14,7 @@ let package = Package(
     ],
     products: [
         .library(name: "MetaCodable", targets: ["MetaCodable"]),
+        .library(name: "HelperCoders", targets: ["HelperCoders"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
@@ -34,10 +35,11 @@ let package = Package(
             ]
         ),
         .target(name: "MetaCodable", dependencies: ["CodableMacroPlugin"]),
+        .target(name: "HelperCoders", dependencies: ["MetaCodable"]),
         .testTarget(
             name: "MetaCodableTests",
             dependencies: [
-                "CodableMacroPlugin", "MetaCodable",
+                "CodableMacroPlugin", "MetaCodable", "HelperCoders",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ]
         ),
