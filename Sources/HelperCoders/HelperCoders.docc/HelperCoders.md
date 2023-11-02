@@ -14,6 +14,8 @@ Level up ``/MetaCodable``'s generated implementations with helpers assisting com
 - Custom `Date` decoding/encoding approach, i.e. converting from UNIX timestamp, text formatted date etc.
 - Custom `Data` decoding/encoding approach, i.e. converting from base64 text etc.
 - Decoding/encoding non-confirming floats with text based infinity and not-a-number representations.
+- Conditionally decode/encode with two helpers each handling one.
+- Using existing property wrappers for custom decoding/encoding.
 
 ## Installation
 
@@ -54,3 +56,9 @@ Level up ``/MetaCodable``'s generated implementations with helpers assisting com
 ### Data
 
 - ``Base64Coder``
+
+### Composition
+
+- ``PropertyWrapperCoder``
+- ``PropertyWrappable``
+- ``ConditionalCoder``
