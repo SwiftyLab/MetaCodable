@@ -50,8 +50,7 @@ final class GroupedVariableTests: XCTestCase {
                         case three = "three"
                     }
                 }
-                """,
-            diagnostics: [.multiBinding(line: 4, column: 5)]
+                """
         )
     }
 
@@ -97,8 +96,7 @@ final class GroupedVariableTests: XCTestCase {
                         case two = "two"
                     }
                 }
-                """,
-            diagnostics: [.multiBinding(line: 4, column: 5)]
+                """
         )
     }
 
@@ -186,8 +184,7 @@ final class GroupedVariableTests: XCTestCase {
                         case three = "three"
                     }
                 }
-                """,
-            diagnostics: [.multiBinding(line: 4, column: 5)]
+                """
         )
     }
 
@@ -233,8 +230,7 @@ final class GroupedVariableTests: XCTestCase {
                         case three = "three"
                     }
                 }
-                """,
-            diagnostics: [.multiBinding(line: 4, column: 5)]
+                """
         )
     }
 
@@ -280,8 +276,7 @@ final class GroupedVariableTests: XCTestCase {
                         case three = "three"
                     }
                 }
-                """,
-            diagnostics: [.multiBinding(line: 4, column: 5)]
+                """
         )
     }
 }
