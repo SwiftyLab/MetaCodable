@@ -42,6 +42,25 @@ struct KeyedVariable<Var: Variable>: ComposedVariable {
     /// Provides whether underlying variable value is to be encoded,
     /// if provided code option is set as `false` otherwise `true`.
     var encode: Bool? { options.code ? true : base.encode }
+
+    /// Whether the variable type requires `Decodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Decodable` conformance and provided code option
+    /// is set as `true`. Otherwise depends on whether
+    /// underlying variable is to be decoded.
+    var requireDecodable: Bool? {
+        return options.code ? base.requireDecodable : base.decode
+    }
+    /// Whether the variable type requires `Encodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Encodable` conformance and provided code option
+    /// is set as `true`. Otherwise depends on whether
+    /// underlying variable is to be encoded.
+    var requireEncodable: Bool? {
+        return options.code ? base.requireEncodable : base.encode
+    }
 }
 
 extension KeyedVariable: BasicCodingVariable

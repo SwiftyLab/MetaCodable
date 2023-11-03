@@ -44,6 +44,17 @@ where Var.Initialization == RequiredInitialization {
     /// Always `true` for this type.
     var encode: Bool? { true }
 
+    /// Whether the variable type requires `Decodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Decodable` conformance.
+    var requireDecodable: Bool? { base.requireDecodable }
+    /// Whether the variable type requires `Encodable` conformance.
+    ///
+    /// Provides whether underlying variable type requires
+    /// `Encodable` conformance.
+    var requireEncodable: Bool? { base.requireEncodable }
+
     /// Indicates the initialization type for this variable.
     ///
     /// Provides default initialization value in initialization

@@ -34,6 +34,21 @@ struct BasicVariable: BasicCodingVariable {
     /// during initialization.
     let encode: Bool?
 
+    /// Whether the variable type requires
+    /// `Decodable` conformance.
+    ///
+    /// By default set as `nil`, unless
+    /// `decode` is set explicitly during
+    /// initialization.
+    var requireDecodable: Bool? { self.decode }
+    /// Whether the variable type requires
+    /// `Encodable` conformance.
+    ///
+    /// By default set as `nil`, unless
+    /// `encode` is set explicitly during
+    /// initialization.
+    var requireEncodable: Bool? { self.encode }
+
     /// Creates a new variable with provided data.
     ///
     /// Basic implementation for this variable provided
