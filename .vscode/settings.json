@@ -10,4 +10,8 @@
     "editor.unicodeHighlight.allowedCharacters": {
         "－": true
     },
+    "swift.disableAutoResolve": true,
+    "swift.swiftEnvironmentVariables": {
+        "SWIFT_SYNTAX_EXTENSION_MACRO_FIXED": "true"
+    },
 }

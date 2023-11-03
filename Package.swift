@@ -45,3 +45,19 @@ let package = Package(
         ),
     ]
 )
+
+if Context.environment["SWIFT_SYNTAX_EXTENSION_MACRO_FIXED"] != nil {
+    package.dependencies.remove(at: 0)
+    package.dependencies.append(
+        .package(
+            url: "https://github.com/soumyamahunt/swift-syntax.git",
+            branch: "extension-macro-assert-fix"
+        )
+    )
+
+    package.targets.forEach { target in
+        var settings = target.swiftSettings ?? []
+        settings.append(.define("SWIFT_SYNTAX_EXTENSION_MACRO_FIXED"))
+        target.swiftSettings = settings
+    }
+}

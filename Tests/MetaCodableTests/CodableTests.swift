@@ -104,7 +104,8 @@ final class CodableTests: XCTestCase {
                         case value = "value"
                     }
                 }
-                """
+                """,
+            conformsTo: ["Codable": ["Decodable"]]
         )
     }
 
@@ -142,7 +143,8 @@ final class CodableTests: XCTestCase {
                         case value = "value"
                     }
                 }
-                """
+                """,
+            conformsTo: ["Codable": ["Encodable"]]
         )
     }
 
@@ -173,7 +175,8 @@ final class CodableTests: XCTestCase {
                     func encode(to encoder: Encoder) throws {
                     }
                 }
-                """
+                """,
+            conformsTo: ["Codable": []]
         )
     }
 }
@@ -182,6 +185,9 @@ func assertMacroExpansion(
     _ originalSource: String,
     expandedSource: String,
     diagnostics: [DiagnosticSpec] = [],
+    conformsTo conformanceMap: [String: [TypeSyntax]] = [
+        "Codable": ["Decodable", "Encodable"]
+    ],
     testModuleName: String = "TestModule",
     testFileName: String = "test.swift",
     indentationWidth: Trivia = .spaces(4),
@@ -204,6 +210,7 @@ func assertMacroExpansion(
             "CodingKeys": CodingKeys.self,
             "IgnoreCodingInitialized": IgnoreCodingInitialized.self,
         ],
+        conformsTo: conformanceMap,
         testModuleName: testModuleName, testFileName: testFileName,
         indentationWidth: indentationWidth,
         file: file, line: line
@@ -221,14 +228,9 @@ extension DiagnosticSpec {
         return .init(
             id: MessageID(
                 domain: "SwiftSyntaxMacroExpansion",
-                id: "accessorMacroOnVariableWithMultipleBindings"
+                id: "peerMacroOnVariableWithMultipleBindings"
             ),
-            message:
-                "swift-syntax applies macros syntactically and"
-                + " there is no way to represent a variable declaration"
-                + " with multiple bindings that have accessors syntactically."
-                + " While the compiler allows this expansion,"
-                + " swift-syntax cannot represent it and thus disallows it.",
+            message: "peer macro can only be applied to a single variable",
             line: line, column: column
         )
     }

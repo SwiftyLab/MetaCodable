@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "npm exec --package=swiftylab-ci -- build.js",
-    "test": "npm exec --package=swiftylab-ci -- test.js",
+    "test": "SWIFT_SYNTAX_EXTENSION_MACRO_FIXED=true npm exec --package=swiftylab-ci -- test.js",
     "archive": "echo implement",
     "generate": "echo implement",
     "format": "npm exec --package=swiftylab-ci -- format.js",

@@ -51,16 +51,7 @@ final class CodedAtTests: XCTestCase {
                 }
                 """,
             diagnostics: [
-                .multiBinding(line: 2, column: 5),
-                .init(
-                    id: CodedAt.misuseID,
-                    message:
-                        "@CodedAt can't be used with grouped variables declaration",
-                    line: 2, column: 5,
-                    fixIts: [
-                        .init(message: "Remove @CodedAt attribute")
-                    ]
-                ),
+                .multiBinding(line: 2, column: 5)
             ]
         )
     }
