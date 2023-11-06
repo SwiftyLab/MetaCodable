@@ -47,8 +47,7 @@ struct StaticVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     // is directly used in the guard statement.
     let isStatic = syntax.as(VariableDeclSyntax.self)?
       .modifiers.contains { $0.name.tokenKind == .keyword(.static) }
-    guard isStatic ?? false
-    else { return false }
+    guard isStatic ?? false else { return false }
     let message = attr.node.diagnostic(
       message:
         "@\(attr.name) can't be used with static variables declarations",
