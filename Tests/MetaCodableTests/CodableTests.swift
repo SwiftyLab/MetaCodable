@@ -72,8 +72,8 @@ final class CodableTests: XCTestCase {
         )
     }
 
-  func testWithoutAnyCustomizationWithStaticVar() throws {
-    assertMacroExpansion(
+    func testWithoutAnyCustomizationWithStaticVar() throws {
+        assertMacroExpansion(
             """
             @Codable
             struct SomeCodable {
@@ -110,8 +110,8 @@ final class CodableTests: XCTestCase {
                     }
                 }
                 """
-    )
-  }
+        )
+    }
 
     func testOnlyDecodeConformance() throws {
         assertMacroExpansion(

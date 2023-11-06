@@ -127,7 +127,7 @@ final class CodedAtTests: XCTestCase {
                     fixIts: [
                         .init(message: "Remove @CodedAt attribute")
                     ]
-                )
+                ),
             ]
         )
     }
