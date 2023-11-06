@@ -419,16 +419,14 @@ final class CodedAtTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let container_valueDecoder = try container.superDecoder(forKey: CodingKeys.value)
-                        self.value = try LossySequenceCoder<[String]>().decode(from: container_valueDecoder)
+                        self.value = try LossySequenceCoder<[String]>().decode(from: container, forKey: CodingKeys.value)
                     }
                 }
 
                 extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
-                        let container_valueEncoder = container.superEncoder(forKey: CodingKeys.value)
-                        try LossySequenceCoder<[String]>().encode(self.value, to: container_valueEncoder)
+                        try LossySequenceCoder<[String]>().encode(self.value, to: &container, atKey: CodingKeys.value)
                     }
                 }
 
@@ -467,8 +465,7 @@ final class CodedAtTests: XCTestCase {
                     init(from decoder: Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         do {
-                            let container_valueDecoder = try container.superDecoder(forKey: CodingKeys.value)
-                            self.value = try LossySequenceCoder<[String]>().decode(from: container_valueDecoder)
+                            self.value = try LossySequenceCoder<[String]>().decode(from: container, forKey: CodingKeys.value)
                         } catch {
                             self.value = ["some"]
                         }
@@ -478,8 +475,7 @@ final class CodedAtTests: XCTestCase {
                 extension SomeCodable: Encodable {
                     func encode(to encoder: Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
-                        let container_valueEncoder = container.superEncoder(forKey: CodingKeys.value)
-                        try LossySequenceCoder<[String]>().encode(self.value, to: container_valueEncoder)
+                        try LossySequenceCoder<[String]>().encode(self.value, to: &container, atKey: CodingKeys.value)
                     }
                 }
 
@@ -621,8 +617,7 @@ final class CodedAtTests: XCTestCase {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        let nested_deeply_container_valueDecoder = try nested_deeply_container.superDecoder(forKey: CodingKeys.value)
-                        self.value = try LossySequenceCoder<[String]>().decode(from: nested_deeply_container_valueDecoder)
+                        self.value = try LossySequenceCoder<[String]>().decode(from: nested_deeply_container, forKey: CodingKeys.value)
                     }
                 }
 
@@ -631,8 +626,7 @@ final class CodedAtTests: XCTestCase {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        let nested_deeply_container_valueEncoder = nested_deeply_container.superEncoder(forKey: CodingKeys.value)
-                        try LossySequenceCoder<[String]>().encode(self.value, to: nested_deeply_container_valueEncoder)
+                        try LossySequenceCoder<[String]>().encode(self.value, to: &nested_deeply_container, atKey: CodingKeys.value)
                     }
                 }
 
@@ -675,8 +669,7 @@ final class CodedAtTests: XCTestCase {
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                         do {
-                            let nested_deeply_container_valueDecoder = try nested_deeply_container.superDecoder(forKey: CodingKeys.value)
-                            self.value = try LossySequenceCoder<[String]>().decode(from: nested_deeply_container_valueDecoder)
+                            self.value = try LossySequenceCoder<[String]>().decode(from: nested_deeply_container, forKey: CodingKeys.value)
                         } catch {
                             self.value = ["some"]
                         }
@@ -688,8 +681,7 @@ final class CodedAtTests: XCTestCase {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                         var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        let nested_deeply_container_valueEncoder = nested_deeply_container.superEncoder(forKey: CodingKeys.value)
-                        try LossySequenceCoder<[String]>().encode(self.value, to: nested_deeply_container_valueEncoder)
+                        try LossySequenceCoder<[String]>().encode(self.value, to: &nested_deeply_container, atKey: CodingKeys.value)
                     }
                 }
 
