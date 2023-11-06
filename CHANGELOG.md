@@ -1,3 +1,33 @@
+## [1.1.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.0.0...v1.1.0) (2023-11-06)
+
+
+### 🚀 Features
+
+* **`HelperCoders`:** added base64 data  decoding/encoding helpers ([bee7cc4](https://github.com/SwiftyLab/MetaCodable/commit/bee7cc4a00af53eaeb7c7179e6b9d01e79c8c7b3))
+* **`HelperCoders`:** added basic data types decoding helpers ([6089cb5](https://github.com/SwiftyLab/MetaCodable/commit/6089cb5a9fdbd8a41f7471c0c8ade819f36306f5))
+* **`HelperCoders`:** added conditional and property wrapper based helpers ([4542ac2](https://github.com/SwiftyLab/MetaCodable/commit/4542ac2e9c05cd1c54b9b06a95022f63a18edc5d))
+* **`HelperCoders`:** added date decoding/encoding helpers ([ae9ed44](https://github.com/SwiftyLab/MetaCodable/commit/ae9ed449d56a8057fe6dd3721643fa07f4403dcd))
+* **`HelperCoders`:** added non-confirming floats decoding/encoding helpers ([6f8241a](https://github.com/SwiftyLab/MetaCodable/commit/6f8241ab9add0f33941332b26044ba081d001e26))
+* added non-variadic generics support ([#23](https://github.com/SwiftyLab/MetaCodable/issues/23)) ([b615251](https://github.com/SwiftyLab/MetaCodable/commit/b615251ffd23fd2bda56d201eab9865b4bd73557))
+
+
+### 🐛 Fixes
+
+* fixed build failure with `ExistentialAny` upcoming feature (by @Midbin) ([#34](https://github.com/SwiftyLab/MetaCodable/issues/34)) ([db55d96](https://github.com/SwiftyLab/MetaCodable/commit/db55d9696cc676f9b0e099352bb8b35c09631be9))
+* fixed default value not respected for optional types ([#36](https://github.com/SwiftyLab/MetaCodable/issues/36)) ([4eb999c](https://github.com/SwiftyLab/MetaCodable/commit/4eb999cd76676e5f4d012435de123bdc1b6d08b5))
+* fixed failure in structs with static members (by @Midbin) ([#37](https://github.com/SwiftyLab/MetaCodable/issues/37)) ([e256e12](https://github.com/SwiftyLab/MetaCodable/commit/e256e12a85896449cdbd092b9bd3ac2f0a13b1f7))
+* fixed optional value decoding failure with `HelperCoder` when value doesn't exist ([#35](https://github.com/SwiftyLab/MetaCodable/issues/35)) ([ad19d4d](https://github.com/SwiftyLab/MetaCodable/commit/ad19d4d55cb9966071316b9d91b158137c0898db))
+
+
+### 📚 Documentation
+
+* **README:** added `HelperCoders` usage ([#38](https://github.com/SwiftyLab/MetaCodable/issues/38)) ([8da6282](https://github.com/SwiftyLab/MetaCodable/commit/8da6282f8c4ff79b3bf8f68929172126055082ab))
+
+
+### ✅ Tests
+
+* added `swift-syntax` temporary fix for extension macros testing ([#33](https://github.com/SwiftyLab/MetaCodable/issues/33)) ([5344f13](https://github.com/SwiftyLab/MetaCodable/commit/5344f133a6458fa20458427e8f3fed252907fda4))
+
 ## [1.0.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.0.0-alpha.2...v1.0.0) (2023-09-20)
 
 
