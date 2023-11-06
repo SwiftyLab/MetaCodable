@@ -1,6 +1,6 @@
 # MetaCodable
 
-[![API Docs](http://img.shields.io/badge/Read_the-docs-2196f3.svg)](https://swiftylab.github.io/MetaCodable/documentation/metacodable/)
+[![API Docs](http://img.shields.io/badge/Read_the-docs-2196f3.svg)](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/metacodable)
 [![Swift Package Manager Compatible](https://img.shields.io/github/v/tag/SwiftyLab/MetaCodable?label=SPM&color=orange)](https://badge.fury.io/gh/SwiftyLab%2FMetaCodable)
 [![Swift](https://img.shields.io/badge/Swift-5.9+-orange)](https://img.shields.io/badge/Swift-5-DE5D43)
 [![Platforms](https://img.shields.io/badge/Platforms-all-sucess)](https://img.shields.io/badge/Platforms-all-sucess)
@@ -21,7 +21,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
-- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
+- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` and types from ``HelperCoders`` module.
 - Allows to ignore specific properties from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``@IgnoreEncoding()``.
 - Allows to use camel-case names for variables according to [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/#general-conventions), while enabling a type to work with different case style keys with ``CodingKeys(_:)``.
 - Allows to ignore all initialized properties of a type from decoding/encoding with ``IgnoreCodingInitialized()`` unless explicitly asked to decode/encode by attaching any coding attributes, i.e. ``CodedIn(_:)``, ``CodedAt(_:)``,
@@ -219,7 +219,23 @@ init(field: String = "some") {
 
 </details>
 
-See the full [documentation](https://swiftylab.github.io/MetaCodable/documentation/metacodable/) for API details and advanced use cases.
+<details>
+  <summary>Use or create custom helpers to provide custom decoding/encoding.</summary>
+
+Library provides following helpers that address common custom decoding/encoding needs:
+
+- `LossySequenceCoder` to decode only valid data while ignopring invalid data in a sequence, instead of traditional way of failing decoding entirely.
+- `ValueCoder` to decode `Bool`, `Int`, `Double`, `String` etc. basic types even if they are represented in some other type, i.e decoding `Int` from `"1"`, decoding boolean from `"yes"` etc.
+- Custom Date decoding/encoding with UNIX timestamp (`Since1970DateCoder`) or date formatters (`DateCoder`, `ISO8601DateCoder`).
+- `Base64Coder` to decode/encode data in base64 string representation.
+
+And more, see the full documentation for [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/helpercoders) for more deatils.
+
+You can even create your own by conforming to `HelperCoder`.
+
+</details>
+
+See the full documentation for [`MetaCodable`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/metacodable) and [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/helpercoders), for API details and advanced use cases.
 
 ## Contributing
 

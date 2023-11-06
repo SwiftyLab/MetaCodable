@@ -218,14 +218,14 @@ public extension HelperCoder {
         try self.encode(value, to: encoder)
     }
 
-    /// Encodes given value of the ``Coded`` type to the provided `container`
+    /// Encodes given value of the ``HelperCoder/Coded`` type to the provided `container`
     /// at the specified `key`.
     ///
-    /// By default, of the ``Coded`` value confirms to `Encodable`, then
+    /// By default, of the ``HelperCoder/Coded`` value confirms to `Encodable`, then
     /// encoding is performed. Otherwise no data written to the encoder.
     ///
     /// - Parameters:
-    ///   - value: The ``Coded`` value to encode.
+    ///   - value: The ``HelperCoder/Coded`` value to encode.
     ///   - container: The container to write data to.
     ///   - key: The key to write data at.
     ///
@@ -239,14 +239,14 @@ public extension HelperCoder {
         try self.encode(value, to: container.superEncoder(forKey: key))
     }
 
-    /// Encodes given optional value of the ``Coded`` type to the provided
+    /// Encodes given optional value of the ``HelperCoder/Coded`` type to the provided
     /// `container` at the specified `key`, if it is not `nil`.
     ///
-    /// By default, of the ``Coded`` value confirms to `Encodable`, then
+    /// By default, of the ``HelperCoder/Coded`` value confirms to `Encodable`, then
     /// encoding is performed. Otherwise no data written to the encoder.
     ///
     /// - Parameters:
-    ///   - value: The optional ``Coded`` value to encode.
+    ///   - value: The optional ``HelperCoder/Coded`` value to encode.
     ///   - container: The container to write data to.
     ///   - key: The key to write data at.
     ///
