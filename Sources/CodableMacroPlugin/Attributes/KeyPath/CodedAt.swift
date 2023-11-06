@@ -37,6 +37,8 @@ struct CodedAt: PropertyAttribute {
     ///   declaration.
     /// * Attached declaration is not a grouped variable
     ///   declaration.
+    /// * Attached declaration is not a static variable
+    ///   declaration
     /// * This attribute isn't used combined with `CodedIn`
     ///   and `IgnoreCoding` attribute.
     ///
@@ -44,6 +46,7 @@ struct CodedAt: PropertyAttribute {
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             attachedToUngroupedVariable()
+            attachedToNonStaticVariable()
             cantDuplicate()
             cantBeCombined(with: CodedIn.self)
             cantBeCombined(with: IgnoreCoding.self)

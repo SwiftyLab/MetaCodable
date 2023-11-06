@@ -56,6 +56,34 @@ final class CodedAtTests: XCTestCase {
         )
     }
 
+    func testMisuseOnStaticVariableDeclaration() throws {
+        assertMacroExpansion(
+            """
+            struct SomeCodable {
+                @CodedAt
+                static let value: String
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    static let value: String
+                }
+                """,
+            diagnostics: [
+                .init(
+                    id: CodedAt.misuseID,
+                    message:
+                        "@CodedAt can't be used with static variables declarations",
+                    line: 2, column: 5,
+                    fixIts: [
+                      .init(message: "Remove @CodedAt attribute")
+                    ]
+                )
+            ]
+        )
+    }
+
     func testMisuseInCombinationWithCodedInMacro() throws {
         assertMacroExpansion(
             """
