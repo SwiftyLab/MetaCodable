@@ -3,22 +3,23 @@ import MetaCodable
 import XCTest
 
 final class HelperCodersTests: XCTestCase {
-    func testConditionalCoding() throws {
+    func testConditionalAndOptionalCoding() throws {
         let jsonStr = """
             {
-                "date": "1997-11-04T10:38:21Z",
-                "optionalDate": "1997-11-04T10:38:21Z"
+                "date": "1997-11-04T10:38:21Z"
             }
             """
         let json = try XCTUnwrap(jsonStr.data(using: .utf8))
         let model = try JSONDecoder().decode(Model.self, from: json)
         let epoch: Double = 878639901
         XCTAssertEqual(model.date.timeIntervalSince1970, epoch)
+        XCTAssertNil(model.optionalDate)
         let encoded = try JSONEncoder().encode(model)
         let customDecoder = JSONDecoder()
         customDecoder.dateDecodingStrategy = .secondsSince1970
         let newModel = try customDecoder.decode(MirrorModel.self, from: encoded)
         XCTAssertEqual(newModel.date.timeIntervalSince1970, epoch)
+        XCTAssertNil(model.optionalDate)
     }
 
     func testPropertyWrapperCoding() throws {

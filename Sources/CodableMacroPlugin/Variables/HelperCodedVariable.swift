@@ -84,10 +84,10 @@ struct HelperCodedVariable<Var: BasicCodingVariable>: ComposedVariable {
                 """
             }
         case .container(let container, let key):
-            let decoder: TokenSyntax = "\(container)_\(name.raw)Decoder"
             return CodeBlockItemListSyntax {
-                "let \(decoder) = try \(container).superDecoder(forKey: \(key))"
-                "self.\(name) = try \(options.expr).\(method)(from: \(decoder))"
+                """
+                self.\(name) = try \(options.expr).\(method)(from: \(container), forKey: \(key))
+                """
             }
         }
     }
@@ -121,10 +121,10 @@ struct HelperCodedVariable<Var: BasicCodingVariable>: ComposedVariable {
                 """
             }
         case .container(let container, let key):
-            let encoder: TokenSyntax = "\(container)_\(name.raw)Encoder"
             return CodeBlockItemListSyntax {
-                "let \(encoder) = \(container).superEncoder(forKey: \(key))"
-                "try \(options.expr).\(method)(self.\(name), to: \(encoder))"
+                """
+                try \(options.expr).\(method)(self.\(name), to: &\(container), atKey: \(key))
+                """
             }
         }
     }
