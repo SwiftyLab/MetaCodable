@@ -72,6 +72,47 @@ final class CodableTests: XCTestCase {
         )
     }
 
+    func testWithoutAnyCustomizationWithStaticVar() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            struct SomeCodable {
+                let value: String
+                static let otherValue: String
+                public private(set) static var valueWithModifiers: String
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let value: String
+                    static let otherValue: String
+                    public private(set) static var valueWithModifiers: String
+                }
+
+                extension SomeCodable: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                    }
+                }
+
+                extension SomeCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.value, forKey: CodingKeys.value)
+                    }
+                }
+
+                extension SomeCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case value = "value"
+                    }
+                }
+                """
+        )
+    }
+
     func testOnlyDecodeConformance() throws {
         assertMacroExpansion(
             """

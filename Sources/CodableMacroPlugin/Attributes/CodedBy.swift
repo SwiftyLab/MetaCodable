@@ -38,6 +38,8 @@ struct CodedBy: PropertyAttribute {
     /// The following conditions are checked by the
     /// built diagnoser:
     /// * Attached declaration is a variable declaration.
+    /// * Attached declaration is not a static variable
+    ///   declaration
     /// * Macro usage is not duplicated for the same
     ///   declaration.
     /// * This attribute isn't used combined with
@@ -47,6 +49,7 @@ struct CodedBy: PropertyAttribute {
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
             expect(syntax: VariableDeclSyntax.self)
+            attachedToNonStaticVariable()
             cantDuplicate()
             cantBeCombined(with: IgnoreCoding.self)
         }

@@ -48,6 +48,8 @@ struct CodedIn: PropertyAttribute {
     /// * Attached declaration is a variable declaration.
     /// * Macro usage is not duplicated for the same
     ///   declaration.
+    /// * Attached declaration is not a static variable
+    ///   declaration
     /// * This attribute isn't used combined with `CodedAt`
     ///   and `IgnoreCoding` attribute.
     ///
@@ -56,6 +58,7 @@ struct CodedIn: PropertyAttribute {
         return AggregatedDiagnosticProducer {
             expect(syntax: VariableDeclSyntax.self)
             cantDuplicate()
+            attachedToNonStaticVariable()
             cantBeCombined(with: CodedAt.self)
             cantBeCombined(with: IgnoreCoding.self)
         }
