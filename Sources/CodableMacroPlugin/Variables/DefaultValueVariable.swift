@@ -89,10 +89,14 @@ where Var.Initialization == RequiredInitialization {
         let catchClauses = CatchClauseListSyntax {
             CatchClauseSyntax { "self.\(name) = \(options.expr)" }
         }
+        var doClauses = base.decoding(in: context, from: location)
+        if type.isOptional, !doClauses.isEmpty {
+            let lastIndex = doClauses.index(before: doClauses.endIndex)
+            let assignmentblock = doClauses.remove(at: lastIndex)
+            doClauses.append("\(assignmentblock) ?? \(options.expr)")
+        }
         return CodeBlockItemListSyntax {
-            DoStmtSyntax(catchClauses: catchClauses) {
-                base.decoding(in: context, from: location)
-            }
+            DoStmtSyntax(catchClauses: catchClauses) { doClauses }
         }
     }
 }
