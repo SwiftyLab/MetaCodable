@@ -23,14 +23,14 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Decodable where T: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decode(T.self, forKey: CodingKeys.value)
                     }
                 }
 
                 extension GenericCodable: Encodable where T: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                     }
@@ -64,7 +64,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Decodable where T: Decodable, U: Decodable, V: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value1 = try container.decode(T.self, forKey: CodingKeys.value1)
                         self.value2 = try container.decode(U.self, forKey: CodingKeys.value2)
@@ -73,7 +73,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Encodable where T: Encodable, U: Encodable, V: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value1, forKey: CodingKeys.value1)
                         try container.encode(self.value2, forKey: CodingKeys.value2)
@@ -109,7 +109,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Decodable where T: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decode(T.self, forKey: CodingKeys.value)
                         self.str = try container.decode(String.self, forKey: CodingKeys.str)
@@ -117,7 +117,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Encodable where T: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.value, forKey: CodingKeys.value)
                         try container.encode(self.str, forKey: CodingKeys.str)
@@ -151,14 +151,14 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.str = try container.decode(String.self, forKey: CodingKeys.str)
                     }
                 }
 
                 extension GenericCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.str, forKey: CodingKeys.str)
                     }
@@ -191,7 +191,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try TestCoder().decode(from: container, forKey: CodingKeys.value)
                         self.str = try container.decode(String.self, forKey: CodingKeys.str)
@@ -199,7 +199,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try TestCoder().encode(self.value, to: &container, atKey: CodingKeys.value)
                         try container.encode(self.str, forKey: CodingKeys.str)
@@ -234,7 +234,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Decodable where T: Decodable {
-                    init(from decoder: Decoder) throws {
+                    init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.value = try container.decode(T.self, forKey: CodingKeys.value)
                         self.str = try container.decode(String.self, forKey: CodingKeys.str)
@@ -242,7 +242,7 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Encodable {
-                    func encode(to encoder: Encoder) throws {
+                    func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.str, forKey: CodingKeys.str)
                     }
