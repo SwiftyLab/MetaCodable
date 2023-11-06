@@ -45,10 +45,8 @@ extension RegistrationAttribute {
             // The Macro fails to compile if the decl.modifiers.contains
             // is directly used in the guard statement. Otherwise it should
             // be used as a second condition in guard block above.
-            let isStaticVar = decl.modifiers.contains{$0.name.tokenKind == .keyword(.static)}
-            guard !isStaticVar else {
-              return
-            }
+            let isStatic = decl.modifiers.contains { $0.name.tokenKind == .keyword(.static) }
+            guard !isStatic else { return }
 
             // builder
             let builder =

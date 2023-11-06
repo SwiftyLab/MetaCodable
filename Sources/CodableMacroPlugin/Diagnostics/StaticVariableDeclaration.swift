@@ -45,9 +45,9 @@ struct StaticVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
   ) -> Bool {
     // The Macro fails to compile if the .modifiers.contains
     // is directly used in the guard statement.
-    let isStaticVar = syntax.as(VariableDeclSyntax.self)?
-      .modifiers.contains{$0.name.tokenKind == .keyword(.static)}
-    guard isStaticVar ?? false
+    let isStatic = syntax.as(VariableDeclSyntax.self)?
+      .modifiers.contains { $0.name.tokenKind == .keyword(.static) }
+    guard isStatic ?? false
     else { return false }
     let message = attr.node.diagnostic(
       message:
