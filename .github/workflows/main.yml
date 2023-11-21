@@ -49,16 +49,15 @@ jobs:
   #       }
 
   # spell-check:
-  #   name: Run spell check
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout repository
-  #     uses: actions/checkout@v4
-
-  #   - name: Spellcheck Action
-  #     uses: rojopolis/spellcheck-github-actions@0.24.0
-  #     with:
-  #       config_path: .github/config/spellcheck.yml
+     name: Run spell check
+     runs-on: ubuntu-latest
+     steps:
+     - name: Checkout repository
+       uses: actions/checkout@v4
+     - name: Spellcheck Action
+       uses: rojopolis/spellcheck-github-actions@0.35.0
+       with:
+         config_path: .github/config/spellcheck.yaml
 
   swift-package-test:
     name: Swift Package
