@@ -224,12 +224,12 @@ init(field: String = "some") {
 
 Library provides following helpers that address common custom decoding/encoding needs:
 
-- `LossySequenceCoder` to decode only valid data while ignopring invalid data in a sequence, instead of traditional way of failing decoding entirely.
+- `LossySequenceCoder` to decode only valid data while ignoring invalid data in a sequence, instead of traditional way of failing decoding entirely.
 - `ValueCoder` to decode `Bool`, `Int`, `Double`, `String` etc. basic types even if they are represented in some other type, i.e decoding `Int` from `"1"`, decoding boolean from `"yes"` etc.
 - Custom Date decoding/encoding with UNIX timestamp (`Since1970DateCoder`) or date formatters (`DateCoder`, `ISO8601DateCoder`).
 - `Base64Coder` to decode/encode data in base64 string representation.
 
-And more, see the full documentation for [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/helpercoders) for more deatils.
+And more, see the full documentation for [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/helpercoders) for more details.
 
 You can even create your own by conforming to `HelperCoder`.
 

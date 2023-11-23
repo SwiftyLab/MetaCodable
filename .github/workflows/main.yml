@@ -48,17 +48,16 @@ jobs:
   #         ]
   #       }
 
-  # spell-check:
-  #   name: Run spell check
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout repository
-  #     uses: actions/checkout@v4
-
-  #   - name: Spellcheck Action
-  #     uses: rojopolis/spellcheck-github-actions@0.24.0
-  #     with:
-  #       config_path: .github/config/spellcheck.yml
+  spell-check:
+    name: Run spell check
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: Spellcheck Action
+      uses: rojopolis/spellcheck-github-actions@0.35.0
+      with:
+        config_path: .github/config/spellcheck.yaml
 
   swift-package-test:
     name: Swift Package
@@ -82,7 +81,7 @@ jobs:
   ci:
     name: CI
     if: github.event_name == 'push'
-    needs: swift-package-test
+    needs: [swift-package-test, spell-check]
     # needs: [analyze, swift-package-test]
     uses: SwiftyLab/ci/.github/workflows/ci.yml@main
 
@@ -94,7 +93,7 @@ jobs:
        github.event.inputs.release == 'true' &&
        (needs.ci.result == 'success' || needs.ci.result == 'skipped') &&
        (needs.swift-package-test.result == 'success' || needs.swift-package-test.result == 'skipped')
-    needs: [swift-package-test, ci]
+    needs: [swift-package-test, spell-check, ci]
     # needs: [analyze, swift-package-test, ci]
     uses: SwiftyLab/ci/.github/workflows/cd.yml@main
     with:
