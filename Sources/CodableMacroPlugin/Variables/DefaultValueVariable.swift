@@ -55,6 +55,17 @@ where Var.Initialization == RequiredInitialization {
     /// `Encodable` conformance.
     var requireEncodable: Bool? { base.requireEncodable }
 
+    /// The fallback behavior when decoding fails.
+    ///
+    /// In the event this decoding this variable is failed,
+    /// appropriate fallback would be applied.
+    ///
+    /// This variable will be initialized with default expression
+    /// provided, if decoding fails.
+    var decodingFallback: DecodingFallback {
+        return .ifError("self.\(name) = \(options.expr)")
+    }
+
     /// Indicates the initialization type for this variable.
     ///
     /// Provides default initialization value in initialization

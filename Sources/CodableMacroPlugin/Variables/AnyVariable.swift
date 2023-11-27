@@ -49,6 +49,14 @@ struct AnyVariable<Initialization: VariableInitialization>: Variable {
     /// `Encodable` conformance.
     var requireEncodable: Bool? { base.requireEncodable }
 
+    /// The fallback behavior when decoding fails.
+    ///
+    /// In the event this decoding this variable is failed,
+    /// appropriate fallback would be applied.
+    ///
+    /// Provides fallback for the underlying variable value.
+    var decodingFallback: DecodingFallback { base.decodingFallback }
+
     /// Wraps the provided variable erasing its type and
     /// initialization type.
     ///

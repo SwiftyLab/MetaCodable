@@ -49,6 +49,18 @@ struct BasicVariable: BasicCodingVariable {
     /// initialization.
     var requireEncodable: Bool? { self.encode }
 
+    /// The fallback behavior when decoding fails.
+    ///
+    /// In the event this decoding this variable is failed,
+    /// appropriate fallback would be applied.
+    ///
+    /// If variable is of optional type, variable will be assigned
+    /// `nil` value only when missing or `null`.
+    var decodingFallback: DecodingFallback {
+        guard type.isOptional else { return .throw }
+        return .ifMissing("self.\(name) = nil")
+    }
+
     /// Creates a new variable with provided data.
     ///
     /// Basic implementation for this variable provided
