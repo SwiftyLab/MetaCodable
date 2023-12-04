@@ -8,39 +8,6 @@
 /// use `decoding`, `encoding` and `codingKeys` methods
 /// to get final generated implementation of `Codable` conformance.
 struct Registrar {
-    /// A type indicating various configurations available
-    /// for `Registrar`.
-    ///
-    /// These options are used as global level customization
-    /// performed on the final generated implementation
-    /// of `Codable` conformance.
-    struct Options {
-        /// The default list of modifiers to be applied to generated
-        /// conformance implementation declarations.
-        fileprivate let modifiers: DeclModifierListSyntax
-        /// The where clause generator for generic type arguments.
-        fileprivate let constraintGenerator: ConstraintGenerator
-
-        /// Memberwise initialization generator with provided options.
-        ///
-        /// Creates memberwise initialization generator by passing
-        /// the provided access modifiers.
-        var initGenerator: MemberwiseInitGenerator {
-            return .init(options: .init(modifiers: modifiers))
-        }
-
-        /// Creates a new options instance with provided declaration group.
-        ///
-        /// - Parameters:
-        ///   - decl: The declaration group options will be applied to.
-        ///
-        /// - Returns: The newly created options.
-        init(decl: DeclGroupSyntax) {
-            self.modifiers = decl.modifiers
-            self.constraintGenerator = .init(decl: decl)
-        }
-    }
-
     /// The root node containing all the keys
     /// and associated field metadata maps.
     private var root: Node
@@ -190,7 +157,7 @@ struct Registrar {
             )
         ) {
             InitializerDeclSyntax.decode(
-                modifiers: options.modifiers
+                modifiers: options.modifiersGenerator.generated
             ) { decoder in
                 let type = caseMap.type
                 root.decoding(in: context, from: .coder(decoder, keyType: type))
@@ -223,7 +190,9 @@ struct Registrar {
                 conformingTo: `protocol`
             )
         ) {
-            FunctionDeclSyntax.encode(modifiers: options.modifiers) { encoder in
+            FunctionDeclSyntax.encode(
+                modifiers: options.modifiersGenerator.generated
+            ) { encoder in
                 let type = caseMap.type
                 root.encoding(in: context, from: .coder(encoder, keyType: type))
             }
