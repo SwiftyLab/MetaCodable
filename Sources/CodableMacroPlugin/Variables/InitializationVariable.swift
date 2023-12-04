@@ -43,10 +43,12 @@ where Wrapped.Initialization: RequiredVariableInitialization {
     var decode: Bool? { options.`init` ? base.decode : false }
     /// Whether the variable is to be encoded.
     ///
-    /// Depends on whether variable is initializable if underlying variable doesn't
-    /// specify explicit encoding. Otherwise depends on whether underlying variable
-    /// is to be decoded.
-    var encode: Bool? { base.encode ?? options.`init` }
+    /// Depends on whether variable is initializable if underlying variable
+    /// doesn't specify explicit encoding. Otherwise depends on whether
+    /// underlying variable is to be decoded.
+    var encode: Bool? {
+        return base.encode ?? (options.initialized || options.`init`)
+    }
 
     /// Whether the variable type requires `Decodable` conformance.
     ///
@@ -63,7 +65,7 @@ where Wrapped.Initialization: RequiredVariableInitialization {
     /// specifies explicit encoding. Otherwise depends on
     /// whether underlying variable is to be decoded.
     var requireEncodable: Bool? {
-        return base.requireEncodable ?? options.`init`
+        return base.requireEncodable ?? (options.initialized || options.`init`)
     }
 
     /// Indicates the initialization type for this variable.

@@ -30,11 +30,14 @@ final class VariableDeclarationTests: XCTestCase {
 
                 extension SomeCodable: Encodable {
                     func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.value, forKey: CodingKeys.value)
                     }
                 }
 
                 extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
+                        case value = "value"
                     }
                 }
                 """
