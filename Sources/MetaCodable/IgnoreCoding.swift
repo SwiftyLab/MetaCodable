@@ -1,7 +1,7 @@
 /// Indicates the field needs to ignored from decoding and encoding.
 ///
-/// This macro can be applied to initialized mutable variables to ignore
-/// them from both decoding and encoding.
+/// This macro can be applied to initialized variables to ignore them
+/// from both decoding and encoding.
 /// ```swift
 /// @IgnoreCoding
 /// var field: String = "some"
