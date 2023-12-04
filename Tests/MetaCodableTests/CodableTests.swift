@@ -1,6 +1,8 @@
 #if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
 import SwiftDiagnostics
 import SwiftSyntax
+import SwiftSyntaxMacros
+import SwiftSyntaxMacroExpansion
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
@@ -146,7 +148,7 @@ final class CodableTests: XCTestCase {
                     }
                 }
                 """,
-            conformsTo: ["Codable": ["Decodable"]]
+            conformsTo: ["Decodable"]
         )
     }
 
@@ -185,7 +187,7 @@ final class CodableTests: XCTestCase {
                     }
                 }
                 """,
-            conformsTo: ["Codable": ["Encodable"]]
+            conformsTo: ["Encodable"]
         )
     }
 
@@ -217,7 +219,7 @@ final class CodableTests: XCTestCase {
                     }
                 }
                 """,
-            conformsTo: ["Codable": []]
+            conformsTo: []
         )
     }
 }
@@ -226,32 +228,34 @@ func assertMacroExpansion(
     _ originalSource: String,
     expandedSource: String,
     diagnostics: [DiagnosticSpec] = [],
-    conformsTo conformanceMap: [String: [TypeSyntax]] = [
-        "Codable": ["Decodable", "Encodable"]
-    ],
+    conformsTo conformances: [TypeSyntax] = ["Decodable", "Encodable"],
     testModuleName: String = "TestModule",
     testFileName: String = "test.swift",
     indentationWidth: Trivia = .spaces(4),
     file: StaticString = #file,
     line: UInt = #line
 ) {
+    let macros: [String: Macro.Type] = [
+        "CodedAt": CodedAt.self,
+        "CodedIn": CodedIn.self,
+        "Default": Default.self,
+        "CodedBy": CodedBy.self,
+        "IgnoreCoding": IgnoreCoding.self,
+        "IgnoreDecoding": IgnoreDecoding.self,
+        "IgnoreEncoding": IgnoreEncoding.self,
+        "Codable": Codable.self,
+        "MemberInit": MemberInit.self,
+        "CodingKeys": CodingKeys.self,
+        "IgnoreCodingInitialized": IgnoreCodingInitialized.self,
+    ]
     assertMacroExpansion(
         originalSource, expandedSource: expandedSource,
         diagnostics: diagnostics,
-        macros: [
-            "CodedAt": CodedAt.self,
-            "CodedIn": CodedIn.self,
-            "Default": Default.self,
-            "CodedBy": CodedBy.self,
-            "IgnoreCoding": IgnoreCoding.self,
-            "IgnoreDecoding": IgnoreDecoding.self,
-            "IgnoreEncoding": IgnoreEncoding.self,
-            "Codable": Codable.self,
-            "MemberInit": MemberInit.self,
-            "CodingKeys": CodingKeys.self,
-            "IgnoreCodingInitialized": IgnoreCodingInitialized.self,
-        ],
-        conformsTo: conformanceMap,
+        macroSpecs: Dictionary(
+            uniqueKeysWithValues: macros.map { key, value in
+                (key, MacroSpec(type: value, conformances: conformances))
+            }
+        ),
         testModuleName: testModuleName, testFileName: testFileName,
         indentationWidth: indentationWidth,
         file: file, line: line
