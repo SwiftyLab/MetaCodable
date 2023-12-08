@@ -62,6 +62,12 @@ protocol Variable<Initialization> {
     /// generic where clause by default.
     var requireEncodable: Bool? { get }
 
+    /// The fallback behavior when decoding fails.
+    ///
+    /// In the event this decoding this variable is failed,
+    /// appropriate fallback would be applied.
+    var decodingFallback: DecodingFallback { get }
+
     /// Indicates the initialization type for this variable.
     ///
     /// Indicates whether initialization is required, optional

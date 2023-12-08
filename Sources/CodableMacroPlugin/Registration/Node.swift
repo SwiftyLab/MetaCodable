@@ -143,16 +143,26 @@ extension Registrar.Node {
                         )
                     }
                 case .container(let container, let key):
-                    let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"
-                    """
-                    let \(nestedContainer) = try \(container).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
-                    """
-                    for (cKey, node) in children {
-                        node.decoding(
-                            in: context,
-                            from: .container(nestedContainer, key: cKey)
-                        )
-                    }
+                    children.lazy
+                        .flatMap(\.value.linkedVariables)
+                        .map(\.decodingFallback)
+                        .aggregate
+                        .represented(
+                            decodingContainer: container,
+                            fromKey: key
+                        ) { nestedContainer in
+                            return CodeBlockItemListSyntax {
+                                for (cKey, node) in children {
+                                    node.decoding(
+                                        in: context,
+                                        from: .container(
+                                            nestedContainer,
+                                            key: cKey
+                                        )
+                                    )
+                                }
+                            }
+                        }
                 }
             }
         }

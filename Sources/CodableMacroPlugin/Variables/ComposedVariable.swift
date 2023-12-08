@@ -36,6 +36,14 @@ extension ComposedVariable {
     /// Provides type of the underlying variable value.
     var type: TypeSyntax { base.type }
 
+    /// The fallback behavior when decoding fails.
+    ///
+    /// In the event this decoding this variable is failed,
+    /// appropriate fallback would be applied.
+    ///
+    /// Provides fallback for the underlying variable value.
+    var decodingFallback: DecodingFallback { base.decodingFallback }
+
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
     ///
