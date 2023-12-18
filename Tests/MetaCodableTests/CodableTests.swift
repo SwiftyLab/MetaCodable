@@ -27,7 +27,8 @@ final class CodableTests: XCTestCase {
             diagnostics: [
                 .init(
                     id: Codable.misuseID,
-                    message: "@Codable only applicable to struct declarations",
+                    message:
+                        "@Codable only applicable to struct or class declarations",
                     line: 1, column: 1,
                     fixIts: [
                         .init(message: "Remove @Codable attribute")

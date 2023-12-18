@@ -56,7 +56,7 @@ struct CodedIn: PropertyAttribute {
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntax: VariableDeclSyntax.self)
+            expect(syntaxes: VariableDeclSyntax.self)
             cantDuplicate()
             attachedToNonStaticVariable()
             cantBeCombined(with: CodedAt.self)

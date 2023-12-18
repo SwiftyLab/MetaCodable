@@ -294,5 +294,66 @@ final class IgnoreCodingTests: XCTestCase {
                 """
         )
     }
+
+    func testClassCombinationWithOtherMacros() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable {
+                @IgnoreDecoding
+                @CodedIn("deeply", "nested")
+                var one: String = "some"
+                @IgnoreDecoding
+                @CodedAt("deeply", "nested", "key")
+                var two: String = "some"
+                @IgnoreEncoding
+                @CodedIn("deeply", "nested")
+                var three: String = "some"
+                @IgnoreEncoding
+                @CodedAt("deeply", "nested", "key")
+                var four: String = "some"
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable {
+                    var one: String = "some"
+                    var two: String = "some"
+                    var three: String = "some"
+                    var four: String = "some"
+
+                    required init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
+                        self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
+                        try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case one = "one"
+                        case deeply = "deeply"
+                        case nested = "nested"
+                        case two = "key"
+                        case three = "three"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
+                }
+                """
+        )
+    }
 }
 #endif

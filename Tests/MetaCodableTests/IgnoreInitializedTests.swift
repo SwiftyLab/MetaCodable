@@ -68,6 +68,39 @@ final class IgnoreInitializedTests: XCTestCase {
         )
     }
 
+    func testClassIgnore() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            @IgnoreCodingInitialized
+            class SomeCodable {
+                var one: String = "some"
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable {
+                    var one: String = "some"
+
+                    required init(from decoder: any Decoder) throws {
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
+                }
+                """
+        )
+    }
+
     func testExplicitCodingWithIgnore() throws {
         assertMacroExpansion(
             """

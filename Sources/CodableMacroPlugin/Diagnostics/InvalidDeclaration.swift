@@ -5,8 +5,7 @@
 ///
 /// This producer can be used for macro-attributes that require attached syntax
 /// should be of specific type.
-struct InvalidDeclaration<Attr, Expect>: DiagnosticProducer
-where Attr: Attribute, Expect: NamedSyntax {
+struct InvalidDeclaration<Attr>: DiagnosticProducer where Attr: Attribute {
     /// The attribute for which
     /// validation performed.
     ///
@@ -14,24 +13,24 @@ where Attr: Attribute, Expect: NamedSyntax {
     /// in generated diagnostic
     /// messages.
     let attr: Attr
-    /// The expected syntax type.
+    /// The expected syntax types.
     ///
-    /// Error diagnostic is generated
-    /// if passed syntax is not of this type.
-    let expected: Expect.Type
+    /// Error diagnostic is generated if passed
+    /// syntax is not of any of these types.
+    let expected: [any SyntaxProtocol.Type]
 
     /// Creates a syntax type validation instance with provided attribute
-    /// and expected type.
+    /// and expected types.
     ///
-    /// The expected type is used to check syntax and diagnostic is
+    /// The expected types are used to check syntax and diagnostic is
     /// created at provided attribute if check fails.
     ///
     /// - Parameters:
     ///   - attr: The attribute for which validation performed.
-    ///   - expected: The expected syntax type.
+    ///   - expected: The expected syntax types.
     ///
     /// - Returns: Newly created diagnostic producer.
-    init(_ attr: Attr, expect expected: Expect.Type) {
+    init(_ attr: Attr, expect expected: [any SyntaxProtocol.Type]) {
         self.attr = attr
         self.expected = expected
     }
@@ -39,7 +38,7 @@ where Attr: Attribute, Expect: NamedSyntax {
     /// Validates and produces diagnostics for the passed syntax
     /// in the macro expansion context provided.
     ///
-    /// Checks whether passed syntax is of specified syntax type.
+    /// Checks whether passed syntax is of specified syntax types.
     /// Diagnostic is produced if that's not the case.
     ///
     /// - Parameters:
@@ -52,9 +51,10 @@ where Attr: Attribute, Expect: NamedSyntax {
         for syntax: some SyntaxProtocol,
         in context: some MacroExpansionContext
     ) -> Bool {
-        guard !syntax.is(expected) else { return false }
-        let message = attr.node.diagnostic(
-            message: "@\(attr.name) only applicable to \(expected.pluralName)",
+        guard !expected.contains(where: { syntax.is($0) }) else { return false }
+        let names = expected.map { name(for: $0) }.joined(separator: " or ")
+        let message = attr.diagnostic(
+            message: "@\(attr.name) only applicable to \(names) declarations",
             id: attr.misuseMessageID,
             severity: .error
         )
@@ -67,53 +67,33 @@ where Attr: Attribute, Expect: NamedSyntax {
         )
         return true
     }
+
+    /// The name associated with provided syntax type.
+    ///
+    /// Indicates declaration name.
+    ///
+    /// - Parameter syntax: The syntax type
+    /// - Returns: The name of syntax type.
+    func name(for syntax: SyntaxProtocol.Type) -> String {
+        let name = "\(syntax)"
+        let suffix = "DeclSyntax"
+        guard name.hasSuffix(suffix) else { return name.lowercased() }
+        return String(name.dropLast(suffix.count)).lowercased()
+    }
 }
 
 extension Attribute {
     /// Indicates attribute expects the attached syntax of
-    /// provided type.
+    /// provided types.
     ///
     /// The created diagnostic producer produces error diagnostic,
-    /// if attribute is attached to declarations not of the specified type.
+    /// if attribute is attached to declarations not of the specified types.
     ///
-    /// - Parameter type: The expected declaration type.
+    /// - Parameter types: The expected declaration types.
     /// - Returns: Declaration validation diagnostic producer.
-    func expect<Expect: NamedSyntax>(
-        syntax type: Expect.Type
-    ) -> InvalidDeclaration<Self, Expect> {
-        return .init(self, expect: type)
+    func expect(
+        syntaxes types: SyntaxProtocol.Type...
+    ) -> InvalidDeclaration<Self> {
+        return .init(self, expect: types)
     }
-}
-
-/// A syntax type that has some name associated.
-///
-/// The associated name is used for diagnostics
-/// messages.
-protocol NamedSyntax: SyntaxProtocol {
-    /// The name associated with this syntax.
-    ///
-    /// This value is used for diagnostics messages
-    /// related to this syntax.
-    static var name: String { get }
-}
-
-extension NamedSyntax {
-    /// The pluralized name of this syntax.
-    ///
-    /// This is obtained by adding `s` at the end of syntax name.
-    static var pluralName: String { "\(name)s" }
-}
-
-extension StructDeclSyntax: NamedSyntax {
-    /// The name associated with this syntax.
-    ///
-    /// Indicates declaration is a struct declaration.
-    static var name: String { "struct declaration" }
-}
-
-extension VariableDeclSyntax: NamedSyntax {
-    /// The name associated with this syntax.
-    ///
-    /// Indicates declaration is a variable declaration.
-    static var name: String { "variable declaration" }
 }

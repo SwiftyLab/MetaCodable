@@ -30,7 +30,7 @@ final class CodedInDefaultTests: XCTestCase {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         do {
-                            self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
                         } catch {
                             self.value = "some"
                         }
@@ -127,7 +127,7 @@ final class CodedInDefaultTests: XCTestCase {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         if let nested_container = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) {
                             do {
-                                self.value = try nested_container.decode(String.self, forKey: CodingKeys.value)
+                                self.value = try nested_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
                             } catch {
                                 self.value = "some"
                             }
@@ -236,7 +236,7 @@ final class CodedInDefaultTests: XCTestCase {
                         if let deeply_container = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) {
                             if let nested_deeply_container = try? deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) {
                                 do {
-                                    self.value = try nested_deeply_container.decode(String.self, forKey: CodingKeys.value)
+                                    self.value = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
                                 } catch {
                                     self.value = "some"
                                 }
@@ -456,7 +456,7 @@ final class CodedInDefaultTests: XCTestCase {
                             if let value3_value4_container = try? value4_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.value3) {
                                 if let level_value3_value4_container = try? value3_value4_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.level) {
                                     do {
-                                        self.value1 = try level_value3_value4_container.decode(String.self, forKey: CodingKeys.value1)
+                                        self.value1 = try level_value3_value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
                                     } catch {
                                         self.value1 = "some"
                                     }
@@ -502,6 +502,93 @@ final class CodedInDefaultTests: XCTestCase {
                         case level = "level"
                         case value2 = "value2"
                     }
+                }
+                """
+        )
+    }
+
+    func testClassWithNestedPathOnMixedTypes() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable {
+                @Default("some")
+                @CodedIn("deeply", "nested", "level")
+                let value1: String
+                @Default("some")
+                @CodedIn("deeply", "nested", "level")
+                let value2: String?
+                @CodedAt("deeply", "nested")
+                let value3: String?
+                @CodedAt("deeply")
+                let value4: String
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable {
+                    let value1: String
+                    let value2: String?
+                    let value3: String?
+                    let value4: String
+
+                    required init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.value4 = try container.decode(String.self, forKey: CodingKeys.value4)
+                        if (try? container.decodeNil(forKey: CodingKeys.value4)) == false {
+                            let value4_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.value4)
+                            self.value3 = try value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
+                            if let value3_value4_container = try? value4_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.value3) {
+                                if let level_value3_value4_container = try? value3_value4_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.level) {
+                                    do {
+                                        self.value1 = try level_value3_value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
+                                    } catch {
+                                        self.value1 = "some"
+                                    }
+                                    do {
+                                        self.value2 = try level_value3_value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value2) ?? "some"
+                                    } catch {
+                                        self.value2 = "some"
+                                    }
+                                } else {
+                                    self.value1 = "some"
+                                    self.value2 = "some"
+                                }
+                            } else {
+                                self.value1 = "some"
+                                self.value2 = "some"
+                            }
+                        } else {
+                            self.value3 = nil
+                            self.value1 = "some"
+                            self.value2 = "some"
+                        }
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.value4, forKey: CodingKeys.value4)
+                        var value4_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.value4)
+                        try value4_container.encodeIfPresent(self.value3, forKey: CodingKeys.value3)
+                        var value3_value4_container = value4_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.value3)
+                        var level_value3_value4_container = value3_value4_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.level)
+                        try level_value3_value4_container.encode(self.value1, forKey: CodingKeys.value1)
+                        try level_value3_value4_container.encodeIfPresent(self.value2, forKey: CodingKeys.value2)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case value1 = "value1"
+                        case value4 = "deeply"
+                        case value3 = "nested"
+                        case level = "level"
+                        case value2 = "value2"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
                 }
                 """
         )

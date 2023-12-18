@@ -16,7 +16,7 @@
 ///     methods.
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
-struct Codable: RegistrationAttribute {
+struct Codable: Attribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
@@ -40,13 +40,13 @@ struct Codable: RegistrationAttribute {
     /// attached declaration.
     ///
     /// Builds diagnoser that validates attached declaration
-    /// is `struct` declaration and macro usage is not
-    /// duplicated for the same declaration.
+    /// is `struct` or `class` declaration and macro
+    /// usage is not duplicated for the same declaration.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntax: StructDeclSyntax.self)
+            expect(syntaxes: StructDeclSyntax.self, ClassDeclSyntax.self)
             cantDuplicate()
         }
     }

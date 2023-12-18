@@ -25,7 +25,7 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
     /// if passed declaration is variable declaration.
     /// If validation failed, then further validation by
     /// this type is terminated.
-    let base: InvalidDeclaration<Attr, VariableDeclSyntax>
+    let base: InvalidDeclaration<Attr>
 
     /// Creates an uninitialized variable declaration validation instance
     /// with provided attribute.
@@ -39,7 +39,7 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
     /// - Returns: Newly created diagnostic producer.
     init(_ attr: Attr) {
         self.attr = attr
-        self.base = .init(attr, expect: VariableDeclSyntax.self)
+        self.base = .init(attr, expect: [VariableDeclSyntax.self])
     }
 
     /// Validates and produces diagnostics for the passed syntax
@@ -86,12 +86,12 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
             {
                 msg.append(" \(varName)")
             }
-            let message = attr.node.diagnostic(
+            let message = attr.diagnostic(
                 message: msg,
                 id: attr.misuseMessageID,
                 severity: .error
             )
-            context.diagnose(attr: attr, message: message)
+            attr.diagnose(message: message, in: context)
             result = true
         }
         return result

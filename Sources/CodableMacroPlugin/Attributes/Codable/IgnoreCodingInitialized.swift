@@ -44,3 +44,25 @@ struct IgnoreCodingInitialized: PeerAttribute {
         }
     }
 }
+
+extension Registration where Var: NamedVariable {
+    /// Update registration whether decoding/encoding to be ignored.
+    ///
+    /// New registration is updated with decoding and encoding condition
+    /// depending on whether already initialized. Already initialized variables
+    /// are updated to be ignored in decoding/encoding.
+    ///
+    /// - Parameter decl: The declaration to check for attribute.
+    /// - Returns: Newly built registration with conditional decoding/encoding
+    ///   data.
+    func checkInitializedCodingIgnored<D: AttributableDeclSyntax>(
+        attachedAt decl: D
+    ) -> Registration<Decl, ConditionalCodingVariable<Var>> {
+        typealias Output = ConditionalCodingVariable<Var>
+        let attr = IgnoreCodingInitialized(from: decl)
+        let code = attr != nil ? self.variable.value == nil : nil
+        let options = Output.Options(decode: code, encode: code)
+        let newVariable = Output(base: self.variable, options: options)
+        return self.updating(with: newVariable)
+    }
+}

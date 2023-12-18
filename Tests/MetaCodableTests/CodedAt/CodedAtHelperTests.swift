@@ -418,5 +418,57 @@ final class CodedAtHelperTests: XCTestCase {
                 """
         )
     }
+
+    func testClassWithNestedPathOnMixedTypes() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable {
+                @CodedBy(LossySequenceCoder<[String]>())
+                @CodedAt("deeply", "nested", "key1")
+                let value1: [String]
+                @CodedBy(LossySequenceCoder<[String]>())
+                @CodedAt("deeply", "nested", "key2")
+                let value2: [String]?
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable {
+                    let value1: [String]
+                    let value2: [String]?
+
+                    required init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        self.value1 = try LossySequenceCoder<[String]>().decode(from: nested_deeply_container, forKey: CodingKeys.value1)
+                        self.value2 = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value2)
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        try LossySequenceCoder<[String]>().encode(self.value1, to: &nested_deeply_container, atKey: CodingKeys.value1)
+                        try LossySequenceCoder<[String]>().encodeIfPresent(self.value2, to: &nested_deeply_container, atKey: CodingKeys.value2)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case value1 = "key1"
+                        case deeply = "deeply"
+                        case nested = "nested"
+                        case value2 = "key2"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
+                }
+                """
+        )
+    }
 }
 #endif
