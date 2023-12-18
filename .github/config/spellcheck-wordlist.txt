@@ -8,6 +8,7 @@ HelperCoder
 HelperCoders
 JSON
 LossySequenceCoder
+Codable
 MetaCodable
 Midbin
 README
@@ -48,3 +49,4 @@ variadic
 vscode
 watchOS
 www
+typealias

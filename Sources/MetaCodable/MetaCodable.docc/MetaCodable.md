@@ -23,6 +23,8 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to ignore all initialized properties of a type from decoding/encoding with ``IgnoreCodingInitialized()`` unless explicitly asked to decode/encode by attaching any coding attributes, i.e. ``CodedIn(_:)``, ``CodedAt(_:)``,
 ``CodedBy(_:)``, ``Default(_:)`` etc.
 
+ [**See the limitations for this macro**](<doc:Limitations>).
+
 ## Installation
 
 @TabNavigator {

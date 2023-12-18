@@ -51,3 +51,20 @@ struct CodingKeys: PeerAttribute {
         }
     }
 }
+
+extension Registration {
+    /// Update current registration `CodingKey` path data.
+    ///
+    /// New registration is updated with the transformed `CodingKey` path
+    /// based on provided `strategy`.
+    ///
+    /// - Parameter decl: The declaration where `strategy` provided.
+    /// - Returns: Newly built registration with transformed `CodingKey` path data.
+    func transformKeysAccordingToStrategy<D>(
+        attachedTo decl: D
+    ) -> Self where D: AttributableDeclSyntax {
+        guard let attr = CodingKeys(from: decl) else { return self }
+        let strategy = attr.strategy
+        return self.updating(with: strategy.transform(keyPath: self.keyPath))
+    }
+}

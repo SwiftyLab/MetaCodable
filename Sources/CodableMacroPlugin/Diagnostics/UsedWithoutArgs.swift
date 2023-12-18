@@ -49,12 +49,12 @@ struct UsedWithoutArgs<Attr: Attribute>: DiagnosticProducer {
                 .as(LabeledExprListSyntax.self)?.first == nil
         else { return false }
 
-        let message = attr.node.diagnostic(
+        let message = attr.diagnostic(
             message: "Unnecessary use of @\(attr.name) without argument(s)",
             id: attr.unusedMessageID,
             severity: .warning
         )
-        context.diagnose(attr: attr, message: message)
+        attr.diagnose(message: message, in: context)
         return false
     }
 }

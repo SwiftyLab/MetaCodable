@@ -236,6 +236,7 @@ You can even create your own by conforming to `HelperCoder`.
 </details>
 
 See the full documentation for [`MetaCodable`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/metacodable) and [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/helpercoders), for API details and advanced use cases.
+Also, [see the limitations](Sources/MetaCodable/MetaCodable.docc/Limitations.md).
 
 ## Contributing
 

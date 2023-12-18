@@ -85,3 +85,24 @@ extension CodedIn: KeyPathProvider {
         return finalPath
     }
 }
+
+extension Registration where Decl: AttributableDeclSyntax {
+    /// Update registration with `CodingKey` path data.
+    ///
+    /// New registration is updated with the provided `CodingKey` path from provider,
+    /// updating current `CodingKey` path data.
+    ///
+    /// - Parameter provider: The `CodingKey` path data provider.
+    /// - Returns: Newly built registration with additional `CodingKey` path data.
+    func registerKeyPath(
+        provider: KeyPathProvider
+    ) -> Registration<Decl, KeyedVariable<Var>> {
+        typealias Output = KeyedVariable<Var>
+        let options = Output.Options(code: provider.provided)
+        let newVar = Output(base: self.variable, options: options)
+        let output = self.updating(with: newVar)
+        guard provider.provided else { return output }
+        let updatedPath = provider.keyPath(withExisting: self.keyPath)
+        return output.updating(with: updatedPath)
+    }
+}

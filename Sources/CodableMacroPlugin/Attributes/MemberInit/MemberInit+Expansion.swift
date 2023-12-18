@@ -4,10 +4,8 @@
 extension MemberInit: MemberMacro {
     /// Expand to produce memberwise initializer(s) for attached struct.
     ///
-    /// For all the variable declarations in the attached type registration is
-    /// done via `Registrar` instance with optional `PropertyAttribute`
-    /// metadata. The `Registrar` instance provides declarations based on
-    /// all the registrations.
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
     ///
     /// - Parameters:
     ///   - node: The attribute describing this macro.
@@ -20,8 +18,11 @@ extension MemberInit: MemberMacro {
         providingMembersOf declaration: some DeclGroupSyntax,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        let registrar = registrar(for: declaration, node: node, in: context)
-        guard let registrar else { return [] }
-        return registrar.memberInit(in: context).map { DeclSyntax($0) }
+        guard
+            let self = Self(from: node),
+            !self.diagnoser().produce(for: declaration, in: context),
+            let expander = AttributeExpander(for: declaration, in: context)
+        else { return [] }
+        return expander.memberInit(in: context).map { DeclSyntax($0) }
     }
 }

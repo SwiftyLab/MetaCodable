@@ -561,5 +561,55 @@ final class CodedAtTests: XCTestCase {
                 """
         )
     }
+
+    func testClassWithNestedPathOnMixedTypes() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable {
+                @CodedAt("deeply", "nested", "key1")
+                let value1: String
+                @CodedAt("deeply", "nested", "key2")
+                let value2: String?
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable {
+                    let value1: String
+                    let value2: String?
+
+                    required init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        self.value1 = try nested_deeply_container.decode(String.self, forKey: CodingKeys.value1)
+                        self.value2 = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value2)
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        try nested_deeply_container.encode(self.value1, forKey: CodingKeys.value1)
+                        try nested_deeply_container.encodeIfPresent(self.value2, forKey: CodingKeys.value2)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case value1 = "key1"
+                        case deeply = "deeply"
+                        case nested = "nested"
+                        case value2 = "key2"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
+                }
+                """
+        )
+    }
 }
 #endif

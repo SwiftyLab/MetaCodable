@@ -67,7 +67,7 @@ where Attr: Attribute, Comb: Attribute {
         for syntax: some SyntaxProtocol,
         in context: some MacroExpansionContext
     ) -> Bool {
-        guard let uAttr = syntax.attributes(for: type).first
+        guard let uAttr = type.attributes(attachedTo: syntax).first
         else { return false }
 
         let verb =
@@ -77,13 +77,13 @@ where Attr: Attribute, Comb: Attribute {
             default:
                 "needn't"
             }
-        let message = attr.node.diagnostic(
+        let message = attr.diagnostic(
             message:
                 "@\(attr.name) \(verb) be used in combination with @\(uAttr.name)",
             id: attr.misuseMessageID,
             severity: severity
         )
-        context.diagnose(attr: attr, message: message)
+        attr.diagnose(message: message, in: context)
         return severity == .error
     }
 }

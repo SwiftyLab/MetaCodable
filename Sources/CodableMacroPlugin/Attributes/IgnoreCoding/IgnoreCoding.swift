@@ -50,3 +50,46 @@ struct IgnoreCoding: PropertyAttribute {
         }
     }
 }
+
+extension Registration where Decl: AttributableDeclSyntax {
+    /// The output registration variable type that handles conditional
+    /// decoding/encoding data.
+    typealias ConditionalOutput = ConditionalCodingVariable<Var>
+    /// Update registration whether decoding/encoding to be ignored.
+    ///
+    /// New registration is updated with conditional decoding/encoding data
+    /// indicating whether variable needs to decoded/encoded.
+    ///
+    /// Checks the following criteria to decide decoding/encoding condition
+    /// for variable:
+    /// * Ignores for decoding, if `@IgnoreCoding` or `@IgnoreDecoding`
+    ///   macro attached.
+    /// * Ignores for encoding, if `@IgnoreCoding` or `@IgnoreEncoding`
+    ///   macro attached.
+    ///
+    /// - Returns: Newly built registration with conditional decoding/encoding
+    ///   data.
+    func checkCodingIgnored() -> Registration<Decl, ConditionalOutput> {
+        typealias Output = ConditionalOutput
+        let declaration = self.declaration
+        let ignoreCoding = IgnoreCoding(from: declaration) != nil
+        let ignoreDecoding = IgnoreDecoding(from: declaration) != nil
+        let ignoreEncoding = IgnoreEncoding(from: declaration) != nil
+        let decode = !ignoreCoding && !ignoreDecoding
+        let encode = !ignoreCoding && !ignoreEncoding
+        let options = Output.Options(decode: decode, encode: encode)
+        let newVariable = Output(base: self.variable, options: options)
+        return self.updating(with: newVariable)
+    }
+}
+
+/// An attribute type indicating explicit decoding/encoding when attached
+/// to variable declarations.
+///
+/// Attaching attributes of this type to computed properties indicates
+/// this variable should be encoded for the type.
+fileprivate protocol CodingAttribute: PropertyAttribute {}
+extension CodedIn: CodingAttribute {}
+extension CodedAt: CodingAttribute {}
+extension CodedBy: CodingAttribute {}
+extension Default: CodingAttribute {}

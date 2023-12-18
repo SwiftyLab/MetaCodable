@@ -38,6 +38,26 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     /// and ignored for diagnostics.
     var fixItID: MessageID { diagnosticID }
 
+    /// Generate `FixIt` for removing
+    /// the provided `macro` attribute.
+    var fixItByRemove: FixIt {
+        let name = macro.attributeName
+            .as(IdentifierTypeSyntax.self)!.description
+        return .init(
+            message: Self.fixIt(
+                macro: macro,
+                message: "Remove @\(name) attribute",
+                id: fixItID
+            ),
+            changes: [
+                .replace(
+                    oldNode: Syntax(macro),
+                    newNode: Syntax("" as DeclSyntax)
+                )
+            ]
+        )
+    }
+
     /// Creates a new message instance
     /// with provided message, id and severity.
     ///
@@ -52,7 +72,7 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     ///   - severity: The severity of diagnostic.
     ///
     /// - Returns: The newly created message instance.
-    fileprivate init(
+    init(
         macro: AttributeSyntax,
         message: String,
         messageID: MessageID,
@@ -64,80 +84,24 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
         self.severity = severity
     }
 
-    /// Generate `FixIt` for removing
-    /// the provided `macro` attribute.
-    var fixItByRemove: FixIt {
-        let name = macro.attributeName
-            .as(IdentifierTypeSyntax.self)!.description
-        return .init(
-            message: macro.fixIt(
-                message: "Remove @\(name) attribute",
-                id: fixItID
-            ),
-            changes: [
-                .replace(
-                    oldNode: Syntax(macro),
-                    newNode: Syntax("" as DeclSyntax)
-                )
-            ]
-        )
-    }
-}
-
-/// An extension that manages diagnostic
-/// and fixes messages related to attributes.
-extension AttributeSyntax {
-    /// Creates a new diagnostic message instance
-    /// with provided message, id and severity.
-    ///
-    /// - Parameters:
-    ///   - message: The message to be shown.
-    ///   - messageID: The id associated with diagnostic.
-    ///   - severity: The severity of diagnostic.
-    ///
-    /// - Returns: The newly created diagnostic message instance.
-    func diagnostic(
-        message: String,
-        id: MessageID,
-        severity: DiagnosticSeverity
-    ) -> MetaCodableMessage {
-        return .init(
-            macro: self,
-            message: message,
-            messageID: id,
-            severity: severity
-        )
-    }
-
     /// Creates a new fixit/quick-fix message instance
     /// with provided message and id.
     ///
     /// - Parameters:
+    ///   - macro: The macro attribute message is shown at.
     ///   - message: The message to be shown.
     ///   - messageID: The id associated with the fix suggested.
     ///
     /// - Returns: The newly created fixit/quick-fix message instance.
-    func fixIt(message: String, id: MessageID) -> MetaCodableMessage {
+    static func fixIt(
+        macro: AttributeSyntax,
+        message: String, id: MessageID
+    ) -> MetaCodableMessage {
         return .init(
-            macro: self,
+            macro: macro,
             message: message,
             messageID: id,
             severity: .warning
-        )
-    }
-}
-
-/// An extension that manages
-/// module specific message ids.
-extension MessageID {
-    /// Creates a new message id in current package domain.
-    ///
-    /// - Parameters id: The message id.
-    /// - Returns: Created message id.
-    static func messageID(_ id: String) -> Self {
-        return .init(
-            domain: "com.SwiftyLab.MetaCodable",
-            id: id
         )
     }
 }

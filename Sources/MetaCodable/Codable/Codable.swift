@@ -1,5 +1,5 @@
-/// Generate `Codable` implementation of `struct` types by leveraging custom
-/// attributes provided on variable declarations.
+/// Generate `Codable` implementation of `struct` and `class` types
+/// by leveraging custom attributes provided on variable declarations.
 ///
 /// # Usage
 /// By default the field name is used as `CodingKey` for the field value during
@@ -35,9 +35,14 @@
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
 ///
-/// - Important: The attached declaration must be of a struct type.
+/// - Important: The attached declaration must be of a `struct` or `class` type.
+///   [See the limitations for this macro](<doc:Limitations>).
 @attached(
     extension, conformances: Decodable, Encodable,
+    names: named(CodingKeys), named(init(from:)), named(encode(to:))
+)
+@attached(
+    member, conformances: Decodable, Encodable,
     names: named(CodingKeys), named(init(from:)), named(encode(to:))
 )
 @available(swift 5.9)

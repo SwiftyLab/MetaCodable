@@ -3,7 +3,7 @@
 /// The `ConditionalCodingVariable` type forwards `Variable`
 /// decoding/encoding, initialization implementations and only
 /// decoding/encoding condition are customized.
-struct ConditionalCodingVariable<Var: Variable>: ComposedVariable {
+struct ConditionalCodingVariable<Var: Variable>: ComposedVariable, Variable {
     /// The customization options for `ConditionalCodingVariable`.
     ///
     /// `ConditionalCodingVariable` uses the instance of this type,
@@ -14,18 +14,13 @@ struct ConditionalCodingVariable<Var: Variable>: ComposedVariable {
         /// `True` for non-initialized stored variables.
         /// `False` for variables with `@IgnoreCoding`
         /// and `@IgnoreDecoding` attributes.
-        let decode: Bool
+        let decode: Bool?
         /// Whether variable should to be encoded.
         ///
         /// False for variables with `@IgnoreCoding`
         /// and `@IgnoreEncoding` attributes.
-        let encode: Bool
+        let encode: Bool?
     }
-
-    /// The initialization type of this variable.
-    ///
-    /// Initialization type is the same as underlying wrapped variable.
-    typealias Initialization = Var.Initialization
 
     /// The value wrapped by this instance.
     ///
@@ -36,25 +31,31 @@ struct ConditionalCodingVariable<Var: Variable>: ComposedVariable {
     ///
     /// Options is provided during initialization.
     let options: Options
+}
 
+extension ConditionalCodingVariable: NamedVariable
+where Wrapped: NamedVariable {
     /// Whether the variable is to be decoded.
     ///
     /// Provides whether underlying variable value is to be decoded,
     /// if provided decode option is set as `true` otherwise `false`.
-    var decode: Bool? { options.decode ? base.decode : false }
+    var decode: Bool? { (options.decode ?? true) ? base.decode : false }
     /// Whether the variable is to be encoded.
     ///
     /// Provides whether underlying variable value is to be encoded,
     /// if provided encode option is set as `true` otherwise `false`.
-    var encode: Bool? { options.encode ? base.encode : false }
+    var encode: Bool? { (options.encode ?? true) ? base.encode : false }
+}
 
+extension ConditionalCodingVariable: PropertyVariable
+where Var: PropertyVariable {
     /// Whether the variable type requires `Decodable` conformance.
     ///
     /// Provides whether underlying variable type requires
     /// `Decodable` conformance, if provided decode
     /// option is set as `true` otherwise `false`.
     var requireDecodable: Bool? {
-        return options.decode ? base.requireDecodable : false
+        return (options.decode ?? true) ? base.requireDecodable : false
     }
     /// Whether the variable type requires `Encodable` conformance.
     ///
@@ -62,22 +63,17 @@ struct ConditionalCodingVariable<Var: Variable>: ComposedVariable {
     /// `Encodable` conformance, if provided encode
     /// option is set as `true` otherwise `false`.
     var requireEncodable: Bool? {
-        return options.encode ? base.requireEncodable : false
+        return (options.encode ?? true) ? base.requireEncodable : false
     }
 }
 
-extension ConditionalCodingVariable: DefaultOptionComposedVariable {
-    /// Creates variable wrapping passed variable.
+extension ConditionalCodingVariable: InitializableVariable
+where Var: InitializableVariable {
+    /// The initialization type of this variable.
     ///
-    /// Default options are used that allows direct usage
-    /// of underlying variable's decoding/encoding implementations.
-    ///
-    /// - Parameter base: The underlying variable.
-    /// - Returns: Newly created variable.
-    init(base: Var) {
-        self.init(base: base, options: .init(decode: true, encode: true))
-    }
+    /// Initialization type is the same as underlying wrapped variable.
+    typealias Initialization = Var.Initialization
 }
 
-extension ConditionalCodingVariable: BasicCodingVariable
-where Var: BasicCodingVariable {}
+extension ConditionalCodingVariable: DefaultPropertyVariable
+where Var: DefaultPropertyVariable {}

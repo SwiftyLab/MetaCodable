@@ -48,10 +48,45 @@ struct CodedBy: PropertyAttribute {
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntax: VariableDeclSyntax.self)
+            expect(syntaxes: VariableDeclSyntax.self)
             attachedToNonStaticVariable()
             cantDuplicate()
             cantBeCombined(with: IgnoreCoding.self)
         }
+    }
+}
+
+extension Registration
+where
+    Decl: AttributableDeclSyntax, Var: DefaultPropertyVariable,
+    Var.Initialization == RequiredInitialization
+{
+    /// The optional variable data with helper expression
+    /// that output registration will have.
+    typealias CodedByOutput = AnyPropertyVariable<Var.Initialization>
+    /// Update registration with helper expression data.
+    ///
+    /// New registration is updated with helper expression data that will be
+    /// used for decoding/encoding, if provided.
+    ///
+    /// - Returns: Newly built registration with helper expression data.
+    func useHelperCoderIfExists() -> Registration<Decl, CodedByOutput> {
+        guard let attr = CodedBy(from: self.declaration)
+        else { return self.updating(with: self.variable.any) }
+        let newVar = self.variable.with(helper: attr.expr)
+        return self.updating(with: newVar.any)
+    }
+}
+
+fileprivate extension DefaultPropertyVariable {
+    /// Update variable data with the helper instance expression provided.
+    ///
+    /// `HelperCodedVariable` is created with this variable as base
+    /// and helper expression provided.
+    ///
+    /// - Parameter expr: The helper expression to add.
+    /// - Returns: Created variable data with helper expression.
+    func with(helper expr: ExprSyntax) -> HelperCodedVariable<Self> {
+        return .init(base: self, options: .init(expr: expr))
     }
 }

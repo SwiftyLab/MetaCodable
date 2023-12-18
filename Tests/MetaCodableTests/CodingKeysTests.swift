@@ -208,6 +208,54 @@ final class CodingKeysTests: XCTestCase {
         )
     }
 
+    func testClassCameCaseToSnakeCase() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            @CodingKeys(.snake_case)
+            class SomeCodable {
+                let productName: String
+                let productCost: String
+                let description: String
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable {
+                    let productName: String
+                    let productCost: String
+                    let description: String
+
+                    required init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.productName = try container.decode(String.self, forKey: CodingKeys.productName)
+                        self.productCost = try container.decode(String.self, forKey: CodingKeys.productCost)
+                        self.description = try container.decode(String.self, forKey: CodingKeys.description)
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.productName, forKey: CodingKeys.productName)
+                        try container.encode(self.productCost, forKey: CodingKeys.productCost)
+                        try container.encode(self.description, forKey: CodingKeys.description)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case productName = "product_name"
+                        case productCost = "product_cost"
+                        case description = "description"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
+                }
+                """
+        )
+    }
+
     func testCameCaseToCamelSnakeCase() throws {
         assertMacroExpansion(
             """

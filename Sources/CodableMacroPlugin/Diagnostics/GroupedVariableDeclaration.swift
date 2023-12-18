@@ -25,7 +25,7 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     /// This diagnostic producer is used first to check if passed declaration is
     /// variable declaration. If validation failed, then further validation by
     /// this type is terminated.
-    let base: InvalidDeclaration<Attr, VariableDeclSyntax>
+    let base: InvalidDeclaration<Attr>
 
     /// Creates a grouped variable declaration validation instance
     /// with provided attribute.
@@ -39,7 +39,7 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     /// - Returns: Newly created diagnostic producer.
     init(_ attr: Attr) {
         self.attr = attr
-        self.base = .init(attr, expect: VariableDeclSyntax.self)
+        self.base = .init(attr, expect: [VariableDeclSyntax.self])
     }
 
     /// Validates and produces diagnostics for the passed syntax
@@ -62,13 +62,13 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
         guard !base.produce(for: syntax, in: context) else { return true }
         guard syntax.as(VariableDeclSyntax.self)!.bindings.count > 1
         else { return false }
-        let message = attr.node.diagnostic(
+        let message = attr.diagnostic(
             message:
                 "@\(attr.name) can't be used with grouped variables declaration",
             id: attr.misuseMessageID,
             severity: .error
         )
-        context.diagnose(attr: attr, message: message)
+        attr.diagnose(message: message, in: context)
         return true
     }
 }
