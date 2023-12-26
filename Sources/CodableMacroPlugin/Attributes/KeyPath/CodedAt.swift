@@ -32,24 +32,36 @@ struct CodedAt: PropertyAttribute {
     ///
     /// The following conditions are checked by the
     /// built diagnoser:
-    /// * Attached declaration is a variable declaration.
-    /// * Macro usage is not duplicated for the same
-    ///   declaration.
-    /// * Attached declaration is not a grouped variable
-    ///   declaration.
-    /// * Attached declaration is not a static variable
-    ///   declaration
-    /// * This attribute isn't used combined with `CodedIn`
-    ///   and `IgnoreCoding` attribute.
+    /// * Macro usage is not duplicated for the same declaration.
+    /// * If macro is attached to enum declaration:
+    ///   * This attribute must be combined with `Codable`
+    ///   and `TaggedAt` attribute.
+    /// * else:
+    ///   * Attached declaration is a variable declaration.
+    ///   * Attached declaration is not a grouped variable
+    ///     declaration.
+    ///   * Attached declaration is not a static variable
+    ///     declaration
+    ///   * This attribute isn't used combined with `CodedIn`
+    ///     and `IgnoreCoding` attribute.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            attachedToUngroupedVariable()
-            attachedToNonStaticVariable()
             cantDuplicate()
-            cantBeCombined(with: CodedIn.self)
-            cantBeCombined(with: IgnoreCoding.self)
+            `if`(
+                isEnum,
+                AggregatedDiagnosticProducer {
+                    mustBeCombined(with: Codable.self)
+                    mustBeCombined(with: TaggedAt.self)
+                },
+                else: AggregatedDiagnosticProducer {
+                    attachedToUngroupedVariable()
+                    attachedToNonStaticVariable()
+                    cantBeCombined(with: CodedIn.self)
+                    cantBeCombined(with: IgnoreCoding.self)
+                }
+            )
         }
     }
 }

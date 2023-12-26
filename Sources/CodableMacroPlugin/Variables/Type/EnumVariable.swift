@@ -53,7 +53,11 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
             ) { registration in
                 return registration.useHelperCoderIfExists()
             } switcherBuilder: { registration in
-                return registration
+                return registration.checkForAdjacentTagging(
+                    contentDecoder: "contentDecoder",
+                    contentEncoder: "contentEncoder",
+                    codingKeys: codingKeys, context: context
+                )
             }
         } caseBuilder: { input in
             return input.checkForAlternateValue().checkCodingIgnored()

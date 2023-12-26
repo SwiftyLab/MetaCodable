@@ -160,6 +160,45 @@ final class CodedAtTests: XCTestCase {
         )
     }
 
+    func testMisuseOnEnumDeclaration() throws {
+        assertMacroExpansion(
+            """
+            @CodedAt("content")
+            enum Command {
+                case load(key: String)
+                case store(key: String, value: Int)
+            }
+            """,
+            expandedSource:
+                """
+                enum Command {
+                    case load(key: String)
+                    case store(key: String, value: Int)
+                }
+                """,
+            diagnostics: [
+                .init(
+                    id: CodedAt.misuseID,
+                    message:
+                        "@CodedAt must be used in combination with @Codable",
+                    line: 1, column: 1,
+                    fixIts: [
+                        .init(message: "Remove @CodedAt attribute")
+                    ]
+                ),
+                .init(
+                    id: CodedAt.misuseID,
+                    message:
+                        "@CodedAt must be used in combination with @TaggedAt",
+                    line: 1, column: 1,
+                    fixIts: [
+                        .init(message: "Remove @CodedAt attribute")
+                    ]
+                ),
+            ]
+        )
+    }
+
     func testWithNoPath() throws {
         assertMacroExpansion(
             """
