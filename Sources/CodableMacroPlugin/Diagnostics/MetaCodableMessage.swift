@@ -42,7 +42,7 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     /// the provided `macro` attribute.
     var fixItByRemove: FixIt {
         let name = macro.attributeName
-            .as(IdentifierTypeSyntax.self)!.description
+            .as(IdentifierTypeSyntax.self)!.name.text
         return .init(
             message: Self.fixIt(
                 macro: macro,

@@ -3,8 +3,8 @@
 
 /// A type-erased variable value only containing initialization type data.
 ///
-/// The `AnyPropertyVariable` type forwards `Variable` implementations to an underlying
-/// variable value, hiding the type of the wrapped value.
+/// The `AnyPropertyVariable` type forwards `Variable` implementations
+/// to an underlying variable value, hiding the type of the wrapped value.
 struct AnyPropertyVariable<Initialization>: PropertyVariable
 where Initialization: VariableInitialization {
     /// The value wrapped by this instance.

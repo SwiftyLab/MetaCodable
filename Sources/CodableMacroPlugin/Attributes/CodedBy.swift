@@ -27,7 +27,7 @@ struct CodedBy: PropertyAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+                .name.text == Self.name
         else { return nil }
         self.node = node
     }
@@ -37,21 +37,36 @@ struct CodedBy: PropertyAttribute {
     ///
     /// The following conditions are checked by the
     /// built diagnoser:
-    /// * Attached declaration is a variable declaration.
-    /// * Attached declaration is not a static variable
-    ///   declaration
-    /// * Macro usage is not duplicated for the same
-    ///   declaration.
-    /// * This attribute isn't used combined with
-    ///   `IgnoreCoding` attribute.
+    /// * Macro usage is not duplicated for the same declaration.
+    /// * If attached declaration is enum declaration:
+    ///   * This attribute must be combined with `Codable`
+    ///     and `TaggedAt` attribute.
+    ///   * This attribute mustn't be combined with `CodedAs`
+    ///     attribute.
+    /// * If macro has one argument provided:
+    ///   * Attached declaration is a variable declaration.
+    ///   * Attached declaration is not a static variable
+    ///     declaration
+    ///   * This attribute isn't used combined with
+    ///     `IgnoreCoding` attribute.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntaxes: VariableDeclSyntax.self)
-            attachedToNonStaticVariable()
             cantDuplicate()
-            cantBeCombined(with: IgnoreCoding.self)
+            `if`(
+                isEnum,
+                AggregatedDiagnosticProducer {
+                    mustBeCombined(with: Codable.self)
+                    mustBeCombined(with: TaggedAt.self)
+                    cantBeCombined(with: CodedAs.self)
+                },
+                else: AggregatedDiagnosticProducer {
+                    expect(syntaxes: VariableDeclSyntax.self)
+                    attachedToNonStaticVariable()
+                    cantBeCombined(with: IgnoreCoding.self)
+                }
+            )
         }
     }
 }

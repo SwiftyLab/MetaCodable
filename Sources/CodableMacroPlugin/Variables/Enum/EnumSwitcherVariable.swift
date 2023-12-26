@@ -67,11 +67,43 @@ struct EnumSwitcherLocation {
 ///
 /// Represents the switch expression with additional prefix code generated.
 struct EnumSwitcherGenerated {
-    ///The decoding/encoding container syntax to use.
+    /// A type representing enum-case specific data.
     ///
-    /// Represents the container that will be passed to individual
+    /// This data will be related to switch statement generated
+    /// and passed to each case.
+    enum CaseData {
+        /// Case specific callback for decoding/encoding case variation.
+        ///
+        /// The passed token is used by switcher to decode/encode case
+        /// variation.
+        typealias CoderCallback = (TokenSyntax) -> CodeBlockItemListSyntax
+        /// Represents case is decoded/encoded in the provided container
+        /// keyed by variation value.
+        ///
+        /// The associated properties of case are decoded/encoded keyed
+        /// by enum-case variation data.
+        ///
+        /// - Parameter container: The decoding/encoding container
+        ///   for enum-case.
+        case container(_ container: TokenSyntax)
+        /// Represents case is decoded/encoded using provided data.
+        ///
+        /// The associated properties of case are decoded/encoded from/to
+        /// the provided decoder/encoder, while enum-case variation data
+        /// by passing the value in the provided callback .
+        ///
+        /// - Parameters:
+        ///   - coder: The decoder/encoder for decoding/encoding enum-case
+        ///     associated variables.
+        ///   - postfix: The callback to generate case variation data.
+        case coder(_ coder: TokenSyntax, _ postfix: CoderCallback)
+    }
+
+    /// The switch statement data for enum-case.
+    ///
+    /// Represents the data that will be passed to individual
     /// enum-case variables.
-    let container: TokenSyntax
+    let data: CaseData
     /// The switch header expression.
     ///
     /// This expression will be used to switch on

@@ -87,9 +87,9 @@ struct PropertyVariableTreeNode: Variable {
     ///
     /// - Parameters:
     ///   - variable: The variable data, i.e. name, type and
-    ///               additional macro metadata.
+    ///     additional macro metadata.
     ///   - keyPath: The `CodingKey` path where the value
-    ///              will be decode/encoded.
+    ///     will be decode/encoded.
     mutating func register(
         variable: any PropertyVariable,
         keyPath: [CodingKeysMap.Key]

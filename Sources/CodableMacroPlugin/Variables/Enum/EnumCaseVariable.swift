@@ -19,10 +19,11 @@ where CodingLocation == EnumCaseCodingLocation, Generated == SwitchCaseSyntax {
 /// Represents the container and value for `EnumCaseVariable`s
 /// decoding/encoding.
 struct EnumCaseCodingLocation {
-    /// The container of variable.
+    /// The enum switch statement data for enum-cases.
     ///
-    /// Represents the container variable will be decoded/encoded.
-    let container: TokenSyntax
+    /// Represents the data related to switch statement
+    /// of enum passed to each case.
+    let data: EnumSwitcherGenerated.CaseData
     /// The value of the variable.
     ///
     /// Represents the actual value that will be decoded/encoded.

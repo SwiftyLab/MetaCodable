@@ -23,3 +23,40 @@
 @available(swift 5.9)
 public macro CodedAs<T: Codable>(_ value: T) =
     #externalMacro(module: "CodableMacroPlugin", type: "CodedAs")
+
+/// Provides the identifier actual type for internally/adjacently tagged enums.
+///
+/// When type is provided attached to an enum declaration the identifier is
+/// decoded to the provided type instead of `String` type. i.e. for enum:
+/// ```swift
+/// @Codable
+/// @TaggedAt("type")
+/// @CodedAs<Int>
+/// enum Command {
+///     @CodedAs(1)
+///     case load(key: String)
+///     @CodedAs(2)
+///     case store(key: String, value: Int)
+/// }
+/// ```
+/// the encoded JSON for internally tagged enum will be of following variations:
+/// ```json
+/// { "key": "MyKey", "type": 1 }
+/// ```
+/// ```json
+/// { "key": "MyKey", "value": 42, "type": 1 }
+/// ```
+///
+/// - Note: This macro on its own only validates if attached declaration
+///   is a variable declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
+///
+/// - Important: For each case ``CodedAs(_:)`` macro with value
+///   of the type here should be provided, otherwise case name as `String`
+///   will be used for comparison. If the type here conforms to
+///   `ExpressibleByStringLiteral` and can be represented by case name
+///   as `String` literal then no need to provide value with ``CodedAs(_:)``.
+@attached(peer)
+@available(swift 5.9)
+public macro CodedAs<T: Codable>() =
+    #externalMacro(module: "CodableMacroPlugin", type: "CodedAs")

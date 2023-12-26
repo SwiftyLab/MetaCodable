@@ -78,7 +78,7 @@ struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
             """
         }
         return .init(
-            container: container, expr: expr, code: code,
+            data: .container(container), expr: expr, code: code,
             defaultCase: false
         )
     }
@@ -106,7 +106,7 @@ struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
             """
         }
         return .init(
-            container: container, expr: "self", code: code,
+            data: .container(container), expr: "self", code: code,
             defaultCase: true
         )
     }

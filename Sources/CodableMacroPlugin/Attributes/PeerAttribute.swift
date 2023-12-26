@@ -44,19 +44,6 @@ extension PeerAttribute {
         self.init(from: attribute)
     }
 
-    /// Create a new instance from provided attached
-    /// grouped declaration.
-    ///
-    /// This initialization will fail if this attribute not attached
-    /// to provided variable declaration
-    ///
-    /// - Parameter decl: The attached grouped declaration.
-    /// - Returns: Newly created attribute instance.
-    init?(from decl: some DeclGroupSyntax) {
-        guard let decl = decl as? AttributableDeclSyntax else { return nil }
-        self.init(from: decl)
-    }
-
     /// Provide metadata to `Codable` macro for final expansion
     /// and verify proper usage of this macro.
     ///
