@@ -70,8 +70,8 @@ where
     /// used for decoding/encoding, if provided.
     ///
     /// - Returns: Newly built registration with helper expression data.
-    func useHelperCoderIfExists() -> Registration<Decl, CodedByOutput> {
-        guard let attr = CodedBy(from: self.declaration)
+    func useHelperCoderIfExists() -> Registration<Decl, Key, CodedByOutput> {
+        guard let attr = CodedBy(from: self.decl)
         else { return self.updating(with: self.variable.any) }
         let newVar = self.variable.with(helper: attr.expr)
         return self.updating(with: newVar.any)

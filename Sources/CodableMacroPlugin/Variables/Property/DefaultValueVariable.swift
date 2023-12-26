@@ -65,7 +65,7 @@ where
     /// This variable will be initialized with default expression
     /// provided, if decoding fails.
     var decodingFallback: DecodingFallback {
-        return .ifError("self.\(name) = \(options.expr)")
+        return .ifError("\(decodePrefix)\(name) = \(options.expr)")
     }
 
     /// Provides the code syntax for decoding this variable
@@ -85,7 +85,7 @@ where
         from location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
         let catchClauses = CatchClauseListSyntax {
-            CatchClauseSyntax { "self.\(name) = \(options.expr)" }
+            CatchClauseSyntax { "\(decodePrefix)\(name) = \(options.expr)" }
         }
         let method: ExprSyntax = "decodeIfPresent"
         let newLocation: PropertyCodingLocation =
@@ -118,3 +118,6 @@ where
         return .init(base: initialization, expr: options.expr)
     }
 }
+
+extension DefaultValueVariable: AssociatedVariable
+where Wrapped: AssociatedVariable {}

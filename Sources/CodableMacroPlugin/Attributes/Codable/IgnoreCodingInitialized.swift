@@ -36,16 +36,23 @@ struct IgnoreCodingInitialized: PeerAttribute {
     /// has `Codable` macro attached and macro usage
     /// is not duplicated for the same declaration.
     ///
+    /// For enum case declarations this attribute can be attached
+    /// without `Codable` macro.
+    ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            mustBeCombined(with: Codable.self)
             shouldNotDuplicate()
+            `if`(
+                isStruct || isClass || isEnum,
+                mustBeCombined(with: Codable.self),
+                else: expect(syntaxes: EnumCaseDeclSyntax.self)
+            )
         }
     }
 }
 
-extension Registration where Var: NamedVariable {
+extension Registration where Var: ValuedVariable {
     /// Update registration whether decoding/encoding to be ignored.
     ///
     /// New registration is updated with decoding and encoding condition
@@ -57,7 +64,7 @@ extension Registration where Var: NamedVariable {
     ///   data.
     func checkInitializedCodingIgnored<D: AttributableDeclSyntax>(
         attachedAt decl: D
-    ) -> Registration<Decl, ConditionalCodingVariable<Var>> {
+    ) -> Registration<Decl, Key, ConditionalCodingVariable<Var>> {
         typealias Output = ConditionalCodingVariable<Var>
         let attr = IgnoreCodingInitialized(from: decl)
         let code = attr != nil ? self.variable.value == nil : nil

@@ -75,10 +75,14 @@ struct InvalidDeclaration<Attr>: DiagnosticProducer where Attr: Attribute {
     /// - Parameter syntax: The syntax type
     /// - Returns: The name of syntax type.
     func name(for syntax: SyntaxProtocol.Type) -> String {
+        func kebabCased(_ str: String) -> String {
+            return CodingKeyTransformer(strategy: .kebab－case)
+                .transform(key: str)
+        }
         let name = "\(syntax)"
         let suffix = "DeclSyntax"
-        guard name.hasSuffix(suffix) else { return name.lowercased() }
-        return String(name.dropLast(suffix.count)).lowercased()
+        guard name.hasSuffix(suffix) else { return kebabCased(name) }
+        return kebabCased(String(name.dropLast(suffix.count)))
     }
 }
 

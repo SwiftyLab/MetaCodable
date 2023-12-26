@@ -30,23 +30,25 @@ struct IgnoreCoding: PropertyAttribute {
     /// Builds diagnoser that can validate this macro
     /// attached declaration.
     ///
-    /// The following conditions are checked by the
-    /// built diagnoser:
-    /// * Attached declaration is a variable declaration.
-    /// * Attached variable declaration has default
-    ///   initialization or variable is a computed property.
-    /// * This attribute isn't used combined with `CodedIn`
-    ///   and `CodedAt` attribute.
-    /// * Additionally, warning generated if macro usage
-    ///   is duplicated for the same declaration.
+    /// The following conditions are checked by the built diagnoser:
+    /// * Attached declaration is a variable or enum case declaration.
+    /// * Attached variable declaration has default initialization or
+    ///   variable is a computed property.
+    /// * This attribute isn't used combined with `CodedIn` and
+    ///  `CodedAt` attribute.
+    /// * Additionally, warning generated if macro usage is duplicated
+    ///   for the same declaration.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            attachedToInitializedVariable()
             cantBeCombined(with: CodedIn.self)
             cantBeCombined(with: CodedAt.self)
             shouldNotDuplicate()
+            `if`(
+                isVariable, attachedToInitializedVariable(),
+                else: expect(syntaxes: EnumCaseDeclSyntax.self)
+            )
         }
     }
 }
@@ -69,12 +71,11 @@ extension Registration where Decl: AttributableDeclSyntax {
     ///
     /// - Returns: Newly built registration with conditional decoding/encoding
     ///   data.
-    func checkCodingIgnored() -> Registration<Decl, ConditionalOutput> {
+    func checkCodingIgnored() -> Registration<Decl, Key, ConditionalOutput> {
         typealias Output = ConditionalOutput
-        let declaration = self.declaration
-        let ignoreCoding = IgnoreCoding(from: declaration) != nil
-        let ignoreDecoding = IgnoreDecoding(from: declaration) != nil
-        let ignoreEncoding = IgnoreEncoding(from: declaration) != nil
+        let ignoreCoding = IgnoreCoding(from: self.decl) != nil
+        let ignoreDecoding = IgnoreDecoding(from: self.decl) != nil
+        let ignoreEncoding = IgnoreEncoding(from: self.decl) != nil
         let decode = !ignoreCoding && !ignoreDecoding
         let encode = !ignoreCoding && !ignoreEncoding
         let options = Output.Options(decode: decode, encode: encode)

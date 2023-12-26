@@ -43,16 +43,23 @@ struct CodingKeys: PeerAttribute {
     /// has `Codable` macro attached and macro usage
     /// is not duplicated for the same declaration.
     ///
+    /// For enum case declarations this attribute can be attached
+    /// without `Codable` macro.
+    ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            mustBeCombined(with: Codable.self)
             cantDuplicate()
+            `if`(
+                isStruct || isClass || isEnum,
+                mustBeCombined(with: Codable.self),
+                else: expect(syntaxes: EnumCaseDeclSyntax.self)
+            )
         }
     }
 }
 
-extension Registration {
+extension Registration where Key == [String] {
     /// Update current registration `CodingKey` path data.
     ///
     /// New registration is updated with the transformed `CodingKey` path
@@ -65,6 +72,6 @@ extension Registration {
     ) -> Self where D: AttributableDeclSyntax {
         guard let attr = CodingKeys(from: decl) else { return self }
         let strategy = attr.strategy
-        return self.updating(with: strategy.transform(keyPath: self.keyPath))
+        return self.updating(with: strategy.transform(keyPath: self.key))
     }
 }

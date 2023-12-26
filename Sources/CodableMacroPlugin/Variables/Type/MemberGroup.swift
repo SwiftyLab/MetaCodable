@@ -9,49 +9,55 @@
 struct MemberGroup<Decl>: TypeVariable, InitializableVariable
 where
     Decl: MemberGroupSyntax & GenericTypeDeclSyntax & AttributableDeclSyntax,
-    Decl.MemberSyntax.Variable: NamedVariable
+    Decl.MemberSyntax: VariableSyntax, Decl.MemberSyntax.Variable: NamedVariable
 {
+    /// The declaration members syntax type.
+    typealias MemberSyntax = Decl.MemberSyntax
+
     /// The where clause generator for generic type arguments.
     let constraintGenerator: ConstraintGenerator
     /// The root node containing all the keys
     /// and associated field metadata maps.
     let node: PropertyVariableTreeNode
-    /// The case map containing keys
+    /// The `CodingKeys` map containing keys
     /// and generated case names.
-    let caseMap: CaseMap
+    let codingKeys: CodingKeysMap
 
     /// Creates a new member group from provided data.
     ///
     /// - Parameters:
     ///   - decl: The declaration to read data from.
     ///   - context: The context in which to perform the macro expansion.
-    ///   - caseMap: The case map where `CodingKeys` maintained.
-    ///   - builder: The builder action to use to update member variable registration data.
+    ///   - codingKeys: The map where `CodingKeys` maintained.
+    ///   - builder: The builder action to use to update member variables
+    ///     registration data.
     ///
     /// - Returns: Created member group.
     init<Output: PropertyVariable>(
         from decl: Decl, in context: some MacroExpansionContext,
-        caseMap: CaseMap,
+        codingKeys: CodingKeysMap, memberInput: Decl.ChildSyntaxInput,
         builder: (
-            _ input: Registration<Decl.MemberSyntax, Decl.MemberSyntax.Variable>
-        ) -> Registration<Decl.MemberSyntax, Output>
+            _ input: PathRegistration<MemberSyntax, MemberSyntax.Variable>
+        ) -> PathRegistration<MemberSyntax, Output>
     ) {
         self.constraintGenerator = .init(decl: decl)
         var node = PropertyVariableTreeNode()
-        for member in decl.codableMembers() {
-            let reg = Registration(declaration: member, context: context)
+        for member in decl.codableMembers(input: memberInput) {
+            let `var` = member.codableVariable(in: context)
+            let key = [CodingKeysMap.Key.name(for: `var`.name).text]
+            let reg = Registration(decl: member, key: key, context: context)
             let registration = builder(reg)
-            let path = registration.keyPath
+            let path = registration.key
             let variable = registration.variable
             guard
                 (variable.decode ?? true) || (variable.encode ?? true)
             else { continue }
             let name = variable.name
-            let keys = caseMap.add(keys: path, field: name, context: context)
+            let keys = codingKeys.add(keys: path, field: name, context: context)
             node.register(variable: variable, keyPath: keys)
         }
         self.node = node
-        self.caseMap = caseMap
+        self.codingKeys = codingKeys
     }
 
     /// Provides the syntax for decoding at the provided location.
@@ -72,7 +78,7 @@ where
         return .init(
             code: node.decoding(
                 in: context,
-                from: .coder(location.method.arg, keyType: caseMap.type)
+                from: .coder(location.method.arg, keyType: codingKeys.type)
             ),
             modifiers: [],
             whereClause: constraintGenerator.decodingClause(
@@ -101,7 +107,7 @@ where
         return .init(
             code: node.encoding(
                 in: context,
-                to: .coder(location.method.arg, keyType: caseMap.type)
+                to: .coder(location.method.arg, keyType: codingKeys.type)
             ),
             modifiers: [],
             whereClause: constraintGenerator.encodingClause(
@@ -114,7 +120,7 @@ where
 
     /// Provides the syntax for `CodingKeys` declarations.
     ///
-    /// Single `CodingKeys` enum generated using the `caseMap`
+    /// Single `CodingKeys` enum generated using the `codingKeys`
     /// provided during initialization.
     ///
     /// - Parameters:
@@ -134,7 +140,7 @@ where
             ).isEmpty
         else { return [] }
         return MemberBlockItemListSyntax {
-            caseMap.decl(in: context)
+            codingKeys.decl(in: context)
         }
     }
 
@@ -153,7 +159,7 @@ where
 }
 
 extension MemberGroup: DeclaredVariable
-where Decl.MemberSyntax == PropertyDeclSyntax {
+where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
     /// Creates a new variable from declaration and expansion context.
     ///
     /// Uses default builder actions that provides following features:
@@ -172,15 +178,15 @@ where Decl.MemberSyntax == PropertyDeclSyntax {
     init(from decl: Decl, in context: some MacroExpansionContext) {
         self.init(
             from: decl, in: context,
-            caseMap: .init(typeName: "CodingKeys")
+            codingKeys: .init(typeName: "CodingKeys"), memberInput: ()
         ) { input in
             return
                 input
                 .transformKeysAccordingToStrategy(attachedTo: decl)
                 .checkInitializedCodingIgnored(attachedAt: decl)
                 .registerKeyPath(
-                    provider: CodedAt(from: input.declaration)
-                        ?? CodedIn(from: input.declaration) ?? CodedIn()
+                    provider: CodedAt(from: input.decl)
+                        ?? CodedIn(from: input.decl) ?? CodedIn()
                 )
                 .useHelperCoderIfExists()
                 .addDefaultValueIfExists()

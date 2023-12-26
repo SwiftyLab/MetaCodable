@@ -70,6 +70,9 @@ extension ComposedVariable where Self: NamedVariable, Wrapped: NamedVariable {
     ///
     /// Provides name of the underlying variable value.
     var name: TokenSyntax { base.name }
+}
+
+extension ComposedVariable where Self: ValuedVariable, Wrapped: ValuedVariable {
     /// The value of the variable.
     ///
     /// Provides value of the underlying variable value.
@@ -82,6 +85,15 @@ where Self: PropertyVariable, Wrapped: PropertyVariable {
     ///
     /// Provides type of the underlying variable value.
     var type: TypeSyntax { base.type }
+
+    /// The prefix token to use along with `name` when decoding.
+    ///
+    /// Provides decode prefix of the underlying variable value.
+    var decodePrefix: TokenSyntax { base.decodePrefix }
+    /// The prefix token to use along with `name` when encoding.
+    ///
+    /// Provides encode prefix of the underlying variable value.
+    var encodePrefix: TokenSyntax { base.encodePrefix }
 
     /// The fallback behavior when decoding fails.
     ///
@@ -108,4 +120,20 @@ where
     where Initialization == Wrapped.Initialization {
         return base.initializing(in: context)
     }
+}
+
+extension ComposedVariable
+where Self: AssociatedVariable, Wrapped: AssociatedVariable {
+    /// The label of the variable.
+    ///
+    /// Provides label of the underlying variable value.
+    var label: TokenSyntax? { base.label }
+}
+
+extension ComposedVariable
+where Self: EnumCaseVariable, Wrapped: EnumCaseVariable {
+    /// All the associated variables for this case.
+    ///
+    /// Provides associated variables of the underlying variable value.
+    var variables: [any AssociatedVariable] { base.variables }
 }

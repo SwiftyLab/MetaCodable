@@ -40,13 +40,16 @@ struct Codable: Attribute {
     /// attached declaration.
     ///
     /// Builds diagnoser that validates attached declaration
-    /// is `struct` or `class` declaration and macro
+    /// is `struct`/`class`/`enum` declaration and macro
     /// usage is not duplicated for the same declaration.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntaxes: StructDeclSyntax.self, ClassDeclSyntax.self)
+            expect(
+                syntaxes: StructDeclSyntax.self, ClassDeclSyntax.self,
+                EnumDeclSyntax.self
+            )
             cantDuplicate()
         }
     }

@@ -180,7 +180,7 @@ struct AttributeExpander {
     /// Provides the declaration of `CodingKey` type that is used
     /// for `Codable` implementation generation.
     ///
-    /// This registrar asks `caseMap` to generate `CodingKey`
+    /// This registrar asks `variable` to generate `CodingKey`
     /// declaration based on current keys registrations.
     ///
     /// - Parameters:

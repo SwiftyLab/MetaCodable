@@ -37,7 +37,7 @@ struct PropertyVariableTreeNode: Variable {
         /// - Parameters:
         ///   - container: The container for decoding/encoding.
         ///   - key: The `CodingKey` inside the container.
-        case container(_ container: TokenSyntax, key: CaseMap.Key)
+        case container(_ container: TokenSyntax, key: CodingKeysMap.Key)
 
         /// The decoding/encoding location for individual variables.
         ///
@@ -55,7 +55,7 @@ struct PropertyVariableTreeNode: Variable {
     /// All the variables registered at this node.
     private(set) var variables: [any PropertyVariable]
     /// Nested registration node associated with keys.
-    private(set) var children: OrderedDictionary<CaseMap.Key, Self>
+    private(set) var children: OrderedDictionary<CodingKeysMap.Key, Self>
 
     /// List of all the linked variables registered.
     ///
@@ -74,7 +74,7 @@ struct PropertyVariableTreeNode: Variable {
     /// - Returns: The newly created node instance.
     init(
         variables: [any PropertyVariable] = [],
-        children: OrderedDictionary<CaseMap.Key, Self> = [:]
+        children: OrderedDictionary<CodingKeysMap.Key, Self> = [:]
     ) {
         self.variables = variables
         self.children = children
@@ -92,7 +92,7 @@ struct PropertyVariableTreeNode: Variable {
     ///              will be decode/encoded.
     mutating func register(
         variable: any PropertyVariable,
-        keyPath: [CaseMap.Key]
+        keyPath: [CodingKeysMap.Key]
     ) {
         guard !keyPath.isEmpty else { variables.append(variable); return }
 

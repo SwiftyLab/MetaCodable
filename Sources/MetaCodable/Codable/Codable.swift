@@ -1,4 +1,4 @@
-/// Generate `Codable` implementation of `struct` and `class` types
+/// Generate `Codable` implementation of `struct`, `class`, `enum` types
 /// by leveraging custom attributes provided on variable declarations.
 ///
 /// # Usage
@@ -15,12 +15,13 @@
 ///   * Use ``CodedBy(_:)`` to provide custom decoding/encoding behavior for
 ///     `Codable` types or implement decoding/encoding for non-`Codable` types.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
+///   * Use ``CodedAs(_:)`` to provided custom value for enum cases.
 ///   * Use ``IgnoreCoding()``, ``IgnoreDecoding()`` and
-///     ``IgnoreEncoding()`` to ignore specific properties from
+///     ``IgnoreEncoding()`` to ignore specific properties/cases from
 ///     decoding/encoding or both.
 ///   * Use ``CodingKeys(_:)`` to work with different case style `CodingKey`s.
 ///   * Use ``IgnoreCodingInitialized()`` to ignore decoding and encoding
-///     all initialized properties.
+///     all initialized properties/case associated variables.
 ///
 /// # Effect
 /// This macro composes extension macro expansion depending on `Codable`
@@ -35,11 +36,12 @@
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
 ///
-/// - Important: The attached declaration must be of a `struct` or `class` type.
-///   [See the limitations for this macro](<doc:Limitations>).
+/// - Important: The attached declaration must be of a `struct`, `class`
+///   or `enum` type. [See the limitations for this macro](<doc:Limitations>).
 @attached(
     extension, conformances: Decodable, Encodable,
-    names: named(CodingKeys), named(init(from:)), named(encode(to:))
+    names: named(CodingKeys), named(DecodingKeys),
+    named(init(from:)), named(encode(to:))
 )
 @attached(
     member, conformances: Decodable, Encodable,

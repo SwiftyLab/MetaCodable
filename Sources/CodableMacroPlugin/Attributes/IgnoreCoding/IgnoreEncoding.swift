@@ -27,22 +27,19 @@ struct IgnoreEncoding: PropertyAttribute {
         self.node = node
     }
 
-    /// Builds diagnoser that can validate this macro
-    /// attached declaration.
+    /// Builds diagnoser that can validate this macro attached declaration.
     ///
-    /// The following conditions are checked by the
-    /// built diagnoser:
-    /// * Attached declaration is a variable declaration.
-    /// * Additionally, warning generated if macro usage
-    ///   is duplicated for the same declaration.
-    /// * Additionally, warning also generated if this
-    ///   attribute is used combined with `IgnoreCoding`
-    ///   attribute.
+    /// The following conditions are checked by the built diagnoser:
+    /// * Attached declaration is a variable or enum case declaration.
+    /// * Additionally, warning generated if macro usage is duplicated
+    ///   for the same declaration.
+    /// * Additionally, warning also generated if this attribute is used
+    ///   combined with `IgnoreCoding` attribute.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntaxes: VariableDeclSyntax.self)
+            expect(syntaxes: VariableDeclSyntax.self, EnumCaseDeclSyntax.self)
             shouldNotDuplicate()
             shouldNotBeCombined(with: IgnoreCoding.self)
         }

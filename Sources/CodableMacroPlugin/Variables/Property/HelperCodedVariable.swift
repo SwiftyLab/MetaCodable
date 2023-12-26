@@ -6,9 +6,8 @@
 ///
 /// The `HelperCodedVariable` customizes decoding and encoding
 /// by using the helper instance expression provided during initialization.
-struct HelperCodedVariable<Wrapped: DefaultPropertyVariable>: ComposedVariable,
-    PropertyVariable
-{
+struct HelperCodedVariable<Wrapped>: ComposedVariable, PropertyVariable
+where Wrapped: DefaultPropertyVariable {
     /// The customization options for `HelperCodedVariable`.
     ///
     /// `HelperCodedVariable` uses the instance of this type,
@@ -78,14 +77,14 @@ struct HelperCodedVariable<Wrapped: DefaultPropertyVariable>: ComposedVariable,
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
-                self.\(name) = try \(options.expr).\(method)(from: \(decoder))
+                \(decodePrefix)\(name) = try \(options.expr).\(method)(from: \(decoder))
                 """
             }
         case .container(let container, let key, let passedMethod):
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
-                self.\(name) = try \(options.expr).\(method)(from: \(container), forKey: \(key))
+                \(decodePrefix)\(name) = try \(options.expr).\(method)(from: \(container), forKey: \(key))
                 """
             }
         }
@@ -117,14 +116,14 @@ struct HelperCodedVariable<Wrapped: DefaultPropertyVariable>: ComposedVariable,
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
-                try \(options.expr).\(method)(self.\(name), to: \(encoder))
+                try \(options.expr).\(method)(\(encodePrefix)\(name), to: \(encoder))
                 """
             }
         case .container(let container, let key, let passedMethod):
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
-                try \(options.expr).\(method)(self.\(name), to: &\(container), atKey: \(key))
+                try \(options.expr).\(method)(\(encodePrefix)\(name), to: &\(container), atKey: \(key))
                 """
             }
         }
@@ -138,6 +137,9 @@ where Wrapped: InitializableVariable {
     /// Initialization type is the same as underlying wrapped variable.
     typealias Initialization = Wrapped.Initialization
 }
+
+extension HelperCodedVariable: AssociatedVariable
+where Wrapped: AssociatedVariable {}
 
 /// A `Variable` type representing that doesn't customize
 /// decoding/encoding implementation.

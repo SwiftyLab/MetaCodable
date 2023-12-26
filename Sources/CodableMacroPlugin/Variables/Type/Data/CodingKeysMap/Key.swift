@@ -3,17 +3,17 @@
 @_implementationOnly import SwiftSyntaxBuilder
 @_implementationOnly import SwiftSyntaxMacros
 
-extension CaseMap {
+extension CodingKeysMap {
     /// A type containing key data.
     ///
     /// This type also provides key associated
-    /// `CodingKey` expression from `CaseMap`.
+    /// `CodingKey` expression from `CodingKeysMap`.
     struct Key: Equatable, Hashable, CustomStringConvertible {
         /// The key value.
         private let value: String
-        /// The case map that generates `CodingKey`
+        /// The `CodingKeys` map that generates `CodingKey`
         /// expressions for keys.
-        private let map: CaseMap
+        private let map: CodingKeysMap
 
         /// The `CodingKey` expression associated
         /// with the stored key `value`.
@@ -30,15 +30,15 @@ extension CaseMap {
         var description: String { value }
 
         /// Creates a new key instance with provided
-        /// key value and case map.
+        /// key value and `CodingKeys` map.
         ///
         /// - Parameters:
         ///   - value: A key value.
-        ///   - map: The `CaseMap` that generates
+        ///   - map: The `CodingKeysMap` that generates
         ///          `CodingKey` maps.
         ///
         /// - Returns: The newly created key instance.
-        init(value: String, map: CaseMap) {
+        init(value: String, map: CodingKeysMap) {
             self.value = value
             self.map = map
         }

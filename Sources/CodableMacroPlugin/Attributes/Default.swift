@@ -69,8 +69,8 @@ where
     /// used for decoding failure and memberwise initializer(s), if provided.
     ///
     /// - Returns: Newly built registration with default expression data.
-    func addDefaultValueIfExists() -> Registration<Decl, DefOutput> {
-        guard let attr = Default(from: self.declaration)
+    func addDefaultValueIfExists() -> Registration<Decl, Key, DefOutput> {
+        guard let attr = Default(from: self.decl)
         else { return self.updating(with: self.variable.any) }
         let newVar = self.variable.with(default: attr.expr)
         return self.updating(with: newVar.any)
