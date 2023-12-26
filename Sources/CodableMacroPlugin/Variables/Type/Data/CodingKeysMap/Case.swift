@@ -1,10 +1,10 @@
 @_implementationOnly import SwiftSyntax
 
-extension CaseMap {
+extension CodingKeysMap {
     /// A type indicating how the
     /// case name was decided.
     ///
-    /// Helps `CaseMap` decide
+    /// Helps `CodingKeysMap` decide
     /// how to handle conflicting
     /// key values.
     enum Case {
@@ -25,7 +25,7 @@ extension CaseMap {
         /// directly from key value.
         ///
         /// Instead of direct usage of key string
-        /// `CaseMap.add(forKeys:field:context:)`
+        /// `CodingKeysMap.add(forKeys:field:context:)`
         /// method applies some processors to build case name.
         case builtWithKey(TokenSyntax)
 
@@ -44,7 +44,7 @@ extension CaseMap {
             switch self {
             case .field(let token), .nestedKeyField(let token),
                 .builtWithKey(let token):
-                return token.text
+                return CodingKeysMap.Key.name(for: token).text
             }
         }
     }

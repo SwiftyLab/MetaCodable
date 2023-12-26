@@ -36,7 +36,7 @@ enum DecodingFallback {
     /// - Returns: The generated code block.
     func represented(
         decodingContainer container: TokenSyntax,
-        fromKey key: CaseMap.Key,
+        fromKey key: CodingKeysMap.Key,
         nestedDecoding decoding: (TokenSyntax) -> CodeBlockItemListSyntax
     ) -> CodeBlockItemListSyntax {
         let nestedContainer: TokenSyntax = "\(key.raw)_\(container)"

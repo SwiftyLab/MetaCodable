@@ -8,7 +8,6 @@
 /// decoding/encoding implementations similar to standard library
 /// generated implementations.
 struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
-    let label: TokenSyntax?
     /// The name of this variable.
     ///
     /// The name is provided during
@@ -24,6 +23,17 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
     /// The value is provided during
     /// initialization of this variable.
     let value: ExprSyntax?
+
+    /// The prefix token to use along with `name` when decoding.
+    ///
+    /// When generating decode implementation the prefix
+    /// is used before `name` during assignment.
+    let decodePrefix: TokenSyntax
+    /// The prefix token to use along with `name` when encoding.
+    ///
+    /// When generating encode implementation the prefix
+    /// is used before `name` during method invocation.
+    let encodePrefix: TokenSyntax
 
     /// Whether the variable is to
     /// be decoded.
@@ -64,7 +74,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
     /// `nil` value only when missing or `null`.
     var decodingFallback: DecodingFallback {
         guard hasOptionalType else { return .throw }
-        return .ifMissing("self.\(name) = nil")
+        return .ifMissing("\(decodePrefix)\(name) = nil")
     }
 
     /// Creates a new variable with provided data.
@@ -80,14 +90,15 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
     ///
     /// - Returns: Newly created variable.
     init(
-        label: TokenSyntax?, name: TokenSyntax,
-        type: TypeSyntax, value: ExprSyntax?,
+        name: TokenSyntax, type: TypeSyntax, value: ExprSyntax?,
+        decodePrefix: TokenSyntax, encodePrefix: TokenSyntax,
         decode: Bool? = nil, encode: Bool? = nil
     ) {
-        self.label = label
         self.name = name
         self.type = type
         self.value = value
+        self.decodePrefix = decodePrefix
+        self.encodePrefix = encodePrefix
         self.decode = decode
         self.encode = encode
     }
@@ -102,7 +113,6 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
     init(
         from decl: PropertyDeclSyntax, in context: some MacroExpansionContext
     ) {
-        self.label = nil
         self.name =
             decl.binding.pattern.as(IdentifierPatternSyntax.self)!
             .identifier.trimmed
@@ -110,6 +120,8 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
         self.value = decl.binding.initializer?.value
         self.decode = nil
         self.encode = nil
+        self.decodePrefix = "self."
+        self.encodePrefix = "self."
     }
 
     /// Provides the code syntax for decoding this variable
@@ -141,7 +153,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
                 }
             return CodeBlockItemListSyntax {
                 """
-                self.\(name) = try \(type)\(optionalToken)(from: \(decoder))
+                \(decodePrefix)\(name) = try \(type)\(optionalToken)(from: \(decoder))
                 """
             }
         case .container(let container, let key, let passedMethod):
@@ -149,7 +161,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
-                self.\(name) = try \(container).\(method)(\(type).self, forKey: \(key))
+                \(decodePrefix)\(name) = try \(container).\(method)(\(type).self, forKey: \(key))
                 """
             }
         }
@@ -178,7 +190,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
         case .coder(let encoder, _):
             return CodeBlockItemListSyntax {
                 """
-                try self.\(name).encode(to: \(encoder))
+                try \(encodePrefix)\(name).encode(to: \(encoder))
                 """
             }
         case .container(let container, let key, let passedMethod):
@@ -186,7 +198,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
-                try \(container).\(method)(self.\(name), forKey: \(key))
+                try \(container).\(method)(\(encodePrefix)\(name), forKey: \(key))
                 """
             }
         }
@@ -215,6 +227,6 @@ extension BasicPropertyVariable: InitializableVariable {
             } else {
                 "\(name): \(type)"
             }
-        return .init(param: param, code: "self.\(name) = \(name)")
+        return .init(param: param, code: "\(decodePrefix)\(name) = \(name)")
     }
 }

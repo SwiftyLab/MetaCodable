@@ -9,7 +9,7 @@
 /// for similar sounding keys and duplicate
 /// case definitions for keys declared
 /// multiple times.
-final class CaseMap {
+final class CodingKeysMap {
     /// Generated enum type name.
     let typeName: TokenSyntax
     /// Generated enum type expression that can be passed
@@ -53,7 +53,7 @@ final class CaseMap {
     ///     * Convert key to camelcase
     ///     * If after conversion, string begins with numbers,
     ///       `key` is prepended
-    ///     * If current cases in the `CaseMap` doesn't contain built
+    ///     * If current cases in the `CodingKeysMap` doesn't contain built
     ///       string, and built string doesn't conflict with existing Swift
     ///       keywords in `invalidCaseNames` then built string added as
     ///       case name for the key.
@@ -64,7 +64,7 @@ final class CaseMap {
     ///     * If built string is already conflicts with
     ///       Swift keywords in `invalidCaseNames`,
     ///       then built string is wrapped with \` and checked
-    ///       if present in current cases in the `CaseMap`.
+    ///       if present in current cases in the `CodingKeysMap`.
     ///       If not present new string added as case name,
     ///       otherwise previous rule is used.
     ///
@@ -78,23 +78,25 @@ final class CaseMap {
         context: some MacroExpansionContext
     ) -> [Key] {
         guard !keys.isEmpty else { return [] }
+        let currentCases = data.values.map(\.name)
+        let fieldIncluded = currentCases.contains(Key.name(for: field).text)
         switch data[keys.last!] {
-        case .none, .builtWithKey:
+        case .none where !fieldIncluded, .builtWithKey where !fieldIncluded:
             guard keys.count > 1 else { fallthrough }
             data[keys.last!] = .nestedKeyField(field)
-        case .nestedKeyField where keys.count == 1:
+        case .nestedKeyField where !fieldIncluded:
+            guard keys.count == 1 else { fallthrough }
             data[keys.last!] = .field(field)
         default:
             break
         }
 
-        for key in keys.dropLast() where data[key] == nil {
+        for key in keys where data[key] == nil {
             var fieldName = camelCased(str: key)
             if doesBeginWithNumber(str: fieldName) {
                 fieldName = "key\(fieldName)"
             }
 
-            let currentCases = data.values.map(\.name)
             data[key] = {
                 if !currentCases.contains(fieldName) && !fieldName.isEmpty {
                     if !invalidCaseNames.contains(fieldName) {
@@ -142,7 +144,7 @@ final class CaseMap {
     }
 }
 
-fileprivate extension CaseMap {
+fileprivate extension CodingKeysMap {
     /// Creates camel case `String`
     ///
     /// Removes non-alphanumeric characters

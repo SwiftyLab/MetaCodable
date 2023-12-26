@@ -32,6 +32,15 @@ where Initialization: VariableInitialization {
     /// Provides value of the underlying variable value.
     var value: ExprSyntax? { base.value }
 
+    /// The prefix token to use along with `name` when decoding.
+    ///
+    /// Provides underlying variable value decode prefix.
+    var decodePrefix: TokenSyntax { base.decodePrefix }
+    /// The prefix token to use along with `name` when encoding.
+    ///
+    /// Provides underlying variable value encode prefix.
+    var encodePrefix: TokenSyntax { base.encodePrefix }
+
     /// Whether the variable is to be decoded.
     ///
     /// Provides whether underlying variable value
@@ -137,6 +146,21 @@ where Initialization: VariableInitialization {
         to location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
         return base.encoding(in: context, to: location)
+    }
+}
+
+extension AnyPropertyVariable: AssociatedVariable
+where Initialization: RequiredVariableInitialization {
+    /// The label of the variable.
+    ///
+    /// Provides label of the underlying associated variable value,
+    /// `nil` if underlying variable not associated variable.
+    var label: TokenSyntax? {
+        guard let base = base as? any AssociatedVariable else {
+            print("casting \(Swift.type(of: base)) to associated failed")
+            return nil
+        }
+        return base.label
     }
 }
 

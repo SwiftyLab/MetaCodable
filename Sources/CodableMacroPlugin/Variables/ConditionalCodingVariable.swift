@@ -33,8 +33,8 @@ struct ConditionalCodingVariable<Var: Variable>: ComposedVariable, Variable {
     let options: Options
 }
 
-extension ConditionalCodingVariable: NamedVariable
-where Wrapped: NamedVariable {
+extension ConditionalCodingVariable: ConditionalVariable
+where Wrapped: ConditionalVariable {
     /// Whether the variable is to be decoded.
     ///
     /// Provides whether underlying variable value is to be decoded,
@@ -75,5 +75,13 @@ where Var: InitializableVariable {
     typealias Initialization = Var.Initialization
 }
 
+extension ConditionalCodingVariable: NamedVariable where Var: NamedVariable {}
+extension ConditionalCodingVariable: ValuedVariable where Var: ValuedVariable {}
+
 extension ConditionalCodingVariable: DefaultPropertyVariable
 where Var: DefaultPropertyVariable {}
+
+extension ConditionalCodingVariable: AssociatedVariable
+where Var: AssociatedVariable {}
+extension ConditionalCodingVariable: EnumCaseVariable
+where Var: EnumCaseVariable {}

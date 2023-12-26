@@ -28,7 +28,7 @@ struct KeyedVariable<Var: Variable>: ComposedVariable {
     let options: Options
 }
 
-extension KeyedVariable: NamedVariable where Var: NamedVariable {
+extension KeyedVariable: ConditionalVariable where Var: ConditionalVariable {
     /// Whether the variable is to be decoded.
     ///
     /// Provides whether underlying variable value is to be decoded,
@@ -69,6 +69,10 @@ where Var: InitializableVariable {
     /// Initialization type is the same as underlying wrapped variable.
     typealias Initialization = Var.Initialization
 }
+
+extension KeyedVariable: NamedVariable where Var: NamedVariable {}
+extension KeyedVariable: ValuedVariable where Var: ValuedVariable {}
+extension KeyedVariable: AssociatedVariable where Var: AssociatedVariable {}
 
 extension KeyedVariable: DefaultPropertyVariable
 where Var: DefaultPropertyVariable {}

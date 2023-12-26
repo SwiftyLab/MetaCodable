@@ -92,6 +92,84 @@ final class GenericsTests: XCTestCase {
         )
     }
 
+    func testEnumMultipleGenericTypeExpansion() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            enum GenericCodable<T, U, V> {
+                case one(T)
+                case two(U)
+                case three(V)
+            }
+            """,
+            expandedSource:
+                """
+                enum GenericCodable<T, U, V> {
+                    case one(T)
+                    case two(U)
+                    case three(V)
+                }
+
+                extension GenericCodable: Decodable where T: Decodable, U: Decodable, V: Decodable {
+                    init(from decoder: any Decoder) throws where T: Decodable, U: Decodable, V: Decodable {
+                        let container = try decoder.container(keyedBy: DecodingKeys.self)
+                        guard container.allKeys.count == 1 else {
+                            let context = DecodingError.Context(
+                                codingPath: container.codingPath,
+                                debugDescription: "Invalid number of keys found, expected one."
+                            )
+                            throw DecodingError.typeMismatch(GenericCodable.self, context)
+                        }
+                        switch container.allKeys.first.unsafelyUnwrapped {
+                        case DecodingKeys.one:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.one)
+                            let _0 = try T(from: contentDecoder)
+                            self = .one(_0)
+                        case DecodingKeys.two:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.two)
+                            let _0 = try U(from: contentDecoder)
+                            self = .two(_0)
+                        case DecodingKeys.three:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.three)
+                            let _0 = try V(from: contentDecoder)
+                            self = .three(_0)
+                        }
+                    }
+                }
+
+                extension GenericCodable: Encodable where T: Encodable, U: Encodable, V: Encodable {
+                    func encode(to encoder: any Encoder) throws where T: Encodable, U: Encodable, V: Encodable {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        switch self {
+                        case .one(let _0):
+                            let contentEncoder = container.superEncoder(forKey: CodingKeys.one)
+                            try _0.encode(to: contentEncoder)
+                        case .two(let _0):
+                            let contentEncoder = container.superEncoder(forKey: CodingKeys.two)
+                            try _0.encode(to: contentEncoder)
+                        case .three(let _0):
+                            let contentEncoder = container.superEncoder(forKey: CodingKeys.three)
+                            try _0.encode(to: contentEncoder)
+                        }
+                    }
+                }
+
+                extension GenericCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case one = "one"
+                        case two = "two"
+                        case three = "three"
+                    }
+                    enum DecodingKeys: String, CodingKey {
+                        case one = "one"
+                        case two = "two"
+                        case three = "three"
+                    }
+                }
+                """
+        )
+    }
+
     func testMixedGenericTypeExpansion() throws {
         assertMacroExpansion(
             """
@@ -171,6 +249,73 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Encodable where T: Encodable {
+                }
+                """
+        )
+    }
+
+    func testEnumMixedGenericTypeExpansion() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            enum GenericCodable<T> {
+                @IgnoreEncoding
+                case one(T)
+                case two(String)
+            }
+            """,
+            expandedSource:
+                """
+                enum GenericCodable<T> {
+                    case one(T)
+                    case two(String)
+                }
+
+                extension GenericCodable: Decodable where T: Decodable {
+                    init(from decoder: any Decoder) throws where T: Decodable {
+                        let container = try decoder.container(keyedBy: DecodingKeys.self)
+                        guard container.allKeys.count == 1 else {
+                            let context = DecodingError.Context(
+                                codingPath: container.codingPath,
+                                debugDescription: "Invalid number of keys found, expected one."
+                            )
+                            throw DecodingError.typeMismatch(GenericCodable.self, context)
+                        }
+                        switch container.allKeys.first.unsafelyUnwrapped {
+                        case DecodingKeys.one:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.one)
+                            let _0 = try T(from: contentDecoder)
+                            self = .one(_0)
+                        case DecodingKeys.two:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.two)
+                            let _0 = try String(from: contentDecoder)
+                            self = .two(_0)
+                        }
+                    }
+                }
+
+                extension GenericCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        switch self {
+                        case .two(let _0):
+                            let contentEncoder = container.superEncoder(forKey: CodingKeys.two)
+                            try _0.encode(to: contentEncoder)
+                        default:
+                            break
+                        }
+                    }
+                }
+
+                extension GenericCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case one = "one"
+                        case two = "two"
+                    }
+                    enum DecodingKeys: String, CodingKey {
+                        case one = "one"
+                        case two = "two"
+                    }
                 }
                 """
         )
@@ -337,6 +482,73 @@ final class GenericsTests: XCTestCase {
                 }
 
                 extension GenericCodable: Encodable {
+                }
+                """
+        )
+    }
+
+    func testEnumIgnoredEncodingGenericTypeExpansion() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            enum GenericCodable<T> {
+                @IgnoreEncoding
+                case one(T)
+                case two(String)
+            }
+            """,
+            expandedSource:
+                """
+                enum GenericCodable<T> {
+                    case one(T)
+                    case two(String)
+                }
+
+                extension GenericCodable: Decodable where T: Decodable {
+                    init(from decoder: any Decoder) throws where T: Decodable {
+                        let container = try decoder.container(keyedBy: DecodingKeys.self)
+                        guard container.allKeys.count == 1 else {
+                            let context = DecodingError.Context(
+                                codingPath: container.codingPath,
+                                debugDescription: "Invalid number of keys found, expected one."
+                            )
+                            throw DecodingError.typeMismatch(GenericCodable.self, context)
+                        }
+                        switch container.allKeys.first.unsafelyUnwrapped {
+                        case DecodingKeys.one:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.one)
+                            let _0 = try T(from: contentDecoder)
+                            self = .one(_0)
+                        case DecodingKeys.two:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.two)
+                            let _0 = try String(from: contentDecoder)
+                            self = .two(_0)
+                        }
+                    }
+                }
+
+                extension GenericCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        switch self {
+                        case .two(let _0):
+                            let contentEncoder = container.superEncoder(forKey: CodingKeys.two)
+                            try _0.encode(to: contentEncoder)
+                        default:
+                            break
+                        }
+                    }
+                }
+
+                extension GenericCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case one = "one"
+                        case two = "two"
+                    }
+                    enum DecodingKeys: String, CodingKey {
+                        case one = "one"
+                        case two = "two"
+                    }
                 }
                 """
         )

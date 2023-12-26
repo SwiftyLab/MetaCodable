@@ -127,7 +127,7 @@ where
     Var.Initialization: RequiredVariableInitialization
 {
     /// The output registration variable type that handles initialization data.
-    typealias InitializationOutput = InitializationVariable<Var>
+    typealias InitOutput = InitializationVariable<Var>
     /// Update registration with initialization data.
     ///
     /// New registration is updated with new variable data indicating whether
@@ -135,11 +135,11 @@ where
     /// before.
     ///
     /// - Returns: Newly built registration with initialization data.
-    func checkCanBeInitialized() -> Registration<Decl, InitializationOutput> {
-        typealias Output = InitializationOutput
+    func checkCanBeInitialized() -> Registration<Decl, Key, InitOutput> {
+        typealias Output = InitOutput
         let initialized = self.variable.value != nil
         let canInit =
-            switch self.declaration.accessorBlock?.accessors {
+            switch self.decl.accessorBlock?.accessors {
             case .getter:
                 false
             case .accessors(let accessors):
@@ -152,7 +152,7 @@ where
             //     decl.accessorKind.tokenKind == .keyword(.`init`)
             // }
             default:
-                self.declaration.bindingSpecifier.tokenKind == .keyword(.var)
+                self.decl.bindingSpecifier.tokenKind == .keyword(.var)
                     || !initialized
             }
 

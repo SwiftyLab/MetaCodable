@@ -1,5 +1,5 @@
-/// Indicates `CodingKey` for the field names will be of the provided
-/// case format.
+/// Indicates `CodingKey` for the field names/associated value label will be
+/// of the provided case format.
 ///
 /// The [Swift API Design Guidelines] recommend using camel-case names.
 /// This macro can be used for types to work with `CodingKey`s of different
@@ -27,6 +27,59 @@
 /// ```
 /// The ``Codable()`` macro generated code will transform field names
 /// to snake-case in the `Codable` implementation.
+///
+/// Similarly, for enums associated value label can be kept camel-cased while
+/// `CodingKey`s of different case style can be generated.
+///
+/// For a JSON where keys follow snake-case style:
+/// ```json
+/// {
+///   "banana": {
+///     "product_cost": 200
+///   },
+///   "apple": {
+///     "product_cost": 200
+///   }
+/// }
+/// ```
+///
+/// equivalent `Codable` type can be created that uses keys in camel-case
+/// style:
+/// ```swift
+/// @Codable
+/// @CodingKeys(.snake_case)
+/// enum CodableType {
+///     case banana(_ productCost: String)
+///     case apple(_ productCost: String)
+/// }
+/// ```
+///
+/// Also, for enums `CodingKey`s of different case styles can be generated
+/// per case while keeping all associated values label camel-cased.
+///
+/// For a JSON where keys follow mixed snake-case and kebab-case style:
+/// ```json
+/// {
+///   "banana": {
+///     "product_cost": 200
+///   },
+///   "apple": {
+///     "product-cost": 200
+///   }
+/// }
+/// ```
+///
+/// equivalent `Codable` type can be created that uses keys in camel-case
+/// style:
+/// ```swift
+/// @Codable
+/// enum CodableType {
+///     @CodingKeys(.snake_case)
+///     case banana(_ productCost: String)
+///     @CodingKeys(.kebab－case)
+///     case apple(_ productCost: String)
+/// }
+/// ```
 ///
 /// - Parameter strategy: The case strategy `CodingKey`.
 ///

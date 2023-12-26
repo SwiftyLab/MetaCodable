@@ -6,7 +6,8 @@
 ///
 /// This type informs how this variable needs to be initialized,
 /// decoded/encoded in the macro expansion phase.
-protocol PropertyVariable<Initialization>: NamedVariable, InitializableVariable
+protocol PropertyVariable<Initialization>: NamedVariable, ValuedVariable,
+    ConditionalVariable, InitializableVariable
 where
     CodingLocation == PropertyCodingLocation,
     Generated == CodeBlockItemListSyntax, Initialization: VariableInitialization
@@ -44,6 +45,17 @@ where
     /// If `nil` is returned, variable is used in
     /// generic where clause by default.
     var requireEncodable: Bool? { get }
+
+    /// The prefix token to use along with `name` when decoding.
+    ///
+    /// When generating decode implementation the prefix
+    /// is used before `name` during assignment.
+    var decodePrefix: TokenSyntax { get }
+    /// The prefix token to use along with `name` when encoding.
+    ///
+    /// When generating encode implementation the prefix
+    /// is used before `name` during method invocation.
+    var encodePrefix: TokenSyntax { get }
 
     /// The fallback behavior when decoding fails.
     ///
