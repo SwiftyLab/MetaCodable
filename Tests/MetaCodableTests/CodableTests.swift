@@ -242,6 +242,7 @@ func assertMacroExpansion(
         "Default": Default.self,
         "CodedBy": CodedBy.self,
         "CodedAs": CodedAs.self,
+        "TaggedAt": TaggedAt.self,
         "IgnoreCoding": IgnoreCoding.self,
         "IgnoreDecoding": IgnoreDecoding.self,
         "IgnoreEncoding": IgnoreEncoding.self,

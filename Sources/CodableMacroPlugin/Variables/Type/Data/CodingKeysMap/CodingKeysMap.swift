@@ -70,25 +70,28 @@ final class CodingKeysMap {
     ///
     /// - Parameters:
     ///   - keys: The `CodingKey`s path for the field's value.
-    ///   - field: The field located at the `CodingKey` path.
+    ///   - field: The optional field located at the `CodingKey` path.
     ///   - context: The macro expansion context.
     func add(
         keys: [String] = [],
-        field: TokenSyntax,
+        field: TokenSyntax? = nil,
         context: some MacroExpansionContext
     ) -> [Key] {
         guard !keys.isEmpty else { return [] }
         let currentCases = data.values.map(\.name)
-        let fieldIncluded = currentCases.contains(Key.name(for: field).text)
-        switch data[keys.last!] {
-        case .none where !fieldIncluded, .builtWithKey where !fieldIncluded:
-            guard keys.count > 1 else { fallthrough }
-            data[keys.last!] = .nestedKeyField(field)
-        case .nestedKeyField where !fieldIncluded:
-            guard keys.count == 1 else { fallthrough }
-            data[keys.last!] = .field(field)
-        default:
-            break
+
+        if let field {
+            let fieldIncluded = currentCases.contains(Key.name(for: field).text)
+            switch data[keys.last!] {
+            case .none where !fieldIncluded, .builtWithKey where !fieldIncluded:
+                guard keys.count > 1 else { fallthrough }
+                data[keys.last!] = .nestedKeyField(field)
+            case .nestedKeyField where !fieldIncluded:
+                guard keys.count == 1 else { fallthrough }
+                data[keys.last!] = .field(field)
+            default:
+                break
+            }
         }
 
         for key in keys where data[key] == nil {

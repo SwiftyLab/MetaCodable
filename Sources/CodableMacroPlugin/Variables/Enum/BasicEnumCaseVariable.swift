@@ -90,7 +90,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
 
     /// Provides the syntax for decoding at the provided location.
     ///
-    /// Depending on the container and enum-case value data
+    /// Depending on the tagging of enum and enum-case value data
     /// the decoding syntax is generated.
     ///
     /// - Parameters:
@@ -113,10 +113,20 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         }
         let labeledExpr = LabeledExprListSyntax { for arg in caseArgs { arg } }
         let argExpr: ExprSyntax = !caseArgs.isEmpty ? "(\(labeledExpr))" : ""
+        let contentCoder: TokenSyntax
+        let prefix: CodeBlockItemListSyntax
+        switch location.data {
+        case .container(let container):
+            contentCoder = "contentDecoder"
+            prefix = """
+                let \(contentCoder) = try \(container).superDecoder(forKey: \(value))
+                """
+        case .coder(let coder, let callback):
+            contentCoder = coder
+            prefix = callback("\(value)")
+        }
         return SwitchCaseSyntax(label: .case(label)) {
-            let contentCoder: TokenSyntax = "contentDecoder"
-            let container = location.container
-            "let \(contentCoder) = try \(container).superDecoder(forKey: \(value))"
+            prefix
             node.decoding(
                 in: context,
                 from: .coder(contentCoder, keyType: codingKeys.type)
@@ -127,7 +137,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
 
     /// Provides the syntax for encoding at the provided location.
     ///
-    /// Depending on the container and enum-case value data
+    /// Depending on the tagging of enum and enum-case value data
     /// the encoding syntax is generated.
     ///
     /// - Parameters:
@@ -150,11 +160,20 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         let expr: ExprSyntax = ".\(name)\(argExpr)"
         let pattern = ExpressionPatternSyntax(expression: expr)
         let label = SwitchCaseLabelSyntax { .init(pattern: pattern) }
+        let value = location.value
+        let contentCoder: TokenSyntax
+        let prefix: CodeBlockItemListSyntax
+        switch location.data {
+        case .container(let container):
+            contentCoder = "contentEncoder"
+            prefix =
+                "let \(contentCoder) = \(container).superEncoder(forKey: \(value))"
+        case .coder(let coder, let callback):
+            contentCoder = coder
+            prefix = callback("\(value)")
+        }
         return SwitchCaseSyntax(label: .case(label)) {
-            let contentCoder: TokenSyntax = "contentEncoder"
-            let container = location.container
-            let value = location.value
-            "let \(contentCoder) = \(container).superEncoder(forKey: \(value))"
+            prefix
             node.encoding(
                 in: context, to: .coder(contentCoder, keyType: codingKeys.type)
             )
