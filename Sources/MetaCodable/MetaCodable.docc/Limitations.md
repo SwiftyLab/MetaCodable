@@ -31,3 +31,40 @@ struct Model {
 The ability to pass conformance data to macro for classes when performing member attribute expansion was introduced in [`Swift 5.9.2`](https://github.com/apple/swift-evolution/blob/main/proposals/0407-member-macro-conformances.md). Please make sure to upgrade to this version to have this working.
 
 Even with this it is unable for ``Codable()`` to get clear indication where conformance to `Codable` is implemented by current class or the super class. ``Codable()`` checks current class for the conformance implementation by checking implementation functions and the check will not work if some `typealias` used for `Decoder`/`Encoder` in implementation function definition.
+
+### Why enum-case associated values decoding/encoding are not customizable?
+
+The goal of ``MetaCodable`` is to allow same level of customization for enum-case associated values as it is allowed for `struct`/`class`/`actor` member properties. Unfortunately, as of now, `Swift` doesn't allow macro attributes (or any attributes) to be attached per enum-case arguments.
+
+[A pitch has been created to allow this support in `Swift`](https://forums.swift.org/t/attached-macro-support-for-enum-case-arguments/67952), you can support this pitch on `Swift` forum if this feature will benefit you.
+
+The current workaround is to extract enum-case arguments to separate `struct` and have the customization options in the `struct` itself. i.e. since following isn't possible:
+
+```swift
+@Codable
+enum SomeEnum {
+    case string(@CodedAt("data") String)
+}
+```
+
+you can convert it to:
+
+```swift
+@Codable
+enum SomeEnum {
+    case string(StringData)
+
+    @Codable
+    struct StringData {
+        let data: String
+    }
+}
+```
+
+### Why `actor` conformance to `Encodable` not generated?
+
+For `actor`s ``Codable()`` generates `Decodable` conformance, while `Encodable` conformance isn't generated, only `encode(to:)` method implementation is generated which is isolated to `actor`.
+
+To generate `Encodable` conformance, the `encode(to:)` method must be `nonisolated` to `actor`, and since `encode(to:)` method must be synchronous making it `nonisolated` will prevent accessing mutable properties.
+
+Due to these limitations, `Encodable` conformance isn't generated, users has to implement the conformance manually.

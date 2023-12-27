@@ -39,7 +39,7 @@ struct MemberInit: Attribute {
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntaxes: StructDeclSyntax.self)
+            expect(syntaxes: StructDeclSyntax.self, ActorDeclSyntax.self)
             cantDuplicate()
         }
     }

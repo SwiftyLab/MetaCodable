@@ -594,5 +594,65 @@ final class CodedInTests: XCTestCase {
                 """
         )
     }
+
+    func testActorWithNestedPathOnMixedTypes() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            @MemberInit
+            actor SomeCodable {
+                @CodedIn("deeply", "nested1")
+                let value1: String
+                @CodedIn("deeply", "nested2")
+                var value2: String?
+            }
+            """,
+            expandedSource:
+                """
+                actor SomeCodable {
+                    let value1: String
+                    var value2: String?
+
+                    init(value1: String, value2: String? = nil) {
+                        self.value1 = value1
+                        self.value2 = value2
+                    }
+
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        let nested1_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested1)
+                        self.value1 = try nested1_deeply_container.decode(String.self, forKey: CodingKeys.value1)
+                        if (try? deeply_container.decodeNil(forKey: CodingKeys.nested2)) == false {
+                            let nested2_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested2)
+                            self.value2 = try nested2_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value2)
+                        } else {
+                            self.value2 = nil
+                        }
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        var nested1_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested1)
+                        try nested1_deeply_container.encode(self.value1, forKey: CodingKeys.value1)
+                        var nested2_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested2)
+                        try nested2_deeply_container.encodeIfPresent(self.value2, forKey: CodingKeys.value2)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case value1 = "value1"
+                        case deeply = "deeply"
+                        case nested1 = "nested1"
+                        case value2 = "value2"
+                        case nested2 = "nested2"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+                """
+        )
+    }
 }
 #endif

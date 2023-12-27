@@ -70,10 +70,16 @@ extension Codable: MemberMacro, ExtensionMacro {
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         guard
-            let exp = AttributeExpander(for: declaration, in: context),
-            let decl = declaration.as(ClassDeclSyntax.self),
-            case let type = IdentifierTypeSyntax(name: decl.name)
+            let exp = AttributeExpander(for: declaration, in: context)
         else { return [] }
+        let type: IdentifierTypeSyntax
+        if let decl = declaration.as(ClassDeclSyntax.self) {
+            type = .init(name: decl.name)
+        } else if let decl = declaration.as(ActorDeclSyntax.self) {
+            type = .init(name: decl.name)
+        } else {
+            return []
+        }
         let exts = exp.codableExpansion(for: type, to: protocols, in: context)
         return exts.flatMap { `extension` in
             `extension`.memberBlock.members.map { DeclSyntax($0.decl) }
@@ -120,7 +126,9 @@ extension Codable: MemberMacro, ExtensionMacro {
             let exp = AttributeExpander(for: declaration, in: context)
         else { return [] }
         var exts = exp.codableExpansion(for: type, to: protocols, in: context)
-        if declaration.is(ClassDeclSyntax.self) {
+        if declaration.is(ClassDeclSyntax.self)
+            || declaration.is(ActorDeclSyntax.self)
+        {
             for (index, var `extension`) in exts.enumerated() {
                 `extension`.memberBlock = .init(members: [])
                 exts[index] = `extension`
