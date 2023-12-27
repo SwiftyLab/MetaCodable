@@ -10,34 +10,6 @@ import XCTest
 
 final class CodableTests: XCTestCase {
 
-    func testMisuseOnInvalidDeclaration() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            actor SomeCodable {
-                let value: String
-            }
-            """,
-            expandedSource:
-                """
-                actor SomeCodable {
-                    let value: String
-                }
-                """,
-            diagnostics: [
-                .init(
-                    id: Codable.misuseID,
-                    message:
-                        "@Codable only applicable to struct or class or enum declarations",
-                    line: 1, column: 1,
-                    fixIts: [
-                        .init(message: "Remove @Codable attribute")
-                    ]
-                )
-            ]
-        )
-    }
-
     func testWithoutAnyCustomization() throws {
         assertMacroExpansion(
             """

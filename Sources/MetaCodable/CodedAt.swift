@@ -76,13 +76,35 @@
 ///   }
 ///   ```
 ///
+/// * For enums, this attribute can be used along with ``TaggedAt(_:_:)``
+///   to support adjacently tagged enums. The path provided represents the path
+///   where associated values of each case is decoded/encoded.
+///   i.e. for JSON with following format:
+///   ```json
+///   {"t": "para", "c": [{...}, {...}]}
+///   ```
+///   ```json
+///   {"t": "str", "c": "the string"}
+///   ```
+///   enum representation can be created:
+///   ```swift
+///   @Codable
+///   @TaggedAt("t")
+///   @CodedAt("c")
+///   enum Block {
+///       case para([Inline]),
+///       case str(String),
+///   }
+///   ```
+///
 /// - Parameter path: The `CodingKey` path value located at.
 ///
 /// - Note: This macro on its own only validates if attached declaration
 ///   is a variable declaration. ``Codable()`` macro uses this macro
 ///   when generating final implementations.
 ///
-/// - Important: The field type must confirm to `Codable`.
+/// - Important: When applied to fields, the field type must confirm to
+///   `Codable`.
 @attached(peer)
 @available(swift 5.9)
 public macro CodedAt(_ path: StaticString...) =

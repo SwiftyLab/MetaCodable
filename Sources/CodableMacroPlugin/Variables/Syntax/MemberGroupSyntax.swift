@@ -92,6 +92,13 @@ extension ClassDeclSyntax: MemberGroupSyntax, VariableSyntax {
     typealias Variable = ClassVariable
 }
 
+extension ActorDeclSyntax: MemberGroupSyntax, VariableSyntax {
+    /// The `Variable` type this syntax represents.
+    ///
+    /// The actor variable type used with current declaration.
+    typealias Variable = ActorVariable
+}
+
 extension EnumDeclSyntax: MemberGroupSyntax, VariableSyntax {
     /// The `Variable` type this syntax represents.
     ///

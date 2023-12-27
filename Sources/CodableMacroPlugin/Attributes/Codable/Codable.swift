@@ -48,7 +48,7 @@ struct Codable: Attribute {
         return AggregatedDiagnosticProducer {
             expect(
                 syntaxes: StructDeclSyntax.self, ClassDeclSyntax.self,
-                EnumDeclSyntax.self
+                EnumDeclSyntax.self, ActorDeclSyntax.self
             )
             cantDuplicate()
         }

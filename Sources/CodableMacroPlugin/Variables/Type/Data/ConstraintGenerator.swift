@@ -122,3 +122,4 @@ protocol GenericTypeDeclSyntax {
 extension StructDeclSyntax: GenericTypeDeclSyntax {}
 extension ClassDeclSyntax: GenericTypeDeclSyntax {}
 extension EnumDeclSyntax: GenericTypeDeclSyntax {}
+extension ActorDeclSyntax: GenericTypeDeclSyntax {}

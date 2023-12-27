@@ -1,5 +1,5 @@
-/// Generate `Codable` implementation of `struct`, `class`, `enum` types
-/// by leveraging custom attributes provided on variable declarations.
+/// Generate `Codable` implementation of `struct`, `class`, `enum`, `actor`
+/// types by leveraging custom attributes provided on variable declarations.
 ///
 /// # Usage
 /// By default the field name is used as `CodingKey` for the field value during
@@ -38,8 +38,8 @@
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
 ///
-/// - Important: The attached declaration must be of a `struct`, `class`
-///   or `enum` type. [See the limitations for this macro](<doc:Limitations>).
+/// - Important: The attached declaration must be of a `struct`, `class`, `enum`
+///   or `actor` type. [See the limitations for this macro](<doc:Limitations>).
 @attached(
     extension, conformances: Decodable, Encodable,
     names: named(CodingKeys), named(DecodingKeys),
