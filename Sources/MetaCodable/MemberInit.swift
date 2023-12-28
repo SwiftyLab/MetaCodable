@@ -1,5 +1,5 @@
-/// Generate memberwise initializer(s) of `struct` types by leveraging custom
-/// attributes provided on variable declarations.
+/// Generate memberwise initializer(s) of `struct` and `actor` types
+/// by leveraging custom attributes provided on variable declarations.
 ///
 /// By default the memberwise initializer(s) generated are the same as generated
 /// by Swift standard library. Following customization can be done on fields to

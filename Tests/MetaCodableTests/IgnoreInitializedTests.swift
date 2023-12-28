@@ -59,11 +59,6 @@ final class IgnoreInitializedTests: XCTestCase {
                     func encode(to encoder: any Encoder) throws {
                     }
                 }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                    }
-                }
                 """
         )
     }
@@ -86,9 +81,6 @@ final class IgnoreInitializedTests: XCTestCase {
                     }
 
                     func encode(to encoder: any Encoder) throws {
-                    }
-
-                    enum CodingKeys: String, CodingKey {
                     }
                 }
 

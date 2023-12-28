@@ -195,6 +195,118 @@ final class CodableTests: XCTestCase {
             conformsTo: []
         )
     }
+
+    func testSuperClassCodableConformance() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable: SuperCodable {
+                let value: String
+
+                required init(from decoder: AnotherDecoder) throws {
+                    self.value = "some"
+                }
+
+                func encode(to encoder: AnotherEncoder) throws {
+                }
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable: SuperCodable {
+                    let value: String
+
+                    required init(from decoder: AnotherDecoder) throws {
+                        self.value = "some"
+                    }
+
+                    func encode(to encoder: AnotherEncoder) throws {
+                    }
+
+                    required init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        try super.init(from: decoder)
+                    }
+
+                    override func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.value, forKey: CodingKeys.value)
+                        try super.encode(to: encoder)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case value = "value"
+                    }
+                }
+                """,
+            conformsTo: []
+        )
+    }
+
+    func testClassIgnoredCodableConformance() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable: Codable {
+                let value: String
+
+                required init(from decoder: any Decoder) throws {
+                    self.value = "some"
+                }
+
+                func encode(to encoder: any Encoder) throws {
+                }
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable: Codable {
+                    let value: String
+
+                    required init(from decoder: any Decoder) throws {
+                        self.value = "some"
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                    }
+                }
+                """,
+            conformsTo: []
+        )
+    }
+
+    func testClassIgnoredCodableConformanceWithoutAny() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable: Codable {
+                let value: String
+
+                required init(from decoder: Decoder) throws {
+                    self.value = "some"
+                }
+
+                func encode(to encoder: Encoder) throws {
+                }
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable: Codable {
+                    let value: String
+
+                    required init(from decoder: Decoder) throws {
+                        self.value = "some"
+                    }
+
+                    func encode(to encoder: Encoder) throws {
+                    }
+                }
+                """,
+            conformsTo: []
+        )
+    }
 }
 
 func assertMacroExpansion(
@@ -214,7 +326,7 @@ func assertMacroExpansion(
         "Default": Default.self,
         "CodedBy": CodedBy.self,
         "CodedAs": CodedAs.self,
-        "TaggedAt": TaggedAt.self,
+        "ContentAt": ContentAt.self,
         "IgnoreCoding": IgnoreCoding.self,
         "IgnoreDecoding": IgnoreDecoding.self,
         "IgnoreEncoding": IgnoreEncoding.self,
@@ -226,11 +338,9 @@ func assertMacroExpansion(
     assertMacroExpansion(
         originalSource, expandedSource: expandedSource,
         diagnostics: diagnostics,
-        macroSpecs: Dictionary(
-            uniqueKeysWithValues: macros.map { key, value in
-                (key, MacroSpec(type: value, conformances: conformances))
-            }
-        ),
+        macroSpecs: macros.mapValues { value in
+            return MacroSpec(type: value, conformances: conformances)
+        },
         testModuleName: testModuleName, testFileName: testFileName,
         indentationWidth: indentationWidth,
         file: file, line: line

@@ -160,45 +160,6 @@ final class CodedAtTests: XCTestCase {
         )
     }
 
-    func testMisuseOnEnumDeclaration() throws {
-        assertMacroExpansion(
-            """
-            @CodedAt("content")
-            enum Command {
-                case load(key: String)
-                case store(key: String, value: Int)
-            }
-            """,
-            expandedSource:
-                """
-                enum Command {
-                    case load(key: String)
-                    case store(key: String, value: Int)
-                }
-                """,
-            diagnostics: [
-                .init(
-                    id: CodedAt.misuseID,
-                    message:
-                        "@CodedAt must be used in combination with @Codable",
-                    line: 1, column: 1,
-                    fixIts: [
-                        .init(message: "Remove @CodedAt attribute")
-                    ]
-                ),
-                .init(
-                    id: CodedAt.misuseID,
-                    message:
-                        "@CodedAt must be used in combination with @TaggedAt",
-                    line: 1, column: 1,
-                    fixIts: [
-                        .init(message: "Remove @CodedAt attribute")
-                    ]
-                ),
-            ]
-        )
-    }
-
     func testWithNoPath() throws {
         assertMacroExpansion(
             """
@@ -228,11 +189,6 @@ final class CodedAtTests: XCTestCase {
                 extension SomeCodable: Encodable {
                     func encode(to encoder: any Encoder) throws {
                         try self.value.encode(to: encoder)
-                    }
-                }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
                     }
                 }
                 """
@@ -268,11 +224,6 @@ final class CodedAtTests: XCTestCase {
                 extension SomeCodable: Encodable {
                     func encode(to encoder: any Encoder) throws {
                         try self.value.encode(to: encoder)
-                    }
-                }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
                     }
                 }
                 """
@@ -654,8 +605,8 @@ final class CodedAtTests: XCTestCase {
     func testActorWithNestedPathOnMixedTypes() throws {
         assertMacroExpansion(
             """
-            @Codable
             @MemberInit
+            @Codable
             actor SomeCodable {
                 @CodedAt("deeply", "nested", "key1")
                 let value1: String

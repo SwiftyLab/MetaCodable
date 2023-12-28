@@ -38,11 +38,6 @@ final class CodedAtHelperTests: XCTestCase {
                         try LossySequenceCoder<[String]>().encode(self.value, to: encoder)
                     }
                 }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                    }
-                }
                 """
         )
     }
@@ -77,11 +72,6 @@ final class CodedAtHelperTests: XCTestCase {
                 extension SomeCodable: Encodable {
                     func encode(to encoder: any Encoder) throws {
                         try LossySequenceCoder<[String]>().encodeIfPresent(self.value, to: encoder)
-                    }
-                }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
                     }
                 }
                 """

@@ -72,7 +72,7 @@ where Var: AdjacentlyTaggableSwitcher, Decl: AttributableDeclSyntax {
         codingKeys: CodingKeysMap, context: MacroExpansionContext
     ) -> Registration<Decl, Key, AnyEnumSwitcher> {
         guard
-            let attr = CodedAt(from: decl),
+            let attr = ContentAt(from: decl),
             case let keyPath = attr.keyPath(withExisting: []),
             !keyPath.isEmpty
         else { return self.updating(with: variable.any) }

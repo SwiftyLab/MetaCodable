@@ -30,7 +30,7 @@ public macro CodedAs<T: Codable>(_ value: T) =
 /// decoded to the provided type instead of `String` type. i.e. for enum:
 /// ```swift
 /// @Codable
-/// @TaggedAt("type")
+/// @CodedAt("type")
 /// @CodedAs<Int>
 /// enum Command {
 ///     @CodedAs(1)

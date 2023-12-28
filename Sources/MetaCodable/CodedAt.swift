@@ -76,25 +76,25 @@
 ///   }
 ///   ```
 ///
-/// * For enums, this attribute can be used along with ``TaggedAt(_:_:)``
-///   to support adjacently tagged enums. The path provided represents the path
-///   where associated values of each case is decoded/encoded.
-///   i.e. for JSON with following format:
-///   ```json
-///   {"t": "para", "c": [{...}, {...}]}
-///   ```
-///   ```json
-///   {"t": "str", "c": "the string"}
-///   ```
-///   enum representation can be created:
+/// * For enums, this attribute can be used to support internally tagged enums.
+///   The `CodingKey` path provided represents the path where value identifying
+///   each case is decoded/encoded. By default, this value is decoded/encoded
+///   as `String` unless different type specified with ``CodedAs()`` and
+///   compared with value for each enum-case identifier. i.e. for enum:
 ///   ```swift
 ///   @Codable
-///   @TaggedAt("t")
-///   @CodedAt("c")
-///   enum Block {
-///       case para([Inline]),
-///       case str(String),
+///   @CodedAt("type")
+///   enum Command {
+///       case load(key: String)
+///       case store(key: String, value: Int)
 ///   }
+///   ```
+///   the encoded JSON for internally tagged enum will be of following variations:
+///   ```json
+///   { "key": "MyKey", "type": "load" }
+///   ```
+///   ```json
+///   { "key": "MyKey", "value": 42, "type": "store" }
 ///   ```
 ///
 /// - Parameter path: The `CodingKey` path value located at.

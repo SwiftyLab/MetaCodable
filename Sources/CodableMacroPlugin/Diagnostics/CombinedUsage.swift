@@ -103,19 +103,4 @@ extension Attribute {
     ) -> CombinedUsage<Self, Comb> {
         return .init(self, cantBeCombinedWith: type)
     }
-
-    /// Indicates this macro should be used together with
-    /// the provided attribute.
-    ///
-    /// The created diagnostic producer produces warning diagnostic,
-    /// if attribute isn't used together with the provided attribute.
-    ///
-    /// - Parameter type: The unsupported attribute type.
-    /// - Returns: Attribute combination usage validation
-    ///   diagnostic producer.
-    func shouldBeCombined<Comb: Attribute>(
-        with type: Comb.Type
-    ) -> CombinedUsage<Self, Comb> {
-        return .init(self, cantBeCombinedWith: type, severity: .warning)
-    }
 }

@@ -309,7 +309,6 @@ final class GenericsTests: XCTestCase {
 
                 extension GenericCodable {
                     enum CodingKeys: String, CodingKey {
-                        case one = "one"
                         case two = "two"
                     }
                     enum DecodingKeys: String, CodingKey {
@@ -542,7 +541,6 @@ final class GenericsTests: XCTestCase {
 
                 extension GenericCodable {
                     enum CodingKeys: String, CodingKey {
-                        case one = "one"
                         case two = "two"
                     }
                     enum DecodingKeys: String, CodingKey {

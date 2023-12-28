@@ -160,7 +160,7 @@ final class CodedAsTests: XCTestCase {
                 .init(
                     id: CodedAs.misuseID,
                     message:
-                        "@CodedAs must be used in combination with @TaggedAt",
+                        "@CodedAs must be used in combination with @CodedAt",
                     line: 1, column: 1,
                     fixIts: [
                         .init(message: "Remove @CodedAs attribute")
@@ -174,7 +174,7 @@ final class CodedAsTests: XCTestCase {
         assertMacroExpansion(
             """
             @Codable
-            @TaggedAt("type")
+            @CodedAt("type")
             @CodedAs<Int>
             @CodedBy(LossySequenceCoder<[Int]>())
             enum Command {

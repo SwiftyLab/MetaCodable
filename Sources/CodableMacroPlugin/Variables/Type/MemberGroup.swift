@@ -137,11 +137,10 @@ where
                 named: TypeCodingLocation.Method.decode.protocol,
                 TypeCodingLocation.Method.encode.protocol,
                 in: protocols
-            ).isEmpty
+            ).isEmpty,
+            let decl = codingKeys.decl(in: context)
         else { return [] }
-        return MemberBlockItemListSyntax {
-            codingKeys.decl(in: context)
-        }
+        return MemberBlockItemListSyntax { decl }
     }
 
     /// Indicates the initialization type for this variable.
