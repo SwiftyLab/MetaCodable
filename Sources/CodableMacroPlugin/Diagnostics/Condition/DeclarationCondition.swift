@@ -29,10 +29,6 @@ extension Attribute {
     ///
     /// Uses `DeclarationCondition` to check syntax type.
     var isEnum: DeclarationCondition<EnumDeclSyntax> { .init() }
-    /// Whether declaration is `actor` declaration.
-    ///
-    /// Uses `DeclarationCondition` to check syntax type.
-    var isActor: DeclarationCondition<ActorDeclSyntax> { .init() }
     /// Whether declaration is `variable` declaration.
     ///
     /// Uses `DeclarationCondition` to check syntax type.

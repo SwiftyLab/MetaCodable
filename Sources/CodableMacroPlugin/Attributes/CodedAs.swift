@@ -49,13 +49,13 @@ struct CodedAs: PropertyAttribute {
     /// * If macro has zero arguments provided:
     ///   * Attached declaration is an enum declaration.
     ///   * This attribute must be combined with `Codable`
-    ///   and `TaggedAt` attribute.
+    ///   and `CodedAt` attribute.
     ///   * This attribute mustn't be combined with `CodedBy`
-    ///   attribute.
+    ///     attribute.
     /// * If macro has one argument provided:
     ///   * Attached declaration is an enum-case declaration.
     ///   * This attribute isn't used combined with `IgnoreCoding`
-    ///   attribute.
+    ///     attribute.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
@@ -70,7 +70,7 @@ struct CodedAs: PropertyAttribute {
                 else: AggregatedDiagnosticProducer {
                     expect(syntaxes: EnumDeclSyntax.self)
                     mustBeCombined(with: Codable.self)
-                    mustBeCombined(with: TaggedAt.self)
+                    mustBeCombined(with: CodedAt.self)
                     cantBeCombined(with: CodedBy.self)
                 }
             )

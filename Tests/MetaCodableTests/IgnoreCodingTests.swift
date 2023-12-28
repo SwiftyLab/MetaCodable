@@ -95,11 +95,6 @@ final class IgnoreCodingTests: XCTestCase {
                     func encode(to encoder: any Encoder) throws {
                     }
                 }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                    }
-                }
                 """,
             diagnostics: [
                 .init(
@@ -148,9 +143,37 @@ final class IgnoreCodingTests: XCTestCase {
                     func encode(to encoder: any Encoder) throws {
                     }
                 }
+                """
+        )
+    }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
+    func testEnumDecodingEncodingIgnore() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            enum SomeEnum {
+                @IgnoreCoding
+                case bool(_ variableBool: Bool)
+            }
+            """,
+            expandedSource:
+                """
+                enum SomeEnum {
+                    case bool(_ variableBool: Bool)
+                }
+
+                extension SomeEnum: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let context = DecodingError.Context(
+                            codingPath: decoder.codingPath,
+                            debugDescription: "No decodable case present."
+                        )
+                        throw DecodingError.typeMismatch(SomeEnum.self, context)
+                    }
+                }
+
+                extension SomeEnum: Encodable {
+                    func encode(to encoder: any Encoder) throws {
                     }
                 }
                 """
@@ -193,6 +216,53 @@ final class IgnoreCodingTests: XCTestCase {
         )
     }
 
+    func testEnumDecodingIgnore() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            enum SomeEnum {
+                @IgnoreDecoding
+                case bool(_ variableBool: Bool)
+            }
+            """,
+            expandedSource:
+                """
+                enum SomeEnum {
+                    case bool(_ variableBool: Bool)
+                }
+
+                extension SomeEnum: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let context = DecodingError.Context(
+                            codingPath: decoder.codingPath,
+                            debugDescription: "No decodable case present."
+                        )
+                        throw DecodingError.typeMismatch(SomeEnum.self, context)
+                    }
+                }
+
+                extension SomeEnum: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        switch self {
+                        case .bool(_: let variableBool):
+                            let contentEncoder = container.superEncoder(forKey: CodingKeys.bool)
+                            var container = contentEncoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(variableBool, forKey: CodingKeys.variableBool)
+                        }
+                    }
+                }
+
+                extension SomeEnum {
+                    enum CodingKeys: String, CodingKey {
+                        case variableBool = "variableBool"
+                        case bool = "bool"
+                    }
+                }
+                """
+        )
+    }
+
     func testEncodingIgnore() throws {
         assertMacroExpansion(
             """
@@ -228,6 +298,58 @@ final class IgnoreCodingTests: XCTestCase {
                     enum CodingKeys: String, CodingKey {
                         case one = "one"
                         case two = "two"
+                    }
+                }
+                """
+        )
+    }
+
+    func testEnumEncodingIgnore() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            enum SomeEnum {
+                @IgnoreEncoding
+                case bool(_ variableBool: Bool)
+            }
+            """,
+            expandedSource:
+                """
+                enum SomeEnum {
+                    case bool(_ variableBool: Bool)
+                }
+
+                extension SomeEnum: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: DecodingKeys.self)
+                        guard container.allKeys.count == 1 else {
+                            let context = DecodingError.Context(
+                                codingPath: container.codingPath,
+                                debugDescription: "Invalid number of keys found, expected one."
+                            )
+                            throw DecodingError.typeMismatch(SomeEnum.self, context)
+                        }
+                        switch container.allKeys.first.unsafelyUnwrapped {
+                        case DecodingKeys.bool:
+                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.bool)
+                            let container = try contentDecoder.container(keyedBy: CodingKeys.self)
+                            let variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
+                            self = .bool(_: variableBool)
+                        }
+                    }
+                }
+
+                extension SomeEnum: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                    }
+                }
+
+                extension SomeEnum {
+                    enum CodingKeys: String, CodingKey {
+                        case variableBool = "variableBool"
+                    }
+                    enum DecodingKeys: String, CodingKey {
+                        case bool = "bool"
                     }
                 }
                 """
@@ -426,9 +548,7 @@ final class IgnoreCodingTests: XCTestCase {
                     enum CodingKeys: String, CodingKey {
                         case val = "val"
                         case int = "altInt"
-                        case string = "altString"
                         case variable = "variable"
-                        case multi = "multi"
                     }
                     enum DecodingKeys: String, CodingKey {
                         case string = "altString"

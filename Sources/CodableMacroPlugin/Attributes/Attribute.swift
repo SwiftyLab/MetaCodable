@@ -52,11 +52,6 @@ extension Attribute {
     /// This attribute can must be removed or its usage condition
     /// must be satisfied.
     var misuseMessageID: MessageID { messageID("\(id)-misuse") }
-    /// Message id for unnecessary usage of this attribute.
-    ///
-    /// This attribute can be omitted in such scenario and the
-    /// final result will still be the same.
-    var unusedMessageID: MessageID { messageID("\(id)-unused") }
 
     /// Creates a new message id in current package domain.
     ///

@@ -35,12 +35,31 @@ struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
             ?? CodingKeysMap.Key.name(for: variable.name).text
         let keys = [keyStr]
         let name = variable.name
-        let eKey = codingKeys.add(keys: keys, field: name, context: context)
-            .first!
-        guard variable.decode ?? true else { return .key(eKey) }
-        let dKey = decodingKeys.add(keys: keys, field: name, context: context)
-            .first!
-        return .keys(dKey, eKey)
+
+        let eKey: CodingKeysMap.Key? =
+            if variable.encode ?? true {
+                codingKeys.add(keys: keys, field: name, context: context).first!
+            } else {
+                nil
+            }
+
+        let dKey: CodingKeysMap.Key? =
+            if variable.decode ?? true {
+                decodingKeys.add(keys: keys, field: name, context: context)
+                    .first!
+            } else {
+                nil
+            }
+
+        if let dKey, let eKey {
+            return .keys(dKey, eKey)
+        } else if let dKey {
+            return .key(dKey)
+        } else if let eKey {
+            return .key(eKey)
+        } else {
+            return .raw("\(literal: keyStr)")
+        }
     }
 
     /// Provides the syntax for decoding at the provided location.
@@ -120,8 +139,7 @@ struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
     func codingKeys(
         in context: some MacroExpansionContext
     ) -> MemberBlockItemListSyntax {
-        return MemberBlockItemListSyntax {
-            decodingKeys.decl(in: context)
-        }
+        guard let decl = decodingKeys.decl(in: context) else { return [] }
+        return MemberBlockItemListSyntax { decl }
     }
 }

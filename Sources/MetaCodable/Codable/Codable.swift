@@ -16,8 +16,8 @@
 ///     `Codable` types or implement decoding/encoding for non-`Codable` types.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
 ///   * Use ``CodedAs(_:)`` to provided custom value for enum cases.
-///   * Use ``TaggedAt(_:_:)`` to provide enum-case identifier tag path.
-///   * Use ``CodedAt(_:)`` to provided enum-case content path.
+///   * Use ``CodedAt(_:)`` to provide enum-case identifier tag path.
+///   * Use ``ContentAt(_:_:)`` to provided enum-case content path.
 ///   * Use ``IgnoreCoding()``, ``IgnoreDecoding()`` and
 ///     ``IgnoreEncoding()`` to ignore specific properties/cases from
 ///     decoding/encoding or both.

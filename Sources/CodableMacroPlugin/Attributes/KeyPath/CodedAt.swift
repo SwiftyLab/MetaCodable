@@ -35,7 +35,7 @@ struct CodedAt: PropertyAttribute {
     /// * Macro usage is not duplicated for the same declaration.
     /// * If macro is attached to enum declaration:
     ///   * This attribute must be combined with `Codable`
-    ///   and `TaggedAt` attribute.
+    ///     attribute.
     /// * else:
     ///   * Attached declaration is a variable declaration.
     ///   * Attached declaration is not a grouped variable
@@ -51,10 +51,7 @@ struct CodedAt: PropertyAttribute {
             cantDuplicate()
             `if`(
                 isEnum,
-                AggregatedDiagnosticProducer {
-                    mustBeCombined(with: Codable.self)
-                    mustBeCombined(with: TaggedAt.self)
-                },
+                mustBeCombined(with: Codable.self),
                 else: AggregatedDiagnosticProducer {
                     attachedToUngroupedVariable()
                     attachedToNonStaticVariable()
@@ -63,5 +60,51 @@ struct CodedAt: PropertyAttribute {
                 }
             )
         }
+    }
+}
+
+extension Registration
+where Var == ExternallyTaggedEnumSwitcher, Decl == EnumDeclSyntax {
+    /// Checks if enum declares internal tagging.
+    ///
+    /// Checks if identifier path provided with `CodedAt` macro,
+    /// identifier type is used if `CodedAs` macro provided falling back to
+    /// the `fallbackType` passed.
+    ///
+    /// - Parameters:
+    ///   - encodeContainer: The container for case variation encoding.
+    ///   - identifier: The identifier name to use.
+    ///   - fallbackType: The fallback identifier type to use if not provided.
+    ///   - codingKeys: The map where `CodingKeys` maintained.
+    ///   - context: The context in which to perform the macro expansion.
+    ///   - variableBuilder: The builder action for building identifier.
+    ///   - switcherBuilder: The further builder action if check succeeds.
+    ///
+    /// - Returns: Type-erased variable registration applying builders
+    ///   if succeeds, otherwise current variable type-erased registration.
+    func checkForInternalTagging<Variable, Switcher>(
+        encodeContainer: TokenSyntax,
+        identifier: TokenSyntax, fallbackType: TypeSyntax,
+        codingKeys: CodingKeysMap, context: some MacroExpansionContext,
+        variableBuilder: @escaping (
+            PathRegistration<EnumDeclSyntax, BasicPropertyVariable>
+        ) -> PathRegistration<EnumDeclSyntax, Variable>,
+        switcherBuilder: @escaping (
+            Registration<Decl, Key, InternallyTaggedEnumSwitcher<Variable>>
+        ) -> Registration<Decl, Key, Switcher>
+    ) -> Registration<Decl, Key, AnyEnumSwitcher>
+    where Variable: PropertyVariable, Switcher: EnumSwitcherVariable {
+        guard
+            let tagAttr = CodedAt(from: decl)
+        else { return self.updating(with: variable.any) }
+        let typeAttr = CodedAs(from: decl)
+        let variable = InternallyTaggedEnumSwitcher(
+            encodeContainer: encodeContainer, identifier: identifier,
+            identifierType: typeAttr?.type ?? fallbackType,
+            keyPath: tagAttr.keyPath(withExisting: []), codingKeys: codingKeys,
+            decl: decl, context: context, variableBuilder: variableBuilder
+        )
+        let newRegistration = switcherBuilder(self.updating(with: variable))
+        return newRegistration.updating(with: newRegistration.variable.any)
     }
 }

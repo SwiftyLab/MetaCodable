@@ -235,7 +235,7 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
 
         let selfType: ExprSyntax = "\(name).self"
         let code: CodeBlockItemListSyntax
-        if cases.contains(where: { $0.variable.decode ?? true }) {
+        if cases.contains(where: { $0.variable.encode ?? true }) {
             let switcherLocation = EnumSwitcherLocation(
                 coder: location.method.arg, container: "container",
                 keyType: codingKeys.type, selfType: selfType
@@ -290,10 +290,11 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
                 named: TypeCodingLocation.Method.decode.protocol,
                 TypeCodingLocation.Method.encode.protocol,
                 in: protocols
-            ).isEmpty
+            ).isEmpty,
+            let decl = codingKeys.decl(in: context)
         else { return [] }
         return MemberBlockItemListSyntax {
-            codingKeys.decl(in: context)
+            decl
             switcher.codingKeys(in: context)
         }
     }

@@ -42,11 +42,6 @@ final class CodedAtDefaultTests: XCTestCase {
                         try self.value.encode(to: encoder)
                     }
                 }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                    }
-                }
                 """
         )
     }
@@ -85,11 +80,6 @@ final class CodedAtDefaultTests: XCTestCase {
                 extension SomeCodable: Encodable {
                     func encode(to encoder: any Encoder) throws {
                         try self.value.encode(to: encoder)
-                    }
-                }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
                     }
                 }
                 """

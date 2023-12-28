@@ -66,9 +66,8 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
                 let decl = member.decl.as(InitializerDeclSyntax.self),
                 decl.signature.parameterClause.parameters.count == 1,
                 let parameter = decl.signature.parameterClause.parameters.first,
-                !parameter.modifiers.isEmpty,
-                let label = parameter.modifiers.first?.name.text,
-                label == location.method.argLabel.text,
+                case let label = parameter.firstName.tokenKind,
+                label == .identifier(location.method.argLabel.text),
                 self.areSameProtocol(parameter.type, location.method.argType)
             else { return false }
             return true
@@ -86,9 +85,8 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
                 decl.name.text == location.method.name.text,
                 decl.signature.parameterClause.parameters.count == 1,
                 let parameter = decl.signature.parameterClause.parameters.first,
-                !parameter.modifiers.isEmpty,
-                let label = parameter.modifiers.first?.name.text,
-                label == location.method.argLabel.text,
+                case let label = parameter.firstName.tokenKind,
+                label == .identifier(location.method.argLabel.text),
                 self.areSameProtocol(parameter.type, location.method.argType)
             else { return false }
             return true

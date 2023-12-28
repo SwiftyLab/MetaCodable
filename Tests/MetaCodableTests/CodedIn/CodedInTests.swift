@@ -598,8 +598,8 @@ final class CodedInTests: XCTestCase {
     func testActorWithNestedPathOnMixedTypes() throws {
         assertMacroExpansion(
             """
-            @Codable
             @MemberInit
+            @Codable
             actor SomeCodable {
                 @CodedIn("deeply", "nested1")
                 let value1: String

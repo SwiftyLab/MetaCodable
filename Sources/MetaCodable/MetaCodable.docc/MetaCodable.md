@@ -60,7 +60,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``Default(_:)``
 - ``CodedBy(_:)``
 - ``CodedAs(_:)``
-- ``TaggedAt(_:_:)``
+- ``ContentAt(_:_:)``
 - ``IgnoreCoding()``
 - ``IgnoreDecoding()``
 - ``IgnoreEncoding()``

@@ -134,7 +134,8 @@ final class CodingKeysMap {
     ///
     /// - Parameter context: The macro expansion context.
     /// - Returns: The generated enum declaration syntax.
-    func decl(in context: some MacroExpansionContext) -> EnumDeclSyntax {
+    func decl(in context: some MacroExpansionContext) -> EnumDeclSyntax? {
+        guard !data.isEmpty else { return nil }
         let clause = InheritanceClauseSyntax {
             InheritedTypeSyntax(type: "String" as TypeSyntax)
             InheritedTypeSyntax(type: "CodingKey" as TypeSyntax)

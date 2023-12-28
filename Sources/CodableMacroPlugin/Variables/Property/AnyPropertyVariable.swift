@@ -156,10 +156,7 @@ where Initialization: RequiredVariableInitialization {
     /// Provides label of the underlying associated variable value,
     /// `nil` if underlying variable not associated variable.
     var label: TokenSyntax? {
-        guard let base = base as? any AssociatedVariable else {
-            print("casting \(Swift.type(of: base)) to associated failed")
-            return nil
-        }
+        guard let base = base as? any AssociatedVariable else { return nil }
         return base.label
     }
 }

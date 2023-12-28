@@ -28,13 +28,4 @@ struct RequiredInitialization: RequiredVariableInitialization {
     func add(to generator: MemberwiseInitGenerator) -> MemberwiseInitGenerator {
         generator.add(.init(param: param, code: code))
     }
-
-    /// Updates initialization type with the provided function parameter syntax.
-    ///
-    /// - Parameter param: The function parameter for the initialization
-    ///   function.
-    /// - Returns: Updated initialization type.
-    func update(param: FunctionParameterSyntax) -> Self {
-        return .init(param: param, code: code)
-    }
 }

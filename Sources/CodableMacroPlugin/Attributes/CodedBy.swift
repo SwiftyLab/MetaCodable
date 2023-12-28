@@ -40,7 +40,7 @@ struct CodedBy: PropertyAttribute {
     /// * Macro usage is not duplicated for the same declaration.
     /// * If attached declaration is enum declaration:
     ///   * This attribute must be combined with `Codable`
-    ///     and `TaggedAt` attribute.
+    ///     and `CodedAt` attribute.
     ///   * This attribute mustn't be combined with `CodedAs`
     ///     attribute.
     /// * If macro has one argument provided:
@@ -58,7 +58,7 @@ struct CodedBy: PropertyAttribute {
                 isEnum,
                 AggregatedDiagnosticProducer {
                     mustBeCombined(with: Codable.self)
-                    mustBeCombined(with: TaggedAt.self)
+                    mustBeCombined(with: CodedAt.self)
                     cantBeCombined(with: CodedAs.self)
                 },
                 else: AggregatedDiagnosticProducer {
