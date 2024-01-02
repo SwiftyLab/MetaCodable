@@ -8,7 +8,7 @@ Currently all the limitations of this library and possible workarounds and futur
 
 ### Why strict typing is necessary?
 
-`Swift` doesn't provide any type inference data, so to know type of variables ``Codable()`` needs types to be explicitly specified in the code. i.e. following code will not work and will cause error while macro expansion:
+`Swift` compiler doesn't provide any type inference data to macros, so to know type of variables ``Codable()`` needs types to be explicitly specified in the code. i.e. following code will not work and will cause error while macro expansion:
 
 ```swift
 @Codable
@@ -60,6 +60,10 @@ enum SomeEnum {
     }
 }
 ```
+
+### Why `enum`s with raw value aren't supported?
+
+`Swift` compiler by default generates `Codable` conformance for `enum`s with raw value and `MetaCodable` has nothing extra to add for these type of `enum`s. Hence, in this case the default compiler generated implementation can be used.
 
 ### Why `actor` conformance to `Encodable` not generated?
 

@@ -1,4 +1,4 @@
-/// Indicates the field needs to be decoded and encoded by
+/// Indicates the field/enum identifier needs to be decoded and encoded by
 /// the provided `helper` instance.
 ///
 /// An instance confirming to ``HelperCoder`` can be provided
@@ -6,6 +6,9 @@
 /// to non-`Codable` types. i.e ``LossySequenceCoder`` that decodes
 /// sequence from JSON ignoring invalid data matches instead of throwing error
 /// (failing decoding of entire sequence).
+///
+/// For enums, applying this attribute means ``HelperCoder`` will be used to
+/// decode and encode identifier value in internally or adjacently tagged enums.
 ///
 /// - Parameter helper: The value that performs decoding and encoding.
 ///
@@ -15,6 +18,9 @@
 ///
 /// - Important: The `helper`'s ``HelperCoder/Coded``
 ///   associated type must be the same as field type.
+///
+/// - Important: This attribute must be used combined with ``Codable()``
+///   and ``CodedAt(_:)`` when applying to enums.
 @attached(peer)
 @available(swift 5.9)
 public macro CodedBy<T: HelperCoder>(_ helper: T) =

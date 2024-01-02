@@ -18,10 +18,12 @@
 ///   when generating final implementations.
 ///
 /// - Important: The value type must be `String` when used in
-///   externally tagged enums.
+///   externally tagged enums, and internally/adjacently tagged enums
+///   without type specified with ``CodedAs()`` macro. When used
+///   along with ``CodedAs()`` macro, both the generic type must be same.
 @attached(peer)
 @available(swift 5.9)
-public macro CodedAs<T: Codable>(_ value: T) =
+public macro CodedAs<T: Codable & Equatable>(_ value: T) =
     #externalMacro(module: "CodableMacroPlugin", type: "CodedAs")
 
 /// Provides the identifier actual type for internally/adjacently tagged enums.
@@ -56,7 +58,10 @@ public macro CodedAs<T: Codable>(_ value: T) =
 ///   will be used for comparison. If the type here conforms to
 ///   `ExpressibleByStringLiteral` and can be represented by case name
 ///   as `String` literal then no need to provide value with ``CodedAs(_:)``.
+///
+/// - Important: This attribute must be used combined with ``Codable()``
+///   and ``CodedAt(_:)``.
 @attached(peer)
 @available(swift 5.9)
-public macro CodedAs<T: Codable>() =
+public macro CodedAs<T: Codable & Equatable>() =
     #externalMacro(module: "CodableMacroPlugin", type: "CodedAs")
