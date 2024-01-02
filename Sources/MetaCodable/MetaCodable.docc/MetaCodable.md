@@ -48,6 +48,11 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ## Topics
 
+### Essentials
+
+- <doc:/tutorials/Usage>
+- <doc:Limitations>
+
 ### Macros
 
 - ``Codable()``
@@ -59,6 +64,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``CodedIn(_:)``
 - ``Default(_:)``
 - ``CodedBy(_:)``
+- ``CodedAs()``
 - ``CodedAs(_:)``
 - ``ContentAt(_:_:)``
 - ``IgnoreCoding()``

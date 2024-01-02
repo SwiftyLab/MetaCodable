@@ -1,6 +1,6 @@
 # MetaCodable
 
-[![API Docs](http://img.shields.io/badge/Read_the-docs-2196f3.svg)](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/metacodable)
+[![API Docs](http://img.shields.io/badge/Read_the-docs-2196f3.svg)](https://swiftpackageindex.com/SwiftyLab/MetaCodable/documentation/metacodable)
 [![Swift Package Manager Compatible](https://img.shields.io/github/v/tag/SwiftyLab/MetaCodable?label=SPM&color=orange)](https://badge.fury.io/gh/SwiftyLab%2FMetaCodable)
 [![Swift](https://img.shields.io/badge/Swift-5.9+-orange)](https://img.shields.io/badge/Swift-5-DE5D43)
 [![Platforms](https://img.shields.io/badge/Platforms-all-sucess)](https://img.shields.io/badge/Platforms-all-sucess)
@@ -229,13 +229,79 @@ Library provides following helpers that address common custom decoding/encoding 
 - Custom Date decoding/encoding with UNIX timestamp (`Since1970DateCoder`) or date formatters (`DateCoder`, `ISO8601DateCoder`).
 - `Base64Coder` to decode/encode data in base64 string representation.
 
-And more, see the full documentation for [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/helpercoders) for more details.
+And more, see the full documentation for [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/documentation/helpercoders) for more details.
 
 You can even create your own by conforming to `HelperCoder`.
 
 </details>
 
-See the full documentation for [`MetaCodable`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/metacodable) and [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/main/documentation/helpercoders), for API details and advanced use cases.
+<details>
+  <summary>Represent data with variations in the form of external/internal/adjacent tagging, with single enum with each case as a variation.</summary>
+
+ i.e. while `Swift` compiler only generates implementation assuming external tagged enums, only following data:
+
+```json
+[
+  {
+    "load": {
+      "key": "MyKey"
+    }
+  },
+  {
+    "store": {
+      "key": "MyKey",
+      "value": 42
+    }
+  }
+]
+```
+
+can be represented by following `enum` with current compiler implementation:
+
+```swift
+enum Command {
+    case load(key: String)
+    case store(key: String, value: Int)
+}
+```
+
+while `MetaCodable` allows data in both of the following format to be represented by above `enum` as well:
+
+```json
+[
+  {
+    "type": "load",
+    "key": "MyKey"
+  },
+  {
+    "type": "store",
+    "key": "MyKey",
+    "value": 42
+  }
+]
+```
+
+```json
+[
+  {
+    "type": "load",
+    "content": {
+      "key": "MyKey"
+    }
+  },
+  {
+    "type": "store",
+    "content": {
+      "key": "MyKey",
+      "value": 42
+    }
+  }
+]
+```
+
+</details>
+
+See the full documentation for [`MetaCodable`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/documentation/metacodable) and [`HelperCoders`](https://swiftpackageindex.com/SwiftyLab/MetaCodable/documentation/helpercoders), for API details and advanced use cases.
 Also, [see the limitations](Sources/MetaCodable/MetaCodable.docc/Limitations.md).
 
 ## Contributing

@@ -7,7 +7,7 @@ struct EnumCaseVariableDeclSyntax: MemberGroupSyntax, AttributableDeclSyntax {
     /// The `Variable` type this syntax represents.
     ///
     /// Represents basic enum-case variable decoding/encoding data.
-    typealias Variable = EnumCaseVariable
+    typealias Variable = BasicEnumCaseVariable
 
     /// The actual variable syntax.
     ///

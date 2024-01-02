@@ -22,6 +22,12 @@ final class CodingKeysMap {
     /// `add(forKeys:field:context:)`
     /// method.
     private var data: OrderedDictionary<String, Case> = [:]
+    /// The `CodingKey`s that have been used.
+    ///
+    /// Represents these `CodingKey`s have been used
+    /// in generated code syntax and must be present as case
+    /// in generated `CodingKey` enum declaration.
+    private var usedKeys: Set<String> = []
 
     /// Creates a new case-map with provided enum name.
     ///
@@ -116,6 +122,9 @@ final class CodingKeysMap {
 
     /// The case name token syntax available for a key.
     ///
+    /// Adds key to the list of used keys, as this method is invoked to use
+    /// key in generated code syntax.
+    ///
     /// - Parameter key: The key to look up against.
     /// - Returns: The token syntax for case name stored against
     ///   a key if exists. Otherwise `nil` returned.
@@ -123,6 +132,7 @@ final class CodingKeysMap {
     /// - Note: Should only be used after case names generated
     ///   or all the keys for a particular type.
     func `case`(forKey key: String) -> TokenSyntax? {
+        usedKeys.insert(key)
         return data[key]?.token
     }
 
@@ -131,6 +141,8 @@ final class CodingKeysMap {
     ///
     /// The generated enum is a raw enum of `String` type
     /// and confirms to `CodingKey`.
+    ///
+    /// Only keys used in generated code syntax is present in this enum.
     ///
     /// - Parameter context: The macro expansion context.
     /// - Returns: The generated enum declaration syntax.
@@ -141,7 +153,7 @@ final class CodingKeysMap {
             InheritedTypeSyntax(type: "CodingKey" as TypeSyntax)
         }
         return EnumDeclSyntax(name: typeName, inheritanceClause: clause) {
-            for (key, `case`) in data {
+            for (key, `case`) in data where usedKeys.contains(key) {
                 "case \(`case`.token) = \(literal: key)" as DeclSyntax
             }
         }

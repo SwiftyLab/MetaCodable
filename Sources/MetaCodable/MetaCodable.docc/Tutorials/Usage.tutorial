@@ -1,0 +1,40 @@
+@Tutorials(name: "Discover MetaCodable") {
+    @Intro(title: "Discover MetaCodable") {
+        `MetaCodable` supercharges `Swift`'s `Codable` implementations with macros. Remove previous boiler-plate for `Codable` implementations and create `Codable` conformances faster than ever before.
+
+        @Comment {
+            Add image asset here!
+        }
+    }
+
+    @Chapter(name: "MetaCodable essentials") {
+        Learn how to use `MetaCodable` to create custom `Codable` types with fine grained customized implementation.
+
+        @Comment {
+            Add image asset here!
+        }
+
+        @TutorialReference(tutorial: "doc:Essential")
+        @TutorialReference(tutorial: "doc:Enum")
+    }
+
+    @Resources {
+        Explore more resources for `MetaCodable` usage.
+
+        @Documentation(destination: "https://swiftpackageindex.com/SwiftyLab/MetaCodable/documentation/metacodable") {
+            Browse and search detailed API documentation.
+
+            - [Serialization fundamentals](https://developer.apple.com/documentation/foundation/archives_and_serialization)
+        }
+
+        @Forums(destination: "https://github.com/SwiftyLab/MetaCodable/discussions") {
+            Discuss `MetaCodable` features and improvements with other developers.
+
+            - [Submit issues or feature requests](https://github.com/SwiftyLab/MetaCodable/issues)
+        }
+
+        @Downloads(destination: "https://www.swift.org/download/") {
+            Download Swift 5.9 or later to use `MetaCodable` macros.
+        }
+    }
+}

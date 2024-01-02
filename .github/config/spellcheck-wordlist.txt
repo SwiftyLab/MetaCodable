@@ -50,3 +50,6 @@ vscode
 watchOS
 www
 typealias
+customizable
+enum
+enums
