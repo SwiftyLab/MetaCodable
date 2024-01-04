@@ -4,7 +4,7 @@ import XCTest
 
 @testable import CodableMacroPlugin
 
-final class CodedAsTests: XCTestCase {
+final class CodedAsEnumTests: XCTestCase {
 
     func testMisuseOnNonCaseDeclaration() throws {
         assertMacroExpansion(
@@ -35,7 +35,7 @@ final class CodedAsTests: XCTestCase {
                 .init(
                     id: CodedAs.misuseID,
                     message:
-                        "@CodedAs only applicable to enum-case declarations",
+                        "@CodedAs only applicable to enum-case or variable declarations",
                     line: 7, column: 5,
                     fixIts: [
                         .init(message: "Remove @CodedAs attribute")
@@ -112,6 +112,15 @@ final class CodedAsTests: XCTestCase {
                 """,
             diagnostics: [
                 .init(
+                    id: IgnoreCoding.misuseID,
+                    message:
+                        "@IgnoreCoding can't be used in combination with @CodedAs",
+                    line: 2, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @IgnoreCoding attribute")
+                    ]
+                ),
+                .init(
                     id: CodedAs.misuseID,
                     message:
                         "@CodedAs can't be used in combination with @IgnoreCoding",
@@ -119,7 +128,7 @@ final class CodedAsTests: XCTestCase {
                     fixIts: [
                         .init(message: "Remove @CodedAs attribute")
                     ]
-                )
+                ),
             ]
         )
     }
@@ -264,7 +273,7 @@ final class CodedAsTests: XCTestCase {
         )
     }
 
-    func testCustomValue() throws {
+    func testExternallyTaggedCustomValue() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -272,7 +281,7 @@ final class CodedAsTests: XCTestCase {
                 case bool(_ variable: Bool)
                 @CodedAs("altInt")
                 case int(val: Int)
-                @CodedAs("altDouble")
+                @CodedAs("altDouble1", "altDouble2")
                 case double(_: Double)
                 case string(String)
                 case multi(_ variable: Bool, val: Int, String)
@@ -309,8 +318,11 @@ final class CodedAsTests: XCTestCase {
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .int(val: val)
-                        case DecodingKeys.double:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.double)
+                        case DecodingKeys.double, DecodingKeys.altDouble2:
+                            let identifierKey = [DecodingKeys.double, DecodingKeys.altDouble2].first {
+                                container.allKeys.contains($0)
+                            } ?? DecodingKeys.double
+                            let contentDecoder = try container.superDecoder(forKey: identifierKey)
                             let _0 = try Double(from: contentDecoder)
                             self = .double(_: _0)
                         case DecodingKeys.string:
@@ -362,16 +374,118 @@ final class CodedAsTests: XCTestCase {
                         case bool = "bool"
                         case val = "val"
                         case int = "altInt"
-                        case double = "altDouble"
+                        case double = "altDouble1"
+                        case altDouble2 = "altDouble2"
                         case string = "string"
                         case multi = "multi"
                     }
                     enum DecodingKeys: String, CodingKey {
                         case bool = "bool"
                         case int = "altInt"
-                        case double = "altDouble"
+                        case double = "altDouble1"
+                        case altDouble2 = "altDouble2"
                         case string = "string"
                         case multi = "multi"
+                    }
+                }
+                """
+        )
+    }
+
+    func testInternallyTaggedCustomValue() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            @CodedAt("type")
+            enum SomeEnum {
+                case bool(_ variable: Bool)
+                @CodedAs("altInt")
+                case int(val: Int)
+                @CodedAs("altDouble1", "altDouble2")
+                case double(_: Double)
+                case string(String)
+                case multi(_ variable: Bool, val: Int, String)
+            }
+            """,
+            expandedSource:
+                """
+                enum SomeEnum {
+                    case bool(_ variable: Bool)
+                    case int(val: Int)
+                    case double(_: Double)
+                    case string(String)
+                    case multi(_ variable: Bool, val: Int, String)
+                }
+
+                extension SomeEnum: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let type = try container.decode(String.self, forKey: CodingKeys.type)
+                        switch type {
+                        case "bool":
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            self = .bool(_: variable)
+                        case "altInt":
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            self = .int(val: val)
+                        case "altDouble1", "altDouble2":
+                            let _0 = try Double(from: decoder)
+                            self = .double(_: _0)
+                        case "string":
+                            let _0 = try String(from: decoder)
+                            self = .string(_0)
+                        case "multi":
+                            let _2 = try String(from: decoder)
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            self = .multi(_: variable, val: val, _2)
+                        default:
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(SomeEnum.self, context)
+                        }
+                    }
+                }
+
+                extension SomeEnum: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var typeContainer = container
+                        switch self {
+                        case .bool(_: let variable):
+                            try typeContainer.encode("bool", forKey: CodingKeys.type)
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(variable, forKey: CodingKeys.variable)
+                        case .int(val: let val):
+                            try typeContainer.encode("altInt", forKey: CodingKeys.type)
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(val, forKey: CodingKeys.val)
+                        case .double(_: let _0):
+                            try typeContainer.encode("altDouble1", forKey: CodingKeys.type)
+                            try _0.encode(to: encoder)
+                        case .string(let _0):
+                            try typeContainer.encode("string", forKey: CodingKeys.type)
+                            try _0.encode(to: encoder)
+                        case .multi(_: let variable,val: let val,let _2):
+                            try typeContainer.encode("multi", forKey: CodingKeys.type)
+                            try _2.encode(to: encoder)
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(variable, forKey: CodingKeys.variable)
+                            try container.encode(val, forKey: CodingKeys.val)
+                        }
+                    }
+                }
+
+                extension SomeEnum {
+                    enum CodingKeys: String, CodingKey {
+                        case type = "type"
+                        case variable = "variable"
+                        case val = "val"
                     }
                 }
                 """

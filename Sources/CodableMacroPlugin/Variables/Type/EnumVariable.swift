@@ -31,6 +31,7 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
     /// * `CodingKeys` case style customization.
     /// * Initialized variables decoding/encoding ignore customization.
     /// * `CodingKeys` path customization for individual variables.
+    /// * Multiple `CodingKeys` alias customization for individual variables.
     /// * Helper expression with custom decoding/encoding customization.
     /// * Individual cases and variables decoding/encoding ignore customization.
     ///
@@ -70,6 +71,7 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
                         ?? CodedIn(from: input.decl) ?? CodedIn()
                 )
                 .useHelperCoderIfExists()
+                .checkForAlternateKeyValues(addTo: codingKeys, context: context)
                 .addDefaultValueIfExists()
                 .checkCodingIgnored()
         }
@@ -121,14 +123,14 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
                 from: member, in: context, builder: propertyBuilder
             )
             let reg = ExprRegistration(
-                decl: member, key: nil, variable: variable
+                decl: member, key: [], variable: variable
             )
             let registration = caseBuilder(reg)
             let `case` = registration.variable
             guard (`case`.decode ?? true) || (`case`.encode ?? true)
             else { continue }
             let value = self.switcher.keyExpression(
-                for: `case`, value: registration.key,
+                for: `case`, values: registration.key,
                 codingKeys: self.codingKeys, context: context
             )
             cases.append((variable: `case`, value: value))
@@ -175,7 +177,7 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
                 SwitchExprSyntax(subject: generated.expr) {
                     for (`case`, value) in cases where `case`.decode ?? true {
                         let location = EnumCaseCodingLocation(
-                            data: generated.data, value: value.decodeExpr
+                            data: generated.data, values: value.decodeExprs
                         )
                         `case`.decoding(in: context, from: location)
                     }
@@ -206,7 +208,9 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
         return .init(
             code: code, modifiers: [],
             whereClause: constraintGenerator.decodingClause(
-                withVariables: cases.flatMap(\.variable.variables)
+                withVariables: cases.lazy
+                    .filter { $0.variable.decode ?? true }
+                    .flatMap(\.variable.variables)
                     .filter { $0.decode ?? true },
                 conformingTo: conformance
             ),
@@ -247,7 +251,7 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
                 SwitchExprSyntax(subject: generated.expr) {
                     for (`case`, value) in cases where `case`.encode ?? true {
                         let location = EnumCaseCodingLocation(
-                            data: generated.data, value: value.encodeExpr
+                            data: generated.data, values: value.encodeExprs
                         )
                         `case`.encoding(in: context, to: location)
                     }
@@ -262,7 +266,9 @@ struct EnumVariable: TypeVariable, DeclaredVariable {
         return .init(
             code: code, modifiers: [],
             whereClause: constraintGenerator.encodingClause(
-                withVariables: cases.flatMap(\.variable.variables)
+                withVariables: cases.lazy
+                    .filter { $0.variable.encode ?? true }
+                    .flatMap(\.variable.variables)
                     .filter { $0.encode ?? true },
                 conformingTo: conformance
             ),
@@ -305,53 +311,53 @@ extension EnumVariable {
     ///
     /// The value can either be `CodingKey` based or raw value.
     enum CaseValue {
-        /// Represents value is a raw value.
+        /// Represents value is a set of raw values.
         ///
-        /// The expression represents the raw value expression.
+        /// The expression represents a set of raw value expressions.
         ///
-        /// - Parameter expr: The raw expression.
-        case raw(_ expr: ExprSyntax)
-        /// Represents value is a `CodingKey`.
+        /// - Parameter exprs: The raw expressions.
+        case raw(_ exprs: [ExprSyntax])
+        /// Represents value is a set of `CodingKey`s.
         ///
-        /// The expression for the key is used as value expression.
+        /// The expressions for the keys are used as value expressions.
         ///
-        /// - Parameter key: The `CodingKey` value.
-        case key(_ key: CodingKeysMap.Key)
-        /// Represents value is a `CodingKey`.
+        /// - Parameter keys: The `CodingKey` values.
+        case key(_ keys: [CodingKeysMap.Key])
+        /// Represents value is a set of `CodingKey`s.
         ///
-        /// The expression for the keys are used as value expression.
-        /// The value expression is different for both decoding/encoding.
+        /// The expressions for the keys are used as value expressions.
+        /// The value expressions are different for both decoding/encoding.
         ///
         /// - Parameters:
-        ///   - dKey: The decoding `CodingKey` value.
-        ///   - eKey: The encoding `CodingKey` value.
-        case keys(_ dKey: CodingKeysMap.Key, _ eKey: CodingKeysMap.Key)
+        ///   - dKeys: The decoding `CodingKey` values.
+        ///   - eKeys: The encoding `CodingKey` values.
+        case keys(_ dKeys: [CodingKeysMap.Key], _ eKeys: [CodingKeysMap.Key])
 
-        /// The expression for decoding.
+        /// The expressions for decoding.
         ///
-        /// Represents value expression for case when decoding.
-        var decodeExpr: ExprSyntax {
+        /// Represents value expressions for case when decoding.
+        var decodeExprs: [ExprSyntax] {
             switch self {
-            case .raw(let expr):
-                return expr
-            case .key(let key):
-                return key.expr
-            case .keys(let decodeKey, _):
-                return decodeKey.expr
+            case .raw(let exprs):
+                return exprs
+            case .key(let keys):
+                return keys.map(\.expr)
+            case .keys(let decodeKeys, _):
+                return decodeKeys.map(\.expr)
             }
         }
 
-        /// The expression for encoding.
+        /// The expressions for encoding.
         ///
-        /// Represents value expression for case when encoding.
-        var encodeExpr: ExprSyntax {
+        /// Represents value expressions for case when encoding.
+        var encodeExprs: [ExprSyntax] {
             switch self {
-            case .raw(let expr):
-                return expr
-            case .key(let key):
-                return key.expr
-            case .keys(_, let encodeKey):
-                return encodeKey.expr
+            case .raw(let exprs):
+                return exprs
+            case .key(let keys):
+                return keys.map(\.expr)
+            case .keys(_, let encodeKeys):
+                return encodeKeys.map(\.expr)
             }
         }
     }

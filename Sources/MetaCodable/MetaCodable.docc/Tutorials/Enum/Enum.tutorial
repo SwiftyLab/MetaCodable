@@ -52,7 +52,7 @@
             }
 
             @Step {
-                Variation tag value can be declared explicitly by attaching ``CodedAs(_:)`` macro to the case.
+                Variation tag values can be declared explicitly by attaching ``CodedAs(_:_:)`` macro to the case.
 
                 @Code(name: "Command.swift", file: Command-04.swift) {
                     @Image(source: Command-01.png, alt: "Command variations JSON representation")
@@ -128,7 +128,7 @@
             }
 
             @Step {
-                If tag value differs from case name, specify explicitly with ``CodedAs(_:)`` macro attached to the case.
+                If tag values differ from case name, specify explicitly with ``CodedAs(_:_:)`` macro attached to the case.
 
                 @Code(name: "Command.swift", file: Command-10.swift) {
                     @Image(source: Command-08.png, alt: "Command variations JSON representation")

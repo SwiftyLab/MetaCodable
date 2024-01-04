@@ -34,8 +34,8 @@ struct IgnoreCoding: PropertyAttribute {
     /// * Attached declaration is a variable or enum case declaration.
     /// * Attached variable declaration has default initialization or
     ///   variable is a computed property.
-    /// * This attribute isn't used combined with `CodedIn` and
-    ///  `CodedAt` attribute.
+    /// * This attribute isn't used combined with `CodedIn`,
+    ///  `CodedAt` and `CodedAs` attribute.
     /// * Additionally, warning generated if macro usage is duplicated
     ///   for the same declaration.
     ///
@@ -44,6 +44,7 @@ struct IgnoreCoding: PropertyAttribute {
         return AggregatedDiagnosticProducer {
             cantBeCombined(with: CodedIn.self)
             cantBeCombined(with: CodedAt.self)
+            cantBeCombined(with: CodedAs.self)
             shouldNotDuplicate()
             `if`(
                 isVariable, attachedToInitializedVariable(),

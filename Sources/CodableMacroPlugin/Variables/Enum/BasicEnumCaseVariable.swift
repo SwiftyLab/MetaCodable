@@ -102,9 +102,15 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         in context: some MacroExpansionContext,
         from location: EnumCaseCodingLocation
     ) -> SwitchCaseSyntax {
-        let value = location.value
-        let pattern = ExpressionPatternSyntax(expression: value)
-        let label = SwitchCaseLabelSyntax { .init(pattern: pattern) }
+        let firstKey = location.values.first!
+        let label = SwitchCaseLabelSyntax(
+            caseItems: .init {
+                for value in location.values {
+                    let pattern = ExpressionPatternSyntax(expression: value)
+                    SwitchCaseItemSyntax.init(pattern: pattern)
+                }
+            }
+        )
         let caseArgs = variables.map { variable in
             let decode = (variable.decode ?? true)
             let expr: ExprSyntax = decode ? "\(variable.name)" : variable.value!
@@ -118,12 +124,25 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         switch location.data {
         case .container(let container):
             contentCoder = "contentDecoder"
-            prefix = """
-                let \(contentCoder) = try \(container).superDecoder(forKey: \(value))
-                """
+            prefix = CodeBlockItemListSyntax {
+                if location.values.count > 1 {
+                    let keyName: TokenSyntax = "identifierKey"
+                    let keyList = ArrayExprSyntax(expressions: location.values)
+                    """
+                    let \(keyName) = \(keyList).first { \(container).allKeys.contains($0) } ?? \(firstKey)
+                    """
+                    """
+                    let \(contentCoder) = try \(container).superDecoder(forKey: \(keyName))
+                    """
+                } else {
+                    """
+                    let \(contentCoder) = try \(container).superDecoder(forKey: \(firstKey))
+                    """
+                }
+            }
         case .coder(let coder, let callback):
             contentCoder = coder
-            prefix = callback("\(value)")
+            prefix = callback("\(firstKey)")
         }
         return SwitchCaseSyntax(label: .case(label)) {
             prefix
@@ -160,7 +179,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         let expr: ExprSyntax = ".\(name)\(argExpr)"
         let pattern = ExpressionPatternSyntax(expression: expr)
         let label = SwitchCaseLabelSyntax { .init(pattern: pattern) }
-        let value = location.value
+        let value = location.values.first!
         let contentCoder: TokenSyntax
         let prefix: CodeBlockItemListSyntax
         switch location.data {

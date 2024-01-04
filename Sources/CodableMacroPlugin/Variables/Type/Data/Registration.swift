@@ -88,5 +88,5 @@ where Var: Variable
 ///
 /// This type contains variable and `CodingKey` value data that is necessary
 /// for syntax generation.
-typealias ExprRegistration<Decl, Var> = Registration<Decl, ExprSyntax?, Var>
+typealias ExprRegistration<Decl, Var> = Registration<Decl, [ExprSyntax], Var>
 where Var: Variable

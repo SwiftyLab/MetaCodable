@@ -24,8 +24,9 @@ struct EnumCaseCodingLocation {
     /// Represents the data related to switch statement
     /// of enum passed to each case.
     let data: EnumSwitcherGenerated.CaseData
-    /// The value of the variable.
+    /// The values of the variable.
     ///
-    /// Represents the actual value that will be decoded/encoded.
-    let value: ExprSyntax
+    /// Represents the actual values that will be decoded.
+    /// Only the first value will be encoded.
+    let values: [ExprSyntax]
 }

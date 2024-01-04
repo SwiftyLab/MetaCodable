@@ -8,20 +8,20 @@
 protocol EnumSwitcherVariable: Variable
 where CodingLocation == EnumSwitcherLocation, Generated == EnumSwitcherGenerated
 {
-    /// Creates value expression for provided enum-case variable.
+    /// Creates value expressions for provided enum-case variable.
     ///
-    /// Determines the value of enum-case variable to have a `CodingKey`
-    /// based value or any raw value.
+    /// Determines the value of enum-case variable to have `CodingKey`
+    /// based values or any raw values.
     ///
     /// - Parameters:
     ///   - variable: The variable for which generated.
-    ///   - value: The optional value present in syntax.
+    ///   - values: The values present in syntax.
     ///   - codingKeys: The map where `CodingKeys` maintained.
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: The generated value.
     func keyExpression<Var: EnumCaseVariable>(
-        for variable: Var, value: ExprSyntax?,
+        for variable: Var, values: [ExprSyntax],
         codingKeys: CodingKeysMap, context: some MacroExpansionContext
     ) -> EnumVariable.CaseValue
 

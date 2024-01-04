@@ -10,12 +10,14 @@ struct Post {
 
 @Codable
 struct TextPost {
+    @CodedAt
     let base: Post
     let text: String
 }
 
 @Codable
 struct PicturePost {
+    @CodedAt
     let base: Post
     let url: String
     let caption: String
@@ -23,6 +25,7 @@ struct PicturePost {
 
 @Codable
 struct AudioPost {
+    @CodedAt
     let base: Post
     let url: String
     let duration: Float

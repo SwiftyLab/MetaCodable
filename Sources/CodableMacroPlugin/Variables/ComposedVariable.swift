@@ -80,11 +80,32 @@ extension ComposedVariable where Self: ValuedVariable, Wrapped: ValuedVariable {
 }
 
 extension ComposedVariable
+where Self: ConditionalVariable, Wrapped: ConditionalVariable {
+    /// Whether the variable is to be decoded.
+    ///
+    /// Whether underlying wrapped variable is to be decoded.
+    var decode: Bool? { base.decode }
+    /// Whether the variable is to be encoded.
+    ///
+    /// Whether underlying wrapped variable is to be encoded.
+    var encode: Bool? { base.encode }
+}
+
+extension ComposedVariable
 where Self: PropertyVariable, Wrapped: PropertyVariable {
     /// The type of the variable.
     ///
     /// Provides type of the underlying variable value.
     var type: TypeSyntax { base.type }
+
+    /// Whether the variable type requires `Decodable` conformance.
+    ///
+    /// Whether underlying wrapped variable requires `Decodable` conformance.
+    var requireDecodable: Bool? { base.requireDecodable }
+    /// Whether the variable type requires `Encodable` conformance.
+    ///
+    /// Whether underlying wrapped variable requires `Encodable` conformance.
+    var requireEncodable: Bool? { base.requireEncodable }
 
     /// The prefix token to use along with `name` when decoding.
     ///
