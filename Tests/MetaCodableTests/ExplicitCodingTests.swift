@@ -127,6 +127,48 @@ final class ExplicitCodingTests: XCTestCase {
         )
     }
 
+    func testClassGetterOnlyVariableWithMultiLineStatements() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            class SomeCodable {
+                @CodedIn
+                var value: String {
+                    let val = "Val"
+                    return "some\\(val)"
+                }
+            }
+            """,
+            expandedSource:
+                """
+                class SomeCodable {
+                    var value: String {
+                        let val = "Val"
+                        return "some\\(val)"
+                    }
+
+                    required init(from decoder: any Decoder) throws {
+                    }
+
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.value, forKey: CodingKeys.value)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case value = "value"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
+                }
+                """
+        )
+    }
+
     func testComputedProperty() throws {
         assertMacroExpansion(
             """

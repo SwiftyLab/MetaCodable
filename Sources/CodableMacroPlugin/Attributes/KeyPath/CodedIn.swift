@@ -25,7 +25,7 @@ struct CodedIn: PropertyAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+                .name.text == Self.name
         else { return nil }
         self.node = node
         self.inDefaultMode = false
@@ -56,7 +56,7 @@ struct CodedIn: PropertyAttribute {
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntax: VariableDeclSyntax.self)
+            expect(syntaxes: VariableDeclSyntax.self)
             cantDuplicate()
             attachedToNonStaticVariable()
             cantBeCombined(with: CodedAt.self)

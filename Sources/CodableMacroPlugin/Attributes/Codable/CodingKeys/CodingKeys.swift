@@ -31,7 +31,7 @@ struct CodingKeys: PeerAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+                .name.text == Self.name
         else { return nil }
         self.node = node
     }
@@ -43,11 +43,35 @@ struct CodingKeys: PeerAttribute {
     /// has `Codable` macro attached and macro usage
     /// is not duplicated for the same declaration.
     ///
+    /// For enum case declarations this attribute can be attached
+    /// without `Codable` macro.
+    ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            mustBeCombined(with: Codable.self)
             cantDuplicate()
+            `if`(
+                isStruct || isClass || isEnum,
+                mustBeCombined(with: Codable.self),
+                else: expect(syntaxes: EnumCaseDeclSyntax.self)
+            )
         }
+    }
+}
+
+extension Registration where Key == [String] {
+    /// Update current registration `CodingKey` path data.
+    ///
+    /// New registration is updated with the transformed `CodingKey` path
+    /// based on provided `strategy`.
+    ///
+    /// - Parameter decl: The declaration where `strategy` provided.
+    /// - Returns: Newly built registration with transformed `CodingKey` path data.
+    func transformKeysAccordingToStrategy<D>(
+        attachedTo decl: D
+    ) -> Self where D: AttributableDeclSyntax {
+        guard let attr = CodingKeys(from: decl) else { return self }
+        let strategy = attr.strategy
+        return self.updating(with: strategy.transform(keyPath: self.key))
     }
 }

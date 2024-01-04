@@ -1,0 +1,191 @@
+@Tutorial(time: 10) {
+    @XcodeRequirement(title: "Xcode 15 or later", destination: "https://itunes.apple.com/us/app/xcode/id497799835?mt=12")
+
+    @Intro(title: "Represent variations in data") {
+        This tutorial guides you through handling variation in data and how to represent different kinds of variations in `Swift` using `MetaCodable`.
+
+        @Comment {
+            Add image asset here!
+        }
+    }
+
+    @Section(title: "Create Codable enums with external tag") {
+        @ContentAndMedia {
+            This is default representation of `enum` in `MetaCodable`, where variation can be identified with the value of the key.
+
+            Since the data is keyed by the tag, variation is known before the content is being parsed.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify all the variations and the tags representing variations.
+
+                @Image(source: Command-01.png, alt: "Command variations JSON representation")
+            }
+
+            @Step {
+                Create `Codable` `enum` with each case representing each variation, with case name synonymous to tag value.
+
+                @Code(name: "Command.swift", file: Command-01.swift) {
+                    @Image(source: Command-01.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Add variation data to each case as associated values with label representing field name and value type as field type.
+
+                @Code(name: "Command.swift", file: Command-02.swift) {
+                    @Image(source: Command-01.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Secondary label can be used as field name as well, to allow not specifying explicit label when creating case value.
+
+                @Code(name: "Command.swift", file: Command-03.swift) {
+                    @Image(source: Command-01.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Variation tag values can be declared explicitly by attaching ``CodedAs(_:_:)`` macro to the case.
+
+                @Code(name: "Command.swift", file: Command-04.swift) {
+                    @Image(source: Command-01.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                In case of multiple variation data fields, variation specific `struct` or `class` type can be created, and created type can be added to enum-case as associated value without any label.
+
+                @Code(name: "Command.swift", file: Command-05.swift) {
+                    @Image(source: Command-01.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Ignore specific case from decoding or encoding or both by attaching ``IgnoreDecoding()`` or ``IgnoreEncoding()`` or ``IgnoreCoding()`` macros respectively.
+
+                @Code(name: "Command.swift", file: Command-06.swift) {
+                    @Image(source: Command-01.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Use ``CodingKeys(_:)`` macro to specify `CodingKey` case style per case while using different case style for associated value label.
+
+                @Code(name: "Command.swift", file: Command-07.swift) {
+                    @Image(source: Command-07.png, alt: "Command variations JSON representation")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Create Codable enums with internal tag") {
+        @ContentAndMedia {
+            In this case the tag value identifying variant is inside the content, next to any other fields.
+
+            The tag value is present at a specific field common across all the variations. `MetaCodable` supports any type of value for tag default being `String`.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify all the variations by the tags representing variations and the field for the tag value.
+
+                @Image(source: Command-08.png, alt: "Command variations JSON representation")
+            }
+
+            @Step {
+                Create `Codable` `enum` with each case name synonymous to tag value, and associated values with label and type representing field name and type respectively, similar to first section.
+
+                @Code(name: "Command.swift", file: Command-02.swift) {
+                    @Image(source: Command-08.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Attach ``CodedAt(_:)`` macro to `enum` type definition with value specifying tag field name.
+
+                @Code(name: "Command.swift", file: Command-08.swift) {
+                    @Image(source: Command-08.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                If tag value type differs from `String` type, specify explicitly with ``CodedAs()`` macro attached to `enum` type definition.
+
+                @Code(name: "Command.swift", file: Command-09.swift) {
+                    @Image(source: Command-08.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                If tag values differ from case name, specify explicitly with ``CodedAs(_:_:)`` macro attached to the case.
+
+                @Code(name: "Command.swift", file: Command-10.swift) {
+                    @Image(source: Command-08.png, alt: "Command variations JSON representation")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Create Codable enums with adjacent tag") {
+        @ContentAndMedia {
+            In this case the tag and content are adjacent to each other as two fields in each variation.
+
+            The tag and content fields are common across all the variations. `MetaCodable` supports any type of value for tag default being `String`.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify all the variations by the tags representing variations and the fields for the tag and content value.
+
+                @Image(source: Command-11.png, alt: "Command variations JSON representation")
+            }
+
+            @Step {
+                Create `Codable` `enum` with each case name synonymous to tag value, and associated values with label and type representing field name and type respectively, similar to first section.
+
+                @Code(name: "Command.swift", file: Command-02.swift) {
+                    @Image(source: Command-11.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Attach ``CodedAt(_:)`` macro to `enum` type definition with value specifying tag field name, similar to previous section.
+
+                @Code(name: "Command.swift", file: Command-08.swift) {
+                    @Image(source: Command-11.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Attach ``ContentAt(_:_:)`` macro to `enum` type definition with value specifying content field name.
+
+                @Code(name: "Command.swift", file: Command-11.swift) {
+                    @Image(source: Command-11.png, alt: "Command variations JSON representation")
+                }
+            }
+
+            @Step {
+                Use ``IgnoreCodingInitialized()`` macro to ignore decoding and encoding initialized associated values per case while allowing them in other cases.
+
+                @Code(name: "Command.swift", file: Command-12.swift) {
+                    @Image(source: Command-12.png, alt: "Command variations JSON representation")
+                }
+            }
+        }
+    }
+}

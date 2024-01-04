@@ -1,5 +1,5 @@
-/// Indicates by default initialized properties for the attached type will be
-/// ignored for decoding/encoding.
+/// Indicates by default initialized properties/associated values for
+/// the attached type/enum-case will be ignored for decoding/encoding.
 ///
 /// This macro can be applied to types to ignore decoding and encoding
 /// all initialized properties of said type:
@@ -29,6 +29,32 @@
 /// ```
 /// Here `explicitCode` property is decoded and encoded
 /// while `initialized` is ignored from decoding and encoding.
+///
+/// Similarly, all initialized associated values can be ignored for decoding
+/// and encoding in enum type:
+/// ```swift
+/// @Codable
+/// @IgnoreCodingInitialized
+/// enum CodableType {
+///     case one(initialized: String = "some")
+///     case two(uninitialized: String)
+/// }
+/// ```
+/// Here `initialized` associated value is ignored from decoding and encoding
+/// while `uninitialized` is decoded and encoded.
+///
+/// Also, only for particular case initialized associated values can be ignored
+/// for decoding and encoding in enum type:
+/// ```swift
+/// @Codable
+/// enum CodableType {
+///     @IgnoreCodingInitialized
+///     case one(initialized: String = "some")
+///     case two(notIgnored: String = "some")
+/// }
+/// ```
+/// Here `initialized` associated value is ignored from decoding and encoding
+/// while `notIgnored` is decoded and encoded.
 ///
 /// - Note: This macro on its own only validates if attached declaration
 ///   is a variable declaration. ``Codable()`` macro uses this macro

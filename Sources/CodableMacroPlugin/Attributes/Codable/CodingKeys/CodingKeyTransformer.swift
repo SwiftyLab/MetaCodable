@@ -113,10 +113,10 @@ fileprivate extension CodingKeys.Strategy {
             case .lower:
                 return parts.map { $0.lowercased() }
             case .all:
-                return parts.map { $0.uppercasingFirst }
+                return parts.map { uppercasingFirst(in: $0) }
             case .exceptFirst:
-                let first = parts.first!.lowercasingFirst
-                let rest = parts.dropFirst().map { $0.uppercasingFirst }
+                let first = lowercasingFirst(in: parts.first!)
+                let rest = parts.dropFirst().map { uppercasingFirst(in: $0) }
                 return [first] + rest
             }
         }
@@ -141,38 +141,26 @@ fileprivate extension CodingKeys.Strategy {
     }
 }
 
-/// Helps converting any string to camel case
-///
-/// Picked up from:
-/// https://gist.github.com/reitzig/67b41e75176ddfd432cb09392a270218
-extension String {
-    /// Makes the first letter lowercase.
-    var lowercasingFirst: String { prefix(1).lowercased() + dropFirst() }
-    /// Makes the first letter uppercase.
-    var uppercasingFirst: String { prefix(1).uppercased() + dropFirst() }
-
-    /// Convert any string to camel case
+extension CodingKeys.Strategy.Capitalization {
+    /// Creates `String` the first letter of lowercase.
     ///
-    /// Removes non-alphanumeric characters
-    /// and makes the letters just after these
-    /// characters uppercase.
+    /// Creates a new `String` from provided `String`
+    /// with first letter lowercased.
     ///
-    /// First letter is made lowercase.
-    var camelCased: String {
-        return CodingKeyTransformer(strategy: .camelCase).transform(key: self)
+    /// - Parameter str: The input `String`.
+    /// - Returns: The created `String`.
+    func lowercasingFirst(in str: String) -> String {
+        return str.prefix(1).lowercased() + str.dropFirst()
     }
 
-    /// Check if begins with number.
+    /// Creates `String` the first letter of uppercase.
     ///
-    /// Checks whether key name begins with number.
-    var beginsWithNumber: Bool {
-        if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
-            return try! #/^[0-9]+[a-zA-Z0-9]*/#.wholeMatch(in: self) != nil
-        } else {
-            return self.range(
-                of: "^[0-9]+[a-zA-Z0-9]*",
-                options: .regularExpression
-            ) != nil
-        }
+    /// Creates a new `String` from provided `String`
+    /// with first letter uppercased.
+    ///
+    /// - Parameter str: The input `String`.
+    /// - Returns: The created `String`.
+    func uppercasingFirst(in str: String) -> String {
+        return str.prefix(1).uppercased() + str.dropFirst()
     }
 }

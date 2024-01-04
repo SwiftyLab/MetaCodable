@@ -26,7 +26,7 @@ struct Default: PropertyAttribute {
     init?(from node: AttributeSyntax) {
         guard
             node.attributeName.as(IdentifierTypeSyntax.self)!
-                .description == Self.name
+                .name.text == Self.name
         else { return nil }
         self.node = node
     }
@@ -47,10 +47,46 @@ struct Default: PropertyAttribute {
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            expect(syntax: VariableDeclSyntax.self)
+            expect(syntaxes: VariableDeclSyntax.self)
             attachedToNonStaticVariable()
             cantDuplicate()
             cantBeCombined(with: IgnoreCoding.self)
         }
+    }
+}
+
+extension Registration
+where
+    Decl: AttributableDeclSyntax, Var: PropertyVariable,
+    Var.Initialization == RequiredInitialization
+{
+    /// The variable data with default expression
+    /// that output registration will have.
+    typealias DefOutput = AnyPropertyVariable<AnyRequiredVariableInitialization>
+    /// Update registration with default value if exists.
+    ///
+    /// New registration is updated with default expression data that will be
+    /// used for decoding failure and memberwise initializer(s), if provided.
+    ///
+    /// - Returns: Newly built registration with default expression data.
+    func addDefaultValueIfExists() -> Registration<Decl, Key, DefOutput> {
+        guard let attr = Default(from: self.decl)
+        else { return self.updating(with: self.variable.any) }
+        let newVar = self.variable.with(default: attr.expr)
+        return self.updating(with: newVar.any)
+    }
+}
+
+fileprivate extension PropertyVariable
+where Initialization == RequiredInitialization {
+    /// Update variable data with the default value expression provided.
+    ///
+    /// `DefaultValueVariable` is created with this variable as base
+    /// and default expression provided.
+    ///
+    /// - Parameter expr: The default expression to add.
+    /// - Returns: Created variable data with default expression.
+    func with(default expr: ExprSyntax) -> DefaultValueVariable<Self> {
+        return .init(base: self, options: .init(expr: expr))
     }
 }

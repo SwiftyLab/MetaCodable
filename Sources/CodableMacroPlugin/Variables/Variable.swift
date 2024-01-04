@@ -1,35 +1,103 @@
 @_implementationOnly import SwiftSyntax
 @_implementationOnly import SwiftSyntaxMacros
 
-/// A type representing data associated with
-/// a variable inside type declarations.
+/// A type representing data associated with decodable/encodable
+/// variable.
 ///
-/// This type informs how the variable needs
-/// to be initialized, decoded and encoded
-/// in the macro code generation phase.
-protocol Variable<Initialization> {
-    /// A type representing the initialization of this variable.
+/// This type informs how the variable needs to be decoded/encoded
+/// in the macro expansion phase.
+protocol Variable<CodingLocation, Generated> {
+    /// The decoding/encoding location type.
+    associatedtype CodingLocation
+    /// The generated decoding/encoding syntax type.
+    associatedtype Generated
+
+    /// Provides the syntax for decoding at the provided location.
     ///
-    /// Represents the initialization type of this variable, i.e whether
-    /// initialization is required, optional or can be ignored.
-    associatedtype Initialization: VariableInitialization
+    /// Individual implementation can customize decoding strategy.
+    ///
+    /// - Parameters:
+    ///   - context: The context in which to perform the macro expansion.
+    ///   - location: The decoding location.
+    ///
+    /// - Returns: The generated decoding syntax.
+    func decoding(
+        in context: some MacroExpansionContext,
+        from location: CodingLocation
+    ) -> Generated
+
+    /// Provides the syntax for encoding at the provided location.
+    ///
+    /// Individual implementation can customize encoding strategy.
+    ///
+    /// - Parameters:
+    ///   - context: The context in which to perform the macro expansion.
+    ///   - location: The encoding location.
+    ///
+    /// - Returns: The generated encoding syntax.
+    func encoding(
+        in context: some MacroExpansionContext,
+        to location: CodingLocation
+    ) -> Generated
+}
+
+/// A type representing data associated with variable with name.
+///
+/// This type informs how the variable needs to be decoded/encoded
+/// in the macro expansion phase.
+protocol NamedVariable<CodingLocation, Generated>: Variable {
     /// The name of the variable.
     ///
-    /// For a declaration:
-    /// ```swift
-    /// let variable: String
-    /// ```
-    /// the `name` will be `variable`.
-    var name: TokenSyntax { get }
-    /// The type of the variable.
+    /// - For a declaration:
+    ///   ```swift
+    ///   let variable: String = "data"
+    ///   ```
+    ///   the `name` will be `variable`.
     ///
-    /// For a declaration:
-    /// ```swift
-    /// let variable: String
-    /// ```
-    /// the `type` will be `String`.
-    var type: TypeSyntax { get }
+    /// - For a declaration:
+    ///   ```swift
+    ///   (_ variable: String = "data")
+    ///   ```
+    ///   the `name` will be `variable`.
+    ///
+    /// - For a declaration:
+    ///   ```swift
+    ///   case variable = "data"
+    ///   ```
+    ///   the `name` will be `variable`.
+    var name: TokenSyntax { get }
+}
 
+/// A type representing data associated with variable with name and value.
+///
+/// This type informs how the variable needs to be decoded/encoded
+/// in the macro expansion phase.
+protocol ValuedVariable<CodingLocation, Generated>: NamedVariable {
+    /// The value of the variable.
+    ///
+    /// - For a declaration:
+    ///   ```swift
+    ///   let variable: String = "data"
+    ///   ```
+    ///   the `value` will be `"data"`.
+    ///
+    /// - For a declaration:
+    ///   ```swift
+    ///   (_ variable: String = "data")
+    ///   ```
+    ///   the `value` will be `"data"`.
+    var value: ExprSyntax? { get }
+}
+
+/// A type representing data associated with variable that can be
+/// conditionally decoded/encoded.
+///
+/// This type informs how the variable needs to be decoded/encoded
+/// in the macro expansion phase.
+///
+/// * The variable should be decoded if `decode` property returns `nil`/`true`.
+/// * The variable should be encoded if `encode` property returns `nil`/`true`.
+protocol ConditionalVariable<CodingLocation, Generated>: Variable {
     /// Whether the variable is to
     /// be decoded.
     ///
@@ -42,70 +110,41 @@ protocol Variable<Initialization> {
     /// If `nil` is returned, variable
     /// is encoded by default.
     var encode: Bool? { get }
+}
 
-    /// Whether the variable type requires
-    /// `Decodable` conformance.
+/// A `Variable` representing data that can be initialized.
+///
+/// The initialization returned can be used to generate expansion
+/// for memberwise initializer.
+protocol InitializableVariable<CodingLocation, Generated, Initialization>:
+    Variable
+{
+    /// A type representing the initialization of this variable.
     ///
-    /// Used for generic where clause, for
-    /// `Decodable` conformance generation.
-    ///
-    /// If `nil` is returned, variable is used in
-    /// generic where clause by default.
-    var requireDecodable: Bool? { get }
-    /// Whether the variable type requires
-    /// `Encodable` conformance.
-    ///
-    /// Used for generic where clause, for
-    /// `Encodable` conformance generation.
-    ///
-    /// If `nil` is returned, variable is used in
-    /// generic where clause by default.
-    var requireEncodable: Bool? { get }
-
-    /// The fallback behavior when decoding fails.
-    ///
-    /// In the event this decoding this variable is failed,
-    /// appropriate fallback would be applied.
-    var decodingFallback: DecodingFallback { get }
-
+    /// Represents the initialization type of this variable.
+    associatedtype Initialization
     /// Indicates the initialization type for this variable.
     ///
-    /// Indicates whether initialization is required, optional
-    /// or needs to be skipped. Also, provides default
-    /// initialization data if applicable.
+    /// Indicates whether initialization data for variable.
     ///
     /// - Parameter context: The context in which to perform
     ///   the macro expansion.
     /// - Returns: The type of initialization for variable.
-    func initializing(
-        in context: MacroExpansionContext
-    ) -> Initialization
-    /// Provides the code syntax for decoding this variable
-    /// at the provided location.
+    func initializing(in context: some MacroExpansionContext) -> Initialization
+}
+
+/// A `Variable` type representing that can be read from syntax declaration.
+///
+/// This type informs how the variable can b e read from a syntax declaration.
+protocol DeclaredVariable<Decl, CodingLocation, Generated>: Variable {
+    /// The declaration type for this variable.
+    associatedtype Decl
+    /// Creates a new variable from declaration and expansion context.
     ///
-    /// Individual implementation can customize decoding strategy.
-    ///
-    /// - Parameters:
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - location: The decoding location for the variable.
-    ///
-    /// - Returns: The generated variable decoding code.
-    func decoding(
-        in context: MacroExpansionContext,
-        from location: VariableCodingLocation
-    ) -> CodeBlockItemListSyntax
-    /// Provides the code syntax for encoding this variable
-    /// at the provided location.
-    ///
-    /// Individual implementation can customize encoding strategy.
+    /// Uses the declaration to read variable specific data.
     ///
     /// - Parameters:
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - location: The encoding location for the variable.
-    ///
-    /// - Returns: The generated variable encoding code.
-    func encoding(
-        in context: MacroExpansionContext,
-        to location: VariableCodingLocation
-    ) -> CodeBlockItemListSyntax
+    ///   - decl: The declaration to read from.
+    ///   - context: The context in which the macro expansion performed.
+    init(from decl: Decl, in context: some MacroExpansionContext)
 }

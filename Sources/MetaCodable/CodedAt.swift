@@ -76,13 +76,35 @@
 ///   }
 ///   ```
 ///
+/// * For enums, this attribute can be used to support internally tagged enums.
+///   The `CodingKey` path provided represents the path where value identifying
+///   each case is decoded/encoded. By default, this value is decoded/encoded
+///   as `String` unless different type specified with ``CodedAs()`` and
+///   compared with value for each enum-case identifier. i.e. for enum:
+///   ```swift
+///   @Codable
+///   @CodedAt("type")
+///   enum Command {
+///       case load(key: String)
+///       case store(key: String, value: Int)
+///   }
+///   ```
+///   the encoded JSON for internally tagged enum will be of following variations:
+///   ```json
+///   { "key": "MyKey", "type": "load" }
+///   ```
+///   ```json
+///   { "key": "MyKey", "value": 42, "type": "store" }
+///   ```
+///
 /// - Parameter path: The `CodingKey` path value located at.
 ///
 /// - Note: This macro on its own only validates if attached declaration
 ///   is a variable declaration. ``Codable()`` macro uses this macro
 ///   when generating final implementations.
 ///
-/// - Important: The field type must confirm to `Codable`.
+/// - Important: When applied to fields, the field type must confirm to
+///   `Codable`.
 @attached(peer)
 @available(swift 5.9)
 public macro CodedAt(_ path: StaticString...) =

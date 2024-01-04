@@ -1,0 +1,199 @@
+@Tutorial(time: 10) {
+    @XcodeRequirement(title: "Xcode 15 or later", destination: "https://itunes.apple.com/us/app/xcode/id497799835?mt=12")
+
+    @Intro(title: "Use with general-purpose Swift types") {
+        This tutorial guides you through
+        * creating equivalent types for decoding/encoding.
+        * customizing field's `CodingKey`.
+        * fallback field value when decoding fails
+        * ignoring fields from decoding/encoding.
+        * share common data across `Codable` types.
+
+        @Comment {
+            Add image asset here!
+        }
+    }
+
+    @Section(title: "Create Codable type and customize CodingKey of fields") {
+        @ContentAndMedia {
+            The simplest way to generate `Codable` implementation is to attach ``Codable()`` macro to type definition, provided all its properties using types that are already `Codable`.
+
+            These types include standard library types like `String`, `Int`, and `Double` and `Foundation` types like `Date`, `Data`, and `URL`. Any type whose properties are `Codable` automatically conforms to `Codable` just by attaching this macro.
+
+            `CodingKey` of each field can be customized individually using ``CodedAt(_:)`` or ``CodedIn(_:)`` macros. Optionally, global field case style can be declared using ``CodingKeys(_:)`` macro.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Analyze fields and their data types from data.
+
+                @Image(source: Post-01.png, alt: "Basic post JSON representation")
+            }
+
+            @Step {
+                Create equivalent `struct`/`class` with field name same as in data and type equivalent to encoded data type.
+
+                @Code(name: Post.swift, file: Post-01.swift) {
+                    @Image(source: Post-01.png, alt: "Basic post JSON representation")
+                }
+            }
+
+            @Step {
+                Attach ``Codable()`` macro to type definition.
+
+                @Code(name: Post.swift, file: Post-02.swift) {
+                    @Image(source: Post-01.png, alt: "Basic post JSON representation")
+                }
+            }
+
+            @Step {
+                Provide custom `CodingKey` value to use to ``CodedAt(_:)`` macro attached to said field.
+
+                @Code(name: Post.swift, file: Post-03.swift) {
+                    @Image(source: Post-01.png, alt: "Basic post JSON representation")
+                }
+            }
+
+            @Step {
+                Provide each `CodingKey` path components in order, to ``CodedAt(_:)`` macro for decoding nested field at path.
+
+                @Code(name: Post.swift, file: Post-04.swift) {
+                    @Image(source: Post-04.png, alt: "Basic post JSON representation with author")
+                }
+            }
+
+            @Step {
+                Last `CodingKey` path component can be omitted if it is same as field name by using ``CodedIn(_:)`` macro.
+
+                @Code(name: Post.swift, file: Post-05.swift) {
+                    @Image(source: Post-04.png, alt: "Basic post JSON representation with author")
+                }
+            }
+
+            @Step {
+                Use ``CodedAs(_:_:)`` macro to specify multiple possible `CodingKey`s for a single field.
+
+                @Code(name: Post.swift, file: Post-06.swift) {
+                    @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
+                }
+            }
+
+            @Step {
+                Use ``CodingKeys(_:)`` macro to specify `CodingKey` case style while using different case style for field name.
+
+                @Code(name: Post.swift, file: Post-07.swift) {
+                    @Image(source: Post-07.png, alt: "Basic post JSON representation with author and creation time")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Customize field decoding/encoding") {
+        @ContentAndMedia {
+            Following level of customizations are possible:
+            * Provide default value for fields to be used when decoding fails with ``Default(_:)`` macro.
+            * Ignore both decoding and encoding with ``IgnoreCoding()`` macro per fields and ignore only decoding or encoding with ``IgnoreDecoding()`` or ``IgnoreEncoding()`` macros per fields respectively.
+            * Ignore all initialized fields for a type from decoding/encoding with ``IgnoreCodingInitialized()`` macro.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Provide default value per field if decoding fails due to missing or invalid data.
+
+                @Code(name: Post.swift, file: Post-07.swift) {
+                    @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
+                }
+            }
+
+            @Step {
+                Ignore fields from decoding or encoding or both with ``IgnoreDecoding()`` or ``IgnoreEncoding()`` or ``IgnoreCoding()`` respectively.
+
+                @Code(name: Post.swift, file: Post-08.swift) {
+                    @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
+                }
+            }
+
+            @Step {
+                Ignore all initialized fields from decoding and encoding by attaching ``IgnoreCodingInitialized()`` macro to type definition.
+
+                @Code(name: Post.swift, file: Post-09.swift) {
+                    @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
+                }
+            }
+
+            @Step {
+                Allow specific initialized field decoding and encoding by attaching any of ``CodedAt(_:)``/``CodedIn(_:)``/``CodedBy(_:)``/``Default(_:)`` macros.
+
+                @Code(name: Post.swift, file: Post-10.swift) {
+                    @Image(source: Post-10.png, alt: "Basic post JSON representation with author, creation time and delivered time")
+                }
+            }
+
+            @Step {
+                Attach ``IgnoreDecoding()`` or ``IgnoreEncoding()`` macro to initialized field for only suppressing decoding or encoding respectively.
+
+                @Code(name: Post.swift, file: Post-11.swift) {
+                    @Image(source: Post-11.png, alt: "Basic post JSON representation with author and creation time with delivered time only when encoded")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Share common Codable fields") {
+        @ContentAndMedia {
+            Common `Codable` fields can be extracted to a separate type to be shared across other `Codable` types.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify fields that are common across multiple data.
+
+                @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+            }
+
+            @Step {
+                Create equivalent `Codable` type with fields representing common data.
+
+                @Code(name: Post.swift, file: Post-12.swift) {
+                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                }
+            }
+
+            @Step {
+                Create equivalent `Codable` type for each specific post category only with fields representing category specific data.
+
+                @Code(name: Post.swift, file: Post-13.swift) {
+                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                }
+            }
+
+            @Step {
+                Add common post data field to each specific post category, field name doesn't matter here.
+
+                @Code(name: Post.swift, file: Post-14.swift) {
+                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                }
+            }
+
+            @Step {
+                Attach ``CodedAt(_:)`` without any arguments to common post data field to directly decode common post fields data ignoring the key for each category.
+
+                @Code(name: Post.swift, file: Post-15.swift) {
+                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                }
+            }
+        }
+    }
+}

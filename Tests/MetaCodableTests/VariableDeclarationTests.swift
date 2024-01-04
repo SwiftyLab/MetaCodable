@@ -116,11 +116,6 @@ final class VariableDeclarationTests: XCTestCase {
                     func encode(to encoder: any Encoder) throws {
                     }
                 }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                    }
-                }
                 """
         )
     }
@@ -160,11 +155,6 @@ final class VariableDeclarationTests: XCTestCase {
                     func encode(to encoder: any Encoder) throws {
                     }
                 }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                    }
-                }
                 """
         )
     }
@@ -200,11 +190,6 @@ final class VariableDeclarationTests: XCTestCase {
 
                 extension SomeCodable: Encodable {
                     func encode(to encoder: any Encoder) throws {
-                    }
-                }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
                     }
                 }
                 """
@@ -383,11 +368,6 @@ final class VariableDeclarationTests: XCTestCase {
 
                 extension SomeCodable: Encodable {
                     func encode(to encoder: any Encoder) throws {
-                    }
-                }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
                     }
                 }
                 """

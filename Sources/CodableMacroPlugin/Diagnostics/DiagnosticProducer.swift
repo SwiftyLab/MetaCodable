@@ -27,19 +27,19 @@ protocol DiagnosticProducer {
     ) -> Bool
 }
 
-/// An extension that handles diagnostics
-/// creation while expanding the macro.
-extension MacroExpansionContext {
-    /// Produce a diagnostic for the provided attribute and message
-    /// while expanding the macro.
+extension Attribute {
+    /// Produce the provided diagnostic message for the current attribute.
     ///
     /// - Parameters:
-    ///   - attr: The attribute at which diagnostic produced.
     ///   - message: The message for the diagnostic produced.
-    func diagnose(attr: some Attribute, message: MetaCodableMessage) {
-        let node = Syntax(attr.node)
+    ///   - context: The context of macro expansion to produce in.
+    func diagnose(
+        message: MetaCodableMessage,
+        in context: some MacroExpansionContext
+    ) {
+        let node = Syntax(node)
         let fixIts = [message.fixItByRemove]
-        diagnose(.init(node: node, message: message, fixIts: fixIts))
+        context.diagnose(.init(node: node, message: message, fixIts: fixIts))
     }
 }
 

@@ -9,7 +9,8 @@
 ///
 /// This variable adds customization on top of underlying
 /// wrapped variable's implementation.
-protocol ComposedVariable<Wrapped>: Variable {
+protocol ComposedVariable<Wrapped>: Variable
+where CodingLocation == Wrapped.CodingLocation, Generated == Wrapped.Generated {
     /// A type representing the underlying
     /// wrapped variable.
     ///
@@ -27,23 +28,6 @@ protocol ComposedVariable<Wrapped>: Variable {
 }
 
 extension ComposedVariable {
-    /// The name of the variable.
-    ///
-    /// Provides name of the underlying variable value.
-    var name: TokenSyntax { base.name }
-    /// The type of the variable.
-    ///
-    /// Provides type of the underlying variable value.
-    var type: TypeSyntax { base.type }
-
-    /// The fallback behavior when decoding fails.
-    ///
-    /// In the event this decoding this variable is failed,
-    /// appropriate fallback would be applied.
-    ///
-    /// Provides fallback for the underlying variable value.
-    var decodingFallback: DecodingFallback { base.decodingFallback }
-
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
     ///
@@ -56,9 +40,9 @@ extension ComposedVariable {
     ///
     /// - Returns: The generated variable decoding code.
     func decoding(
-        in context: MacroExpansionContext,
-        from location: VariableCodingLocation
-    ) -> CodeBlockItemListSyntax {
+        in context: some MacroExpansionContext,
+        from location: Wrapped.CodingLocation
+    ) -> Wrapped.Generated {
         return base.decoding(in: context, from: location)
     }
 
@@ -74,14 +58,78 @@ extension ComposedVariable {
     ///
     /// - Returns: The generated variable encoding code.
     func encoding(
-        in context: MacroExpansionContext,
-        to location: VariableCodingLocation
-    ) -> CodeBlockItemListSyntax {
+        in context: some MacroExpansionContext,
+        to location: Wrapped.CodingLocation
+    ) -> Wrapped.Generated {
         return base.encoding(in: context, to: location)
     }
 }
 
-extension ComposedVariable where Initialization == Wrapped.Initialization {
+extension ComposedVariable where Self: NamedVariable, Wrapped: NamedVariable {
+    /// The name of the variable.
+    ///
+    /// Provides name of the underlying variable value.
+    var name: TokenSyntax { base.name }
+}
+
+extension ComposedVariable where Self: ValuedVariable, Wrapped: ValuedVariable {
+    /// The value of the variable.
+    ///
+    /// Provides value of the underlying variable value.
+    var value: ExprSyntax? { base.value }
+}
+
+extension ComposedVariable
+where Self: ConditionalVariable, Wrapped: ConditionalVariable {
+    /// Whether the variable is to be decoded.
+    ///
+    /// Whether underlying wrapped variable is to be decoded.
+    var decode: Bool? { base.decode }
+    /// Whether the variable is to be encoded.
+    ///
+    /// Whether underlying wrapped variable is to be encoded.
+    var encode: Bool? { base.encode }
+}
+
+extension ComposedVariable
+where Self: PropertyVariable, Wrapped: PropertyVariable {
+    /// The type of the variable.
+    ///
+    /// Provides type of the underlying variable value.
+    var type: TypeSyntax { base.type }
+
+    /// Whether the variable type requires `Decodable` conformance.
+    ///
+    /// Whether underlying wrapped variable requires `Decodable` conformance.
+    var requireDecodable: Bool? { base.requireDecodable }
+    /// Whether the variable type requires `Encodable` conformance.
+    ///
+    /// Whether underlying wrapped variable requires `Encodable` conformance.
+    var requireEncodable: Bool? { base.requireEncodable }
+
+    /// The prefix token to use along with `name` when decoding.
+    ///
+    /// Provides decode prefix of the underlying variable value.
+    var decodePrefix: TokenSyntax { base.decodePrefix }
+    /// The prefix token to use along with `name` when encoding.
+    ///
+    /// Provides encode prefix of the underlying variable value.
+    var encodePrefix: TokenSyntax { base.encodePrefix }
+
+    /// The fallback behavior when decoding fails.
+    ///
+    /// In the event this decoding this variable is failed,
+    /// appropriate fallback would be applied.
+    ///
+    /// Provides fallback for the underlying variable value.
+    var decodingFallback: DecodingFallback { base.decodingFallback }
+}
+
+extension ComposedVariable
+where
+    Self: InitializableVariable, Wrapped: InitializableVariable,
+    Initialization == Wrapped.Initialization
+{
     /// Indicates the initialization type for this variable.
     ///
     /// Forwards implementation to underlying variable value.
@@ -89,7 +137,42 @@ extension ComposedVariable where Initialization == Wrapped.Initialization {
     /// - Parameter context: The context in which to perform
     ///                      the macro expansion.
     /// - Returns: The type of initialization for variable.
-    func initializing(in context: MacroExpansionContext) -> Initialization {
+    func initializing(in context: some MacroExpansionContext) -> Initialization
+    where Initialization == Wrapped.Initialization {
         return base.initializing(in: context)
+    }
+}
+
+extension ComposedVariable
+where Self: AssociatedVariable, Wrapped: AssociatedVariable {
+    /// The label of the variable.
+    ///
+    /// Provides label of the underlying variable value.
+    var label: TokenSyntax? { base.label }
+}
+
+extension ComposedVariable
+where Self: EnumCaseVariable, Wrapped: EnumCaseVariable {
+    /// All the associated variables for this case.
+    ///
+    /// Provides associated variables of the underlying variable value.
+    var variables: [any AssociatedVariable] { base.variables }
+}
+
+extension ComposedVariable where Self: TypeVariable, Wrapped: TypeVariable {
+    /// Provides the syntax for `CodingKeys` declarations.
+    ///
+    /// Provides members generated by the underlying variable value.
+    ///
+    /// - Parameters:
+    ///   - protocols: The protocols for which conformance generated.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: The `CodingKeys` declarations.
+    func codingKeys(
+        confirmingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) -> MemberBlockItemListSyntax {
+        return base.codingKeys(confirmingTo: protocols, in: context)
     }
 }

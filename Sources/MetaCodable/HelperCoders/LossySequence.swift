@@ -55,6 +55,7 @@ where S: Codable, S.Element: Codable {
 }
 
 /// A sequence type that can be initialized from another sequence.
+@_documentation(visibility:internal)
 public protocol SequenceInitializable: Sequence {
     /// Creates a new instance of a sequence containing the elements of
     /// provided sequence.

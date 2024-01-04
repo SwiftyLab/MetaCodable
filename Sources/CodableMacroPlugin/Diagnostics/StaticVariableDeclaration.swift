@@ -48,13 +48,13 @@ struct StaticVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
         let isStatic = syntax.as(VariableDeclSyntax.self)?
             .modifiers.contains { $0.name.tokenKind == .keyword(.static) }
         guard isStatic ?? false else { return false }
-        let message = attr.node.diagnostic(
+        let message = attr.diagnostic(
             message:
                 "@\(attr.name) can't be used with static variables declarations",
             id: attr.misuseMessageID,
             severity: .error
         )
-        context.diagnose(attr: attr, message: message)
+        attr.diagnose(message: message, in: context)
         return true
     }
 }

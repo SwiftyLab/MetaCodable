@@ -60,13 +60,13 @@ struct DuplicateUsage<Attr: Attribute>: DiagnosticProducer {
             default:
                 "should"
             }
-        let message = attr.node.diagnostic(
+        let message = attr.diagnostic(
             message:
                 "@\(attr.name) \(verb) only be applied once per declaration",
             id: attr.misuseMessageID,
             severity: severity
         )
-        context.diagnose(attr: attr, message: message)
+        attr.diagnose(message: message, in: context)
         return severity == .error
     }
 }
