@@ -19,24 +19,6 @@ struct BasicAssociatedVariable: AssociatedVariable, ComposedVariable,
     /// initialization of this variable.
     let label: TokenSyntax?
 
-    /// Whether the variable is to be decoded.
-    ///
-    /// Whether underlying wrapped variable is to be decoded.
-    var decode: Bool? { base.decode }
-    /// Whether the variable is to be encoded.
-    ///
-    /// Whether underlying wrapped variable is to be encoded.
-    var encode: Bool? { base.encode }
-
-    /// Whether the variable type requires `Decodable` conformance.
-    ///
-    /// Whether underlying wrapped variable requires `Decodable` conformance.
-    var requireDecodable: Bool? { base.requireDecodable }
-    /// Whether the variable type requires `Encodable` conformance.
-    ///
-    /// Whether underlying wrapped variable requires `Encodable` conformance.
-    var requireEncodable: Bool? { base.requireEncodable }
-
     /// Creates a new variable from declaration and expansion context.
     ///
     /// Uses the declaration to read variable specific data,

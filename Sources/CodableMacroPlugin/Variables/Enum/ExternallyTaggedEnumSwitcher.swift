@@ -12,53 +12,60 @@ struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
     /// This map is used to only register decoding keys for enum-cases.
     let decodingKeys: CodingKeysMap
 
-    /// Creates value expression for provided enum-case variable.
+    /// Creates value expressions for provided enum-case variable.
     ///
-    /// If provided variable is decodable then decoding key expression
+    /// If provided variable is decodable then decoding key expressions
     /// with `decodingKeys` map is generated. The encoding key
-    /// expression is generated from provided map.
+    /// expressions are generated from provided map.
     ///
     /// - Parameters:
     ///   - variable: The variable for which generated.
-    ///   - value: The optional value present in syntax.
+    ///   - values: The values present in syntax.
     ///   - codingKeys: The map where `CodingKeys` maintained.
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: The generated value.
     func keyExpression<Var: EnumCaseVariable>(
-        for variable: Var, value: ExprSyntax?,
+        for variable: Var, values: [ExprSyntax],
         codingKeys: CodingKeysMap, context: some MacroExpansionContext
     ) -> EnumVariable.CaseValue {
-        let keyStr =
-            value?.as(StringLiteralExprSyntax.self)?.segments.first?
-            .as(StringSegmentSyntax.self)?.content.text
-            ?? CodingKeysMap.Key.name(for: variable.name).text
-        let keys = [keyStr]
+        let setKeys = values.compactMap { expr in
+            return expr.as(StringLiteralExprSyntax.self)?.segments.first?
+                .as(StringSegmentSyntax.self)?.content.text
+        }
+        let keys =
+            !setKeys.isEmpty
+            ? setKeys : [CodingKeysMap.Key.name(for: variable.name).text]
         let name = variable.name
 
-        let eKey: CodingKeysMap.Key? =
+        let eKeys: [CodingKeysMap.Key] =
             if variable.encode ?? true {
-                codingKeys.add(keys: keys, field: name, context: context).first!
+                keys.map { key in
+                    codingKeys.add(keys: [key], field: name, context: context)
+                        .first!
+                }
             } else {
-                nil
+                []
             }
 
-        let dKey: CodingKeysMap.Key? =
+        let dKeys: [CodingKeysMap.Key] =
             if variable.decode ?? true {
-                decodingKeys.add(keys: keys, field: name, context: context)
-                    .first!
+                keys.map { key in
+                    decodingKeys.add(keys: [key], field: name, context: context)
+                        .first!
+                }
             } else {
-                nil
+                []
             }
 
-        if let dKey, let eKey {
-            return .keys(dKey, eKey)
-        } else if let dKey {
-            return .key(dKey)
-        } else if let eKey {
-            return .key(eKey)
+        if !dKeys.isEmpty, !eKeys.isEmpty {
+            return .keys(dKeys, eKeys)
+        } else if !dKeys.isEmpty {
+            return .key(dKeys)
+        } else if !eKeys.isEmpty {
+            return .key(eKeys)
         } else {
-            return .raw("\(literal: keyStr)")
+            return .raw(keys.map { "\(literal: $0)" })
         }
     }
 

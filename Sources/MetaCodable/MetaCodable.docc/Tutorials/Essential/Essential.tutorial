@@ -75,10 +75,18 @@
             }
 
             @Step {
-                Use ``CodingKeys(_:)`` macro to specify `CodingKey` case style while using different case style for field name.
+                Use ``CodedAs(_:_:)`` macro to specify multiple possible `CodingKey`s for a single field.
 
                 @Code(name: Post.swift, file: Post-06.swift) {
                     @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
+                }
+            }
+
+            @Step {
+                Use ``CodingKeys(_:)`` macro to specify `CodingKey` case style while using different case style for field name.
+
+                @Code(name: Post.swift, file: Post-07.swift) {
+                    @Image(source: Post-07.png, alt: "Basic post JSON representation with author and creation time")
                 }
             }
         }

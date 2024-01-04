@@ -11,6 +11,4 @@ struct Post {
     @CodedIn("created_by")
     let author: String
     var interacted: Bool = false
-    @CodedIn
-    var deliveredTime: Double = Date().timeIntervalSince1970
 }

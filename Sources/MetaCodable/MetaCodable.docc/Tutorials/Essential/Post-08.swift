@@ -9,6 +9,4 @@ struct Post {
     let createdAt: String
     @CodedIn("created_by")
     let author: String
-    @IgnoreCoding
-    var interacted: Bool = false
 }

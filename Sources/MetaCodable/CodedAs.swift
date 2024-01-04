@@ -1,29 +1,59 @@
-/// Provides a value to be used for an enum-case instead of using case name.
+/// Provides values to be used for an enum-case instead of using case name or
+/// additional variable `CodingKey`s.
 ///
-/// When value is provided attached to a case declaration the value is chosen
-/// as case value. i.e. for a case declared as:
-/// ```swift
-/// @CodedAs("loaded")
-/// case load(key: Int)
-/// ```
-/// the encoded JSON for externally tagged enum will be of following format:
-/// ```json
-/// { "loaded": { "key": 5 } }
-/// ```
+/// * When values are provided attached to a case declaration those are chosen
+///   as case values. The case can be decoded from any of the value specified
+///   while only first value is used for encoding. i.e. for a case declared as:
+///   ```swift
+///   @CodedAs("loaded", "operation_loaded")
+///   case load(key: Int)
+///   ```
+///   can be decoded from both the externally tagged JSON:
+///   ```json
+///   { "loaded": { "key": 5 } }
+///   ```
+///   or
+///   ```json
+///   { "operation_loaded": { "key": 5 } }
+///   ```
+///   but when encoding only first JSON will be generated.
 ///
-/// - Parameter value: The value to use.
+/// * When attached to variables, the values are chosen additional `CodingKey`s
+///   the variable data might appear at. Only the primary key specified with
+///   ``CodedAt(_:)`` or the variable name is used when encoding. i.e. for a
+///   variable declared as:
+///   ```swift
+///   @CodedAt("key")
+///   @CodedAs("key_field")
+///   let field: String
+///   ```
+///   can be decoded from both the JSON:
+///   ```json
+///   { "key": "value" }
+///   ```
+///   or
+///   ```json
+///   { "key_field": "value" }
+///   ```
+///   but when encoding only first JSON will be generated.
+///
+/// - Parameter values: The values to use.
 ///
 /// - Note: This macro on its own only validates if attached declaration
 ///   is a variable declaration. ``Codable()`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The value type must be `String` when used in
-///   externally tagged enums, and internally/adjacently tagged enums
-///   without type specified with ``CodedAs()`` macro. When used
+///   externally tagged enums or variables, and internally/adjacently tagged
+///   enums without type specified with ``CodedAs()`` macro. When used
 ///   along with ``CodedAs()`` macro, both the generic type must be same.
+///
+/// - Important: For externally tagged enum-cases and variables, data
+///   must have only one of the key present, otherwise decoding will result in
+///   `DecodingError.typeMismatch` error.
 @attached(peer)
 @available(swift 5.9)
-public macro CodedAs<T: Codable & Equatable>(_ value: T) =
+public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
     #externalMacro(module: "CodableMacroPlugin", type: "CodedAs")
 
 /// Provides the identifier actual type for internally/adjacently tagged enums.
@@ -53,11 +83,11 @@ public macro CodedAs<T: Codable & Equatable>(_ value: T) =
 ///   is a variable declaration. ``Codable()`` macro uses this macro
 ///   when generating final implementations.
 ///
-/// - Important: For each case ``CodedAs(_:)`` macro with value
+/// - Important: For each case ``CodedAs(_:_:)`` macro with values
 ///   of the type here should be provided, otherwise case name as `String`
 ///   will be used for comparison. If the type here conforms to
 ///   `ExpressibleByStringLiteral` and can be represented by case name
-///   as `String` literal then no need to provide value with ``CodedAs(_:)``.
+///   as `String` literal then no need to provide values with ``CodedAs(_:_:)``.
 ///
 /// - Important: This attribute must be used combined with ``Codable()``
 ///   and ``CodedAt(_:)``.

@@ -12,6 +12,5 @@ struct Post {
     let author: String
     var interacted: Bool = false
     @CodedIn
-    @IgnoreDecoding
     var deliveredTime: Double = Date().timeIntervalSince1970
 }

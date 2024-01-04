@@ -165,6 +165,7 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
     /// * `CodingKeys` case style customization.
     /// * Initialized variables decoding/encoding ignore customization.
     /// * `CodingKeys` path customization for individual variables.
+    /// * Multiple `CodingKeys` alias customization for individual variables.
     /// * Helper expression with custom decoding/encoding customization.
     /// * Default expression when decoding failure customization.
     /// * Individual variables decoding/encoding ignore customization.
@@ -175,9 +176,10 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
     ///
     /// - Returns: Created member group.
     init(from decl: Decl, in context: some MacroExpansionContext) {
+        let codingKeys = CodingKeysMap(typeName: "CodingKeys")
         self.init(
             from: decl, in: context,
-            codingKeys: .init(typeName: "CodingKeys"), memberInput: ()
+            codingKeys: codingKeys, memberInput: ()
         ) { input in
             return
                 input
@@ -188,6 +190,7 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
                         ?? CodedIn(from: input.decl) ?? CodedIn()
                 )
                 .useHelperCoderIfExists()
+                .checkForAlternateKeyValues(addTo: codingKeys, context: context)
                 .addDefaultValueIfExists()
                 .checkCanBeInitialized()
                 .checkCodingIgnored()

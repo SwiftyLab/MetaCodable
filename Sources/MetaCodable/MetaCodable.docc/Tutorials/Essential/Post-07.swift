@@ -3,8 +3,8 @@
 struct Post {
     let id: String
     @CodedAt("header")
+    @CodedAs("title_name")
     let title: String
-    @Default(0)
     let likes: Int
     let createdAt: String
     @CodedIn("created_by")

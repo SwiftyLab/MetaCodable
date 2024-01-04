@@ -1,6 +1,5 @@
 @Codable
 @CodingKeys(.snake_case)
-@IgnoreCodingInitialized
 struct Post {
     let id: String
     @CodedAt("header")
@@ -10,5 +9,6 @@ struct Post {
     let createdAt: String
     @CodedIn("created_by")
     let author: String
+    @IgnoreCoding
     var interacted: Bool = false
 }

@@ -133,24 +133,24 @@ where Variable: PropertyVariable {
         )
     }
 
-    /// Creates value expression for provided enum-case variable.
+    /// Creates value expressions for provided enum-case variable.
     ///
-    /// If value expression is explicitly provided then it is used, otherwise
-    /// case name as `String` literal used as value.
+    /// If value expressions are explicitly provided then those are used,
+    /// otherwise case name as `String` literal used as value.
     ///
     /// - Parameters:
     ///   - variable: The variable for which generated.
-    ///   - value: The optional value present in syntax.
+    ///   - values: The values present in syntax.
     ///   - codingKeys: The map where `CodingKeys` maintained.
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: The generated value.
     func keyExpression<Var>(
-        for variable: Var, value: ExprSyntax?,
+        for variable: Var, values: [ExprSyntax],
         codingKeys: CodingKeysMap, context: some MacroExpansionContext
     ) -> EnumVariable.CaseValue where Var: EnumCaseVariable {
         let name = CodingKeysMap.Key.name(for: variable.name).text
-        return .raw(value ?? "\(literal: name)")
+        return .raw(!values.isEmpty ? values : ["\(literal: name)"])
     }
 
     /// Provides the syntax for decoding at the provided location.

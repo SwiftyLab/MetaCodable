@@ -96,9 +96,13 @@ where
                 .container(container, key: key, method: method)
             }
         let doClauses = base.decoding(in: context, from: newLocation)
+        guard !doClauses.isEmpty else { return "" }
         return CodeBlockItemListSyntax {
             DoStmtSyntax(catchClauses: catchClauses) {
-                "\(doClauses) ?? \(options.expr)"
+                for clause in doClauses.dropLast() {
+                    clause
+                }
+                "\(doClauses.last!) ?? \(options.expr)"
             }
         }
     }

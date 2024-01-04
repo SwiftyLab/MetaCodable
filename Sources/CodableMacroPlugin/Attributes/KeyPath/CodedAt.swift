@@ -41,7 +41,7 @@ struct CodedAt: PropertyAttribute {
     ///   * Attached declaration is not a grouped variable
     ///     declaration.
     ///   * Attached declaration is not a static variable
-    ///     declaration
+    ///     declaration.
     ///   * This attribute isn't used combined with `CodedIn`
     ///     and `IgnoreCoding` attribute.
     ///
