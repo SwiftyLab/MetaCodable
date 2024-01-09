@@ -1,7 +1,7 @@
 #if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
 import XCTest
 
-@testable import CodableMacroPlugin
+@testable import PluginCore
 
 final class IgnoreCodingTests: XCTestCase {
 
@@ -329,9 +329,9 @@ final class IgnoreCodingTests: XCTestCase {
                             )
                             throw DecodingError.typeMismatch(SomeEnum.self, context)
                         }
+                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.bool:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.bool)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
                             self = .bool(_: variableBool)
@@ -514,13 +514,12 @@ final class IgnoreCodingTests: XCTestCase {
                             )
                             throw DecodingError.typeMismatch(SomeEnum.self, context)
                         }
+                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.string:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.string)
                             let _0 = try String(from: contentDecoder)
                             self = .string(_0)
                         case DecodingKeys.multi:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.multi)
                             let _2 = try String(from: contentDecoder)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)

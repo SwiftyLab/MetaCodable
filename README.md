@@ -20,12 +20,18 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows custom `CodingKey` value declaration per variable, instead of requiring you to write all the `CodingKey` values with ``CodedAt(_:)`` passing single argument.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
+- Allows to read data from additional fallback `CodingKey`s provided with ``CodedAs(_:_:)``.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
-- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` and types from ``HelperCoders`` module.
-- Allows to ignore specific properties from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``@IgnoreEncoding()``.
-- Allows to use camel-case names for variables according to [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/#general-conventions), while enabling a type to work with different case style keys with ``CodingKeys(_:)``.
-- Allows to ignore all initialized properties of a type from decoding/encoding with ``IgnoreCodingInitialized()`` unless explicitly asked to decode/encode by attaching any coding attributes, i.e. ``CodedIn(_:)``, ``CodedAt(_:)``,
+- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
+- Allows specifying different case values with ``CodedAs(_:_:)`` and case value/protocol type identifier type different from `String` with ``CodedAs()``.
+- Allows specifying enum-case/protocol type identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
+- Allows to ignore specific properties/cases from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``IgnoreEncoding()``.
+- Allows to use camel-case names for variables according to [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/#general-conventions), while enabling a type/case to work with different case style keys with ``CodingKeys(_:)``.
+- Allows to ignore all initialized properties of a type/case from decoding/encoding with ``IgnoreCodingInitialized()`` unless explicitly asked to decode/encode by attaching any coding attributes, i.e. ``CodedIn(_:)``, ``CodedAt(_:)``,
 ``CodedBy(_:)``, ``Default(_:)`` etc.
+- Allows to generate protocol decoding/encoding ``HelperCoder``s with `MetaProtocolCodable` build tool plugin from ``DynamicCodable`` types.
+
+[**See the limitations for this macro**](<doc:Limitations>).
 
 ## Requirements
 
@@ -236,7 +242,7 @@ You can even create your own by conforming to `HelperCoder`.
 </details>
 
 <details>
-  <summary>Represent data with variations in the form of external/internal/adjacent tagging, with single enum with each case as a variation.</summary>
+  <summary>Represent data with variations in the form of external/internal/adjacent tagging, with single enum with each case as a variation or a protocol type that varies with conformances accross modules.</summary>
 
  i.e. while `Swift` compiler only generates implementation assuming external tagged enums, only following data:
 

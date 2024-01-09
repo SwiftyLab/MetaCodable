@@ -180,9 +180,9 @@ public extension HelperCoder {
         from container: DecodingContainer,
         forKey key: DecodingContainer.Key
     ) throws -> Coded? {
-        guard let decoder = try? container.superDecoder(forKey: key)
+        guard let isNil = try? container.decodeNil(forKey: key), !isNil
         else { return nil }
-        return try self.decodeIfPresent(from: decoder)
+        return try self.decode(from: container, forKey: key)
     }
 
     /// Encodes given value of the ``HelperCoder/Coded`` type

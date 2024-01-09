@@ -19,14 +19,15 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to read data from additional fallback `CodingKey`s provided with ``CodedAs(_:_:)``.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
-- Allows specifying different case values with ``CodedAs(_:_:)`` and case value type different from `String` with ``CodedAs()``.
-- Allows specifying enum-case identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
+- Allows specifying different case values with ``CodedAs(_:_:)`` and case value/protocol type identifier type different from `String` with ``CodedAs()``.
+- Allows specifying enum-case/protocol type identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
 - Allows to ignore specific properties/cases from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``IgnoreEncoding()``.
 - Allows to use camel-case names for variables according to [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/#general-conventions), while enabling a type/case to work with different case style keys with ``CodingKeys(_:)``.
 - Allows to ignore all initialized properties of a type/case from decoding/encoding with ``IgnoreCodingInitialized()`` unless explicitly asked to decode/encode by attaching any coding attributes, i.e. ``CodedIn(_:)``, ``CodedAt(_:)``,
 ``CodedBy(_:)``, ``Default(_:)`` etc.
+- Allows to generate protocol decoding/encoding ``HelperCoder``s with `MetaProtocolCodable` build tool plugin from ``DynamicCodable`` types.
 
- [**See the limitations for this macro**](<doc:Limitations>).
+[**See the limitations for this macro**](<doc:Limitations>).
 
 ## Installation
 
@@ -80,3 +81,8 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 - ``HelperCoder``
 - ``LossySequenceCoder``
+
+### Dynamic Coding
+
+- ``DynamicCodable``
+- ``DynamicCodableIdentifier``

@@ -26,4 +26,4 @@
 @attached(peer)
 @available(swift 5.9)
 public macro Default<T>(_ default: T) =
-    #externalMacro(module: "CodableMacroPlugin", type: "Default")
+    #externalMacro(module: "MacroPlugin", type: "Default")

@@ -1,5 +1,6 @@
 /// Generate `Codable` implementation of `struct`, `class`, `enum`, `actor`
-/// types by leveraging custom attributes provided on variable declarations.
+/// and `protocol` types by leveraging custom attributes provided on variable
+/// declarations.
 ///
 /// # Usage
 /// By default the field name is used as `CodingKey` for the field value during
@@ -18,15 +19,17 @@
 ///     `Codable` types or implement decoding/encoding for non-`Codable` types.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
 ///   * Use ``CodedAs(_:_:)`` to provide custom values for enum cases.
-///   * Use ``CodedAt(_:)`` to provide enum-case identifier tag path.
-///   * Use ``CodedAs()`` to provide enum-case identifier tag type.
-///   * Use ``ContentAt(_:_:)`` to provided enum-case content path.
+///   * Use ``CodedAt(_:)`` to provide enum-case/protocol identifier tag path.
+///   * Use ``CodedAs()`` to provide enum-case/protocol identifier tag type.
+///   * Use ``ContentAt(_:_:)`` to provided enum-case/protocol content path.
 ///   * Use ``IgnoreCoding()``, ``IgnoreDecoding()`` and
-///     ``IgnoreEncoding()`` to ignore specific properties/cases from
+///     ``IgnoreEncoding()`` to ignore specific properties/cases/types from
 ///     decoding/encoding or both.
 ///   * Use ``CodingKeys(_:)`` to work with different case style `CodingKey`s.
 ///   * Use ``IgnoreCodingInitialized()`` to ignore decoding and encoding
 ///     all initialized properties/case associated variables.
+///   * Generate protocol decoding/encoding ``HelperCoder``s with build tool
+///     plugin `MetaProtocolCodable` from ``DynamicCodable`` types.
 ///
 /// # Effect
 /// This macro composes extension macro expansion depending on `Codable`
@@ -54,4 +57,4 @@
 )
 @available(swift 5.9)
 public macro Codable() =
-    #externalMacro(module: "CodableMacroPlugin", type: "Codable")
+    #externalMacro(module: "MacroPlugin", type: "Codable")

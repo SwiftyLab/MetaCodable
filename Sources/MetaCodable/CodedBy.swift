@@ -1,5 +1,5 @@
-/// Indicates the field/enum identifier needs to be decoded and encoded by
-/// the provided `helper` instance.
+/// Indicates the field or enum/protocol identifier needs to be decoded and
+/// encoded by the provided `helper` instance.
 ///
 /// An instance confirming to ``HelperCoder`` can be provided
 /// to allow decoding/encoding customizations or to provide decoding/encoding
@@ -7,8 +7,9 @@
 /// sequence from JSON ignoring invalid data matches instead of throwing error
 /// (failing decoding of entire sequence).
 ///
-/// For enums, applying this attribute means ``HelperCoder`` will be used to
-/// decode and encode identifier value in internally or adjacently tagged enums.
+/// For enums and protocols, applying this attribute means ``HelperCoder``
+/// will be used to decode and encode identifier value in internally/adjacently
+/// tagged data.
 ///
 /// - Parameter helper: The value that performs decoding and encoding.
 ///
@@ -20,8 +21,8 @@
 ///   associated type must be the same as field type.
 ///
 /// - Important: This attribute must be used combined with ``Codable()``
-///   and ``CodedAt(_:)`` when applying to enums.
+///   and ``CodedAt(_:)`` when applying to enums/protocols.
 @attached(peer)
 @available(swift 5.9)
 public macro CodedBy<T: HelperCoder>(_ helper: T) =
-    #externalMacro(module: "CodableMacroPlugin", type: "CodedBy")
+    #externalMacro(module: "MacroPlugin", type: "CodedBy")

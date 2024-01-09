@@ -1,9 +1,10 @@
-/// Indicates the enum-case associated values needs to be decoded/encoded
-/// at the `CodingKey` path provided.
+/// Indicates the enum-case associated values or protocol conforming types need
+/// to be decoded/encoded at the `CodingKey` path provided.
 ///
 /// This attribute can be used along with ``CodedAt(_:)`` to support adjacently
-/// tagged enums. The path provided represents the path where associated values
-/// of each case is decoded/encoded. i.e. for JSON with following format:
+/// tagged enums or protocols. The path provided represents the path where
+/// associated values of each case or conforming types are decoded/encoded.
+/// i.e. for JSON with following format:
 /// ```json
 /// {"t": "para", "c": [{...}, {...}]}
 /// ```
@@ -20,8 +21,30 @@
 ///     case str(String),
 /// }
 /// ```
+/// or protocol representation can be created:
+/// ```swift
+/// @Codable
+/// @CodedAt("t")
+/// @ContentAt("c")
+/// protocol Block {}
 ///
-/// - Parameter path: The `CodingKey` path enum-case content located at.
+/// @Codable
+/// struct Para: Block, DynamicCodable {
+///     static var identifier: DynamicCodableIdentifier<String> { "para" }
+///     @CodedAt
+///     let lines: [Inline]
+/// }
+///
+/// @Codable
+/// struct Str: Block, DynamicCodable {
+///     static var identifier: DynamicCodableIdentifier<String> { "str" }
+///     @CodedAt
+///     let data: String
+/// }
+/// ```
+///
+/// - Parameter path: The `CodingKey` path enum-case content or
+///   protocol conforming type data located at.
 ///
 /// - Note: This macro on its own only validates if attached declaration
 ///   is a variable declaration. ``Codable()`` macro uses this macro
@@ -32,4 +55,4 @@
 @attached(peer)
 @available(swift 5.9)
 public macro ContentAt(_ path: StaticString, _: StaticString...) =
-    #externalMacro(module: "CodableMacroPlugin", type: "ContentAt")
+    #externalMacro(module: "MacroPlugin", type: "ContentAt")

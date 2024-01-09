@@ -4,7 +4,7 @@ import SwiftSyntax
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-@testable import CodableMacroPlugin
+@testable import PluginCore
 
 final class GenericsTests: XCTestCase {
 
@@ -120,17 +120,15 @@ final class GenericsTests: XCTestCase {
                             )
                             throw DecodingError.typeMismatch(GenericCodable.self, context)
                         }
+                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.one:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.one)
                             let _0 = try T(from: contentDecoder)
                             self = .one(_0)
                         case DecodingKeys.two:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.two)
                             let _0 = try U(from: contentDecoder)
                             self = .two(_0)
                         case DecodingKeys.three:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.three)
                             let _0 = try V(from: contentDecoder)
                             self = .three(_0)
                         }
@@ -281,13 +279,12 @@ final class GenericsTests: XCTestCase {
                             )
                             throw DecodingError.typeMismatch(GenericCodable.self, context)
                         }
+                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.one:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.one)
                             let _0 = try T(from: contentDecoder)
                             self = .one(_0)
                         case DecodingKeys.two:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.two)
                             let _0 = try String(from: contentDecoder)
                             self = .two(_0)
                         }
@@ -513,13 +510,12 @@ final class GenericsTests: XCTestCase {
                             )
                             throw DecodingError.typeMismatch(GenericCodable.self, context)
                         }
+                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.one:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.one)
                             let _0 = try T(from: contentDecoder)
                             self = .one(_0)
                         case DecodingKeys.two:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.two)
                             let _0 = try String(from: contentDecoder)
                             self = .two(_0)
                         }

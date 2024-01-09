@@ -98,7 +98,7 @@
 @attached(peer)
 @available(swift 5.9)
 public macro CodingKeys(_ strategy: CodingKeyNameStrategy) =
-    #externalMacro(module: "CodableMacroPlugin", type: "CodingKeys")
+    #externalMacro(module: "MacroPlugin", type: "CodingKeys")
 
 /// The values that determine the equivalent
 /// `CodingKey` value for a property name.
