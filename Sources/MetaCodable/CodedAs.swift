@@ -54,12 +54,13 @@
 @attached(peer)
 @available(swift 5.9)
 public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
-    #externalMacro(module: "CodableMacroPlugin", type: "CodedAs")
+    #externalMacro(module: "MacroPlugin", type: "CodedAs")
 
-/// Provides the identifier actual type for internally/adjacently tagged enums.
+/// Provides the identifier actual type for internally/adjacently tagged enums
+/// and protocols.
 ///
-/// When type is provided attached to an enum declaration the identifier is
-/// decoded to the provided type instead of `String` type. i.e. for enum:
+/// When type is provided attached to enum/protocol declaration the identifier
+/// is decoded to the provided type instead of `String` type. i.e. for enum:
 /// ```swift
 /// @Codable
 /// @CodedAt("type")
@@ -71,12 +72,34 @@ public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
 ///     case store(key: String, value: Int)
 /// }
 /// ```
-/// the encoded JSON for internally tagged enum will be of following variations:
+/// or protocol:
+/// ```swift
+/// @Codable
+/// @CodedAt("type")
+/// @CodedAs<Int>
+/// protocol Command {
+///     var key: String { get }
+/// }
+///
+/// @Codable
+/// struct Load: Command, DynamicCodable {
+///     static var identifier: DynamicCodableIdentifier<Int> { 1 }
+///     let key: String
+/// }
+///
+/// @Codable
+/// struct Store: Command, DynamicCodable {
+///     static var identifier: DynamicCodableIdentifier<Int> { 2 }
+///     let key: String
+///     let value: Int
+/// }
+/// ```
+/// the encoded JSON for internally tagged data will be of following variations:
 /// ```json
 /// { "key": "MyKey", "type": 1 }
 /// ```
 /// ```json
-/// { "key": "MyKey", "value": 42, "type": 1 }
+/// { "key": "MyKey", "value": 42, "type": 2 }
 /// ```
 ///
 /// - Note: This macro on its own only validates if attached declaration
@@ -89,9 +112,13 @@ public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
 ///   `ExpressibleByStringLiteral` and can be represented by case name
 ///   as `String` literal then no need to provide values with ``CodedAs(_:_:)``.
 ///
+/// - Important: When using with protocols ``DynamicCodable/IdentifierValue``
+///   type must be same as the type defined with this macro, in absence of this macro
+///   ``DynamicCodable/IdentifierValue`` type must be `String`.
+///
 /// - Important: This attribute must be used combined with ``Codable()``
 ///   and ``CodedAt(_:)``.
 @attached(peer)
 @available(swift 5.9)
 public macro CodedAs<T: Codable & Equatable>() =
-    #externalMacro(module: "CodableMacroPlugin", type: "CodedAs")
+    #externalMacro(module: "MacroPlugin", type: "CodedAs")

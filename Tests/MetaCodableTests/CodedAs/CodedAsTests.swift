@@ -2,7 +2,7 @@
 import SwiftDiagnostics
 import XCTest
 
-@testable import CodableMacroPlugin
+@testable import PluginCore
 
 final class CodedAsTests: XCTestCase {
 

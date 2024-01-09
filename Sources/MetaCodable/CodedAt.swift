@@ -76,11 +76,13 @@
 ///   }
 ///   ```
 ///
-/// * For enums, this attribute can be used to support internally tagged enums.
-///   The `CodingKey` path provided represents the path where value identifying
-///   each case is decoded/encoded. By default, this value is decoded/encoded
-///   as `String` unless different type specified with ``CodedAs()`` and
-///   compared with value for each enum-case identifier. i.e. for enum:
+/// * For enums/protocols, this attribute can be used to support internally
+///   tagged data. The `CodingKey` path provided represents the path
+///   where value identifying each case/conforming type respectively is
+///   decoded/encoded. By default, this value is decoded/encoded as
+///   `String` unless different type specified with ``CodedAs()`` and
+///   compared with value for each enum-case identifier or conformed type
+///   ``DynamicCodable/identifier``. i.e. for enum:
 ///   ```swift
 ///   @Codable
 ///   @CodedAt("type")
@@ -89,7 +91,29 @@
 ///       case store(key: String, value: Int)
 ///   }
 ///   ```
-///   the encoded JSON for internally tagged enum will be of following variations:
+///   or protocol:
+///   ```swift
+///   @Codable
+///   @CodedAt("type")
+///   @CodedAs<Int>
+///   protocol Command {
+///       var key: String { get }
+///   }
+///
+///   @Codable
+///   struct Load: Command, DynamicCodable {
+///       static var identifier: DynamicCodableIdentifier<String> { "load" }
+///       let key: String
+///   }
+///
+///   @Codable
+///   struct Store: Command, DynamicCodable {
+///       static var identifier: DynamicCodableIdentifier<String> { "store" }
+///       let key: String
+///       let value: Int
+///   }
+///   ```
+///   the encoded JSON for internally tagged data will be of following variations:
 ///   ```json
 ///   { "key": "MyKey", "type": "load" }
 ///   ```
@@ -108,4 +132,4 @@
 @attached(peer)
 @available(swift 5.9)
 public macro CodedAt(_ path: StaticString...) =
-    #externalMacro(module: "CodableMacroPlugin", type: "CodedAt")
+    #externalMacro(module: "MacroPlugin", type: "CodedAt")

@@ -6,7 +6,8 @@ import SwiftSyntaxMacroExpansion
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-@testable import CodableMacroPlugin
+@testable import PluginCore
+@testable import MacroPlugin
 
 final class CodableTests: XCTestCase {
 
@@ -321,19 +322,19 @@ func assertMacroExpansion(
     line: UInt = #line
 ) {
     let macros: [String: Macro.Type] = [
-        "CodedAt": CodedAt.self,
-        "CodedIn": CodedIn.self,
-        "Default": Default.self,
-        "CodedBy": CodedBy.self,
-        "CodedAs": CodedAs.self,
-        "ContentAt": ContentAt.self,
-        "IgnoreCoding": IgnoreCoding.self,
-        "IgnoreDecoding": IgnoreDecoding.self,
-        "IgnoreEncoding": IgnoreEncoding.self,
-        "Codable": Codable.self,
-        "MemberInit": MemberInit.self,
-        "CodingKeys": CodingKeys.self,
-        "IgnoreCodingInitialized": IgnoreCodingInitialized.self,
+        "CodedAt": MacroPlugin.CodedAt.self,
+        "CodedIn": MacroPlugin.CodedIn.self,
+        "Default": MacroPlugin.Default.self,
+        "CodedBy": MacroPlugin.CodedBy.self,
+        "CodedAs": MacroPlugin.CodedAs.self,
+        "ContentAt": MacroPlugin.ContentAt.self,
+        "IgnoreCoding": MacroPlugin.IgnoreCoding.self,
+        "IgnoreDecoding": MacroPlugin.IgnoreDecoding.self,
+        "IgnoreEncoding": MacroPlugin.IgnoreEncoding.self,
+        "Codable": MacroPlugin.Codable.self,
+        "MemberInit": MacroPlugin.MemberInit.self,
+        "CodingKeys": MacroPlugin.CodingKeys.self,
+        "IgnoreCodingInitialized": MacroPlugin.IgnoreCodingInitialized.self,
     ]
     assertMacroExpansion(
         originalSource, expandedSource: expandedSource,

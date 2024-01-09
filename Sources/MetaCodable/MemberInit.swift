@@ -11,4 +11,4 @@
 @attached(member, names: named(init))
 @available(swift 5.9)
 public macro MemberInit() =
-    #externalMacro(module: "CodableMacroPlugin", type: "MemberInit")
+    #externalMacro(module: "MacroPlugin", type: "MemberInit")

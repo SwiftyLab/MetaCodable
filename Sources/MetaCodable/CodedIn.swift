@@ -43,4 +43,4 @@
 @attached(peer)
 @available(swift 5.9)
 public macro CodedIn(_ path: StaticString...) =
-    #externalMacro(module: "CodableMacroPlugin", type: "CodedIn")
+    #externalMacro(module: "MacroPlugin", type: "CodedIn")

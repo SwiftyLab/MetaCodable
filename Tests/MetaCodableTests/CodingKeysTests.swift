@@ -1,7 +1,7 @@
 #if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
 import XCTest
 
-@testable import CodableMacroPlugin
+@testable import PluginCore
 
 final class CodingKeysTests: XCTestCase {
 
@@ -290,23 +290,20 @@ final class CodingKeysTests: XCTestCase {
                             )
                             throw DecodingError.typeMismatch(SomeEnum.self, context)
                         }
+                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.bool:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.bool)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
                             self = .bool(_: variableBool)
                         case DecodingKeys.int:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.int)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let valInt = try container.decode(Int.self, forKey: CodingKeys.valInt)
                             self = .int(valInt: valInt)
                         case DecodingKeys.string:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.string)
                             let _0 = try String(from: contentDecoder)
                             self = .string(_0)
                         case DecodingKeys.multi:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.multi)
                             let _2 = try String(from: contentDecoder)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
@@ -686,23 +683,20 @@ final class CodingKeysTests: XCTestCase {
                             )
                             throw DecodingError.typeMismatch(SomeEnum.self, context)
                         }
+                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.bool:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.bool)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                             self = .bool(_: variable)
                         case DecodingKeys.int:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.int)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .int(val: val)
                         case DecodingKeys.string:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.string)
                             let _0 = try String(from: contentDecoder)
                             self = .string(_0)
                         case DecodingKeys.multi:
-                            let contentDecoder = try container.superDecoder(forKey: DecodingKeys.multi)
                             let _2 = try String(from: contentDecoder)
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                             let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)

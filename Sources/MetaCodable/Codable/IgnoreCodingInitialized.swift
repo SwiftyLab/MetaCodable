@@ -65,5 +65,5 @@
 @available(swift 5.9)
 public macro IgnoreCodingInitialized() =
     #externalMacro(
-        module: "CodableMacroPlugin", type: "IgnoreCodingInitialized"
+        module: "MacroPlugin", type: "IgnoreCodingInitialized"
     )

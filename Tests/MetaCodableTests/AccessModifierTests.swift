@@ -1,9 +1,46 @@
 #if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
 import XCTest
 
-@testable import CodableMacroPlugin
+@testable import PluginCore
 
 final class AccessModifierTests: XCTestCase {
+
+    func testOpen() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            open class SomeCodable {
+                let value: String
+            }
+            """,
+            expandedSource:
+                """
+                open class SomeCodable {
+                    let value: String
+
+                    public required init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                    }
+
+                    public func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.value, forKey: CodingKeys.value)
+                    }
+
+                    enum CodingKeys: String, CodingKey {
+                        case value = "value"
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                }
+
+                extension SomeCodable: Encodable {
+                }
+                """
+        )
+    }
 
     func testPublic() throws {
         assertMacroExpansion(

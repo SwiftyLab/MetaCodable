@@ -32,9 +32,13 @@ final class LossySequenceTests: XCTestCase {
     }
 
     func testOptionalInvalidDataType() throws {
-        let json = #"{"data":1}"#.data(using: .utf8)!
-        let val = try JSONDecoder().decode(OptionalContainer.self, from: json)
-        XCTAssertNil(val.data)
+        do {
+            let json = #"{"data":1}"#.data(using: .utf8)!
+            let _ = try JSONDecoder().decode(
+                OptionalContainer.self, from: json
+            )
+            XCTFail("Invalid data type instead of array")
+        } catch {}
     }
 
     func testOptionalEmptyData() throws {
@@ -85,21 +89,21 @@ final class LossySequenceTests: XCTestCase {
 }
 
 @Codable
-struct Container {
+fileprivate struct Container {
     @CodedBy(LossySequenceCoder<[String]>())
     let data: [String]
 }
 
 @Codable
 @MemberInit
-struct DefaultContainer {
+fileprivate struct DefaultContainer {
     @Default(["some"])
     @CodedBy(LossySequenceCoder<[String]>())
     let data: [String]
 }
 
 @Codable
-struct OptionalContainer {
+fileprivate struct OptionalContainer {
     @CodedBy(LossySequenceCoder<[String]>())
     let data: [String]?
 }
