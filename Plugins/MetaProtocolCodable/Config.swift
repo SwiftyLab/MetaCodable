@@ -38,8 +38,9 @@ extension Config: Codable {
     /// - Parameter decoder: The decoder to read data from.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.scan = try container.decodeIfPresent(
-            ScanMode.self, forKey: .scan
-        ) ?? .target
+        self.scan =
+            try container.decodeIfPresent(
+                ScanMode.self, forKey: .scan
+            ) ?? .target
     }
 }

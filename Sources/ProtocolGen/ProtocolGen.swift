@@ -4,8 +4,6 @@
 
 /// The default file manager used for this module.
 internal var fileManager = FileManager.default
-/// The default file `URLSession` client used for this module.
-internal var urlSession = URLSession.shared
 
 /// The root command for this module that can be executed asynchronously.
 ///

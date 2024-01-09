@@ -25,13 +25,17 @@ extension ProtocolGen {
         /// Performs asynchronous config data fetch and
         /// prints to console in `JSON` format.
         func run() async throws {
+            #if canImport(Darwin)
             let path =
                 if #available(macOS 13, *) {
                     URL(filePath: path)
                 } else {
                     URL(fileURLWithPath: path)
                 }
-            let (data, _) = try await urlSession.data(from: path)
+            #else
+            let path = URL(fileURLWithPath: path)
+            #endif
+            let data = try Data(contentsOf: path)
             let config =
                 if let config = try? JSONDecoder().decode(
                     Config.self, from: data

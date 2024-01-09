@@ -8,6 +8,7 @@
 ///
 /// - Warning: If data in decoder is not of an unkeyed container format
 ///   ``decode(from:)`` can fail with error.
+@available(*, deprecated, message: "Use SequenceCoder from HelperCoders")
 public struct LossySequenceCoder<S: SequenceInitializable>: HelperCoder
 where S: Codable, S.Element: Codable {
     /// The default value to use

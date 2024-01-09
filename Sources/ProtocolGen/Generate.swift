@@ -46,7 +46,7 @@ extension ProtocolGen {
             return try await withThrowingTaskGroup(of: dataType) { group in
                 for path in input {
                     group.addTask {
-                        let (data, _) = try await urlSession.data(from: path)
+                        let data = try Data(contentsOf: path)
                         return try JSONDecoder().decode(dataType, from: data)
                     }
                 }
@@ -57,7 +57,7 @@ extension ProtocolGen {
                     datas.append(data)
                 }
                 var data = SourceData.aggregate(datas: datas)
-                data.protocols = data.protocols.filter { key, value in
+                data.protocols = data.protocols.filter { _, value in
                     return !value.types.isEmpty && !value.attributes.isEmpty
                 }
                 return data
@@ -195,11 +195,11 @@ extension ProtocolGen {
             for declaration: EnumDeclSyntax,
             in context: some MacroExpansionContext
         ) -> EnumVariable {
-            let caseDecodeExpr: EnumVariable.CaseCode = { name, variables in
+            let caseDecodeExpr: EnumVariable.CaseCode = { _, variables in
                 let args = EnumVariable.decodingArgs(representing: variables)
                 return "return \(args)"
             }
-            let caseEncodeExpr: EnumVariable.CaseCode = { name, variables in
+            let caseEncodeExpr: EnumVariable.CaseCode = { _, variables in
                 let oldArgs = EnumVariable.encodingArgs(representing: variables)
                 let args = LabeledExprListSyntax {
                     for (arg, variable) in zip(oldArgs, variables) {
@@ -285,12 +285,16 @@ extension ProtocolGen {
         /// Generates `HelperCoder` implementations
         /// for stored protocol datas.
         func run() async throws {
+            #if canImport(Darwin)
             let inputs =
                 if #available(macOS 13, *) {
                     inputs.map { URL(filePath: $0) }
                 } else {
                     inputs.map { URL(fileURLWithPath: $0) }
                 }
+            #else
+            let inputs = inputs.map { URL(fileURLWithPath: $0) }
+            #endif
 
             let data = try await fetchInputData(input: inputs)
             let context = BasicMacroExpansionContext()

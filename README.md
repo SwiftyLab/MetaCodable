@@ -242,7 +242,7 @@ You can even create your own by conforming to `HelperCoder`.
 </details>
 
 <details>
-  <summary>Represent data with variations in the form of external/internal/adjacent tagging, with single enum with each case as a variation or a protocol type that varies with conformances accross modules.</summary>
+  <summary>Represent data with variations in the form of external/internal/adjacent tagging, with single enum with each case as a variation or a protocol type that varies with conformances across modules.</summary>
 
  i.e. while `Swift` compiler only generates implementation assuming external tagged enums, only following data:
 
