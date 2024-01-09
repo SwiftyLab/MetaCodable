@@ -61,7 +61,7 @@ public enum DynamicCodableIdentifier<Value: Equatable> {
         case let (.many(values), .one(value)):
             values.contains(value)
         case let (.many(left), .many(right)):
-            Set(left).subtracting(Set(right)).count == 0
+            Set(left).subtracting(Set(right)).isEmpty
         }
     }
 }

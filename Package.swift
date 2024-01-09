@@ -70,8 +70,7 @@ let package = Package(
         .testTarget(
             name: "MetaCodableTests",
             dependencies: [
-                "PluginCore", "ProtocolGen",
-                "MacroPlugin", "MetaCodable", "HelperCoders",
+                "PluginCore", "MacroPlugin", "MetaCodable", "HelperCoders",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ],
             plugins: ["MetaProtocolCodable"]

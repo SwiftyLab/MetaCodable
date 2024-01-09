@@ -62,3 +62,7 @@ Level up ``/MetaCodable``'s generated implementations with helpers assisting com
 - ``PropertyWrapperCoder``
 - ``PropertyWrappable``
 - ``ConditionalCoder``
+
+### Sequence
+
+- ``SequenceCoder``

@@ -30,14 +30,20 @@ struct MetaProtocolCodable: BuildToolPlugin {
             return name == "metacodableconfig"
         }
         guard let file else { return .init(scan: .target) }
-        let path = if #available(macOS 13, *) {
-            URL(filePath: target.directory.appending([file]).string)
-        } else {
-            URL(fileURLWithPath: target.directory.appending([file]).string)
-        }
-        let (conf, _) = try await URLSession.shared.data(from: path)
+        let pathStr = target.directory.appending([file]).string
+        #if canImport(Darwin)
+        let path =
+            if #available(macOS 13, *) {
+                URL(filePath: pathStr)
+            } else {
+                URL(fileURLWithPath: pathStr)
+            }
+        #else
+        let path = URL(fileURLWithPath: pathStr)
+        #endif
+        let conf = try Data(contentsOf: path)
         let pConf = try? PropertyListDecoder().decode(Config.self, from: conf)
-        let config = try pConf ??  JSONDecoder().decode(Config.self, from: conf)
+        let config = try pConf ?? JSONDecoder().decode(Config.self, from: conf)
         return config
     }
 
@@ -77,8 +83,8 @@ struct MetaProtocolCodable: BuildToolPlugin {
                 intermFiles.append(genFile)
                 return Command.buildCommand(
                     displayName: """
-                    Parse source file "\(fileName)" in module "\(moduleName)"
-                    """,
+                        Parse source file "\(fileName)" in module "\(moduleName)"
+                        """,
                     executable: tool.path,
                     arguments: [
                         "parse",
@@ -103,15 +109,17 @@ struct MetaProtocolCodable: BuildToolPlugin {
         for file in intermFiles {
             genArgs.append(file.string)
         }
-        buildCommands.append(.buildCommand(
+        buildCommands.append(
+            .buildCommand(
                 displayName: """
-                Generate protocol decoding/encoding syntax for "\(moduleName)"
-                """,
+                    Generate protocol decoding/encoding syntax for "\(moduleName)"
+                    """,
                 executable: tool.path,
                 arguments: genArgs,
                 inputFiles: intermFiles,
                 outputFiles: [genPath]
-        ))
+            )
+        )
         return buildCommands
     }
 }
