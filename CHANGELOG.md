@@ -1,3 +1,30 @@
+## [1.2.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.1.0...v1.2.0) (2024-01-09)
+
+
+### 🚀 Features
+
+* added `CodingKey` alias support ([665306f](https://github.com/SwiftyLab/MetaCodable/commit/665306f0a5d9a60da831d408eecb180060f76533))
+* added actor support ([97a6057](https://github.com/SwiftyLab/MetaCodable/commit/97a605744b1d55c9b25c67e5c9d0b38da7c588a0))
+* added adjacently tagged enum support ([a22e9d1](https://github.com/SwiftyLab/MetaCodable/commit/a22e9d1f8f6134f10be9d8f7b744c95efa16b36c))
+* added class support ([4bfeac3](https://github.com/SwiftyLab/MetaCodable/commit/4bfeac3ffe9bf716509f4c67b0514fd8bceda68f))
+* added externally tagged enum support ([c1097bb](https://github.com/SwiftyLab/MetaCodable/commit/c1097bb0a040273ac2c581de7475283d5f629d40))
+* added internally tagged enum support ([fcdafa8](https://github.com/SwiftyLab/MetaCodable/commit/fcdafa808228896c43ccd9a0cd1486994d1b28b0))
+* added protocol support ([535f446](https://github.com/SwiftyLab/MetaCodable/commit/535f446f13304f79f9012a13bafa9faebb58dca0))
+* added sequence coding helper ([4ea6ff6](https://github.com/SwiftyLab/MetaCodable/commit/4ea6ff6affa7d94a5ad7bfc19e174ee9e2041620))
+
+
+### 🐛 Fixes
+
+* fixed empty `CodingKeys` enum generated instead of being skipped ([a28bb9c](https://github.com/SwiftyLab/MetaCodable/commit/a28bb9c25b84ca1670acc7bc248780259f4c0a73))
+* fixed error with `private` access modifier on type declaration ([#46](https://github.com/SwiftyLab/MetaCodable/issues/46)) ([d378204](https://github.com/SwiftyLab/MetaCodable/commit/d378204f2675a5e9faf2f4997662e39c529e2ada))
+* fixed initialized immutable variables not encoded by default ([#47](https://github.com/SwiftyLab/MetaCodable/issues/47)) ([31db2fd](https://github.com/SwiftyLab/MetaCodable/commit/31db2fdd5cbf0a212d3e798d761940b8552feb42))
+* fixed nested decoding with missing container ([#44](https://github.com/SwiftyLab/MetaCodable/issues/44)) ([495cea4](https://github.com/SwiftyLab/MetaCodable/commit/495cea43b419bf8926e03fb7337405de269d2bf7))
+
+
+### 📚 Documentation
+
+* added sample usage tutorials ([2670fde](https://github.com/SwiftyLab/MetaCodable/commit/2670fde2a028e32a6e689278e307f81730a01cc5))
+
 ## [1.1.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.0.0...v1.1.0) (2023-11-06)
 
 
