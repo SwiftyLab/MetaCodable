@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/SwiftyLab/MetaCodable/compare/v1.2.0...v1.2.1) (2024-01-10)
+
+
+### 🐛 Fixes
+
+* fixed `IgnoreCoding` failing with `didSet` accessors ([#54](https://github.com/SwiftyLab/MetaCodable/issues/54)) ([bd881c9](https://github.com/SwiftyLab/MetaCodable/commit/bd881c9ed8950e6fc38c4cf90bd32c947fad07cb))
+
 ## [1.2.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.1.0...v1.2.0) (2024-01-09)
 
 
