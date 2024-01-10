@@ -120,23 +120,8 @@ extension ProtocolGen {
         /// Performs parsing of swift source files and storing
         /// `SourceData` in JSON format in `output` file path.
         func run() async throws {
-            #if canImport(Darwin)
-            let input =
-                if #available(macOS 13, *) {
-                    URL(filePath: input)
-                } else {
-                    URL(fileURLWithPath: input)
-                }
-            let output =
-                if #available(macOS 13, *) {
-                    URL(filePath: output)
-                } else {
-                    URL(fileURLWithPath: output)
-                }
-            #else
-            let input = URL(fileURLWithPath: input)
-            let output = URL(fileURLWithPath: output)
-            #endif
+            let input = Config.url(forFilePath: input)
+            let output = Config.url(forFilePath: output)
             let sourceData = try Data(contentsOf: input)
             let sourceText = String(data: sourceData, encoding: .utf8)!
             let sourceFile = Parser.parse(source: sourceText)

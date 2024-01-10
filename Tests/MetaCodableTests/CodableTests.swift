@@ -7,7 +7,6 @@ import SwiftSyntaxMacrosTestSupport
 import XCTest
 
 @testable import PluginCore
-@testable import MacroPlugin
 
 final class CodableTests: XCTestCase {
 
@@ -310,6 +309,42 @@ final class CodableTests: XCTestCase {
     }
 }
 
+#if canImport(MacroPlugin)
+@testable import MacroPlugin
+
+let allMacros: [String: Macro.Type] = [
+    "CodedAt": MacroPlugin.CodedAt.self,
+    "CodedIn": MacroPlugin.CodedIn.self,
+    "Default": MacroPlugin.Default.self,
+    "CodedBy": MacroPlugin.CodedBy.self,
+    "CodedAs": MacroPlugin.CodedAs.self,
+    "ContentAt": MacroPlugin.ContentAt.self,
+    "IgnoreCoding": MacroPlugin.IgnoreCoding.self,
+    "IgnoreDecoding": MacroPlugin.IgnoreDecoding.self,
+    "IgnoreEncoding": MacroPlugin.IgnoreEncoding.self,
+    "Codable": MacroPlugin.Codable.self,
+    "MemberInit": MacroPlugin.MemberInit.self,
+    "CodingKeys": MacroPlugin.CodingKeys.self,
+    "IgnoreCodingInitialized": MacroPlugin.IgnoreCodingInitialized.self,
+]
+#else
+let allMacros: [String: Macro.Type] = [
+    "CodedAt": CodedAt.self,
+    "CodedIn": CodedIn.self,
+    "Default": Default.self,
+    "CodedBy": CodedBy.self,
+    "CodedAs": CodedAs.self,
+    "ContentAt": ContentAt.self,
+    "IgnoreCoding": IgnoreCoding.self,
+    "IgnoreDecoding": IgnoreDecoding.self,
+    "IgnoreEncoding": IgnoreEncoding.self,
+    "Codable": Codable.self,
+    "MemberInit": MemberInit.self,
+    "CodingKeys": CodingKeys.self,
+    "IgnoreCodingInitialized": IgnoreCodingInitialized.self,
+]
+#endif
+
 func assertMacroExpansion(
     _ originalSource: String,
     expandedSource: String,
@@ -321,25 +356,10 @@ func assertMacroExpansion(
     file: StaticString = #file,
     line: UInt = #line
 ) {
-    let macros: [String: Macro.Type] = [
-        "CodedAt": MacroPlugin.CodedAt.self,
-        "CodedIn": MacroPlugin.CodedIn.self,
-        "Default": MacroPlugin.Default.self,
-        "CodedBy": MacroPlugin.CodedBy.self,
-        "CodedAs": MacroPlugin.CodedAs.self,
-        "ContentAt": MacroPlugin.ContentAt.self,
-        "IgnoreCoding": MacroPlugin.IgnoreCoding.self,
-        "IgnoreDecoding": MacroPlugin.IgnoreDecoding.self,
-        "IgnoreEncoding": MacroPlugin.IgnoreEncoding.self,
-        "Codable": MacroPlugin.Codable.self,
-        "MemberInit": MacroPlugin.MemberInit.self,
-        "CodingKeys": MacroPlugin.CodingKeys.self,
-        "IgnoreCodingInitialized": MacroPlugin.IgnoreCodingInitialized.self,
-    ]
     assertMacroExpansion(
         originalSource, expandedSource: expandedSource,
         diagnostics: diagnostics,
-        macroSpecs: macros.mapValues { value in
+        macroSpecs: allMacros.mapValues { value in
             return MacroSpec(type: value, conformances: conformances)
         },
         testModuleName: testModuleName, testFileName: testFileName,

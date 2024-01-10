@@ -1,3 +1,5 @@
+@_implementationOnly import Foundation
+
 /// The configuration data for plugin.
 ///
 /// Depending on the configuration data, source file check and
@@ -42,5 +44,17 @@ extension Config: Codable {
             try container.decodeIfPresent(
                 ScanMode.self, forKey: .scan
             ) ?? .target
+    }
+
+    static func url(forFilePath filePath: String) -> URL {
+        #if canImport(Darwin)
+        if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
+            return URL(filePath: filePath)
+        } else {
+            return URL(fileURLWithPath: filePath)
+        }
+        #else
+        return URL(fileURLWithPath: filePath)
+        #endif
     }
 }

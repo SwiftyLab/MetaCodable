@@ -75,7 +75,8 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
                 // && !accessors.contains { decl in
                 //     decl.accessorKind.tokenKind == .keyword(.`init`)
                 // }
-                guard !computed else { continue }
+                guard computed else { fallthrough }
+                continue
             default:
                 guard binding.initializer == nil else { continue }
             }
