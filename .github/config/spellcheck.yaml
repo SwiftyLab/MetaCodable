@@ -16,5 +16,5 @@ matrix:
       - code
       - pre
   sources:
-  - '**/*.md'
+  - '**/*.md|!CHANGELOG.md'
   default_encoding: utf-8

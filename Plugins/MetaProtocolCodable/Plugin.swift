@@ -1,5 +1,5 @@
-import Foundation
-import PackagePlugin
+@_implementationOnly import Foundation
+@_implementationOnly import PackagePlugin
 
 /// Provides `protocol` decoding/encoding syntax generation.
 ///
@@ -31,16 +31,7 @@ struct MetaProtocolCodable: BuildToolPlugin {
         }
         guard let file else { return .init(scan: .target) }
         let pathStr = target.directory.appending([file]).string
-        #if canImport(Darwin)
-        let path =
-            if #available(macOS 13, *) {
-                URL(filePath: pathStr)
-            } else {
-                URL(fileURLWithPath: pathStr)
-            }
-        #else
-        let path = URL(fileURLWithPath: pathStr)
-        #endif
+        let path = Config.url(forFilePath: pathStr)
         let conf = try Data(contentsOf: path)
         let pConf = try? PropertyListDecoder().decode(Config.self, from: conf)
         let config = try pConf ?? JSONDecoder().decode(Config.self, from: conf)

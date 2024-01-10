@@ -285,16 +285,7 @@ extension ProtocolGen {
         /// Generates `HelperCoder` implementations
         /// for stored protocol datas.
         func run() async throws {
-            #if canImport(Darwin)
-            let inputs =
-                if #available(macOS 13, *) {
-                    inputs.map { URL(filePath: $0) }
-                } else {
-                    inputs.map { URL(fileURLWithPath: $0) }
-                }
-            #else
-            let inputs = inputs.map { URL(fileURLWithPath: $0) }
-            #endif
+            let inputs = inputs.map { Config.url(forFilePath: $0) }
 
             let data = try await fetchInputData(input: inputs)
             let context = BasicMacroExpansionContext()

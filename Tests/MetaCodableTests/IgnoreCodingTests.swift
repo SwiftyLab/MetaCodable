@@ -18,6 +18,12 @@ final class IgnoreCodingTests: XCTestCase {
                 var three: String { "some" }
                 @IgnoreDecoding
                 var four: String { get { "some" } }
+                @IgnoreCoding
+                var five: String = "some" {
+                    didSet {
+                        print(five)
+                    }
+                }
             }
             """,
             expandedSource:
@@ -27,6 +33,11 @@ final class IgnoreCodingTests: XCTestCase {
                     var two: String
                     var three: String { "some" }
                     var four: String { get { "some" } }
+                    var five: String = "some" {
+                        didSet {
+                            print(five)
+                        }
+                    }
                 }
 
                 extension SomeCodable: Decodable {
