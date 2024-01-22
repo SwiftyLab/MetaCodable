@@ -48,6 +48,15 @@ Supercharge `Swift`'s `Codable` implementations with macros.
         .product(name: "MetaCodable", package: "MetaCodable"),
         ```
     }
+
+    @Tab("CocoaPods") {
+
+        [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate `MetaCodable` into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+        ```ruby
+        pod 'MetaCodable'
+        ```
+    }
 }
 
 ## Topics

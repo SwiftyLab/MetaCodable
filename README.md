@@ -37,7 +37,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 | Platform | Minimum Swift Version | Installation | Status |
 | --- | --- | --- | --- |
-| iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ | 5.9 | Swift Package Manager | Fully Tested |
+| iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ | 5.9 | Swift Package Manager, CocoaPods | Fully Tested |
 | Linux | 5.9 | Swift Package Manager | Fully Tested |
 | Windows | 5.9.1 | Swift Package Manager | Fully Tested |
 
@@ -58,6 +58,16 @@ Then you can add the `MetaCodable` module product as dependency to the `target`s
 
 ```swift
 .product(name: "MetaCodable", package: "MetaCodable"),
+```
+
+</details>
+<details>
+  <summary><h3>CocoaPods</h3></summary>
+
+[CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate `MetaCodable` into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+pod 'MetaCodable'
 ```
 
 </details>

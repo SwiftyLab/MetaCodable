@@ -78,10 +78,21 @@ jobs:
           ]
         }
 
+  cocoapods-test:
+    name: CocoaPods
+    uses: SwiftyLab/ci/.github/workflows/cocoapods.yml@main
+    strategy:
+      matrix:
+        platforms: ['macos tvos', 'ios']
+    with:
+      os: macos-13
+      xcode: latest
+      platforms: ${{ matrix.platforms }}
+
   ci:
     name: CI
     if: github.event_name == 'push'
-    needs: [analyze, spell-check, swift-package-test]
+    needs: [analyze, spell-check, swift-package-test, cocoapods-test]
     uses: SwiftyLab/ci/.github/workflows/ci.yml@main
 
   cd:
@@ -91,8 +102,9 @@ jobs:
        github.event_name == 'workflow_dispatch' &&
        github.event.inputs.release == 'true' &&
        (needs.ci.result == 'success' || needs.ci.result == 'skipped') &&
-       (needs.swift-package-test.result == 'success' || needs.swift-package-test.result == 'skipped')
-    needs: [analyze, spell-check, swift-package-test, ci]
+       (needs.swift-package-test.result == 'success' || needs.swift-package-test.result == 'skipped') &&
+       (needs.cocoapods-test.result == 'success' || needs.cocoapods-test.result == 'skipped')
+    needs: [analyze, spell-check, swift-package-test, cocoapods-test, ci]
     uses: SwiftyLab/ci/.github/workflows/cd.yml@main
     with:
       version: ${{ github.event.inputs.version }}

@@ -54,3 +54,5 @@ customizable
 enum
 enums
 conformances
+Podfile
+cocoapods
