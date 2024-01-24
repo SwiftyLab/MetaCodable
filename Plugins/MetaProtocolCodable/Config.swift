@@ -22,6 +22,11 @@ struct Config {
         ///
         /// Files from the target which includes plugin and target dependencies
         /// present in current package manifest are checked.
+        case direct
+        /// Represents to check all local targets.
+        ///
+        /// Files from the target which includes plugin and all targets
+        /// that are in the same project/package.
         case local
         /// Represents to check current target and all dependencies.
         ///

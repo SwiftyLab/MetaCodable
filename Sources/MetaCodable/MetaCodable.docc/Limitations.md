@@ -72,3 +72,7 @@ For `actor`s ``Codable()`` generates `Decodable` conformance, while `Encodable` 
 To generate `Encodable` conformance, the `encode(to:)` method must be `nonisolated` to `actor`, and since `encode(to:)` method must be synchronous making it `nonisolated` will prevent accessing mutable properties.
 
 Due to these limitations, `Encodable` conformance isn't generated, users has to implement the conformance manually.
+
+### Why `MetaProtocolCodable` plugin can't scan Xcode target dependencies?
+
+Currently Swift Package Manager always returns empty list for Xcode target dependencies as noted in [this bug](https://github.com/apple/swift-package-manager/issues/6003). Hence `MetaProtocolCodable` can currently only scan the files from the target or from the project including the target.

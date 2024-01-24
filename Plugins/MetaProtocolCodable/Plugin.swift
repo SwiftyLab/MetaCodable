@@ -17,20 +17,11 @@ struct MetaProtocolCodable: BuildToolPlugin {
     ///
     /// - Parameter target: The target including plugin.
     /// - Returns: The config if provided, otherwise default config.
-    func fetchConfig(for target: SourceModuleTarget) async throws -> Config {
-        let fileManager = FileManager.default
-        let directory = target.directory.string
-        let contents = try fileManager.contentsOfDirectory(atPath: directory)
-        let file = contents.first { file in
-            let path = Path(file)
-            let name = path.stem
-                .components(separatedBy: .alphanumerics.inverted)
-                .joined(separator: "")
-                .lowercased()
-            return name == "metacodableconfig"
-        }
-        guard let file else { return .init(scan: .target) }
-        let pathStr = target.directory.appending([file]).string
+    func fetchConfig<Target: MetaProtocolCodableSourceTarget>(
+        for target: Target
+    ) throws -> Config {
+        let pathStr = try target.configPath(named: "metacodableconfig")
+        guard let pathStr else { return .init(scan: .target) }
         let path = Config.url(forFilePath: pathStr)
         let conf = try Data(contentsOf: path)
         let pConf = try? PropertyListDecoder().decode(Config.self, from: conf)
@@ -38,7 +29,8 @@ struct MetaProtocolCodable: BuildToolPlugin {
         return config
     }
 
-    /// Invoked by SwiftPM to create build commands for a particular target.
+    /// Invoked by build systems to create build commands for a particular
+    /// target.
     ///
     /// Creates build commands that produces intermediate files scanning
     /// swift source files according to configuration. Final build command
@@ -49,14 +41,14 @@ struct MetaProtocolCodable: BuildToolPlugin {
     ///   - target: The target including plugin.
     ///
     /// - Returns: The commands to be executed during build.
-    func createBuildCommands(
-        context: PluginContext, target: Target
-    ) async throws -> [Command] {
-        guard let target = target as? SourceModuleTarget else { return [] }
+    func createBuildCommands<Context>(
+        in context: Context, for target: Context.Target
+    ) throws -> [Command] where Context: MetaProtocolCodablePluginContext {
+        // Get config
         let tool = try context.tool(named: "ProtocolGen")
-        // Get Config
-        let config = try await fetchConfig(for: target)
-        let (allTargets, imports) = config.scanInput(for: target)
+        let config = try fetchConfig(for: target)
+        let (allTargets, imports) = config.scanInput(for: target, in: context)
+
         // Setup folder
         let genFolder = context.pluginWorkDirectory.appending(["ProtocolGen"])
         try FileManager.default.createDirectory(
@@ -115,45 +107,49 @@ struct MetaProtocolCodable: BuildToolPlugin {
     }
 }
 
-extension Config {
-    /// Returns targets to scan and import modules based on current
-    /// configuration.
+extension MetaProtocolCodable {
+    /// Invoked by SwiftPM to create build commands for a particular target.
     ///
-    /// Based on configuration, the targets for which source files need
-    /// to be checked and the modules that will be imported in final syntax
-    /// generated is returned.
+    /// Creates build commands that produces intermediate files scanning
+    /// swift source files according to configuration. Final build command
+    /// generates syntax aggregating all intermediate files.
     ///
-    /// - Parameter target: The target including plugin.
-    /// - Returns: The targets to scan and modules to import.
-    func scanInput(
-        for target: SourceModuleTarget
-    ) -> (targets: [SourceModuleTarget], modules: [String]) {
-        let allTargets: [SourceModuleTarget]
-        let modules: [String]
-        switch scan {
-        case .target:
-            allTargets = [target]
-            modules = []
-        case .local:
-            var targets = target.dependencies.compactMap { dependency in
-                return switch dependency {
-                case .target(let target):
-                    target.sourceModule
-                default:
-                    nil
-                }
-            }
-            modules = targets.map(\.moduleName)
-            targets.append(target)
-            allTargets = targets
-        case .recursive:
-            var targets = target.recursiveTargetDependencies.compactMap {
-                return $0 as? SourceModuleTarget
-            }
-            modules = targets.map(\.moduleName)
-            targets.append(target)
-            allTargets = targets
-        }
-        return (allTargets, modules)
+    /// - Parameters:
+    ///   - context: The package and environmental inputs context.
+    ///   - target: The target including plugin.
+    ///
+    /// - Returns: The commands to be executed during build.
+    func createBuildCommands(
+        context: PluginContext, target: Target
+    ) async throws -> [Command] {
+        guard let target = target as? SourceModuleTarget else { return [] }
+        return try self.createBuildCommands(
+            in: context, for: SwiftPackageTarget(module: target)
+        )
     }
 }
+
+#if canImport(XcodeProjectPlugin)
+@_implementationOnly import XcodeProjectPlugin
+
+extension MetaProtocolCodable: XcodeBuildToolPlugin {
+    /// Invoked by Xcode to create build commands for a particular target.
+    ///
+    /// Creates build commands that produces intermediate files scanning
+    /// swift source files according to configuration. Final build command
+    /// generates syntax aggregating all intermediate files.
+    ///
+    /// - Parameters:
+    ///   - context: The package and environmental inputs context.
+    ///   - target: The target including plugin.
+    ///
+    /// - Returns: The commands to be executed during build.
+    func createBuildCommands(
+        context: XcodePluginContext, target: XcodeTarget
+    ) throws -> [Command] {
+        return try self.createBuildCommands(
+            in: context, for: target
+        )
+    }
+}
+#endif
