@@ -15,11 +15,11 @@ module MetaCodable
       self.homepage          = package.homepage
       self.summary           = package.summary
       self.description       = package.description
-      self.license           = { :type => package.license, :file => 'LICENSE' }
+      self.license           = { :type => package.license, :file => 'LICENSE.txt' }
       self.social_media_url  = package.author.url
-      self.readme            = "#{self.homepage}/blob/main/README.md"
-      self.changelog         = "#{self.homepage}/blob/main/CHANGELOG.md"
-      self.documentation_url = "https://swiftylab.github.io/MetaCodable/#{self.version}/documentation/#{self.module_name.downcase}/"
+      self.readme            = "#{self.homepage}/blob/v#{self.version}/README.md"
+      self.changelog         = "#{self.homepage}/blob/v#{self.version}/CHANGELOG.md"
+      self.documentation_url = "https://swiftpackageindex.com/SwiftyLab/MetaCodable/v#{self.version}/documentation/#{self.module_name.downcase}"
 
       self.source            = {
         package.repository.type.to_sym => package.repository.url,
@@ -37,8 +37,9 @@ module MetaCodable
       self.watchos.deployment_target = '6.0'
       self.osx.deployment_target     = '10.15'
 
+      self.preserve_paths = "*.md", "LICENSE"
+
       if has_files
-        self.preserve_paths = "{Sources,Tests}/#{self.module_name}*/**/*", "*.md"
         self.source_files   = "Sources/#{self.module_name}/**/*.*"
       end
     end
