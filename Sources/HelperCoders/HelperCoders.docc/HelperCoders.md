@@ -36,6 +36,15 @@ Level up ``/MetaCodable``'s generated implementations with helpers assisting com
         .product(name: "HelperCoders", package: "MetaCodable"),
         ```
     }
+
+    @Tab("CocoaPods") {
+
+        [CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate `HelperCoders` into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+        ```ruby
+        pod 'MetaCodable/HelperCoders'
+        ```
+    }
 }
 
 ## Topics

@@ -2,6 +2,7 @@
 
 [![API Docs](http://img.shields.io/badge/Read_the-docs-2196f3.svg)](https://swiftpackageindex.com/SwiftyLab/MetaCodable/documentation/metacodable)
 [![Swift Package Manager Compatible](https://img.shields.io/github/v/tag/SwiftyLab/MetaCodable?label=SPM&color=orange)](https://badge.fury.io/gh/SwiftyLab%2FMetaCodable)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MetaCodable.svg?label=CocoaPods&color=C90005)](https://badge.fury.io/co/MetaCodable)
 [![Swift](https://img.shields.io/badge/Swift-5.9+-orange)](https://img.shields.io/badge/Swift-5-DE5D43)
 [![Platforms](https://img.shields.io/badge/Platforms-all-sucess)](https://img.shields.io/badge/Platforms-all-sucess)
 [![CI/CD](https://github.com/SwiftyLab/MetaCodable/actions/workflows/main.yml/badge.svg)](https://github.com/SwiftyLab/MetaCodable/actions/workflows/main.yml)
@@ -37,7 +38,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 | Platform | Minimum Swift Version | Installation | Status |
 | --- | --- | --- | --- |
-| iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ | 5.9 | Swift Package Manager | Fully Tested |
+| iOS 13.0+ / macOS 10.15+ / tvOS 13.0+ / watchOS 6.0+ | 5.9 | Swift Package Manager, CocoaPods | Fully Tested |
 | Linux | 5.9 | Swift Package Manager | Fully Tested |
 | Windows | 5.9.1 | Swift Package Manager | Fully Tested |
 
@@ -58,6 +59,16 @@ Then you can add the `MetaCodable` module product as dependency to the `target`s
 
 ```swift
 .product(name: "MetaCodable", package: "MetaCodable"),
+```
+
+</details>
+<details>
+  <summary><h3>CocoaPods</h3></summary>
+
+[CocoaPods](https://cocoapods.org) is a dependency manager for Cocoa projects. For usage and installation instructions, visit their website. To integrate `MetaCodable` into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+pod 'MetaCodable'
 ```
 
 </details>

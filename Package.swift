@@ -1,5 +1,6 @@
 // swift-tools-version: 5.9
 
+import Foundation
 import PackageDescription
 import CompilerPluginSupport
 
@@ -78,8 +79,29 @@ let package = Package(
     ]
 )
 
+extension Package.Dependency.Kind {
+    var repoName: String? {
+        guard
+            case let .sourceControl(
+                name: _, location: location, requirement: _
+            ) = self,
+            let location = URL(string: location),
+            let name = location.lastPathComponent.split(separator: ".").first
+        else { return nil }
+        return String(name)
+    }
+}
+
+var unusedDeps: [String] = []
+var includeTargets: [String] = []
+var includeProducts: [String] = []
+
+if Context.environment["METACODABLE_CI"] == nil {
+    unusedDeps.append(contentsOf: ["swift-format", "swift-docc-plugin"])
+}
+
 if Context.environment["SWIFT_SYNTAX_EXTENSION_MACRO_FIXED"] != nil {
-    package.dependencies.remove(at: 0)
+    package.dependencies.removeAll { $0.kind.repoName == "swift-syntax" }
     package.dependencies.append(
         .package(
             url: "https://github.com/soumyamahunt/swift-syntax.git",
@@ -93,4 +115,47 @@ if Context.environment["SWIFT_SYNTAX_EXTENSION_MACRO_FIXED"] != nil {
         settings.append(.define("SWIFT_SYNTAX_EXTENSION_MACRO_FIXED"))
         target.swiftSettings = settings
     }
+}
+
+if Context.environment["METACODABLE_BEING_USED_FROM_COCOAPODS"] != nil {
+    includeTargets.append(contentsOf: ["PluginCore", "MacroPlugin"])
+    includeProducts.append("MacroPlugin")
+    package.products.append(.executable(name: "MacroPlugin", targets: ["MacroPlugin"]))
+    package.targets = package.targets.compactMap { target in
+        guard target.type == .macro else { return target }
+        return .executableTarget(
+            name: target.name,
+            dependencies: target.dependencies,
+            path: target.path,
+            exclude: target.exclude,
+            sources: target.sources,
+            resources: target.resources,
+            publicHeadersPath: target.publicHeadersPath,
+            cSettings: target.cSettings,
+            cxxSettings: target.cxxSettings,
+            swiftSettings: target.swiftSettings,
+            linkerSettings: target.linkerSettings,
+            plugins: target.plugins
+        )
+    }
+
+    if Context.environment["METACODABLE_COCOAPODS_PROTOCOL_PLUGIN"] != nil {
+        includeTargets.append("ProtocolGen")
+        includeProducts.append("ProtocolGen")
+        package.products.append(
+            .executable(name: "ProtocolGen", targets: ["ProtocolGen"])
+        )
+    } else {
+        unusedDeps.append("swift-argument-parser")
+    }
+}
+
+package.dependencies.removeAll { unusedDeps.contains($0.kind.repoName ?? "") }
+
+if !includeTargets.isEmpty {
+    package.targets.removeAll { !includeTargets.contains($0.name) }
+}
+
+if !includeProducts.isEmpty {
+    package.products.removeAll { !includeProducts.contains($0.name) }
 }

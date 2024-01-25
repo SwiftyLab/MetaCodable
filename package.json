@@ -24,6 +24,7 @@
     "archive": "echo implement",
     "generate": "echo implement",
     "format": "npm exec --package=swiftylab-ci -- format.js",
+    "pod-lint": "METACODABLE_COCOAPODS_LINT=true npm exec --package=swiftylab-ci -- pod-lint.js",
     "preview-doc": "npm exec --package=swiftylab-ci -- preview-doc.js MetaCodable",
     "build-doc": "npm exec --package=swiftylab-ci -- build-doc.js MetaCodable HelperCoders",
     "serve-doc": "npm exec --package=swiftylab-ci -- serve-doc.js MetaCodable"
