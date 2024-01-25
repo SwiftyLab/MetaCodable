@@ -15,7 +15,7 @@ module MetaCodable
       self.homepage          = package.homepage
       self.summary           = package.summary
       self.description       = package.description
-      self.license           = { :type => package.license, :file => 'LICENSE.txt' }
+      self.license           = { :type => package.license, :file => 'LICENSE' }
       self.social_media_url  = package.author.url
       self.readme            = "#{self.homepage}/blob/v#{self.version}/README.md"
       self.changelog         = "#{self.homepage}/blob/v#{self.version}/CHANGELOG.md"

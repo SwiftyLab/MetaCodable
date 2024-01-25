@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
   plugin_path = "#{build_path}/#{config}/#{plugin_module}##{plugin_module}"
   plugin_output = "$(PODS_BUILD_DIR)/Macros/#{plugin_module}/#{config}/#{plugin_module}"
   script = <<-SCRIPT
-  echo "env -i PATH=\\"$PATH\\" SRCROOT=\\"$PODS_TARGET_SRCROOT\\" BUILD_DIR=\\"$PODS_BUILD_DIR\\" CONFIG=#{config} $METACODABLE_PLUGIN_BUILD_ENVIRONMENT ${PODS_TARGET_SRCROOT}/#{script_path}"
-  env -i PATH="$PATH" SRCROOT="$PODS_TARGET_SRCROOT" BUILD_DIR="$PODS_BUILD_DIR" CONFIG=#{config} $METACODABLE_PLUGIN_BUILD_ENVIRONMENT ${PODS_TARGET_SRCROOT}/#{script_path}
+  echo "env -i PATH=\\"$PATH\\" SRCROOT=\\"$PODS_TARGET_SRCROOT\\" BUILD_DIR=\\"$PODS_BUILD_DIR\\" TOOLCHAIN=\\"$DT_TOOLCHAIN_DIR\\" CONFIG=#{config} $METACODABLE_PLUGIN_BUILD_ENVIRONMENT \\"${PODS_TARGET_SRCROOT}/#{script_path}\\""
+  env -i PATH="$PATH" SRCROOT="$PODS_TARGET_SRCROOT" BUILD_DIR="$PODS_BUILD_DIR" TOOLCHAIN="$DT_TOOLCHAIN_DIR" CONFIG=#{config} $METACODABLE_PLUGIN_BUILD_ENVIRONMENT "${PODS_TARGET_SRCROOT}/#{script_path}"
   SCRIPT
 
   s.preserve_paths = "*.md", "LICENSE", manifest_file, "#{sources_dir}/{#{plugin_module},#{plugin_core}}", script_path
