@@ -1,13 +1,13 @@
 import MetaCodable
 
-/// An ``/MetaCodable/HelperCoder`` that helps decoding/encoding
+/// An `HelperCoder` that helps decoding/encoding
 /// using existing property wrappers.
 ///
 /// This type can be used to reuse existing property
 /// wrappers with custom decoding/encoding with
-/// ``/MetaCodable`` generated implementations.
+/// `MetaCodable` generated implementations.
 public struct PropertyWrapperCoder<Wrapper: PropertyWrappable>: HelperCoder {
-    /// Creates a new instance of ``/MetaCodable/HelperCoder`` that decodes/encodes
+    /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// using existing property wrappers.
     ///
     /// - Returns: A new property wrapper based decoder/encoder.

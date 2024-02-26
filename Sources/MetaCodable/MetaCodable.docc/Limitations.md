@@ -61,11 +61,11 @@ enum SomeEnum {
 }
 ```
 
-### Why `enum`s with raw value aren't supported?
+### Why enums with raw value aren't supported?
 
 `Swift` compiler by default generates `Codable` conformance for `enum`s with raw value and `MetaCodable` has nothing extra to add for these type of `enum`s. Hence, in this case the default compiler generated implementation can be used.
 
-### Why `actor` conformance to `Encodable` not generated?
+### Why actor conformance to Encodable not generated?
 
 For `actor`s ``Codable()`` generates `Decodable` conformance, while `Encodable` conformance isn't generated, only `encode(to:)` method implementation is generated which is isolated to `actor`.
 
@@ -73,6 +73,6 @@ To generate `Encodable` conformance, the `encode(to:)` method must be `nonisolat
 
 Due to these limitations, `Encodable` conformance isn't generated, users has to implement the conformance manually.
 
-### Why `MetaProtocolCodable` plugin can't scan Xcode target dependencies?
+### Why MetaProtocolCodable plugin can't scan Xcode target dependencies?
 
 Currently Swift Package Manager always returns empty list for Xcode target dependencies as noted in [this bug](https://github.com/apple/swift-package-manager/issues/6003). Hence `MetaProtocolCodable` can currently only scan the files from the target or from the project including the target.

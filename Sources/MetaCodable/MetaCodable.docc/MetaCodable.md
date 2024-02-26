@@ -95,3 +95,4 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 - ``DynamicCodable``
 - ``DynamicCodableIdentifier``
+- ``MetaCodableConfig``

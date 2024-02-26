@@ -1,6 +1,6 @@
 import MetaCodable
 
-/// An ``/MetaCodable/HelperCoder`` that performs default decoding/encoding.
+/// An `HelperCoder` that performs default decoding/encoding.
 ///
 /// This type doesn't provide any customization and used only to opt out of
 /// decoding/encoding customizations.

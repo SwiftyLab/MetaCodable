@@ -1,0 +1,151 @@
+@Tutorial(time: 20) {
+    @XcodeRequirement(title: "Xcode 15 or later", destination: "https://itunes.apple.com/us/app/xcode/id497799835?mt=12")
+
+    @Intro(title: "Represent dynamic data variations with protocol") {
+        This tutorial guides you through handling dynamic variation in data and how to represent different kinds of variations as separate types, tied to a single protocol.
+
+        @Comment {
+            Add image asset here!
+        }
+    }
+
+    @Section(title: "Create dynamic variation Codable types") {
+        @ContentAndMedia {
+            Similar to [enums](<doc:Enum>) external, internal and adjacently tagged data variations are supported with default being externally tagged data.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify all the variations and the tags representing variations.
+
+                @Image(source: DynamicPost-01.png, alt: "Post variations JSON representation")
+            }
+
+            @Step {
+                Create protocol containing common fields across all the data variations.
+
+                @Code(name: "Post.swift", file: DynamicPost-01.swift) {
+                    @Image(source: DynamicPost-01.png, alt: "Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                Attach ``Codable()`` attribute to this protocol.
+
+                @Code(name: "Post.swift", file: DynamicPost-02.swift) {
+                    @Image(source: DynamicPost-01.png, alt: "Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                Create `Codable` types with each type representing a variation.
+
+                @Code(name: "Post.swift", file: DynamicPost-03.swift) {
+                    @Image(source: DynamicPost-01.png, alt: "Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                Conform common data protocol for each variant data type.
+
+                @Code(name: "Post.swift", file: DynamicPost-04.swift) {
+                    @Image(source: DynamicPost-01.png, alt: "Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                Add ``DynamicCodable`` conformance for each variant data type, with ``DynamicCodable/identifier`` returning variant tag.
+
+                @Code(name: "Post.swift", file: DynamicPost-05.swift) {
+                    @Image(source: DynamicPost-01.png, alt: "Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                Provide multiple variant tags in ``DynamicCodable/identifier`` in case of multiple tags used to represent same variation.
+
+                @Code(name: "Post.swift", file: DynamicPost-06.swift) {
+                    @Image(source: DynamicPost-02.png, alt: "Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                Ignore specific type from decoding or encoding or both by attaching ``IgnoreDecoding()`` or ``IgnoreEncoding()`` or ``IgnoreCoding()`` macros respectively.
+
+                @Code(name: "Post.swift", file: DynamicPost-07.swift) {
+                    @Image(source: DynamicPost-02.png, alt: "Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                In case of internally tagged data, attach ``CodedAt(_:)`` macro to `protocol` declaration with value specifying tag field name.
+
+                @Code(name: "Post.swift", file: DynamicPost-08.swift) {
+                    @Image(source: DynamicPost-03.png, alt: "Internally tagged Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                In case of adjacently tagged data, additionally attach ``ContentAt(_:_:)`` macro to `protocol` declaration with value specifying content field name.
+
+                @Code(name: "Post.swift", file: DynamicPost-09.swift) {
+                    @Image(source: DynamicPost-04.png, alt: "Adjacently tagged Post variations JSON representation")
+                }
+            }
+
+            @Step {
+                Add `MetaProtocolCodable` build tool plugin to target to handle code generation.
+
+                @Code(name: "Package.swift", file: Plugin.swift) {
+                    @Image(source: Plugin.png, alt: "Xcode build tool plugin settings")
+                }
+            }
+
+            @Step {
+                Use generated ``HelperCoder`` for protocol to decode/encode dynamic type.
+
+                @Code(name: "Page.swift", file: Page.swift) {
+                    @Image(source: Page.png, alt: "JSON representation of Page containing Posts")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Customize dynamic data variations detection") {
+        @ContentAndMedia {
+            Customize `MetaProtocolCodable` build tool plugin code generation.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Add `MetaProtocolCodable` build tool plugin to target to handle code generation.
+
+                @Code(name: "Package.swift", file: Plugin.swift) {
+                    @Image(source: Plugin.png, alt: "Xcode build tool plugin settings")
+                }
+            }
+
+            @Step {
+                Create ``MetaCodableConfig`` file in the target plugin is included.
+
+                @Code(name: "meta_codable_config.json", file: meta_codable_config-01.json)
+            }
+
+            @Step {
+                Provide ``MetaCodableConfig/Scan`` mode in ``MetaCodableConfig`` file to control source files accross dependency targets scanned for ``Codable()`` protocol variation data.
+
+                @Code(name: "meta_codable_config.json", file: meta_codable_config-02.json) {
+                    @Image(source: MetaCodableConfig.png, alt: "MetaCodableConfig.plist configuration file")
+                }
+            }
+        }
+    }
+}

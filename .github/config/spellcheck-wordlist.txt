@@ -9,7 +9,10 @@ HelperCoders
 JSON
 LossySequenceCoder
 Codable
+Encodable
+Decodable
 MetaCodable
+MetaProtocolCodable
 Midbin
 README
 Refactorings
@@ -56,3 +59,6 @@ enums
 conformances
 Podfile
 cocoapods
+DocumentationExtension
+mergeBehavior
+lowercasing

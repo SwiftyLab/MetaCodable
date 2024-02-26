@@ -1,7 +1,7 @@
 import Foundation
 import MetaCodable
 
-/// An ``/MetaCodable/HelperCoder`` that helps decoding/encoding
+/// An `HelperCoder` that helps decoding/encoding
 /// UNIX timestamp.
 ///
 /// This type can be used to decode/encode dates
@@ -47,7 +47,7 @@ public struct Since1970DateCoder: HelperCoder {
     @usableFromInline
     internal let type: IntervalType
 
-    /// Creates a new instance of ``/MetaCodable/HelperCoder`` that decodes/encodes
+    /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// UNIX timestamp.
     ///
     /// Created instance can be used to decode/encode dates

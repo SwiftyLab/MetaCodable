@@ -1,7 +1,7 @@
 import Foundation
 import MetaCodable
 
-/// An ``/MetaCodable/HelperCoder`` that helps decoding/encoding
+/// An `HelperCoder` that helps decoding/encoding
 /// base64 data.
 ///
 /// This type can be used to decode/encode base64 data
@@ -12,7 +12,7 @@ public struct Base64Coder: HelperCoder {
     /// The options to use when encoding data.
     private let encodeOptions: Data.Base64EncodingOptions
 
-    /// Creates a new instance of ``/MetaCodable/HelperCoder`` that decodes/encodes
+    /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// base64 data.
     ///
     /// - Parameters:

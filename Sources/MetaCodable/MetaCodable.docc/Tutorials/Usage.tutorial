@@ -18,6 +18,17 @@
         @TutorialReference(tutorial: "doc:Enum")
     }
 
+    @Chapter(name: "Advanced MetaCodable") {
+        Learn advanced usages of `MetaCodable` to add custom `Codable` implementation customizations.
+
+        @Comment {
+            Add image asset here!
+        }
+
+        @TutorialReference(tutorial: "doc:Helper")
+        @TutorialReference(tutorial: "doc:Dynamic")
+    }
+
     @Resources {
         Explore more resources for `MetaCodable` usage.
 

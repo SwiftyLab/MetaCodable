@@ -1,12 +1,12 @@
 import MetaCodable
 
-/// An ``/MetaCodable/HelperCoder`` that helps decoding/encoding
+/// An `HelperCoder` that helps decoding/encoding
 /// basic value types.
 ///
 /// This type can be used to decode/encode dates
 /// basic value types, i.e. `Bool`, `Int`, `String` etc.
 public struct ValueCoder<Strategy: ValueCodingStrategy>: HelperCoder {
-    /// Creates a new instance of ``/MetaCodable/HelperCoder`` that decodes/encodes
+    /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// basic value types.
     ///
     /// - Returns: A new basic value type decoder/encoder.

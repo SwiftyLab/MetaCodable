@@ -1,0 +1,298 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 6,
+      "patch": 0
+    },
+    "generator": "manual"
+  },
+  "module": {
+    "name": "MetaCodable",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 15
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.typealias",
+        "displayName": "Configuration File"
+      },
+      "identifier": {
+        "precise": "config:MetaCodable_MetaProtocolCodable_ConfigFile",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MetaCodableConfig"
+      ],
+      "names": {
+        "title": "MetaCodableConfig",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "configuration"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "file"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "MetaCodableConfig"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "configuration"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "file"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "MetaCodableConfig"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "internalParam",
+          "spelling": "<"
+        },
+        {
+          "kind": "keyword",
+          "spelling": "dict"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ">"
+        },
+        {
+          "kind": "trivia",
+          "spelling": "\n"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "<!--configuration options-->"
+        },
+        {
+          "kind": "trivia",
+          "spelling": "\n"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "</"
+        },
+        {
+          "kind": "keyword",
+          "spelling": "dict"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ">"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "swift",
+          "introduced": {
+            "major": 5,
+            "minor": 9
+          }
+        }
+      ]
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Configuration Option"
+      },
+      "identifier": {
+        "precise": "config:MetaCodable_MetaProtocolCodable_ConfigOption_Scan",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MetaCodableConfig",
+        "Scan"
+      ],
+      "names": {
+        "title": "Scan",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "configuration"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "option"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Scan"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "configuration"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "option"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Scan"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "internalParam",
+          "spelling": "<"
+        },
+        {
+          "kind": "keyword",
+          "spelling": "key"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ">"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Scan"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "</"
+        },
+        {
+          "kind": "keyword",
+          "spelling": "key"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ">"
+        },
+        {
+          "kind": "trivia",
+          "spelling": "\n"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "<"
+        },
+        {
+          "kind": "keyword",
+          "spelling": "string"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ">"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "target"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "|"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "direct"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "|"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "local"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "|"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "recursive"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "</"
+        },
+        {
+          "kind": "keyword",
+          "spelling": "string"
+        },
+        {
+          "kind": "internalParam",
+          "spelling": ">"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "swift",
+          "introduced": {
+            "major": 5,
+            "minor": 9
+          }
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "config:MetaCodable_MetaProtocolCodable_ConfigOption_Scan",
+      "target": "config:MetaCodable_MetaProtocolCodable_ConfigFile"
+    }
+  ]
+}

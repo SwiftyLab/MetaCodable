@@ -8,7 +8,7 @@ import MetaCodable
 /// represented in **ISO 8601** text format.
 public typealias ISO8601DateCoder = DateCoder<ISO8601DateFormatter>
 
-/// An ``/MetaCodable/HelperCoder`` that helps decoding/encoding
+/// An `HelperCoder` that helps decoding/encoding
 /// formatted date representation.
 ///
 /// This type can be used to decode/encode dates
@@ -18,7 +18,7 @@ public struct DateCoder<Formatter: DateFormatConverter>: HelperCoder {
     @usableFromInline
     internal let formatter: Formatter
 
-    /// Creates a new instance of ``/MetaCodable/HelperCoder`` that decodes/encodes
+    /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// formatted date representation.
     ///
     /// Created instance can be used to decode/encode dates
@@ -29,7 +29,7 @@ public struct DateCoder<Formatter: DateFormatConverter>: HelperCoder {
         self.formatter = formatter
     }
 
-    /// Creates a new instance of ``/MetaCodable/HelperCoder`` that decodes/encodes
+    /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// **ISO 8601** formatted date representation.
     ///
     /// Created instance can be used to decode/encode dates
