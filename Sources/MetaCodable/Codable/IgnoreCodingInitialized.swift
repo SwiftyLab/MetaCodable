@@ -64,6 +64,4 @@
 @attached(peer)
 @available(swift 5.9)
 public macro IgnoreCodingInitialized() =
-    #externalMacro(
-        module: "MacroPlugin", type: "IgnoreCodingInitialized"
-    )
+    #externalMacro(module: "MacroPlugin", type: "IgnoreCodingInitialized")

@@ -70,7 +70,11 @@ extension Config {
             targets.append(target)
             allTargets = targets
         case .local:
-            allTargets = context.localTargets
+            allTargets = context.localTargets.filter { localTarget in
+                return target.recursiveTargets.contains { target in
+                    return target.moduleName == localTarget.moduleName
+                }
+            }
             modules = allTargets.lazy.map(\.moduleName).filter { module in
                 return module != target.moduleName
             }

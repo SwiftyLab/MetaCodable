@@ -103,7 +103,7 @@ package final class CodingKeysMap {
         context: some MacroExpansionContext
     ) -> [Key] {
         guard !keys.isEmpty else { return [] }
-        let currentCases = data.values.map(\.name)
+        var currentCases: [String] { data.values.map(\.name) }
 
         if let field {
             let fieldIncluded = currentCases.contains(Key.name(for: field).text)

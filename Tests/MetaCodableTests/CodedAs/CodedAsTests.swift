@@ -421,5 +421,103 @@ final class CodedAsTests: XCTestCase {
                 """
         )
     }
+
+    func testCodingKeyCaseNameCollisionHandling() {
+        assertMacroExpansion(
+            """
+            @Codable
+            struct TestCodable {
+                @CodedAs("fooBar", "foo_bar")
+                var fooBar: String
+            }
+            """,
+            expandedSource:
+                """
+                struct TestCodable {
+                    var fooBar: String
+                }
+
+                extension TestCodable: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let fooBarKeys = [CodingKeys.fooBar, CodingKeys.__macro_local_6fooBarfMu0_].filter {
+                            container.allKeys.contains($0)
+                        }
+                        guard fooBarKeys.count == 1 else {
+                            let context = DecodingError.Context(
+                                codingPath: container.codingPath,
+                                debugDescription: "Invalid number of keys found, expected one."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
+                        }
+                        self.fooBar = try container.decode(String.self, forKey: fooBarKeys[0])
+                    }
+                }
+
+                extension TestCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.fooBar, forKey: CodingKeys.fooBar)
+                    }
+                }
+
+                extension TestCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case fooBar = "fooBar"
+                        case __macro_local_6fooBarfMu0_ = "foo_bar"
+                    }
+                }
+                """
+        )
+    }
+
+    func testCodingKeyCaseNameCollisionHandlingWithDuplicateAliases() {
+        assertMacroExpansion(
+            """
+            @Codable
+            struct TestCodable {
+                @CodedAs("fooBar", "foo_bar", "foo_bar")
+                var fooBar: String
+            }
+            """,
+            expandedSource:
+                """
+                struct TestCodable {
+                    var fooBar: String
+                }
+
+                extension TestCodable: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let fooBarKeys = [CodingKeys.fooBar, CodingKeys.__macro_local_6fooBarfMu0_].filter {
+                            container.allKeys.contains($0)
+                        }
+                        guard fooBarKeys.count == 1 else {
+                            let context = DecodingError.Context(
+                                codingPath: container.codingPath,
+                                debugDescription: "Invalid number of keys found, expected one."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
+                        }
+                        self.fooBar = try container.decode(String.self, forKey: fooBarKeys[0])
+                    }
+                }
+
+                extension TestCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encode(self.fooBar, forKey: CodingKeys.fooBar)
+                    }
+                }
+
+                extension TestCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case fooBar = "fooBar"
+                        case __macro_local_6fooBarfMu0_ = "foo_bar"
+                    }
+                }
+                """
+        )
+    }
 }
 #endif

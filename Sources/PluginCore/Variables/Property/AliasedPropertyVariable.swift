@@ -1,6 +1,7 @@
 @_implementationOnly import SwiftSyntax
 @_implementationOnly import SwiftSyntaxBuilder
 @_implementationOnly import SwiftSyntaxMacros
+@_implementationOnly import OrderedCollections
 
 /// A variable value containing additional `CodingKey`s for decoding.
 ///
@@ -18,7 +19,7 @@ where Wrapped: PropertyVariable {
     ///
     /// Represents all the additional `CodingKey`s that
     /// this variable could be encoded at.
-    let additionalKeys: [CodingKeysMap.Key]
+    let additionalKeys: OrderedSet<CodingKeysMap.Key>
 
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
@@ -41,6 +42,9 @@ where Wrapped: PropertyVariable {
             case let .container(container, key, method) = location
         else { return base.decoding(in: context, from: location) }
         var allKeys = [key]
+        let additionalKeys = additionalKeys.filter { aKey in
+            return aKey.expr.trimmedDescription != key.trimmedDescription
+        }
         allKeys.append(contentsOf: additionalKeys.map(\.expr))
         let keysName: ExprSyntax = "\(CodingKeysMap.Key.name(for: name))Keys"
         let keyList = ArrayExprSyntax(expressions: allKeys)
