@@ -9,15 +9,15 @@ final class DynamicCodableTests: XCTestCase {
         for (index, item) in page.items.enumerated() {
             switch index {
             case 0:
-                XCTAssertTrue(item.data is TextPost)
+                XCTAssertTrue(item is TextPost)
             case 1, 2:
-                XCTAssertTrue(item.data is PicturePost)
+                XCTAssertTrue(item is PicturePost)
             case 3:
-                XCTAssertTrue(item.data is AudioPost)
+                XCTAssertTrue(item is AudioPost)
             case 4:
-                XCTAssertTrue(item.data is VideoPost)
+                XCTAssertTrue(item is VideoPost)
             case 5:
-                XCTAssertTrue(item.data is Nested.ValidPost)
+                XCTAssertTrue(item is Nested.ValidPost)
             default:
                 XCTFail("Invalid post count")
             }
@@ -31,15 +31,15 @@ final class DynamicCodableTests: XCTestCase {
         for (index, item) in page.items.enumerated() {
             switch index {
             case 0:
-                XCTAssertTrue(item.data is TextPost)
+                XCTAssertTrue(item is TextPost)
             case 1, 2:
-                XCTAssertTrue(item.data is PicturePost)
+                XCTAssertTrue(item is PicturePost)
             case 3:
-                XCTAssertTrue(item.data is AudioPost)
+                XCTAssertTrue(item is AudioPost)
             case 4:
-                XCTAssertTrue(item.data is VideoPost)
+                XCTAssertTrue(item is VideoPost)
             case 5:
-                XCTAssertTrue(item.data is Nested.ValidPost)
+                XCTAssertTrue(item is Nested.ValidPost)
             default:
                 XCTFail("Invalid post count")
             }
@@ -53,15 +53,15 @@ final class DynamicCodableTests: XCTestCase {
         for (index, item) in page.items.enumerated() {
             switch index {
             case 0:
-                XCTAssertTrue(item.data is TextPost)
+                XCTAssertTrue(item is TextPost)
             case 1, 2:
-                XCTAssertTrue(item.data is PicturePost)
+                XCTAssertTrue(item is PicturePost)
             case 3:
-                XCTAssertTrue(item.data is AudioPost)
+                XCTAssertTrue(item is AudioPost)
             case 4:
-                XCTAssertTrue(item.data is VideoPost)
+                XCTAssertTrue(item is VideoPost)
             case 5:
-                XCTAssertTrue(item.data is Nested.ValidPost)
+                XCTAssertTrue(item is Nested.ValidPost)
             default:
                 XCTFail("Invalid post count")
             }

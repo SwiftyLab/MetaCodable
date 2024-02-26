@@ -104,38 +104,20 @@ struct Nested {
 @Codable
 struct PageWithIntPosts {
     @CodedAt("content")
-    let items: [PostItem]
-
-    @Codable
-    struct PostItem {
-        @CodedAt
-        @CodedBy(IntPostCoder())
-        let data: IntPost
-    }
+    @CodedBy(SequenceCoder(elementHelper: IntPostCoder()))
+    let items: [IntPost]
 }
 
 @Codable
 struct PageWithExtPosts {
     @CodedAt("content")
-    let items: [PostItem]
-
-    @Codable
-    struct PostItem {
-        @CodedAt
-        @CodedBy(ExtPostCoder())
-        let data: ExtPost
-    }
+    @CodedBy(SequenceCoder(elementHelper: ExtPostCoder()))
+    let items: [ExtPost]
 }
 
 @Codable
 struct PageWithAdjPosts {
     @CodedAt("content")
-    let items: [PostItem]
-
-    @Codable
-    struct PostItem {
-        @CodedAt
-        @CodedBy(AdjPostCoder())
-        let data: AdjPost
-    }
+    @CodedBy(SequenceCoder(elementHelper: AdjPostCoder()))
+    let items: [AdjPost]
 }

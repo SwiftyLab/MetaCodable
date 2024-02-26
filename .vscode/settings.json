@@ -12,6 +12,7 @@
     },
     "swift.disableAutoResolve": true,
     "swift.swiftEnvironmentVariables": {
+        "METACODABLE_CI": "true",
         "SWIFT_SYNTAX_EXTENSION_MACRO_FIXED": "true"
     },
 }

@@ -33,7 +33,7 @@ extension SequenceCoder {
         ///   - invalidDefault: The sequence to use in case of invalid data.
         ///   - emptyDefault: The sequence to use in case of empty data.
         public init(
-            lossy: Bool,
+            lossy: Bool = false,
             invalidDefault: Sequence? = nil, emptyDefault: Sequence? = nil
         ) {
             self.lossy = lossy
@@ -118,6 +118,27 @@ extension SequenceCoder.Configuration: OptionSet {
         )
     }
 
+    /// Returns a Boolean value indicating whether two values are equal.
+    ///
+    /// Equality is the inverse of inequality. For any values `a` and `b`,
+    /// `a == b` implies that `a != b` is `false`.
+    ///
+    /// - Parameters:
+    ///   - lhs: A value to compare.
+    ///   - rhs: Another value to compare.
+    ///
+    /// - Returns: Whether two values are equal.
+    private static func areEqual(_ lhs: Sequence?, _ rhs: Sequence?) -> Bool {
+        func `is`<T: Equatable>(value lhs: T, equalTo rhs: Any?) -> Bool {
+            return lhs == (rhs as? T)
+        }
+
+        guard
+            let lhs = lhs as? any Equatable
+        else { return false }
+        return `is`(value: lhs, equalTo: rhs)
+    }
+
     /// Updates current configuration in sync with provided configuration.
     ///
     /// The updated configuration has:
@@ -127,13 +148,13 @@ extension SequenceCoder.Configuration: OptionSet {
     /// - Parameter other: The new configuration.
     public mutating func formIntersection(_ other: Self) {
         let invalidDefault =
-            if other.invalidDefault == self.invalidDefault {
+            if Self.areEqual(other.invalidDefault, self.invalidDefault) {
                 self.invalidDefault
             } else {
                 nil as Sequence?
             }
         let emptyDefault =
-            if other.emptyDefault == self.emptyDefault {
+            if Self.areEqual(other.emptyDefault, self.emptyDefault) {
                 self.emptyDefault
             } else {
                 nil as Sequence?
@@ -171,7 +192,7 @@ extension SequenceCoder.Configuration: OptionSet {
     /// - Returns: True only if all the configuration data match.
     public static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.lossy == rhs.lossy
-            && lhs.invalidDefault == rhs.invalidDefault
-            && lhs.emptyDefault == rhs.emptyDefault
+            && areEqual(lhs.invalidDefault, rhs.invalidDefault)
+            && areEqual(lhs.emptyDefault, rhs.emptyDefault)
     }
 }

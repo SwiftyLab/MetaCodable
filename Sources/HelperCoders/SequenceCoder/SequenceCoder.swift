@@ -11,7 +11,7 @@ import MetaCodable
 public struct SequenceCoder<Sequence, ElementHelper>: HelperCoder
 where
     Sequence: SequenceInitializable, ElementHelper: HelperCoder,
-    Sequence.Element == ElementHelper.Coded, Sequence: Equatable
+    Sequence.Element == ElementHelper.Coded
 {
     /// The ``/MetaCodable/HelperCoder`` for element.
     ///

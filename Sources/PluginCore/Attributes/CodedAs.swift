@@ -1,3 +1,4 @@
+@_implementationOnly import OrderedCollections
 @_implementationOnly import SwiftSyntax
 @_implementationOnly import SwiftSyntaxMacros
 
@@ -149,7 +150,7 @@ where Key == [String], Decl: AttributableDeclSyntax, Var: PropertyVariable {
             case let path = attr.providedPath,
             !path.isEmpty
         else { return self.updating(with: self.variable.any) }
-        let keys = codingKeys.add(keys: path, context: context)
+        let keys = OrderedSet(codingKeys.add(keys: path, context: context))
         let oldVar = self.variable
         let newVar = AliasedPropertyVariable(base: oldVar, additionalKeys: keys)
         return self.updating(with: newVar.any)
