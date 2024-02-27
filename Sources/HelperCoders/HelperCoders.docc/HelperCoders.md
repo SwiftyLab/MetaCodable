@@ -4,7 +4,7 @@
     @Available(swift, introduced: "5.9")
 }
 
-Level up ``/MetaCodable``'s generated implementations with helpers assisting common decoding/encoding requirements.
+Level up `MetaCodable`'s generated implementations with helpers assisting common decoding/encoding requirements.
 
 ## Overview
 

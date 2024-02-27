@@ -1,19 +1,19 @@
 import MetaCodable
 
-/// An ``/MetaCodable/HelperCoder`` that helps decoding/encoding sequence.
+/// An `HelperCoder` that helps decoding/encoding sequence.
 ///
 /// This type tries to decode and encode a sequence according to provided
-/// ``Configuration-swift.struct`` and element ``/MetaCodable/HelperCoder``.
+/// ``Configuration-swift.struct`` and element `HelperCoder`.
 ///
 /// `DefaultSequenceElementCoding` can be used as element
-/// ``/MetaCodable/HelperCoder``, if on configuration based.
+/// `HelperCoder`, if on configuration based.
 /// decoding/encoding needed
 public struct SequenceCoder<Sequence, ElementHelper>: HelperCoder
 where
     Sequence: SequenceInitializable, ElementHelper: HelperCoder,
     Sequence.Element == ElementHelper.Coded
 {
-    /// The ``/MetaCodable/HelperCoder`` for element.
+    /// The `HelperCoder` for element.
     ///
     /// Each element is decoded/encoded using this.
     public let elementHelper: ElementHelper
@@ -28,7 +28,7 @@ where
     ///
     /// - Parameters:
     ///   - output: The resulting sequence type.
-    ///   - elementHelper: The ``/MetaCodable/HelperCoder`` for element.
+    ///   - elementHelper: The `HelperCoder` for element.
     ///   - configuration: The configuration for decoding and encoding.
     public init(
         output: Sequence.Type, elementHelper: ElementHelper,
@@ -43,7 +43,7 @@ where
     /// Sequence type is inferred from provided configuration.
     ///
     /// - Parameters:
-    ///   - elementHelper: The ``/MetaCodable/HelperCoder`` for element.
+    ///   - elementHelper: The `HelperCoder` for element.
     ///   - configuration: The configuration for decoding and encoding.
     public init(
         elementHelper: ElementHelper, configuration: Configuration
@@ -92,7 +92,7 @@ where
     /// By default, no additional customizations configuration is used.
     ///
     /// - Parameters:
-    ///   - elementHelper: The ``/MetaCodable/HelperCoder`` for element.
+    ///   - elementHelper: The `HelperCoder` for element.
     ///   - configuration: The configuration for decoding and encoding.
     public init(
         elementHelper: ElementHelper, configuration: Configuration = .init()

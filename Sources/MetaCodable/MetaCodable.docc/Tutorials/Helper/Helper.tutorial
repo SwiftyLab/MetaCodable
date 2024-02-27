@@ -1,0 +1,215 @@
+@Tutorial(time: 20) {
+    @XcodeRequirement(title: "Xcode 15 or later", destination: "https://itunes.apple.com/us/app/xcode/id497799835?mt=12")
+
+    @Intro(title: "Add common decoding/encoding customizations") {
+        This tutorial shows how common customizations to decoding/encoding properties can be made with the help of `HelperCoders` module.
+
+        @Comment {
+            Add image asset here!
+        }
+    }
+
+    @Section(title: "Decode/Encode basic value types without type check") {
+        @ContentAndMedia {
+            In cases where data type is unpredictable, but the data can be converted to a specific type, this approach can be used to decode/encode data.
+
+            i.e. if expected `Int`/`Bool` type data is coming as `String`, the data can be converted to expected type.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify data with unpredictable type and can be mapped to an expected type.
+
+                @Image(source: Product.png, alt: "List of products with inconsistent property types")
+            }
+
+            @Step {
+                Create `Codable` type with the fields as expected type.
+
+                @Code(name: "Product.swift", file: Product-01.swift) {
+                    @Image(source: Product.png, alt: "List of products with inconsistent property types")
+                }
+            }
+
+            @Step {
+                Use `ValueCoder` on properties to indicate the type mapping transformation.
+
+                @Code(name: "Product.swift", file: Product-02.swift) {
+                    @Image(source: Product.png, alt: "List of products with inconsistent property types")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Decode/Encode date representations") {
+        @ContentAndMedia {
+            This tutorial guides you through decoding/encoding `Date` type from various representation formats per property. i.e. UNIX timestamp, date represented in `ISO8601` like text formats.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify date formats represented in data.
+
+                @Image(source: Date.png, alt: "Data with date formats varying for each property")
+            }
+
+            @Step {
+                Create `Codable` type with the fields as `Date` type.
+
+                @Code(name: "Date.swift", file: Date-01.swift) {
+                    @Image(source: Date.png, alt: "Data with date formats varying for each property")
+                }
+            }
+
+            @Step {
+                Use `Since1970DateCoder` to decode/encode UNIX timestamp.
+
+                @Code(name: "Date.swift", file: Date-02.swift) {
+                    @Image(source: Date.png, alt: "Data with date formats varying for each property")
+                }
+            }
+
+            @Step {
+                Use `ISO8601DateCoder` to decode/encode date represented in `ISO8601` standard.
+
+                @Code(name: "Date.swift", file: Date-03.swift) {
+                    @Image(source: Date.png, alt: "Data with date formats varying for each property")
+                }
+            }
+
+            @Step {
+                Use `DateCoder` to decode/encode date represented in custom formats by providing the formatter.
+
+                @Code(name: "Date.swift", file: Date-04.swift) {
+                    @Image(source: Date.png, alt: "Data with date formats varying for each property")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Decode/Encode sequence of values") {
+        @ContentAndMedia {
+            This tutorial guides you through customizing decoding/encoding of a sequence of values.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify the type of sequence to be decoded. i.e. a sequence of base64 data.
+
+                @Image(source: Data.png, alt: "Base64 data sequence data")
+            }
+
+            @Step {
+                Create `Codable` type with the fields as the required sequence type.
+
+                @Code(name: "Data.swift", file: Data-01.swift) {
+                    @Image(source: Data.png, alt: "Base64 data sequence data")
+                }
+            }
+
+            @Step {
+                Use `SequenceCoder` and provide `elementHelper` `HelperCoder` to customize decoding/encoding of each element.
+
+                @Code(name: "Data.swift", file: Data-02.swift) {
+                    @Image(source: Data.png, alt: "Base64 data sequence data")
+                }
+            }
+
+            @Step {
+                Provide `lossy` in `configuration` to ignore invalid element data instead of failing.
+
+                @Code(name: "Data.swift", file: Data-03.swift) {
+                    @Image(source: Data.png, alt: "Base64 data sequence data")
+                }
+            }
+
+            @Step {
+                Provide `default` value in `configuration` to be used in case provided data is not of sequence type or empty sequence data provided.
+
+                @Code(name: "Data.swift", file: Data-04.swift) {
+                    @Image(source: Data.png, alt: "Base64 data sequence data")
+                }
+            }
+        }
+    }
+
+    @Section(title: "Create custom advanced customizations") {
+        @ContentAndMedia {
+            This tutorial guides you through process of creating your own custom customizations for niche use cases that aren't provided by this library.
+
+            In this section, we will try to support decoding/encoding of a property that has different key name for decoding and encoding.
+
+            @Comment {
+                Add image asset here!
+            }
+        }
+
+        @Steps {
+            @Step {
+                Identify data with different key in decoding and encoding.
+
+                @Image(source: User.png, alt: "User data with different key in decoding and encoding")
+            }
+
+            @Step {
+                Create `Codable` type with the fields according to the data.
+
+                @Code(name: "User.swift", file: User-01.swift) {
+                    @Image(source: User.png, alt: "User data with different key in decoding and encoding")
+                }
+            }
+
+            @Step {
+                Create custom ``HelperCoder`` type that accepts decoding and encoding key values.
+
+                @Code(name: "User.swift", file: User-02.swift) {
+                    @Image(source: User.png, alt: "User data with different key in decoding and encoding")
+                }
+            }
+
+            @Step {
+                Create custom `CodingKey` type to be used for decoding/encoding from provided string values.
+
+                @Code(name: "User.swift", file: User-03.swift) {
+                    @Image(source: User.png, alt: "User data with different key in decoding and encoding")
+                }
+            }
+
+            @Step {
+                Provide ``HelperCoder`` implementations for ``HelperCoder/decode(from:)`` and ``HelperCoder/encode(_:to:)`` for decoding and encoding with provided key values.
+
+                @Code(name: "User.swift", file: User-04.swift) {
+                    @Image(source: User.png, alt: "User data with different key in decoding and encoding")
+                }
+            }
+
+            @Step {
+                Use the created custom ``HelperCoder`` with ``CodedBy(_:)`` macro to use the decoding/encoding customization.
+
+                @Code(name: "User.swift", file: User-05.swift) {
+                    @Image(source: User.png, alt: "User data with different key in decoding and encoding")
+                }
+            }
+
+            @Step {
+                Apply ``CodedAt(_:)`` macro without any arguments, to the property to pass the type's `init(from:)` `decoder` argument to the custom ``HelperCoder``.
+
+                @Code(name: "User.swift", file: User-06.swift) {
+                    @Image(source: User.png, alt: "User data with different key in decoding and encoding")
+                }
+            }
+        }
+    }
+}

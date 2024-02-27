@@ -1,6 +1,6 @@
 import MetaCodable
 
-/// An ``/MetaCodable/HelperCoder`` that helps decoding/encoding
+/// An `HelperCoder` that helps decoding/encoding
 /// non-confirming floating point values.
 ///
 /// This type can be used to decode/encode exceptional
@@ -14,7 +14,7 @@ where Float: FloatingPoint & Codable & LosslessStringConvertible {
     /// The value representing not-a-number.
     private let nan: String
 
-    /// Creates a new instance of ``/MetaCodable/HelperCoder`` that decodes/encodes
+    /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// exceptional floating-point values matching provided
     /// string representations.
     ///
