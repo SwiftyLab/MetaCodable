@@ -97,7 +97,10 @@ var includeTargets: [String] = []
 var includeProducts: [String] = []
 
 if Context.environment["METACODABLE_CI"] == nil {
-    unusedDeps.append(contentsOf: ["swift-format", "swift-docc-plugin"])
+    unusedDeps.append("swift-format")
+    if Context.environment["SPI_GENERATE_DOCS"] == nil {
+        unusedDeps.append("swift-docc-plugin")
+    }
 }
 
 if Context.environment["SWIFT_SYNTAX_EXTENSION_MACRO_FIXED"] != nil {
