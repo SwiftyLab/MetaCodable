@@ -1,3 +1,21 @@
+## [1.3.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.2.1...v1.3.0) (2024-02-29)
+
+
+### 🚀 Features
+
+* added CocoaPods support ([#1](https://github.com/SwiftyLab/MetaCodable/issues/1)) ([377a87e](https://github.com/SwiftyLab/MetaCodable/commit/377a87e04b6b33f83e4e7e36d68fc3e48a311e81))
+* added protocol plugin support for Xcode targets ([#58](https://github.com/SwiftyLab/MetaCodable/issues/58)) ([5cc5919](https://github.com/SwiftyLab/MetaCodable/commit/5cc59195b3dd9ce3d8c14a20f047f5f9204ecd1a))
+
+
+### 🐛 Fixes
+
+* fixed duplicate `CodingKey`s generated ([#63](https://github.com/SwiftyLab/MetaCodable/issues/63)) ([73c5d1e](https://github.com/SwiftyLab/MetaCodable/commit/73c5d1ec7057aeae18cfcb1f733f5a021dfe7cb6))
+
+
+### 📚 Documentation
+
+* added tutorials for helper and dynamic decoding/encoding ([#64](https://github.com/SwiftyLab/MetaCodable/issues/64)) ([3f87100](https://github.com/SwiftyLab/MetaCodable/commit/3f8710048fc5ce8b83a244d95bbfca188b8d0a77))
+
 ## [1.2.1](https://github.com/SwiftyLab/MetaCodable/compare/v1.2.0...v1.2.1) (2024-01-10)
 
 
