@@ -26,7 +26,7 @@ struct PropertyDeclSyntax: VariableSyntax, AttributableDeclSyntax {
     ///
     /// If type is not present in syntax, `typeIfMissing` is used.
     var type: TypeSyntax {
-        return binding.typeAnnotation?.type.trimmed ?? typeIfMissing
+        return (binding.typeAnnotation?.type.trimmed ?? binding.initializer?.value.inferredTypeSyntax) ?? typeIfMissing
     }
 
     /// The attributes attached to property.
