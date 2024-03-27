@@ -85,6 +85,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``IgnoreEncoding()``
 - ``CodingKeys(_:)``
 - ``IgnoreCodingInitialized()``
+- ``Inherits(decodable:encodable:)``
 
 ### Helpers
 
