@@ -58,3 +58,36 @@
 @available(swift 5.9)
 public macro Codable() =
     #externalMacro(module: "MacroPlugin", type: "Codable")
+
+/// Indicates whether super class conforms to `Codable` or not.
+///
+/// By default, ``Codable()`` assumes class inherits `Decodable`
+/// or `Encodable` conformance if it doesn't receive protocol needs
+/// to be conformed from the compiler. Using this macro, it can be explicitly
+/// indicated that the class doesn't inherit conformance in such cases.
+///
+/// Following code indicates ``Codable()`` that `Item` class doesn't
+/// inherit conformance:
+/// ```swift
+/// @Codable
+/// @Model
+/// @Inherits(decodable: false, encodable: false)
+/// final class Item {
+///     @CodedAt("timestamp")
+///     var timestamp: Date? = nil
+///
+///     init() { }
+/// }
+/// ```
+///
+/// - Parameters:
+///   - decodable: Whether super class conforms to `Decodable`.
+///   - encodable: Whether super class conforms to `Encodable`.
+///
+/// - Note: This macro on its own only validates if attached declaration
+///   is a class declaration. ``Codable()`` macro uses this macro
+///   when generating final implementations.
+@attached(peer)
+@available(swift 5.9)
+public macro Inherits(decodable: Bool, encodable: Bool) =
+    #externalMacro(module: "MacroPlugin", type: "Inherits")
