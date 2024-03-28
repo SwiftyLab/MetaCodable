@@ -12,6 +12,21 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
     /// The declaration used to create this variable.
     let decl: ClassDeclSyntax
 
+    /// The `Codable` protocol conformance inheritance data.
+    ///
+    /// Allows customizing generated implementation, based on whether
+    /// super class conforms to `Decodable` or `Encodable`.
+    var inherits: Inherits? {
+        for attribute in decl.attributes {
+            guard
+                case let .attribute(attribute) = attribute,
+                let attr = Inherits(from: attribute)
+            else { continue }
+            return attr
+        }
+        return nil
+    }
+
     /// Creates a new variable from declaration and expansion context.
     ///
     /// Uses the class declaration with member group to generate conformances.
@@ -110,28 +125,25 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         let newLocation: TypeCodingLocation
         let overridden: Bool
         var modifiers: DeclModifierListSyntax = [.init(name: "required")]
-        var code: CodeBlockItemListSyntax
-        #if swift(>=5.9.2)
+        let method = location.method
+        let conformance = TypeSyntax(stringLiteral: method.protocol)
+
         if location.conformance == nil, implementDecodable(location: location) {
-            let method = location.method
-            let conformance = TypeSyntax(stringLiteral: method.protocol)
             newLocation = .init(method: method, conformance: conformance)
-            overridden = true
-            code = "try super.\(method.name)(\(method.argLabel): \(method.arg))"
+            overridden = inherits?.decodable ?? true
         } else {
             newLocation = location
             overridden = false
-            code = ""
         }
-        #else
-        let conformance = TypeSyntax(stringLiteral: location.method.protocol)
-        newLocation = .init(method: location.method, conformance: conformance)
-        overridden = false
-        code = ""
-        #endif
+
         guard
             let generated = group.decoding(in: context, from: newLocation)
         else { return nil }
+        var code: CodeBlockItemListSyntax = if overridden {
+            "try super.\(method.name)(\(method.argLabel): \(method.arg))"
+        } else {
+            ""
+        }
         code.insert(contentsOf: generated.code, at: code.startIndex)
         modifiers.append(contentsOf: generated.modifiers)
         return .init(
@@ -157,32 +169,29 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
     ) -> TypeGenerated? {
         let newLocation: TypeCodingLocation
         let overridden: Bool
-        var modifiers: DeclModifierListSyntax
-        var code: CodeBlockItemListSyntax
-        #if swift(>=5.9.2)
+        let method = location.method
+        let conformance = TypeSyntax(stringLiteral: method.protocol)
+
         if location.conformance == nil, implementEncodable(location: location) {
-            let method = location.method
-            let conformance = TypeSyntax(stringLiteral: method.protocol)
             newLocation = .init(method: method, conformance: conformance)
-            overridden = true
-            modifiers = [.init(name: "override")]
-            code = "try super.\(method.name)(\(method.argLabel): \(method.arg))"
+            overridden = inherits?.encodable ?? true
         } else {
             newLocation = location
             overridden = false
-            modifiers = []
-            code = ""
         }
-        #else
-        let conformance = TypeSyntax(stringLiteral: location.method.protocol)
-        newLocation = .init(method: location.method, conformance: conformance)
-        overridden = false
-        modifiers = []
-        code = ""
-        #endif
+
         guard
             let generated = group.encoding(in: context, to: newLocation)
         else { return nil }
+        var code: CodeBlockItemListSyntax
+        var modifiers: DeclModifierListSyntax
+        if overridden {
+            modifiers = [.init(name: "override")]
+            code = "try super.\(method.name)(\(method.argLabel): \(method.arg))"
+        } else {
+            modifiers = []
+            code = ""
+        }
         code.insert(contentsOf: generated.code, at: code.startIndex)
         modifiers.append(contentsOf: generated.modifiers)
         return .init(

@@ -327,6 +327,7 @@ let allMacros: [String: Macro.Type] = [
     "CodingKeys": MacroPlugin.CodingKeys.self,
     "IgnoreCodingInitialized": MacroPlugin.IgnoreCodingInitialized.self,
     "GroupedDefault": MacroPlugin.GroupedDefault.self
+    "Inherits": MacroPlugin.Inherits.self
 ]
 #else
 let allMacros: [String: Macro.Type] = [
@@ -344,6 +345,7 @@ let allMacros: [String: Macro.Type] = [
     "CodingKeys": CodingKeys.self,
     "IgnoreCodingInitialized": IgnoreCodingInitialized.self,
     "GroupedDefault": GroupedDefault.self,
+    "Inherits": Inherits.self
 ]
 #endif
 

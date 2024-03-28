@@ -76,3 +76,9 @@ Due to these limitations, `Encodable` conformance isn't generated, users has to 
 ### Why MetaProtocolCodable plugin can't scan Xcode target dependencies?
 
 Currently Swift Package Manager always returns empty list for Xcode target dependencies as noted in [this bug](https://github.com/apple/swift-package-manager/issues/6003). Hence `MetaProtocolCodable` can currently only scan the files from the target or from the project including the target.
+
+### Why macro is breaking with SwiftData class?
+
+Currently during certain customization in SwiftUI, compiler is sending no protocol data to ``Codable()``. Due to this, ``Codable()`` tries to find `Codable` protocol implementation for the class. If no implementation found, ``Codable()`` assumes class inherits conformance from super class, and generates implementation accordingly causing issues like [#56](https://github.com/SwiftyLab/MetaCodable/issues/56).
+
+Until this is fixes from Swift compiler, ``Inherits(decodable:encodable:)`` macro can be used to indicate explicitly that class doesn't inherit `Codable` conformance.

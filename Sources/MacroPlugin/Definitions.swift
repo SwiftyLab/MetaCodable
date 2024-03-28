@@ -569,3 +569,40 @@ struct IgnoreCodingInitialized: PeerMacro {
         )
     }
 }
+
+/// Attribute type for `Inherits` macro-attribute.
+///
+/// This type can validate`Inherits` macro-attribute
+/// usage and extract data for `Codable` macro to
+/// generate implementation.
+///
+/// Attaching this macro to type allows indicating the generated
+/// `Codable` conformance whether a class already inheriting
+/// conformance from super class or not.
+struct Inherits: PeerMacro {
+    /// Provide metadata to `Codable` macro for final expansion
+    /// and verify proper usage of this macro.
+    ///
+    /// This macro doesn't perform any expansion rather `Codable` macro
+    /// uses when performing expansion.
+    ///
+    /// This macro verifies that macro usage condition is met by attached
+    /// declaration by using the `validate` implementation provided.
+    ///
+    /// - Parameters:
+    ///   - node: The attribute describing this macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: No declaration is returned, only attached declaration is
+    ///            analyzed.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingPeersOf declaration: some DeclSyntaxProtocol,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.Inherits.expansion(
+            of: node, providingPeersOf: declaration, in: context
+        )
+    }
+}
