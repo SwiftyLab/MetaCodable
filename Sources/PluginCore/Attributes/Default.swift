@@ -79,7 +79,8 @@ where
 
 extension Registration
 where
-Decl == PropertyDeclSyntax, Var: PropertyVariable & InitializableVariable, Var.Initialization == AnyRequiredVariableInitialization, Var == AnyPropertyVariable<AnyRequiredVariableInitialization>
+    Decl == PropertyDeclSyntax,
+    Var == AnyPropertyVariable<AnyRequiredVariableInitialization>
 {
     /// Update registration with binding initializer value. If the ``Default`` attribute is applied, it takes precedence.
     ///
