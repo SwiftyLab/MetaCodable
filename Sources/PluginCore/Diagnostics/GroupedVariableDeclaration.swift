@@ -19,6 +19,8 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     /// in generated diagnostic
     /// messages.
     let attr: Attr
+    /// The attribute is attatch to multiple bindings variable.
+    let isAttach: Bool
     /// Underlying producer that validates passed syntax is variable
     /// declaration.
     ///
@@ -36,9 +38,11 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
     ///
     /// - Parameter attr: The attribute for which
     ///   validation performed.
+    /// - Parameter isAttach: can attach to multiple bindings.
     /// - Returns: Newly created diagnostic producer.
-    init(_ attr: Attr) {
+    init(_ attr: Attr, isAttach: Bool) {
         self.attr = attr
+        self.isAttach = isAttach
         self.base = .init(attr, expect: [VariableDeclSyntax.self])
     }
 
@@ -60,11 +64,11 @@ struct GroupedVariableDeclaration<Attr: PropertyAttribute>: DiagnosticProducer {
         in context: some MacroExpansionContext
     ) -> Bool {
         guard !base.produce(for: syntax, in: context) else { return true }
-        guard syntax.as(VariableDeclSyntax.self)!.bindings.count > 1
+        guard (!isAttach && syntax.as(VariableDeclSyntax.self)!.bindings.count > 1) || (isAttach && syntax.as(VariableDeclSyntax.self)!.bindings.count == 1)
         else { return false }
         let message = attr.diagnostic(
             message:
-                "@\(attr.name) can't be used with grouped variables declaration",
+                isAttach ? "@\(attr.name) can't be used with single variables declaration" : "@\(attr.name) can't be used with grouped variables declaration",
             id: attr.misuseMessageID,
             severity: .error
         )
@@ -82,6 +86,17 @@ extension PropertyAttribute {
     ///
     /// - Returns: Grouped variable declaration validation diagnostic producer.
     func attachedToUngroupedVariable() -> GroupedVariableDeclaration<Self> {
-        return .init(self)
+        return .init(self, isAttach: false)
+    }
+    
+    /// Indicates attribute must be attached to multiple bindings variable declaration.
+    ///
+    /// The created diagnostic producer produces error diagnostic,
+    /// if attribute is attached to grouped variable and non-variable
+    /// declarations.
+    ///
+    /// - Returns: Grouped variable declaration validation diagnostic producer.
+    func attachedToGroupedVariable() -> GroupedVariableDeclaration<Self> {
+        return .init(self, isAttach: true)
     }
 }

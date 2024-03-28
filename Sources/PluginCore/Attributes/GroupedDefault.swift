@@ -1,19 +1,21 @@
 @_implementationOnly import SwiftSyntax
+@_implementationOnly import SwiftSyntaxMacros
 
-/// Attribute type for `Default` macro-attribute.
+/// Attribute type for `GroupedDefault` macro-attribute.
 ///
-/// This type can validate`Default` macro-attribute
+/// This type can validate`GroupedDefault` macro-attribute
 /// usage and extract data for `Codable` macro to
 /// generate implementation.
-package struct Default: PropertyAttribute {
+package struct GroupedDefault: PropertyAttribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
 
-    /// The default value expression provided.
-    var expr: ExprSyntax {
-        return node.arguments!
-            .as(LabeledExprListSyntax.self)!.first!.expression
+    /// The default value expressions provided.
+    var exprs: [ExprSyntax] {
+        node.arguments!.as(LabeledExprListSyntax.self)!.map {
+            $0.expression
+        }
     }
 
     /// Creates a new instance with the provided node.
@@ -47,7 +49,7 @@ package struct Default: PropertyAttribute {
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            attachedToUngroupedVariable()
+            attachedToGroupedVariable()
             attachedToNonStaticVariable()
             cantDuplicate()
             cantBeCombined(with: IgnoreCoding.self)
@@ -57,22 +59,46 @@ package struct Default: PropertyAttribute {
 
 extension Registration
 where
-    Decl: AttributableDeclSyntax, Var: PropertyVariable,
-    Var.Initialization == RequiredInitialization
+Decl == PropertyDeclSyntax, Var: PropertyVariable & InitializableVariable, Var.Initialization == AnyRequiredVariableInitialization, Var == AnyPropertyVariable<AnyRequiredVariableInitialization>
 {
-    /// The variable data with default expression
-    /// that output registration will have.
-    typealias DefOutput = AnyPropertyVariable<AnyRequiredVariableInitialization>
-    /// Update registration with default value if exists.
+    /// Update registration with binding initializer value.
     ///
     /// New registration is updated with default expression data that will be
     /// used for decoding failure and memberwise initializer(s), if provided.
     ///
-    /// - Returns: Newly built registration with default expression data.
-    func addDefaultValueIfExists() -> Registration<Decl, Key, DefOutput> {
-        guard let attr = Default(from: self.decl)
-        else { return self.updating(with: self.variable.any) }
-        let newVar = self.variable.with(default: attr.expr)
+    /// - Returns: Newly built registration with default expression data or self.
+    func addDefaultValueIfInitializerExists() -> Self {
+        guard Default(from: self.decl) == nil, GroupedDefault(from: self.decl) == nil, let value = decl.binding.initializer?.value, let variable = self.variable.base as? AnyPropertyVariable<RequiredInitialization> else {
+            return self
+        }
+        
+        let newVar = variable.with(default: value)
+        return self.updating(with: newVar.any)
+    }
+    
+    /// Update registration with pattern binding default values if exists.
+    ///
+    /// New registration is updated with default expression data that will be
+    /// used for decoding failure and memberwise initializer(s), if provided.
+    ///
+    /// - Returns: Newly built registration with default expression data or self.
+    func addGroupedDefaultIfExists() -> Self {
+        guard let defaults = GroupedDefault(from: self.decl) else {
+            return self
+        }
+        
+        var i: Int = 0
+        for (index, binding) in self.decl.decl.bindings.enumerated() {
+            if binding.pattern.description == self.decl.binding.pattern.description {
+                i = index
+                break
+            }
+        }
+        
+        guard let variable = self.variable.base as? AnyPropertyVariable<RequiredInitialization>
+        else { return self }
+
+        let newVar = variable.with(default: defaults.exprs[i])
         return self.updating(with: newVar.any)
     }
 }
