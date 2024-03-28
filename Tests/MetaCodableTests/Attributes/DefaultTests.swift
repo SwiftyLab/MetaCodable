@@ -101,5 +101,81 @@ final class DefaultTests: XCTestCase {
             ]
         )
     }
+    
+    func testMissingDefaultValue() throws {
+        assertMacroExpansion(
+            """
+            struct SomeCodable {
+                @Default()
+                let one: String
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let one: String
+                }
+                """,
+            diagnostics: [
+                .init(
+                    id: Default.misuseID,
+                    message:
+                        "@Default missing default value for variable 'one'",
+                    line: 2, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @Default attribute")
+                    ]
+                ),
+            ]
+        )
+    }
+    
+    func testMissingDefaultValues() throws {
+        assertMacroExpansion(
+            """
+            struct SomeCodable {
+                @Default("hello")
+                let one: String, two: Int
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let one: String, two: Int
+                }
+                """,
+            diagnostics: [
+                .multiBinding(line: 2, column: 5)
+            ]
+        )
+    }
+    
+    func testTooManyDefaultValueParameters() throws {
+        assertMacroExpansion(
+            """
+            struct SomeCodable {
+                @Default("hello", 10)
+                let one: String
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let one: String
+                }
+                """,
+            diagnostics: [
+                .init(
+                    id: Default.misuseID,
+                    message:
+                        "@Default expect 1 default value but found 2 !",
+                    line: 2, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @Default attribute")
+                    ]
+                ),
+            ]
+        )
+    }
 }
 #endif
