@@ -69,7 +69,11 @@ final class VariableDeclarationTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        do {
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
+                        } catch {
+                            self.value = "some"
+                        }
                     }
                 }
 
@@ -308,8 +312,16 @@ final class VariableDeclarationTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
-                        self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
+                        do {
+                            self.value1 = try container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
+                        } catch {
+                            self.value1 = "some"
+                        }
+                        do {
+                            self.value2 = try container.decodeIfPresent(String.self, forKey: CodingKeys.value2) ?? "some"
+                        } catch {
+                            self.value2 = "some"
+                        }
                     }
                 }
 

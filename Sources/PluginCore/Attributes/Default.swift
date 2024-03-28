@@ -77,6 +77,26 @@ where
     }
 }
 
+extension Registration
+where
+Decl == PropertyDeclSyntax, Var: PropertyVariable & InitializableVariable, Var.Initialization == AnyRequiredVariableInitialization, Var == AnyPropertyVariable<AnyRequiredVariableInitialization>
+{
+    /// Update registration with binding initializer value. If the ``Default`` attribute is applied, it takes precedence.
+    ///
+    /// New registration is updated with default expression data that will be
+    /// used for decoding failure and memberwise initializer(s), if provided.
+    ///
+    /// - Returns: Newly built registration with default expression data or self.
+    func addDefaultValueIfInitializerExists() -> Self {
+        guard Default(from: self.decl) == nil, let value = decl.binding.initializer?.value, let variable = self.variable.base as? AnyPropertyVariable<RequiredInitialization> else {
+            return self
+        }
+        
+        let newVar = variable.with(default: value)
+        return self.updating(with: newVar.any)
+    }
+}
+
 fileprivate extension PropertyVariable
 where Initialization == RequiredInitialization {
     /// Update variable data with the default value expression provided.

@@ -192,6 +192,7 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
                 .useHelperCoderIfExists()
                 .checkForAlternateKeyValues(addTo: codingKeys, context: context)
                 .addDefaultValueIfExists()
+                .addDefaultValueIfInitializerExists()
                 .checkCanBeInitialized()
                 .checkCodingIgnored()
         }
