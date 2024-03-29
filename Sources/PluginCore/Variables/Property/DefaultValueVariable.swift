@@ -10,7 +10,7 @@
 /// * For providing default value to variable in memberwise initializer(s).
 struct DefaultValueVariable<Wrapped>: ComposedVariable, PropertyVariable
 where
-    Wrapped: PropertyVariable, Wrapped.Initialization == RequiredInitialization
+    Wrapped: PropertyVariable, Wrapped.Initialization: RequiredVariableInitialization
 {
     /// The customization options for `DefaultValueVariable`.
     ///

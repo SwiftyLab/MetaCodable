@@ -298,7 +298,11 @@ final class IgnoreInitializedTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
+                        do {
+                            self.one = try container.decodeIfPresent(String.self, forKey: CodingKeys.one) ?? "some"
+                        } catch {
+                            self.one = "some"
+                        }
                     }
                 }
 
@@ -376,7 +380,11 @@ final class IgnoreInitializedTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
+                        do {
+                            self.one = try container.decodeIfPresent(String.self, forKey: CodingKeys.one) ?? "some"
+                        } catch {
+                            self.one = "some"
+                        }
                     }
                 }
 

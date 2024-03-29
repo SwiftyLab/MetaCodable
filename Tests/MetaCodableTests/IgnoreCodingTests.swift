@@ -295,7 +295,11 @@ final class IgnoreCodingTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
+                        do {
+                            self.one = try container.decodeIfPresent(String.self, forKey: CodingKeys.one) ?? "some"
+                        } catch {
+                            self.one = "some"
+                        }
                         self.two = try container.decode(String.self, forKey: CodingKeys.two)
                     }
                 }
@@ -398,10 +402,30 @@ final class IgnoreCodingTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
-                        self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
+                        if let deeply_container = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) {
+                            if let nested_deeply_container = try? deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) {
+                                do {
+                                    self.four = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.two) ?? "some"
+                                } catch {
+                                    self.four = "some"
+                                }
+                                do {
+                                    self.three = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.three) ?? "some"
+                                } catch {
+                                    self.three = "some"
+                                }
+                            } else {
+                                self.one = "some"
+                                self.two = "some"
+                                self.four = "some"
+                                self.three = "some"
+                            }
+                        } else {
+                            self.one = "some"
+                            self.two = "some"
+                            self.four = "some"
+                            self.three = "some"
+                        }
                     }
                 }
 
@@ -457,10 +481,30 @@ final class IgnoreCodingTests: XCTestCase {
 
                     required init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
-                        self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
+                        if let deeply_container = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) {
+                            if let nested_deeply_container = try? deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) {
+                                do {
+                                    self.four = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.two) ?? "some"
+                                } catch {
+                                    self.four = "some"
+                                }
+                                do {
+                                    self.three = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.three) ?? "some"
+                                } catch {
+                                    self.three = "some"
+                                }
+                            } else {
+                                self.one = "some"
+                                self.two = "some"
+                                self.four = "some"
+                                self.three = "some"
+                            }
+                        } else {
+                            self.one = "some"
+                            self.two = "some"
+                            self.four = "some"
+                            self.three = "some"
+                        }
                     }
 
                     func encode(to encoder: any Encoder) throws {

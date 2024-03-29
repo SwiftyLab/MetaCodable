@@ -58,10 +58,7 @@ final class VariableDeclarationTests: XCTestCase {
                 struct SomeCodable {
                     var value: String = "some"
 
-                    init() {
-                    }
-
-                    init(value: String) {
+                    init(value: String = "some") {
                         self.value = value
                     }
                 }
@@ -292,18 +289,7 @@ final class VariableDeclarationTests: XCTestCase {
                         }
                     }
 
-                    init() {
-                    }
-
-                    init(value1: String) {
-                        self.value1 = value1
-                    }
-
-                    init(value2: String) {
-                        self.value2 = value2
-                    }
-
-                    init(value1: String, value2: String) {
+                    init(value1: String = "some" , value2: String = "some" ) {
                         self.value1 = value1
                         self.value2 = value2
                     }

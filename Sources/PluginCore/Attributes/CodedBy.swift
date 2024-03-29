@@ -74,7 +74,7 @@ package struct CodedBy: PropertyAttribute {
 extension Registration
 where
     Decl: AttributableDeclSyntax, Var: DefaultPropertyVariable,
-    Var.Initialization == RequiredInitialization
+    Var.Initialization: RequiredVariableInitialization
 {
     /// The optional variable data with helper expression
     /// that output registration will have.

@@ -184,6 +184,7 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
             return
                 input
                 .transformKeysAccordingToStrategy(attachedTo: decl)
+                .addDefaultValueIfInitializerExists()
                 .checkInitializedCodingIgnored(attachedAt: decl)
                 .registerKeyPath(
                     provider: CodedAt(from: input.decl)
@@ -192,7 +193,6 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
                 .useHelperCoderIfExists()
                 .checkForAlternateKeyValues(addTo: codingKeys, context: context)
                 .addDefaultValueIfExists()
-                .addDefaultValueIfInitializerExists()
                 .checkCanBeInitialized()
                 .checkCodingIgnored()
         }
