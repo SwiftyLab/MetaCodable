@@ -92,7 +92,7 @@ where
     /// - Parameter decl: The declaration to check for attribute.
     /// - Returns: Newly built registration with default expression data or self.
     func addDefaultValueIfInitializerExists() -> Registration<Decl, Key, AnyPropertyVariable<AnyRequiredVariableInitialization>> {
-        guard let value = self.variable.value else {
+        guard let value = self.variable.value?.trimmed else {
             return self.updating(with: variable.any)
         }
         let newVar = variable.with(default: value)
