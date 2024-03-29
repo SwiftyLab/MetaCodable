@@ -289,7 +289,7 @@ final class VariableDeclarationTests: XCTestCase {
                         }
                     }
 
-                    init(value1: String = "some" , value2: String = "some" ) {
+                    init(value1: String = "some", value2: String = "some") {
                         self.value1 = value1
                         self.value2 = value2
                     }
