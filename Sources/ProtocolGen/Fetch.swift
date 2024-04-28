@@ -1,5 +1,5 @@
-@_implementationOnly import ArgumentParser
-@_implementationOnly import Foundation
+import ArgumentParser
+import Foundation
 
 extension ProtocolGen {
     /// Fetches configuration data from file asynchronously.

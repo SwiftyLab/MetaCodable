@@ -1,4 +1,4 @@
-@_implementationOnly import PackagePlugin
+import PackagePlugin
 
 /// Represents a target consisting of a source code module,
 /// containing `Swift` source files.

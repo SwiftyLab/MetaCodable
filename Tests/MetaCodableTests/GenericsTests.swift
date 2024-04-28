@@ -123,13 +123,16 @@ final class GenericsTests: XCTestCase {
                         let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.one:
-                            let _0 = try T(from: contentDecoder)
+                            let _0: T
+                            _0 = try T(from: contentDecoder)
                             self = .one(_0)
                         case DecodingKeys.two:
-                            let _0 = try U(from: contentDecoder)
+                            let _0: U
+                            _0 = try U(from: contentDecoder)
                             self = .two(_0)
                         case DecodingKeys.three:
-                            let _0 = try V(from: contentDecoder)
+                            let _0: V
+                            _0 = try V(from: contentDecoder)
                             self = .three(_0)
                         }
                     }
@@ -282,10 +285,12 @@ final class GenericsTests: XCTestCase {
                         let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.one:
-                            let _0 = try T(from: contentDecoder)
+                            let _0: T
+                            _0 = try T(from: contentDecoder)
                             self = .one(_0)
                         case DecodingKeys.two:
-                            let _0 = try String(from: contentDecoder)
+                            let _0: String
+                            _0 = try String(from: contentDecoder)
                             self = .two(_0)
                         }
                     }
@@ -513,10 +518,12 @@ final class GenericsTests: XCTestCase {
                         let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.one:
-                            let _0 = try T(from: contentDecoder)
+                            let _0: T
+                            _0 = try T(from: contentDecoder)
                             self = .one(_0)
                         case DecodingKeys.two:
-                            let _0 = try String(from: contentDecoder)
+                            let _0: String
+                            _0 = try String(from: contentDecoder)
                             self = .two(_0)
                         }
                     }

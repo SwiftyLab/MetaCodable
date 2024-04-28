@@ -1,8 +1,8 @@
-@_implementationOnly import ArgumentParser
-@_implementationOnly import Foundation
-@_implementationOnly import PluginCore
-@_implementationOnly import SwiftParser
-@_implementationOnly import SwiftSyntax
+import ArgumentParser
+import Foundation
+import PluginCore
+import SwiftParser
+import SwiftSyntax
 
 extension ProtocolGen {
     /// Fetches swift source files provided as input.

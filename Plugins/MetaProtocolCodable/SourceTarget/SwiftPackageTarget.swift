@@ -1,5 +1,5 @@
-@_implementationOnly import Foundation
-@_implementationOnly import PackagePlugin
+import Foundation
+import PackagePlugin
 
 /// Represents an SwiftPM target.
 ///

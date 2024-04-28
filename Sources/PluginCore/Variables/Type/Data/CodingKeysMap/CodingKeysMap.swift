@@ -1,6 +1,6 @@
-@_implementationOnly import OrderedCollections
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import OrderedCollections
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A map containing all the case names
 /// for keys in a particular type.
@@ -240,7 +240,7 @@ private let invalidCaseNames: [String] = [
     "func",
     "guard",
     "if",
-    "@_implementationOnly import",
+    "import",
     "in",
     "init",
     "inout",

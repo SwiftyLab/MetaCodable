@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftCompilerPlugin
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftCompilerPlugin
+import SwiftSyntaxMacros
 
 /// The compiler plugin that exposes all the macro type defined.
 ///
@@ -25,5 +25,6 @@ struct MetaCodablePlugin: CompilerPlugin {
         CodingKeys.self,
         IgnoreCodingInitialized.self,
         Inherits.self,
+        UnTagged.self,
     ]
 }

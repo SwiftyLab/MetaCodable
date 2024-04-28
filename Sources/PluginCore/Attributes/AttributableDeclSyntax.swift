@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// A declaration syntax type that supports macro-attribute.
 ///

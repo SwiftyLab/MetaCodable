@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// Validates provided attribute has expected argument count.
 ///

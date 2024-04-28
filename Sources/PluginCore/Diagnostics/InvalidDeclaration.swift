@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate syntax type.
 ///

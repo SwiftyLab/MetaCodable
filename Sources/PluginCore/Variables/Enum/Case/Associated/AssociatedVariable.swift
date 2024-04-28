@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A type representing data associated with an associated variable
 /// inside enum-case declarations.

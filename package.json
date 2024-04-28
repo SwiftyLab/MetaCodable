@@ -19,14 +19,14 @@
     "swiftylab-ci": "github:SwiftyLab/ci"
   },
   "scripts": {
-    "build": "npm exec --package=swiftylab-ci -- build.js",
-    "test": "SWIFT_SYNTAX_EXTENSION_MACRO_FIXED=true npm exec --package=swiftylab-ci -- test.js",
+    "build": "npm exec --package=swiftylab-ci -- build.mjs",
+    "test": "SWIFT_SYNTAX_EXTENSION_MACRO_FIXED=true npm exec --package=swiftylab-ci -- test.mjs",
     "archive": "echo implement",
     "generate": "echo implement",
-    "format": "npm exec --package=swiftylab-ci -- format.js",
-    "pod-lint": "METACODABLE_COCOAPODS_LINT=true npm exec --package=swiftylab-ci -- pod-lint.js",
-    "preview-doc": "METACODABLE_CI=true npm exec --package=swiftylab-ci -- preview-doc.js MetaCodable",
-    "build-doc": "METACODABLE_CI=true npm exec --package=swiftylab-ci -- build-doc.js MetaCodable HelperCoders",
-    "serve-doc": "METACODABLE_CI=true npm exec --package=swiftylab-ci -- serve-doc.js MetaCodable"
+    "format": "METACODABLE_CI=true npm exec --package=swiftylab-ci -- format.mjs",
+    "pod-lint": "METACODABLE_COCOAPODS_LINT=true npm exec --package=swiftylab-ci -- pod-lint.mjs",
+    "preview-doc": "METACODABLE_CI=true SPI_GENERATE_DOCS=true npm exec --package=swiftylab-ci -- preview-doc.mjs MetaCodable",
+    "build-doc": "METACODABLE_CI=true SPI_GENERATE_DOCS=true npm exec --package=swiftylab-ci -- build-doc.mjs MetaCodable HelperCoders",
+    "serve-doc": "METACODABLE_CI=true SPI_GENERATE_DOCS=true npm exec --package=swiftylab-ci -- serve-doc.mjs MetaCodable"
   }
 }

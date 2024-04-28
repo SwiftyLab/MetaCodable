@@ -1,6 +1,6 @@
-@_implementationOnly import ArgumentParser
-@_implementationOnly import Foundation
-@_implementationOnly import SwiftSyntax
+import ArgumentParser
+import Foundation
+import SwiftSyntax
 
 /// The default file manager used for this module.
 internal var fileManager = FileManager.default

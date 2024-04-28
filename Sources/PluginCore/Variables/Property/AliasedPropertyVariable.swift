@@ -1,7 +1,7 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxBuilder
-@_implementationOnly import SwiftSyntaxMacros
-@_implementationOnly import OrderedCollections
+import OrderedCollections
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 /// A variable value containing additional `CodingKey`s for decoding.
 ///

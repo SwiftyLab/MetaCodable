@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftDiagnostics
-@_implementationOnly import SwiftSyntax
+import SwiftDiagnostics
+import SwiftSyntax
 
 /// A message type used as `DiagnosticMessage` and `FixItMessage`
 /// for this macro plugin.

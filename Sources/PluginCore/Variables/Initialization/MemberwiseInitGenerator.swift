@@ -1,6 +1,6 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxBuilder
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 /// A type responsible for generating memberwise
 /// initialization declarations for `Codable` macro.

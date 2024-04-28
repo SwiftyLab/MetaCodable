@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A `TypeVariable` that provides `Codable` conformance
 /// for an `actor` type.

@@ -1,5 +1,5 @@
-@_implementationOnly import Foundation
-@_implementationOnly import PackagePlugin
+import Foundation
+import PackagePlugin
 
 /// Provides `protocol` decoding/encoding syntax generation.
 ///
@@ -130,7 +130,7 @@ extension MetaProtocolCodable {
 }
 
 #if canImport(XcodeProjectPlugin)
-@_implementationOnly import XcodeProjectPlugin
+import XcodeProjectPlugin
 
 extension MetaProtocolCodable: XcodeBuildToolPlugin {
     /// Invoked by Xcode to create build commands for a particular target.

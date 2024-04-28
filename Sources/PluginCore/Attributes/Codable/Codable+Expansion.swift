@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 extension Codable: MemberMacro, ExtensionMacro {
     /// Expand to produce extensions with `Codable` implementation

@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A `TypeVariable` that provides `Codable` conformance
 /// for a `class` type.
@@ -139,11 +139,12 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         guard
             let generated = group.decoding(in: context, from: newLocation)
         else { return nil }
-        var code: CodeBlockItemListSyntax = if overridden {
-            "try super.\(method.name)(\(method.argLabel): \(method.arg))"
-        } else {
-            ""
-        }
+        var code: CodeBlockItemListSyntax =
+            if overridden {
+                "try super.\(method.name)(\(method.argLabel): \(method.arg))"
+            } else {
+                ""
+            }
         code.insert(contentsOf: generated.code, at: code.startIndex)
         modifiers.append(contentsOf: generated.modifiers)
         return .init(

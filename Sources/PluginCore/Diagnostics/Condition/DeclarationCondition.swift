@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// Validates provided syntax is of current declaration.
 ///

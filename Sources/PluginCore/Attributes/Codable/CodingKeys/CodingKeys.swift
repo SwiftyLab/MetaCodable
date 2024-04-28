@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// Attribute type for `CodingKeys` macro-attribute.
 ///

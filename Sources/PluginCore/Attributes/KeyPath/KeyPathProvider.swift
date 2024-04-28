@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// A special `PropertyAttribute` that updates
 /// `CodingKey` path data.

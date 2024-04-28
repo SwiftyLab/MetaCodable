@@ -1,6 +1,6 @@
-@_implementationOnly import SwiftDiagnostics
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftDiagnostics
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// Attribute type for `ContentAt` macro-attribute.
 ///

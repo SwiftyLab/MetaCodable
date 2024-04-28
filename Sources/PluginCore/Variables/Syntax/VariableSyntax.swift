@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntaxMacros
 
 /// A type representing associated `Variable` declaration.
 ///
