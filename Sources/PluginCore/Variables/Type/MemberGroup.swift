@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A `TypeVariable` that provides `Codable` conformance
 /// for a group of properties.
@@ -41,7 +41,7 @@ where
         ) -> PathRegistration<MemberSyntax, Output>
     ) {
         self.constraintGenerator = .init(decl: decl)
-        var node = PropertyVariableTreeNode()
+        let node = PropertyVariableTreeNode()
         for member in decl.codableMembers(input: memberInput) {
             let `var` = member.codableVariable(in: context)
             let key = [CodingKeysMap.Key.name(for: `var`.name).text]
@@ -79,7 +79,7 @@ where
             code: node.decoding(
                 in: context,
                 from: .coder(location.method.arg, keyType: codingKeys.type)
-            ),
+            ).combined(),
             modifiers: [],
             whereClause: constraintGenerator.decodingClause(
                 withVariables: node.linkedVariables,
@@ -108,7 +108,7 @@ where
             code: node.encoding(
                 in: context,
                 to: .coder(location.method.arg, keyType: codingKeys.type)
-            ),
+            ).combined(),
             modifiers: [],
             whereClause: constraintGenerator.encodingClause(
                 withVariables: node.linkedVariables,

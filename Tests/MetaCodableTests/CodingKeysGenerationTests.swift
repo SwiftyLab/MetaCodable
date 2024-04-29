@@ -64,8 +64,8 @@ final class CodingKeysGenerationTests: XCTestCase {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let associatedtype_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.`associatedtype`)
-                        self.val1 = try associatedtype_container.decode(String.self, forKey: CodingKeys.val1)
                         let continue_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.`continue`)
+                        self.val1 = try associatedtype_container.decode(String.self, forKey: CodingKeys.val1)
                         self.val2 = try continue_container.decode(String.self, forKey: CodingKeys.val2)
                     }
                 }

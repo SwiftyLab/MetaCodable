@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// A `VariableSyntax` type representing enum-case variables.
 ///

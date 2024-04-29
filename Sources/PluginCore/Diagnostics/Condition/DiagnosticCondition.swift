@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// A type that checks if certain syntax is satisfied by some condition.
 ///

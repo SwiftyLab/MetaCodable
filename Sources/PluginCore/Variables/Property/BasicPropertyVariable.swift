@@ -1,6 +1,6 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxBuilder
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 /// A default variable value with basic functionalities.
 ///

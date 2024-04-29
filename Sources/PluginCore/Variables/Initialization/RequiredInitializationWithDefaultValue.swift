@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 /// Represents initialization is required for the variable
 /// and default value is provided.

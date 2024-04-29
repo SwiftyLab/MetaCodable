@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 extension MemberInit: MemberMacro {
     /// Expand to produce memberwise initializer(s) for attached struct.

@@ -71,3 +71,15 @@ extension DynamicCodableIdentifier: ExpressibleByArrayLiteral {
         self = .many(elements)
     }
 }
+
+extension DynamicCodableIdentifier: ExpressibleByNilLiteral
+where Value: ExpressibleByNilLiteral {
+    /// Creates an instance initialized with `nil`.
+    ///
+    /// Creates single identifier with the specified `nil` literal.
+    ///
+    /// - Parameter value: The `nil` value to assign.
+    public init(nilLiteral: ()) {
+        self = .one(.init(nilLiteral: nilLiteral))
+    }
+}

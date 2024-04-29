@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 extension AttributeExpander {
     /// A type indicating various configurations available

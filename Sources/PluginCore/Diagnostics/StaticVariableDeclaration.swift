@@ -1,6 +1,6 @@
-@_implementationOnly import SwiftDiagnostics
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftDiagnostics
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A diagnostic producer type that can validate passed syntax is not a static
 /// variable declaration.

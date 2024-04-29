@@ -1,4 +1,4 @@
-@_implementationOnly import Foundation
+import Foundation
 
 /// The configuration data for plugin.
 ///
@@ -72,6 +72,12 @@ extension Config: Codable {
             ) ?? .target
     }
 
+    /// Returns file path as URL converting provided string.
+    ///
+    /// Uses platform and version specific API to create URL file path.
+    ///
+    /// - Parameter filePath: The path to file as string.
+    /// - Returns: The file path URL.
     static func url(forFilePath filePath: String) -> URL {
         #if canImport(Darwin)
         if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {

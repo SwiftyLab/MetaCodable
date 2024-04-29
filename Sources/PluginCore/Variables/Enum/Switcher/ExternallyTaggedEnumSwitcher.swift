@@ -1,12 +1,12 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// An `EnumSwitcherVariable` generating switch expression for externally
 /// tagged enums.
 ///
 /// Maintains a specific `CodingKeys` map only for decoding. The generated
 /// switch expression compares containers key against case values.
-package struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
+package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
     /// The decoding specific `CodingKeys` map.
     ///
     /// This map is used to only register decoding keys for enum-cases.
@@ -19,6 +19,23 @@ package struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
     ///
     /// This encoder is passed to each case for encoding.
     let contentEncoder: TokenSyntax
+
+    /// Provides node at which case associated variables are registered.
+    ///
+    /// Creates a new node for each invocation, allowing separate registration
+    /// for each case associated variables.
+    ///
+    /// - Parameters:
+    ///   - decl: The declaration for which to provide.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: The registering node.
+    func node(
+        for decl: EnumCaseVariableDeclSyntax,
+        in context: some MacroExpansionContext
+    ) -> PropertyVariableTreeNode {
+        return .init()
+    }
 
     /// Creates value expressions for provided enum-case variable.
     ///
@@ -95,13 +112,13 @@ package struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
     package func decoding(
         in context: some MacroExpansionContext,
         from location: EnumSwitcherLocation
-    ) -> EnumSwitcherGenerated {
+    ) -> CodeBlockItemListSyntax {
         let coder = location.coder
         let container = location.container
         let keyType = decodingKeys.type
         let selfType = location.selfType
         let expr: ExprSyntax = "\(container).allKeys.first.unsafelyUnwrapped"
-        let code = CodeBlockItemListSyntax {
+        return CodeBlockItemListSyntax {
             "let \(container) = try \(coder).container(keyedBy: \(keyType))"
             """
             guard \(container).allKeys.count == 1 else {
@@ -115,10 +132,11 @@ package struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
             """
             let \(contentDecoder) = try \(container).superDecoder(forKey: \(expr))
             """
+            self.decodeSwitchExpression(
+                over: expr, at: location, from: contentDecoder,
+                in: context, withDefaultCase: location.hasDefaultCase
+            ) { _ in "" }
         }
-        return .init(
-            coder: contentDecoder, expr: expr, code: code, default: false
-        ) { _ in "" }
     }
 
     /// Provides the syntax for encoding at the provided location.
@@ -134,22 +152,22 @@ package struct ExternallyTaggedEnumSwitcher: EnumSwitcherVariable {
     package func encoding(
         in context: some MacroExpansionContext,
         to location: EnumSwitcherLocation
-    ) -> EnumSwitcherGenerated {
+    ) -> CodeBlockItemListSyntax {
         let coder = location.coder
         let container = location.container
         let keyType = location.keyType
-        let code = CodeBlockItemListSyntax {
+        return CodeBlockItemListSyntax {
             """
             var \(container) = \(coder).container(keyedBy: \(keyType))
             """
-        }
-        return .init(
-            coder: contentEncoder, expr: location.selfValue,
-            code: code, default: true
-        ) { name in
-            return """
-                let \(contentEncoder) = \(container).superEncoder(forKey: \(name))
-                """
+            self.encodeSwitchExpression(
+                over: location.selfValue, at: location, from: contentEncoder,
+                in: context, withDefaultCase: location.hasDefaultCase
+            ) { name in
+                return """
+                    let \(contentEncoder) = \(container).superEncoder(forKey: \(name))
+                    """
+            }
         }
     }
 

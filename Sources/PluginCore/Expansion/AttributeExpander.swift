@@ -1,6 +1,6 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxBuilder
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 /// A type managing registrations of variable and `CodingKey` data.
 ///

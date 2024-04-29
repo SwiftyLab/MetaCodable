@@ -1,7 +1,7 @@
-@_implementationOnly import Foundation
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxBuilder
-@_implementationOnly import SwiftSyntaxMacros
+import Foundation
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacros
 
 extension CodingKeysMap {
     /// A type containing key data.

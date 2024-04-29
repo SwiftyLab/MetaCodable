@@ -1,6 +1,6 @@
-@_implementationOnly import OrderedCollections
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import OrderedCollections
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// Attribute type for `CodedAs` macro-attribute.
 ///

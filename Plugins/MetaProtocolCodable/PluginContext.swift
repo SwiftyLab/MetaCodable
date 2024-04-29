@@ -1,4 +1,4 @@
-@_implementationOnly import PackagePlugin
+import PackagePlugin
 
 /// Provides information about the package for which the plugin is invoked,
 /// as well as contextual information based on the plugin's stated intent
@@ -53,7 +53,7 @@ extension PluginContext: MetaProtocolCodablePluginContext {
 }
 
 #if canImport(XcodeProjectPlugin)
-@_implementationOnly import XcodeProjectPlugin
+import XcodeProjectPlugin
 
 extension XcodePluginContext: MetaProtocolCodablePluginContext {
     /// The targets which are local to current context.

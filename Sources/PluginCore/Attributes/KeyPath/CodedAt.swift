@@ -1,6 +1,6 @@
-@_implementationOnly import SwiftDiagnostics
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftDiagnostics
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// Attribute type for `CodedAt` macro-attribute.
 ///
@@ -36,6 +36,8 @@ package struct CodedAt: PropertyAttribute {
     /// * If macro is attached to enum/protocol declaration:
     ///   * This attribute must be combined with `Codable`
     ///     attribute.
+    ///   * This attribute isn't used combined with `UnTagged`
+    ///     attribute.
     /// * else:
     ///   * Attached declaration is a variable declaration.
     ///   * Attached declaration is not a grouped variable
@@ -51,7 +53,10 @@ package struct CodedAt: PropertyAttribute {
             cantDuplicate()
             `if`(
                 isEnum || isProtocol,
-                mustBeCombined(with: Codable.self),
+                AggregatedDiagnosticProducer {
+                    mustBeCombined(with: Codable.self)
+                    cantBeCombined(with: UnTagged.self)
+                },
                 else: AggregatedDiagnosticProducer {
                     attachedToUngroupedVariable()
                     attachedToNonStaticVariable()

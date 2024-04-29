@@ -64,25 +64,32 @@ final class CodedAtEnumTests: XCTestCase {
 
                 extension SomeEnum: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: String
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try container.decode(String.self, forKey: CodingKeys.type)
+                        type = try container.decode(String.self, forKey: CodingKeys.type)
                         switch type {
                         case "bool":
+                            let variable: Bool
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                             self = .bool(_: variable)
                         case "int":
+                            let val: Int
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .int(val: val)
                         case "string":
-                            let _0 = try String(from: decoder)
+                            let _0: String
+                            _0 = try String(from: decoder)
                             self = .string(_0)
                         case "multi":
-                            let _2 = try String(from: decoder)
+                            let variable: Bool
+                            let val: Int
+                            let _2: String
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            _2 = try String(from: decoder)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .multi(_: variable, val: val, _2)
                         default:
                             let context = DecodingError.Context(
@@ -170,17 +177,21 @@ final class CodedAtEnumTests: XCTestCase {
 
                 extension Command: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: String
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try container.decode(String.self, forKey: CodingKeys.type)
+                        type = try container.decode(String.self, forKey: CodingKeys.type)
                         switch type {
                         case "load":
+                            let key: String
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
                             self = .load(key: key)
                         case "store":
+                            let key: String
+                            let value: Int
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
-                            let value = try container.decode(Int.self, forKey: CodingKeys.value)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                            value = try container.decode(Int.self, forKey: CodingKeys.value)
                             self = .store(key: key, value: value)
                         default:
                             let context = DecodingError.Context(
@@ -243,17 +254,21 @@ final class CodedAtEnumTests: XCTestCase {
 
                 extension Command: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: Int
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try container.decode(Int.self, forKey: CodingKeys.type)
+                        type = try container.decode(Int.self, forKey: CodingKeys.type)
                         switch type {
                         case 1:
+                            let key: String
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
                             self = .load(key: key)
                         case 2:
+                            let key: String
+                            let value: Int
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
-                            let value = try container.decode(Int.self, forKey: CodingKeys.value)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                            value = try container.decode(Int.self, forKey: CodingKeys.value)
                             self = .store(key: key, value: value)
                         default:
                             let context = DecodingError.Context(
@@ -316,17 +331,21 @@ final class CodedAtEnumTests: XCTestCase {
 
                 extension Command: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: String
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try LossySequenceCoder<[Int]>().decode(from: container, forKey: CodingKeys.type)
+                        type = try LossySequenceCoder<[Int]>().decode(from: container, forKey: CodingKeys.type)
                         switch type {
                         case [1, 2, 3]:
+                            let key: String
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
                             self = .load(key: key)
                         case [4, 5, 6]:
+                            let key: String
+                            let value: Int
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
-                            let value = try container.decode(Int.self, forKey: CodingKeys.value)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                            value = try container.decode(Int.self, forKey: CodingKeys.value)
                             self = .store(key: key, value: value)
                         default:
                             let context = DecodingError.Context(
@@ -361,6 +380,176 @@ final class CodedAtEnumTests: XCTestCase {
                         case type = "type"
                         case key = "key"
                         case value = "value"
+                    }
+                }
+                """
+        )
+    }
+
+    func testWithNestedOptionalIdentifier() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            @CodedAs<String?>
+            @CodedAt("data", "attributes", "operation")
+            enum Operation {
+                @CodedAs("REGISTRATION")
+                case registration(Registration)
+                @CodedAs(nil as String?)
+                case expiry(Expiry)
+
+                @Codable
+                struct Registration {
+                    @CodedIn("data", "attributes")
+                    let mac: String
+                    @CodedIn("data", "attributes")
+                    let challange: String
+                    @CodedIn("data", "attributes")
+                    let code: Int
+                }
+
+                @Codable
+                struct Expiry {
+                    @CodedIn("data", "attributes")
+                    let token: String
+                    @CodedIn("data", "attributes")
+                    let expiresIn: Double
+                }
+            }
+            """,
+            expandedSource:
+                """
+                enum Operation {
+                    case registration(Registration)
+                    case expiry(Expiry)
+                    struct Registration {
+                        let mac: String
+                        let challange: String
+                        let code: Int
+                    }
+                    struct Expiry {
+                        let token: String
+                        let expiresIn: Double
+                    }
+                }
+
+                extension Operation.Registration: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let data_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data)
+                        let attributes_data_container = try data_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes)
+                        self.mac = try attributes_data_container.decode(String.self, forKey: CodingKeys.mac)
+                        self.challange = try attributes_data_container.decode(String.self, forKey: CodingKeys.challange)
+                        self.code = try attributes_data_container.decode(Int.self, forKey: CodingKeys.code)
+                    }
+                }
+
+                extension Operation.Registration: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var data_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data)
+                        var attributes_data_container = data_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes)
+                        try attributes_data_container.encode(self.mac, forKey: CodingKeys.mac)
+                        try attributes_data_container.encode(self.challange, forKey: CodingKeys.challange)
+                        try attributes_data_container.encode(self.code, forKey: CodingKeys.code)
+                    }
+                }
+
+                extension Operation.Registration {
+                    enum CodingKeys: String, CodingKey {
+                        case mac = "mac"
+                        case data = "data"
+                        case attributes = "attributes"
+                        case challange = "challange"
+                        case code = "code"
+                    }
+                }
+
+                extension Operation.Expiry: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let data_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data)
+                        let attributes_data_container = try data_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes)
+                        self.token = try attributes_data_container.decode(String.self, forKey: CodingKeys.token)
+                        self.expiresIn = try attributes_data_container.decode(Double.self, forKey: CodingKeys.expiresIn)
+                    }
+                }
+
+                extension Operation.Expiry: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var data_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data)
+                        var attributes_data_container = data_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes)
+                        try attributes_data_container.encode(self.token, forKey: CodingKeys.token)
+                        try attributes_data_container.encode(self.expiresIn, forKey: CodingKeys.expiresIn)
+                    }
+                }
+
+                extension Operation.Expiry {
+                    enum CodingKeys: String, CodingKey {
+                        case token = "token"
+                        case data = "data"
+                        case attributes = "attributes"
+                        case expiresIn = "expiresIn"
+                    }
+                }
+
+                extension Operation: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let type: String?
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        let data_container = ((try? container.decodeNil(forKey: CodingKeys.data)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data) : nil
+                        let attributes_data_container = ((try? data_container?.decodeNil(forKey: CodingKeys.attributes)) == false) ? try data_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes) : nil
+                        if let data_container = data_container {
+                            if let attributes_data_container = attributes_data_container {
+                                type = try attributes_data_container.decodeIfPresent(String.self, forKey: CodingKeys.type)
+                            } else {
+                                type = nil
+                            }
+                        } else {
+                            type = nil
+                        }
+                        switch type {
+                        case "REGISTRATION":
+                            let _0: Registration
+                            _0 = try Registration(from: decoder)
+                            self = .registration(_0)
+                        case nil as String?:
+                            let _0: Expiry
+                            _0 = try Expiry(from: decoder)
+                            self = .expiry(_0)
+                        default:
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(Operation.self, context)
+                        }
+                    }
+                }
+
+                extension Operation: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        var data_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data)
+                        var attributes_data_container = data_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes)
+                        var typeContainer = attributes_data_container
+                        switch self {
+                        case .registration(let _0):
+                            try typeContainer.encodeIfPresent("REGISTRATION", forKey: CodingKeys.type)
+                            try _0.encode(to: encoder)
+                        case .expiry(let _0):
+                            try typeContainer.encodeIfPresent(nil as String?, forKey: CodingKeys.type)
+                            try _0.encode(to: encoder)
+                        }
+                    }
+                }
+
+                extension Operation {
+                    enum CodingKeys: String, CodingKey {
+                        case type = "operation"
+                        case data = "data"
+                        case attributes = "attributes"
                     }
                 }
                 """

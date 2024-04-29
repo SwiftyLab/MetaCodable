@@ -1,6 +1,6 @@
 import Foundation
-import MetaCodable
 import HelperCoders
+import MetaCodable
 
 @Codable
 struct Model {
@@ -8,7 +8,7 @@ struct Model {
         SequenceCoder(
             elementHelper: Base64Coder(),
             configuration: [
-                .lossy, .default([])
+                .lossy, .default([]),
             ]
         )
     )

@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A default enum-case variable value with basic functionalities.
 ///
@@ -39,6 +39,11 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     /// While only decodable/encodable variables are registered on `node`,
     /// this list maintains all variables in the order of their appearance.
     let variables: [any AssociatedVariable]
+    /// The associated attributes decoding and encoding data.
+    ///
+    /// Only variables registered with this data will be decoded/encoded
+    /// from the `node`.
+    let data: PropertyVariableTreeNode.CodingData
 
     /// The `CodingKeys` map that generates keys.
     ///
@@ -50,13 +55,15 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     /// - Parameters:
     ///   - decl: The declaration to read data from.
     ///   - context: The context in which to perform the macro expansion.
+    ///   - node: The node at which variables are registered.
     ///   - builder: The builder action to use to update associated variables
     ///     registration data.
     ///
     /// - Returns: Created enum-case variable.
-    init<Output: AssociatedVariable>(
+    init<Switcher: EnumSwitcherVariable, Output: AssociatedVariable>(
         from decl: EnumCaseVariableDeclSyntax,
         in context: some MacroExpansionContext,
+        switcher: Switcher,
         builder: (
             _ input: PathRegistration<
                 AssociatedDeclSyntax, BasicAssociatedVariable
@@ -67,12 +74,15 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         self.decode = nil
         self.encode = nil
         self.codingKeys = decl.codingKeys
-        var node = PropertyVariableTreeNode()
+        let node = switcher.node(for: decl, in: context)
+        var data = PropertyVariableTreeNode.CodingData()
         var variables: [any AssociatedVariable] = []
         for member in decl.codableMembers() {
-            let reg = Registration(
+            let iReg = Registration(
                 decl: member, key: member.path, context: context
             )
+            let newVar = switcher.transform(variable: iReg.variable)
+            let reg = iReg.updating(with: newVar)
             let registration = builder(reg)
             let path = registration.key
             let variable = registration.variable
@@ -82,8 +92,10 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
             else { continue }
             let name = variable.name
             let keys = codingKeys.add(keys: path, field: name, context: context)
+            data.register(variable: variable, keyPath: keys)
             node.register(variable: variable, keyPath: keys)
         }
+        self.data = data
         self.node = node
         self.variables = variables
     }
@@ -101,24 +113,29 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     func decoding(
         in context: some MacroExpansionContext,
         from location: EnumCaseCodingLocation
-    ) -> SwitchCaseSyntax {
-        let firstKey = location.values.first!
+    ) -> EnumCaseGenerated {
         let label = SwitchCaseLabelSyntax(
             caseItems: .init {
                 for value in location.values {
                     let pattern = ExpressionPatternSyntax(expression: value)
-                    SwitchCaseItemSyntax.init(pattern: pattern)
+                    SwitchCaseItemSyntax(pattern: pattern)
                 }
             }
         )
-        return SwitchCaseSyntax(label: .case(label)) {
-            location.action("\(firstKey)")
-            node.decoding(
-                in: context,
-                from: .coder(location.coder, keyType: codingKeys.type)
-            )
-            "\(location.expr(name, variables))"
+        let generated = node.decoding(
+            with: data, in: context,
+            from: .coder(location.coder, keyType: codingKeys.type)
+        )
+        let newSyntax = CodeBlockItemListSyntax {
+            for variable in variables where variable.decode ?? true {
+                "let \(variable.name): \(variable.type)"
+            }
+            generated.syntax
         }
+        let code = PropertyVariableTreeNode.Generated(
+            syntax: newSyntax, conditionalSyntax: generated.conditionalSyntax
+        )
+        return .init(label: label, code: code)
     }
 
     /// Provides the syntax for encoding at the provided location.
@@ -134,17 +151,11 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     func encoding(
         in context: some MacroExpansionContext,
         to location: EnumCaseCodingLocation
-    ) -> SwitchCaseSyntax {
-        let expr: ExprSyntax = location.expr(name, variables)
-        let pattern = ExpressionPatternSyntax(expression: expr)
-        let label = SwitchCaseLabelSyntax { .init(pattern: pattern) }
-        let value = location.values.first!
-        let contentCoder = location.coder
-        return SwitchCaseSyntax(label: .case(label)) {
-            location.action("\(value)")
-            node.encoding(
-                in: context, to: .coder(contentCoder, keyType: codingKeys.type)
-            )
-        }
+    ) -> EnumCaseGenerated {
+        let generated = node.encoding(
+            with: data, in: context,
+            to: .coder(location.coder, keyType: codingKeys.type)
+        )
+        return .init(label: .init(caseItems: []), code: generated)
     }
 }

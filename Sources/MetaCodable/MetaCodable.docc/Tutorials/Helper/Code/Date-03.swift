@@ -1,6 +1,6 @@
 import Foundation
-import MetaCodable
 import HelperCoders
+import MetaCodable
 
 @Codable
 struct Model {

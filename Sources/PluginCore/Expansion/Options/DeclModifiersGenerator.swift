@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 extension AttributeExpander.Options {
     /// A declaration modifiers generator for `Codable`

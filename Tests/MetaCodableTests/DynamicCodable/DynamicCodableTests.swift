@@ -67,4 +67,15 @@ final class DynamicCodableTests: XCTestCase {
             }
         }
     }
+
+    func testResponse() throws {
+        let rResponse = try JSONDecoder().decode(
+            Response.self, from: registrationResponseAttributesData
+        )
+        XCTAssertTrue(rResponse.attributes is RegistrationAttributes)
+        let vResponse = try JSONDecoder().decode(
+            Response.self, from: verificationResponseAttributesData
+        )
+        XCTAssertTrue(vResponse.attributes is VerificationAttributes)
+    }
 }

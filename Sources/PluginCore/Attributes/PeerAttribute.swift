@@ -1,6 +1,6 @@
-@_implementationOnly import SwiftDiagnostics
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftDiagnostics
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// An `Attribute` type that generates "peer" declarations that
 /// sit alongside the attached declaration.

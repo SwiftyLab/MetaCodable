@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// An `EnumSwitcherVariable` generating switch expression for internally
 /// tagged enums.
@@ -7,7 +7,7 @@
 /// Provides callback to enum cases for variation data decoding/encoding.
 /// The generated switch expression compares case value with the decoded
 /// identifier.
-struct InternallyTaggedEnumSwitcher<Variable>: EnumSwitcherVariable
+struct InternallyTaggedEnumSwitcher<Variable>: TaggedEnumSwitcherVariable
 where Variable: PropertyVariable {
     /// The identifier variable build action type.
     ///
@@ -100,10 +100,10 @@ where Variable: PropertyVariable {
         self.identifierType = identifierType
         self.decl = decl
         self.variableBuilder = variableBuilder
-        var node = PropertyVariableTreeNode()
+        let node = PropertyVariableTreeNode()
         let variable = BasicPropertyVariable(
             name: identifier, type: self.identifierType, value: nil,
-            decodePrefix: "let ", encodePrefix: "",
+            decodePrefix: "", encodePrefix: "",
             decode: true, encode: true
         )
         let input = Registration(decl: decl, key: keyPath, variable: variable)
@@ -128,9 +128,26 @@ where Variable: PropertyVariable {
     func base(_ name: TokenSyntax) -> BasicPropertyVariable {
         return BasicPropertyVariable(
             name: name, type: self.identifierType, value: nil,
-            decodePrefix: "let ", encodePrefix: "",
+            decodePrefix: "", encodePrefix: "",
             decode: true, encode: true
         )
+    }
+
+    /// Provides node at which case associated variables are registered.
+    ///
+    /// Creates a new node for each invocation, allowing separate registration
+    /// for each case associated variables.
+    ///
+    /// - Parameters:
+    ///   - decl: The declaration for which to provide.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: The registering node.
+    func node(
+        for decl: EnumCaseVariableDeclSyntax,
+        in context: some MacroExpansionContext
+    ) -> PropertyVariableTreeNode {
+        return .init()
     }
 
     /// Creates value expressions for provided enum-case variable.
@@ -167,16 +184,9 @@ where Variable: PropertyVariable {
     func decoding(
         in context: some MacroExpansionContext,
         from location: EnumSwitcherLocation
-    ) -> EnumSwitcherGenerated {
+    ) -> CodeBlockItemListSyntax {
         let coder = location.coder
-        let keyType = location.keyType
-        let expr: ExprSyntax = "\(identifier)"
-        let code = CodeBlockItemListSyntax {
-            node.decoding(in: context, from: .coder(coder, keyType: keyType))
-        }
-        return .init(coder: coder, expr: expr, code: code, default: true) { _ in
-            return ""
-        }
+        return self.decoding(in: context, from: location, contentAt: coder)
     }
 
     /// Provides the syntax for encoding at the provided location.
@@ -192,25 +202,9 @@ where Variable: PropertyVariable {
     func encoding(
         in context: some MacroExpansionContext,
         to location: EnumSwitcherLocation
-    ) -> EnumSwitcherGenerated {
+    ) -> CodeBlockItemListSyntax {
         let coder = location.coder
-        let keyType = location.keyType
-        let code = CodeBlockItemListSyntax {
-            node.encoding(in: context, to: .coder(coder, keyType: keyType))
-        }
-        return .init(
-            coder: coder, expr: location.selfValue, code: code, default: true
-        ) { name in
-            let base = self.base(name)
-            let key: [String] = []
-            let input = Registration(decl: decl, key: key, variable: base)
-            let output = variableBuilder(input)
-            let keyExpr = keys.last!.expr
-            return output.variable.encoding(
-                in: context,
-                to: .container(encodeContainer, key: keyExpr, method: nil)
-            )
-        }
+        return self.encoding(in: context, to: location, contentAt: coder)
     }
 
     /// Creates additional enum declarations for enum variable.

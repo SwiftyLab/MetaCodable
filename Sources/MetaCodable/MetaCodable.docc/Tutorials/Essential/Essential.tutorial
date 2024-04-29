@@ -108,7 +108,7 @@
             @Step {
                 Provide default value per field if decoding fails due to missing or invalid data.
 
-                @Code(name: Post.swift, file: Post-07.swift) {
+                @Code(name: Post.swift, file: Post-08.swift) {
                     @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
                 }
             }
@@ -116,7 +116,7 @@
             @Step {
                 Ignore fields from decoding or encoding or both with ``IgnoreDecoding()`` or ``IgnoreEncoding()`` or ``IgnoreCoding()`` respectively.
 
-                @Code(name: Post.swift, file: Post-08.swift) {
+                @Code(name: Post.swift, file: Post-09.swift) {
                     @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
                 }
             }
@@ -124,7 +124,7 @@
             @Step {
                 Ignore all initialized fields from decoding and encoding by attaching ``IgnoreCodingInitialized()`` macro to type definition.
 
-                @Code(name: Post.swift, file: Post-09.swift) {
+                @Code(name: Post.swift, file: Post-10.swift) {
                     @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")
                 }
             }
@@ -132,15 +132,15 @@
             @Step {
                 Allow specific initialized field decoding and encoding by attaching any of ``CodedAt(_:)``/``CodedIn(_:)``/``CodedBy(_:)``/``Default(_:)`` macros.
 
-                @Code(name: Post.swift, file: Post-10.swift) {
-                    @Image(source: Post-10.png, alt: "Basic post JSON representation with author, creation time and delivered time")
+                @Code(name: Post.swift, file: Post-11.swift) {
+                    @Image(source: Post-11.png, alt: "Basic post JSON representation with author, creation time and delivered time")
                 }
             }
 
             @Step {
                 Attach ``IgnoreDecoding()`` or ``IgnoreEncoding()`` macro to initialized field for only suppressing decoding or encoding respectively.
 
-                @Code(name: Post.swift, file: Post-11.swift) {
+                @Code(name: Post.swift, file: Post-12.swift) {
                     @Image(source: Post-11.png, alt: "Basic post JSON representation with author and creation time with delivered time only when encoded")
                 }
             }
@@ -160,38 +160,38 @@
             @Step {
                 Identify fields that are common across multiple data.
 
-                @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                @Image(source: Post-13.png, alt: "Multi-category post JSON representation")
             }
 
             @Step {
                 Create equivalent `Codable` type with fields representing common data.
 
-                @Code(name: Post.swift, file: Post-12.swift) {
-                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                @Code(name: Post.swift, file: Post-13.swift) {
+                    @Image(source: Post-13.png, alt: "Multi-category post JSON representation")
                 }
             }
 
             @Step {
                 Create equivalent `Codable` type for each specific post category only with fields representing category specific data.
 
-                @Code(name: Post.swift, file: Post-13.swift) {
-                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                @Code(name: Post.swift, file: Post-14.swift) {
+                    @Image(source: Post-13.png, alt: "Multi-category post JSON representation")
                 }
             }
 
             @Step {
                 Add common post data field to each specific post category, field name doesn't matter here.
 
-                @Code(name: Post.swift, file: Post-14.swift) {
-                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                @Code(name: Post.swift, file: Post-15.swift) {
+                    @Image(source: Post-13.png, alt: "Multi-category post JSON representation")
                 }
             }
 
             @Step {
                 Attach ``CodedAt(_:)`` without any arguments to common post data field to directly decode common post fields data ignoring the key for each category.
 
-                @Code(name: Post.swift, file: Post-15.swift) {
-                    @Image(source: Post-12.png, alt: "Multi-category post JSON representation")
+                @Code(name: Post.swift, file: Post-16.swift) {
+                    @Image(source: Post-13.png, alt: "Multi-category post JSON representation")
                 }
             }
         }

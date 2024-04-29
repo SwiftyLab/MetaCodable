@@ -1,4 +1,4 @@
-@_implementationOnly import SwiftSyntax
+import SwiftSyntax
 
 extension CodingKeysMap {
     /// A type indicating how the

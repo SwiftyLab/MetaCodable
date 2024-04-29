@@ -1,5 +1,5 @@
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// A type-erased `EnumSwitcherVariable` value.
 ///
@@ -13,6 +13,22 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     /// to its original type using type casting
     /// operators (`as?`, `as!`, or `as`).
     let base: any EnumSwitcherVariable
+
+    /// Provides node at which case associated variables are registered.
+    ///
+    /// Provides node provided by the underlying variable value.
+    ///
+    /// - Parameters:
+    ///   - decl: The declaration for which to provide.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: The registering node.
+    func node(
+        for decl: EnumCaseVariableDeclSyntax,
+        in context: some MacroExpansionContext
+    ) -> PropertyVariableTreeNode {
+        return base.node(for: decl, in: context)
+    }
 
     /// Creates value expressions for provided enum-case variable.
     ///
@@ -35,6 +51,18 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
         )
     }
 
+    /// Update provided variable data.
+    ///
+    /// Passes provided variable to underlying variable value for update.
+    ///
+    /// - Parameter variable: The variable to transform.
+    /// - Returns: Transformed variable.
+    func transform(
+        variable: BasicAssociatedVariable
+    ) -> BasicAssociatedVariable {
+        return base.transform(variable: variable)
+    }
+
     /// Provides the syntax for decoding this variable at the provided location.
     ///
     /// Provides syntax for decoding of the underlying variable value.
@@ -47,7 +75,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     func decoding(
         in context: some MacroExpansionContext,
         from location: EnumSwitcherLocation
-    ) -> EnumSwitcherGenerated {
+    ) -> CodeBlockItemListSyntax {
         return base.decoding(in: context, from: location)
     }
 
@@ -63,7 +91,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     func encoding(
         in context: some MacroExpansionContext,
         to location: EnumSwitcherLocation
-    ) -> EnumSwitcherGenerated {
+    ) -> CodeBlockItemListSyntax {
         return base.encoding(in: context, to: location)
     }
 

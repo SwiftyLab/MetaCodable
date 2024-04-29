@@ -202,17 +202,21 @@ final class CodedAsEnumTests: XCTestCase {
 
                 extension Command: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: Int
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try LossySequenceCoder<[Int]>().decode(from: container, forKey: CodingKeys.type)
+                        type = try LossySequenceCoder<[Int]>().decode(from: container, forKey: CodingKeys.type)
                         switch type {
                         case 1:
+                            let key: String
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
                             self = .load(key: key)
                         case 2:
+                            let key: String
+                            let value: Int
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
-                            let value = try container.decode(Int.self, forKey: CodingKeys.value)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                            value = try container.decode(Int.self, forKey: CodingKeys.value)
                             self = .store(key: key, value: value)
                         default:
                             let context = DecodingError.Context(
@@ -310,24 +314,31 @@ final class CodedAsEnumTests: XCTestCase {
                         let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
                         switch container.allKeys.first.unsafelyUnwrapped {
                         case DecodingKeys.bool:
+                            let variable: Bool
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                             self = .bool(_: variable)
                         case DecodingKeys.int:
+                            let val: Int
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .int(val: val)
                         case DecodingKeys.double, DecodingKeys.altDouble2:
-                            let _0 = try Double(from: contentDecoder)
+                            let _0: Double
+                            _0 = try Double(from: contentDecoder)
                             self = .double(_: _0)
                         case DecodingKeys.string:
-                            let _0 = try String(from: contentDecoder)
+                            let _0: String
+                            _0 = try String(from: contentDecoder)
                             self = .string(_0)
                         case DecodingKeys.multi:
-                            let _2 = try String(from: contentDecoder)
+                            let variable: Bool
+                            let val: Int
+                            let _2: String
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            _2 = try String(from: contentDecoder)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .multi(_: variable, val: val, _2)
                         }
                     }
@@ -412,28 +423,36 @@ final class CodedAsEnumTests: XCTestCase {
 
                 extension SomeEnum: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: String
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try container.decode(String.self, forKey: CodingKeys.type)
+                        type = try container.decode(String.self, forKey: CodingKeys.type)
                         switch type {
                         case "bool":
+                            let variable: Bool
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                             self = .bool(_: variable)
                         case "altInt":
+                            let val: Int
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .int(val: val)
                         case "altDouble1", "altDouble2":
-                            let _0 = try Double(from: decoder)
+                            let _0: Double
+                            _0 = try Double(from: decoder)
                             self = .double(_: _0)
                         case "string":
-                            let _0 = try String(from: decoder)
+                            let _0: String
+                            _0 = try String(from: decoder)
                             self = .string(_0)
                         case "multi":
-                            let _2 = try String(from: decoder)
+                            let variable: Bool
+                            let val: Int
+                            let _2: String
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            _2 = try String(from: decoder)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .multi(_: variable, val: val, _2)
                         default:
                             let context = DecodingError.Context(

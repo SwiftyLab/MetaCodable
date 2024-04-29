@@ -134,12 +134,15 @@ final class IgnoreInitializedTests: XCTestCase {
                         case DecodingKeys.int:
                             self = .int(val: 6)
                         case DecodingKeys.string:
-                            let _0 = try String(from: contentDecoder)
+                            let _0: String
+                            _0 = try String(from: contentDecoder)
                             self = .string(_0)
                         case DecodingKeys.multi:
+                            let variable: Bool
+                            let val: Int
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .multi(_: variable, val: val, "text")
                         }
                     }
@@ -226,13 +229,17 @@ final class IgnoreInitializedTests: XCTestCase {
                         case DecodingKeys.int:
                             self = .int(val: 6)
                         case DecodingKeys.string:
-                            let _0 = try String(from: contentDecoder)
+                            let _0: String
+                            _0 = try String(from: contentDecoder)
                             self = .string(_0)
                         case DecodingKeys.multi:
-                            let _2 = try String (from: contentDecoder)
+                            let variable: Bool
+                            let val: Int
+                            let _2: String
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            let val = try container.decode(Int.self, forKey: CodingKeys.val)
+                            _2 = try String (from: contentDecoder)
+                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                            val = try container.decode(Int.self, forKey: CodingKeys.val)
                             self = .multi(_: variable, val: val, _2)
                         }
                     }

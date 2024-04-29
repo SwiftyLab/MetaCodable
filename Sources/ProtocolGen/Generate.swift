@@ -1,10 +1,10 @@
-@_implementationOnly import ArgumentParser
-@_implementationOnly import Foundation
-@_implementationOnly import PluginCore
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxBuilder
-@_implementationOnly import SwiftSyntaxMacroExpansion
-@_implementationOnly import SwiftSyntaxMacros
+import ArgumentParser
+import Foundation
+import PluginCore
+import SwiftSyntax
+import SwiftSyntaxBuilder
+import SwiftSyntaxMacroExpansion
+import SwiftSyntaxMacros
 
 extension ProtocolGen {
     /// Generates protocols decoding/encoding syntax.

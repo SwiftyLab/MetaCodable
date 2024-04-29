@@ -288,35 +288,40 @@ final class CodedAsTests: XCTestCase {
 
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        do {
-                            let valueKeys = [CodingKeys.value, CodingKeys.key].filter {
-                                container.allKeys.contains($0)
+                        let container = try? decoder.container(keyedBy: CodingKeys.self)
+                        if let container = container {
+                            do {
+                                let valueKeys = [CodingKeys.value, CodingKeys.key].filter {
+                                    container.allKeys.contains($0)
+                                }
+                                guard valueKeys.count == 1 else {
+                                    let context = DecodingError.Context(
+                                        codingPath: container.codingPath,
+                                        debugDescription: "Invalid number of keys found, expected one."
+                                    )
+                                    throw DecodingError.typeMismatch(Self.self, context)
+                                }
+                                self.value = try container.decodeIfPresent(String.self, forKey: valueKeys[0]) ?? "some"
+                            } catch {
+                                self.value = "some"
                             }
-                            guard valueKeys.count == 1 else {
-                                let context = DecodingError.Context(
-                                    codingPath: container.codingPath,
-                                    debugDescription: "Invalid number of keys found, expected one."
-                                )
-                                throw DecodingError.typeMismatch(Self.self, context)
+                            do {
+                                let value1Keys = [CodingKeys.value1, CodingKeys.key1, CodingKeys.key2].filter {
+                                    container.allKeys.contains($0)
+                                }
+                                guard value1Keys.count == 1 else {
+                                    let context = DecodingError.Context(
+                                        codingPath: container.codingPath,
+                                        debugDescription: "Invalid number of keys found, expected one."
+                                    )
+                                    throw DecodingError.typeMismatch(Self.self, context)
+                                }
+                                self.value1 = try container.decodeIfPresent(String.self, forKey: value1Keys[0]) ?? "some"
+                            } catch {
+                                self.value1 = "some"
                             }
-                            self.value = try container.decodeIfPresent(String.self, forKey: valueKeys[0]) ?? "some"
-                        } catch {
+                        } else {
                             self.value = "some"
-                        }
-                        do {
-                            let value1Keys = [CodingKeys.value1, CodingKeys.key1, CodingKeys.key2].filter {
-                                container.allKeys.contains($0)
-                            }
-                            guard value1Keys.count == 1 else {
-                                let context = DecodingError.Context(
-                                    codingPath: container.codingPath,
-                                    debugDescription: "Invalid number of keys found, expected one."
-                                )
-                                throw DecodingError.typeMismatch(Self.self, context)
-                            }
-                            self.value1 = try container.decodeIfPresent(String.self, forKey: value1Keys[0]) ?? "some"
-                        } catch {
                             self.value1 = "some"
                         }
                     }
@@ -367,35 +372,40 @@ final class CodedAsTests: XCTestCase {
 
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        do {
-                            let valueKeys = [CodingKeys.value, CodingKeys.key].filter {
-                                container.allKeys.contains($0)
+                        let container = try? decoder.container(keyedBy: CodingKeys.self)
+                        if let container = container {
+                            do {
+                                let valueKeys = [CodingKeys.value, CodingKeys.key].filter {
+                                    container.allKeys.contains($0)
+                                }
+                                guard valueKeys.count == 1 else {
+                                    let context = DecodingError.Context(
+                                        codingPath: container.codingPath,
+                                        debugDescription: "Invalid number of keys found, expected one."
+                                    )
+                                    throw DecodingError.typeMismatch(Self.self, context)
+                                }
+                                self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: valueKeys[0]) ?? ["some"]
+                            } catch {
+                                self.value = ["some"]
                             }
-                            guard valueKeys.count == 1 else {
-                                let context = DecodingError.Context(
-                                    codingPath: container.codingPath,
-                                    debugDescription: "Invalid number of keys found, expected one."
-                                )
-                                throw DecodingError.typeMismatch(Self.self, context)
+                            do {
+                                let value1Keys = [CodingKeys.value1, CodingKeys.key1, CodingKeys.key2].filter {
+                                    container.allKeys.contains($0)
+                                }
+                                guard value1Keys.count == 1 else {
+                                    let context = DecodingError.Context(
+                                        codingPath: container.codingPath,
+                                        debugDescription: "Invalid number of keys found, expected one."
+                                    )
+                                    throw DecodingError.typeMismatch(Self.self, context)
+                                }
+                                self.value1 = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: value1Keys[0]) ?? ["some"]
+                            } catch {
+                                self.value1 = ["some"]
                             }
-                            self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: valueKeys[0]) ?? ["some"]
-                        } catch {
+                        } else {
                             self.value = ["some"]
-                        }
-                        do {
-                            let value1Keys = [CodingKeys.value1, CodingKeys.key1, CodingKeys.key2].filter {
-                                container.allKeys.contains($0)
-                            }
-                            guard value1Keys.count == 1 else {
-                                let context = DecodingError.Context(
-                                    codingPath: container.codingPath,
-                                    debugDescription: "Invalid number of keys found, expected one."
-                                )
-                                throw DecodingError.typeMismatch(Self.self, context)
-                            }
-                            self.value1 = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: value1Keys[0]) ?? ["some"]
-                        } catch {
                             self.value1 = ["some"]
                         }
                     }

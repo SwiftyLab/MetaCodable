@@ -112,10 +112,14 @@ final class CodedAtHelperDefaultTests: XCTestCase {
 
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        do {
-                            self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: CodingKeys.value) ?? ["some"]
-                        } catch {
+                        let container = try? decoder.container(keyedBy: CodingKeys.self)
+                        if let container = container {
+                            do {
+                                self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: CodingKeys.value) ?? ["some"]
+                            } catch {
+                                self.value = ["some"]
+                            }
+                        } else {
                             self.value = ["some"]
                         }
                     }
@@ -161,10 +165,14 @@ final class CodedAtHelperDefaultTests: XCTestCase {
 
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        do {
-                            self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: CodingKeys.value) ?? ["some"]
-                        } catch {
+                        let container = try? decoder.container(keyedBy: CodingKeys.self)
+                        if let container = container {
+                            do {
+                                self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: container, forKey: CodingKeys.value) ?? ["some"]
+                            } catch {
+                                self.value = ["some"]
+                            }
+                        } else {
                             self.value = ["some"]
                         }
                     }
@@ -210,12 +218,18 @@ final class CodedAtHelperDefaultTests: XCTestCase {
 
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        if let deeply_container = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) {
-                            if let nested_deeply_container = try? deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) {
-                                do {
-                                    self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value) ?? ["some"]
-                                } catch {
+                        let container = try? decoder.container(keyedBy: CodingKeys.self)
+                        let deeply_container = try? container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        let nested_deeply_container = try? deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        if let container = container {
+                            if let deeply_container = deeply_container {
+                                if let nested_deeply_container = nested_deeply_container {
+                                    do {
+                                        self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value) ?? ["some"]
+                                    } catch {
+                                        self.value = ["some"]
+                                    }
+                                } else {
                                     self.value = ["some"]
                                 }
                             } else {
@@ -271,12 +285,18 @@ final class CodedAtHelperDefaultTests: XCTestCase {
 
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        if let deeply_container = try? container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) {
-                            if let nested_deeply_container = try? deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) {
-                                do {
-                                    self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value) ?? ["some"]
-                                } catch {
+                        let container = try? decoder.container(keyedBy: CodingKeys.self)
+                        let deeply_container = try? container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                        let nested_deeply_container = try? deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        if let container = container {
+                            if let deeply_container = deeply_container {
+                                if let nested_deeply_container = nested_deeply_container {
+                                    do {
+                                        self.value = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value) ?? ["some"]
+                                    } catch {
+                                        self.value = ["some"]
+                                    }
+                                } else {
                                     self.value = ["some"]
                                 }
                             } else {
@@ -353,9 +373,10 @@ final class CodedAtHelperDefaultTests: XCTestCase {
                 extension SomeCodable: Decodable {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        if (try? container.decodeNil(forKey: CodingKeys.deeply)) == false {
-                            let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                            if let nested_deeply_container = try? deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) {
+                        let deeply_container = ((try? container.decodeNil(forKey: CodingKeys.deeply)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) : nil
+                        let nested_deeply_container = try? deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                        if let deeply_container = deeply_container {
+                            if let nested_deeply_container = nested_deeply_container {
                                 do {
                                     self.value1 = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value1) ?? ["some"]
                                 } catch {
@@ -466,9 +487,10 @@ final class CodedAtHelperDefaultTests: XCTestCase {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        if (try? deeply_container.decodeNil(forKey: CodingKeys.nested)) == false {
-                            let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                            if let level_nested_deeply_container = try? nested_deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.level) {
+                        let nested_deeply_container = ((try? deeply_container.decodeNil(forKey: CodingKeys.nested)) == false) ? try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) : nil
+                        let level_nested_deeply_container = try? nested_deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.level)
+                        if let nested_deeply_container = nested_deeply_container {
+                            if let level_nested_deeply_container = level_nested_deeply_container {
                                 do {
                                     self.value1 = try LossySequenceCoder<[String]>().decodeIfPresent(from: level_nested_deeply_container, forKey: CodingKeys.value1) ?? ["some"]
                                 } catch {
@@ -566,9 +588,10 @@ final class CodedAtHelperDefaultTests: XCTestCase {
                     required init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        if (try? deeply_container.decodeNil(forKey: CodingKeys.nested)) == false {
-                            let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                            if let level_nested_deeply_container = try? nested_deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.level) {
+                        let nested_deeply_container = ((try? deeply_container.decodeNil(forKey: CodingKeys.nested)) == false) ? try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) : nil
+                        let level_nested_deeply_container = try? nested_deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.level)
+                        if let nested_deeply_container = nested_deeply_container {
+                            if let level_nested_deeply_container = level_nested_deeply_container {
                                 do {
                                     self.value1 = try LossySequenceCoder<[String]>().decodeIfPresent(from: level_nested_deeply_container, forKey: CodingKeys.value1) ?? ["some"]
                                 } catch {

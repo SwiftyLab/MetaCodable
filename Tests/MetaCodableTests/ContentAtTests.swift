@@ -65,18 +65,22 @@ final class ContentAtTests: XCTestCase {
 
                 extension Command: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: String
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try container.decode(String.self, forKey: CodingKeys.type)
+                        type = try container.decode(String.self, forKey: CodingKeys.type)
                         let contentDecoder = try container.superDecoder(forKey: CodingKeys.content)
                         switch type {
                         case "load":
+                            let key: String
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
                             self = .load(key: key)
                         case "store":
+                            let key: String
+                            let value: Int
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
-                            let value = try container.decode(Int.self, forKey: CodingKeys.value)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                            value = try container.decode(Int.self, forKey: CodingKeys.value)
                             self = .store(key: key, value: value)
                         default:
                             let context = DecodingError.Context(
@@ -142,18 +146,22 @@ final class ContentAtTests: XCTestCase {
 
                 extension Command: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: Int
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try container.decode(Int.self, forKey: CodingKeys.type)
+                        type = try container.decode(Int.self, forKey: CodingKeys.type)
                         let contentDecoder = try container.superDecoder(forKey: CodingKeys.content)
                         switch type {
                         case 1:
+                            let key: String
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
                             self = .load(key: key)
                         case 2:
+                            let key: String
+                            let value: Int
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
-                            let value = try container.decode(Int.self, forKey: CodingKeys.value)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                            value = try container.decode(Int.self, forKey: CodingKeys.value)
                             self = .store(key: key, value: value)
                         default:
                             let context = DecodingError.Context(
@@ -219,18 +227,22 @@ final class ContentAtTests: XCTestCase {
 
                 extension Command: Decodable {
                     init(from decoder: any Decoder) throws {
+                        let type: String
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let type = try LossySequenceCoder<[Int]>().decode(from: container, forKey: CodingKeys.type)
+                        type = try LossySequenceCoder<[Int]>().decode(from: container, forKey: CodingKeys.type)
                         let contentDecoder = try container.superDecoder(forKey: CodingKeys.content)
                         switch type {
                         case [1, 2, 3]:
+                            let key: String
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
                             self = .load(key: key)
                         case [4, 5, 6]:
+                            let key: String
+                            let value: Int
                             let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            let key = try container.decode(String.self, forKey: CodingKeys.key)
-                            let value = try container.decode(Int.self, forKey: CodingKeys.value)
+                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                            value = try container.decode(Int.self, forKey: CodingKeys.value)
                             self = .store(key: key, value: value)
                         default:
                             let context = DecodingError.Context(

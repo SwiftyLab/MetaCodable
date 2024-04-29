@@ -1,6 +1,6 @@
 #if canImport(XcodeProjectPlugin)
-@_implementationOnly import PackagePlugin
-@_implementationOnly import XcodeProjectPlugin
+import PackagePlugin
+import XcodeProjectPlugin
 
 extension XcodeTarget: MetaProtocolCodableSourceTarget {
     /// The name of the module produced

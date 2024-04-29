@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:MetaCodable}",
+            "name": "Debug ProtocolGen",
+            "program": "${workspaceFolder:MetaCodable}/.build/debug/ProtocolGen",
+            "preLaunchTask": "swift: Build Debug ProtocolGen"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:MetaCodable}",
+            "name": "Release ProtocolGen",
+            "program": "${workspaceFolder:MetaCodable}/.build/release/ProtocolGen",
+            "preLaunchTask": "swift: Build Release ProtocolGen"
+        }
+    ]
+}

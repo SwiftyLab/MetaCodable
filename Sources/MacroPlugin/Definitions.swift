@@ -1,6 +1,6 @@
-@_implementationOnly import PluginCore
-@_implementationOnly import SwiftSyntax
-@_implementationOnly import SwiftSyntaxMacros
+import PluginCore
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// Attribute type for `Codable` macro-attribute.
 ///
@@ -568,6 +568,42 @@ struct Inherits: PeerMacro {
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         return try PluginCore.Inherits.expansion(
+            of: node, providingPeersOf: declaration, in: context
+        )
+    }
+}
+
+/// Attribute type for `UnTagged` macro-attribute.
+///
+/// This type can validate`UnTagged` macro-attribute usage and
+/// extract data for `Codable` macro to generate implementation.
+///
+/// Attaching this macro to enum declaration indicates the enum doesn't
+/// have any identifier for its cases and each case should be tried for decoding
+/// until decoding succeeds for a case.
+struct UnTagged: PeerMacro {
+    /// Provide metadata to `Codable` macro for final expansion
+    /// and verify proper usage of this macro.
+    ///
+    /// This macro doesn't perform any expansion rather `Codable` macro
+    /// uses when performing expansion.
+    ///
+    /// This macro verifies that macro usage condition is met by attached
+    /// declaration by using the `validate` implementation provided.
+    ///
+    /// - Parameters:
+    ///   - node: The attribute describing this macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: No declaration is returned, only attached declaration is
+    ///            analyzed.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingPeersOf declaration: some DeclSyntaxProtocol,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.UnTagged.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
