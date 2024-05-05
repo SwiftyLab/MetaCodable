@@ -18,6 +18,8 @@ extension CodingKeysMap {
         /// The `CodingKey` expression associated
         /// with the stored key `value`.
         var expr: ExprSyntax { "\(map.typeName).\(map.case(forKey: value)!)" }
+        /// The `CodingKey` type name for this key..
+        var typeName: TokenSyntax { map.typeName }
         /// The `CodingKey` type expression that
         /// can be passed to functions as parameter.
         var type: ExprSyntax { map.type }

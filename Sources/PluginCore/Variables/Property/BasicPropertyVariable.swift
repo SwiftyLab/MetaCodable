@@ -74,7 +74,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
     /// `nil` value only when missing or `null`.
     var decodingFallback: DecodingFallback {
         guard hasOptionalType else { return .throw }
-        return .ifMissing("\(decodePrefix)\(name) = nil")
+        return .onlyIfMissing("\(decodePrefix)\(name) = nil")
     }
 
     /// Creates a new variable with provided data.

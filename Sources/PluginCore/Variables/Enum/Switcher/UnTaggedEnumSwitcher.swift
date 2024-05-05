@@ -62,7 +62,8 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
     func transform(
         variable: BasicAssociatedVariable
     ) -> BasicAssociatedVariable {
-        let fallback = DecodingFallback.ifError("throw \(error)")
+        let `throw`: CodeBlockItemListSyntax = "throw \(error)"
+        let fallback = DecodingFallback.ifMissing(`throw`, ifError: `throw`)
         return .init(
             base: variable.base, label: variable.label,
             fallback: fallback

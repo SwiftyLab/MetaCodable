@@ -17,12 +17,17 @@ where
     /// `DefaultValueVariable` uses the instance of this type,
     /// provided during initialization, for customizing code generation.
     struct Options {
-        /// The default expression used when decoding fails.
+        /// The default expression used when decoding fails for missing value.
         ///
-        /// This expression is provided during initialization
-        /// and used to generate non-failable decoding syntax
-        /// by using this when decoding fails.
-        let expr: ExprSyntax
+        /// This expression is provided during initialization and used to
+        /// generate fallback decoding syntax.
+        let onMissingExpr: ExprSyntax
+        /// The default expression used when decoding fails for errors other
+        /// than missing value.
+        ///
+        /// This expression is provided during initialization and used to
+        /// generate fallback decoding syntax.
+        let onErrorExpr: ExprSyntax?
     }
 
     /// The value wrapped by this instance.
@@ -62,18 +67,24 @@ where
     /// In the event this decoding this variable is failed,
     /// appropriate fallback would be applied.
     ///
-    /// This variable will be initialized with default expression
+    /// This variable will be initialized with default expression(s)
     /// provided, if decoding fails.
     var decodingFallback: DecodingFallback {
-        return .ifError("\(decodePrefix)\(name) = \(options.expr)")
+        let expr: ExprSyntax = "\(decodePrefix)\(name)"
+        let fallback: CodeBlockItemSyntax = "\(expr) = \(options.onMissingExpr)"
+        guard
+            let onErrorExpr = options.onErrorExpr
+        else { return .onlyIfMissing([fallback]) }
+        return .ifMissing([fallback], ifError: "\(expr) = \(onErrorExpr)")
     }
 
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
     ///
-    /// Wraps code syntax for decoding of the underlying
-    /// variable value in `do` block and initializes with
-    /// default expression in the `catch` block.
+    /// Providing missing case expression for value missing case.
+    /// If other errors expression provided, wraps code syntax for
+    /// decoding of the underlying variable value in `do` block and
+    /// initializes with default expression in the `catch` block.
     ///
     /// - Parameters:
     ///   - context: The context in which to perform the macro expansion.
@@ -84,9 +95,6 @@ where
         in context: some MacroExpansionContext,
         from location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
-        let catchClauses = CatchClauseListSyntax {
-            CatchClauseSyntax { "\(decodePrefix)\(name) = \(options.expr)" }
-        }
         let method: ExprSyntax = "decodeIfPresent"
         let newLocation: PropertyCodingLocation =
             switch location {
@@ -97,12 +105,19 @@ where
             }
         let doClauses = base.decoding(in: context, from: newLocation)
         guard !doClauses.isEmpty else { return "" }
+        let mSyntax = CodeBlockItemListSyntax {
+            for clause in doClauses.dropLast() {
+                clause
+            }
+            "\(doClauses.last!) ?? \(options.onMissingExpr)"
+        }
+        guard let onErrorExpr = options.onErrorExpr else { return mSyntax }
+        let catchClauses = CatchClauseListSyntax {
+            CatchClauseSyntax { "\(decodePrefix)\(name) = \(onErrorExpr)" }
+        }
         return CodeBlockItemListSyntax {
             DoStmtSyntax(catchClauses: catchClauses) {
-                for clause in doClauses.dropLast() {
-                    clause
-                }
-                "\(doClauses.last!) ?? \(options.expr)"
+                mSyntax
             }
         }
     }
@@ -119,7 +134,7 @@ where
         in context: some MacroExpansionContext
     ) -> RequiredInitializationWithDefaultValue {
         let initialization = base.initializing(in: context)
-        return .init(base: initialization, expr: options.expr)
+        return .init(base: initialization, expr: options.onMissingExpr)
     }
 }
 
