@@ -111,29 +111,28 @@ extension PropertyVariableTreeNode {
         else { return .init(syntax: "", conditionalSyntax: decodingSyntax) }
         let decodableChildren = children.lazy
             .filter { data?.hasKey($0.key) ?? true }
-        return DecodingFallback.aggregate(
-            fallbacks: decodableChildren.lazy
-                .flatMap(\.value.linkedVariables)
-                .map(\.decodingFallback)
-        ).represented(
-            location: location, nestedContainer: self.decodingContainer
-        ) { container in
-            self.decodingContainer = container.name
-            let generated = decodableChildren.map { cKey, node in
-                return node.decoding(
-                    with: data?.children[cKey],
-                    in: context,
-                    from: .container(container, key: cKey)
+        return decodableChildren.lazy
+            .flatMap(\.value.linkedVariables)
+            .map(\.decodingFallback).reduce(.ifMissing([], ifError: []), +)
+            .represented(
+                location: location, nestedContainer: self.decodingContainer
+            ) { container in
+                self.decodingContainer = container.name
+                let generated = decodableChildren.map { cKey, node in
+                    return node.decoding(
+                        with: data?.children[cKey],
+                        in: context,
+                        from: .container(container, key: cKey)
+                    )
+                }.aggregated()
+                return .init(
+                    syntax: generated.syntax,
+                    conditionalSyntax: CodeBlockItemListSyntax {
+                        decodingSyntax
+                        generated.conditionalSyntax
+                    }
                 )
-            }.aggregated()
-            return .init(
-                syntax: generated.syntax,
-                conditionalSyntax: CodeBlockItemListSyntax {
-                    decodingSyntax
-                    generated.conditionalSyntax
-                }
-            )
-        }
+            }
     }
 
     /// Provides the code block list syntax for decoding individual

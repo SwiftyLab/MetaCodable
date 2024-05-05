@@ -16,13 +16,16 @@ package enum DecodingFallback {
     ///
     /// Indicates if variable data is missing or `null`,
     /// provided fallback syntax will be used for initialization.
-    case ifMissing(CodeBlockItemListSyntax)
+    case onlyIfMissing(CodeBlockItemListSyntax)
     /// Represents fallback option handling
     /// decoding failure completely.
     ///
     /// Indicates for any type of failure error in decoding,
-    /// provided fallback syntax will be used for initialization.
-    case ifError(CodeBlockItemListSyntax)
+    /// provided fallback syntaxes will be used for initialization.
+    ///
+    /// First syntax will be used for errors due to missing or `null`
+    /// value while second syntax will be used for all the other errors.
+    case ifMissing(CodeBlockItemListSyntax, ifError: CodeBlockItemListSyntax)
 
     /// Represents container for decoding/encoding properties.
     typealias Container = PropertyVariableTreeNode.CodingLocation.Container
@@ -76,7 +79,7 @@ package enum DecodingFallback {
         let isOptional: Bool
         let fallbacks: CodeBlockItemListSyntax
         switch self {
-        case .ifError(let eFallbacks):
+        case .ifMissing(_, ifError: let eFallbacks):
             isOptional = true
             fallbacks = eFallbacks
         default:
@@ -146,7 +149,7 @@ package enum DecodingFallback {
                 generated.syntax
             }
             conditionalSyntax = generated.conditionalSyntax
-        case .ifMissing(let fallbacks):
+        case .onlyIfMissing(let fallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
             syntax = CodeBlockItemListSyntax {
                 if nestedContainer == nil {
@@ -167,26 +170,40 @@ package enum DecodingFallback {
                     fallbacks
                 }
             }
-        case .ifError(let fallbacks):
+        case let .ifMissing(fallbacks, ifError: eFallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
+            let containerMissing: TokenSyntax = "\(nContainer)Missing"
             syntax = CodeBlockItemListSyntax {
                 if nestedContainer == nil {
-                    """
-                    let \(nContainer) = try? \(container.syntax).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
-                    """
+                    "let \(nContainer): KeyedDecodingContainer<\(key.typeName)>?"
+                    "let \(containerMissing): Bool"
+                    try! IfExprSyntax(
+                        """
+                        if (try? \(container.syntax).decodeNil(forKey: \(key.expr))) == false
+                        """
+                    ) {
+                        """
+                        \(nContainer) = try? \(container.syntax).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
+                        """
+                        "\(containerMissing) = false"
+                    } else: {
+                        "\(nContainer) = nil"
+                        "\(containerMissing) = true"
+                    }
                 }
                 generated.syntax
             }
             conditionalSyntax = CodeBlockItemListSyntax {
                 try! IfExprSyntax(
-                    """
-                    if let \(nContainer) = \(nContainer)
-                    """
-                ) {
-                    generated.conditionalSyntax
-                } else: {
-                    fallbacks
-                }
+                    "if let \(nContainer) = \(nContainer)",
+                    bodyBuilder: {
+                        generated.conditionalSyntax
+                    }, elseIf: IfExprSyntax("if \(containerMissing)") {
+                        fallbacks
+                    } else: {
+                        eFallbacks
+                    }
+                )
             }
         }
         return .init(syntax: syntax, conditionalSyntax: conditionalSyntax)
@@ -210,36 +227,37 @@ extension DecodingFallback {
             false
         }
     }
-
-    /// The combined fallback option for all variable elements.
+    
+    /// Adds two decoding fallbacks into a single fallback.
     ///
-    /// Represents the fallback to use when decoding container
-    /// of all the element variables fails.
+    /// The generated single fallback represents both
+    /// the fallback syntaxes added.
     ///
-    /// - Parameter fallbacks: The fallback values to combine.
-    /// - Returns: The aggregated fallback value.
-    static func aggregate<C: Collection>(
-        fallbacks: C
-    ) -> Self where C.Element == Self {
-        var aggregated = C.Element.ifError(.init())
-        for fallback in fallbacks {
-            switch (aggregated, fallback) {
-            case (_, .throw), (.throw, _):
-                return .throw
-            case (.ifMissing(var a), .ifMissing(let f)),
-                (.ifMissing(var a), .ifError(let f)),
-                (.ifError(var a), .ifMissing(let f)):
-                if !hasEarlyExit(in: a) {
-                    a.append(contentsOf: f)
-                }
-                aggregated = .ifMissing(a)
-            case (.ifError(var a), .ifError(let f)):
-                if !hasEarlyExit(in: a) {
-                    a.append(contentsOf: f)
-                }
-                aggregated = .ifError(a)
+    /// - Parameters:
+    ///   - lhs: The first value to add.
+    ///   - rhs: The second value to add.
+    ///
+    /// - Returns: The generated fallback value.
+    static func + (lhs: Self, rhs: Self) -> Self {
+        switch (lhs, rhs) {
+        case (.throw, _), (_, .throw):
+            return .throw
+        case (.onlyIfMissing(let lf), .onlyIfMissing(let rf)), (.onlyIfMissing(let lf), .ifMissing(let rf, ifError: _)), (.ifMissing(let lf, ifError: _), .onlyIfMissing(let rf)):
+            var fallbacks = lf
+            if !hasEarlyExit(in: fallbacks) {
+                fallbacks.append(contentsOf: rf)
             }
+            return .onlyIfMissing(fallbacks)
+        case let (.ifMissing(lf, ifError: lef), .ifMissing(rf, ifError: ref)):
+            var fallbacks = lf
+            if !hasEarlyExit(in: fallbacks) {
+                fallbacks.append(contentsOf: rf)
+            }
+            var eFallbacks = lef
+            if !hasEarlyExit(in: eFallbacks) {
+                eFallbacks.append(contentsOf: ref)
+            }
+            return .ifMissing(fallbacks, ifError: eFallbacks)
         }
-        return aggregated
     }
 }
