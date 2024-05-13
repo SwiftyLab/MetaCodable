@@ -110,6 +110,11 @@ package protocol ConditionalVariable<CodingLocation, Generated>: Variable {
     /// If `nil` is returned, variable
     /// is encoded by default.
     var encode: Bool? { get }
+    /// The arguments passed to encoding condition.
+    ///
+    /// The encoding condition takes these arguments and evaluates to
+    /// `true` or `false` based on which encoding is decided.
+    var conditionArguments: LabeledExprListSyntax { get }
 }
 
 /// A `Variable` representing data that can be initialized.

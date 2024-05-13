@@ -17,7 +17,8 @@ package struct Default: PropertyAttribute {
     var onMissingExpr: ExprSyntax {
         return node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
             expr.label?.tokenKind == .identifier("ifMissing")
-        }?.expression ?? node.arguments!
+        }?.expression
+            ?? node.arguments!
             .as(LabeledExprListSyntax.self)!.first!.expression
     }
 

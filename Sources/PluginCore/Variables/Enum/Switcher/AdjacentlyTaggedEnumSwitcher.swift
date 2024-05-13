@@ -170,7 +170,7 @@ extension AdjacentlyTaggedEnumSwitcher {
         /// preserved and this variable is used
         /// to chain code generation implementations.
         let base = BasicPropertyVariable(
-            name: "", type: "", value: nil,
+            name: "", type: "_", value: nil,
             decodePrefix: "", encodePrefix: "",
             decode: true, encode: true
         )

@@ -14,6 +14,19 @@ where CodingLocation == EnumCaseCodingLocation, Generated == EnumCaseGenerated {
     var variables: [any AssociatedVariable] { get }
 }
 
+extension EnumCaseVariable {
+    /// The arguments passed to encoding condition.
+    ///
+    /// All associated variables are passed as argument.
+    var conditionArguments: LabeledExprListSyntax {
+        return LabeledExprListSyntax {
+            for variable in self.variables {
+                variable.conditionArguments
+            }
+        }
+    }
+}
+
 /// Represents the location for decoding/encoding for `EnumCaseVariable`s.
 ///
 /// Represents the container and value for `EnumCaseVariable`s
@@ -46,4 +59,30 @@ struct EnumCaseGenerated {
     /// This contains syntax for container retrieval and conditional
     /// syntax based on container availability.
     let code: PropertyVariableTreeNode.Generated
+}
+
+extension EnumCaseGenerated: ConditionalVariableSyntax {
+    /// Generates new syntax with provided condition.
+    ///
+    /// Adds condition to where clause of the switch case.
+    ///
+    /// - Parameter condition: The condition for the existing syntax.
+    /// - Returns: The new syntax.
+    func adding(condition: LabeledExprListSyntax) -> EnumCaseGenerated {
+        let condition: ExprSyntax = "(\(condition))"
+        let label = SwitchCaseLabelSyntax {
+            for item in self.label.caseItems {
+                let clauseExpr =
+                    if let previousClause = item.whereClause {
+                        "\(condition) && \(previousClause.condition)"
+                            as ExprSyntax
+                    } else {
+                        condition
+                    }
+                let clause = WhereClauseSyntax(condition: clauseExpr)
+                SwitchCaseItemSyntax(pattern: item.pattern, whereClause: clause)
+            }
+        }
+        return .init(label: label, code: code)
+    }
 }

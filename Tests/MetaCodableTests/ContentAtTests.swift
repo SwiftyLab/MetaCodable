@@ -102,7 +102,7 @@ final class ContentAtTests: XCTestCase {
                             try typeContainer.encode("load", forKey: CodingKeys.type)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
-                        case .store(key: let key,value: let value):
+                        case .store(key: let key, value: let value):
                             try typeContainer.encode("store", forKey: CodingKeys.type)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
@@ -183,7 +183,7 @@ final class ContentAtTests: XCTestCase {
                             try typeContainer.encode(1, forKey: CodingKeys.type)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
-                        case .store(key: let key,value: let value):
+                        case .store(key: let key, value: let value):
                             try typeContainer.encode(2, forKey: CodingKeys.type)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
@@ -264,7 +264,7 @@ final class ContentAtTests: XCTestCase {
                             try LossySequenceCoder<[Int]>().encode([1, 2, 3], to: &typeContainer, atKey: CodingKeys.type)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
-                        case .store(key: let key,value: let value):
+                        case .store(key: let key, value: let value):
                             try LossySequenceCoder<[Int]>().encode([4, 5, 6], to: &typeContainer, atKey: CodingKeys.type)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)

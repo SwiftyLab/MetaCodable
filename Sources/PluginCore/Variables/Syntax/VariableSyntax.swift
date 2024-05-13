@@ -1,3 +1,4 @@
+import SwiftSyntax
 import SwiftSyntaxMacros
 
 /// A type representing associated `Variable` declaration.
@@ -25,4 +26,19 @@ extension VariableSyntax {
     func codableVariable(in context: some MacroExpansionContext) -> Variable {
         return .init(from: self, in: context)
     }
+}
+
+/// A syntax that can be represented with conditional checks.
+///
+/// The syntax can accept condition to only execute if the
+/// condition is satisfied.
+protocol ConditionalVariableSyntax {
+    /// Generates new syntax with provided condition.
+    ///
+    /// The newly generated syntax only executes the existing syntax
+    /// if the provided condition is satisfied.
+    ///
+    /// - Parameter condition: The condition for the existing syntax.
+    /// - Returns: The new syntax.
+    func adding(condition: LabeledExprListSyntax) -> Self
 }

@@ -198,7 +198,8 @@ package enum DecodingFallback {
                     "if let \(nContainer) = \(nContainer)",
                     bodyBuilder: {
                         generated.conditionalSyntax
-                    }, elseIf: IfExprSyntax("if \(containerMissing)") {
+                    },
+                    elseIf: IfExprSyntax("if \(containerMissing)") {
                         fallbacks
                     } else: {
                         eFallbacks
@@ -227,7 +228,7 @@ extension DecodingFallback {
             false
         }
     }
-    
+
     /// Adds two decoding fallbacks into a single fallback.
     ///
     /// The generated single fallback represents both
@@ -242,7 +243,9 @@ extension DecodingFallback {
         switch (lhs, rhs) {
         case (.throw, _), (_, .throw):
             return .throw
-        case (.onlyIfMissing(let lf), .onlyIfMissing(let rf)), (.onlyIfMissing(let lf), .ifMissing(let rf, ifError: _)), (.ifMissing(let lf, ifError: _), .onlyIfMissing(let rf)):
+        case (.onlyIfMissing(let lf), .onlyIfMissing(let rf)),
+            (.onlyIfMissing(let lf), .ifMissing(let rf, ifError: _)),
+            (.ifMissing(let lf, ifError: _), .onlyIfMissing(let rf)):
             var fallbacks = lf
             if !hasEarlyExit(in: fallbacks) {
                 fallbacks.append(contentsOf: rf)

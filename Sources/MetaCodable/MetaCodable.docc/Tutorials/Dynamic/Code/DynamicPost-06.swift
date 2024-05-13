@@ -5,10 +5,12 @@ protocol Post {
     var id: UUID { get }
 }
 
+typealias Identifier =
+    DynamicCodableIdentifier<String>
+
 @Codable
 struct TextPost: Post, DynamicCodable {
-    static var identifier:
-    DynamicCodableIdentifier<String> {
+    static var identifier: Identifier {
         return "text"
     }
 
@@ -18,8 +20,7 @@ struct TextPost: Post, DynamicCodable {
 
 @Codable
 struct PicturePost: Post, DynamicCodable {
-    static var identifier:
-    DynamicCodableIdentifier<String> {
+    static var identifier: Identifier {
         return ["picture", "photo"]
     }
 
@@ -30,8 +31,7 @@ struct PicturePost: Post, DynamicCodable {
 
 @Codable
 struct AudioPost: Post, DynamicCodable {
-    static var identifier:
-    DynamicCodableIdentifier<String> {
+    static var identifier: Identifier {
         return "audio"
     }
 
@@ -42,8 +42,7 @@ struct AudioPost: Post, DynamicCodable {
 
 @Codable
 struct VideoPost: Post, DynamicCodable {
-    static var identifier:
-    DynamicCodableIdentifier<String> {
+    static var identifier: Identifier {
         return "video"
     }
 

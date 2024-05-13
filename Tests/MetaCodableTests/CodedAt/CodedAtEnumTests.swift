@@ -117,7 +117,7 @@ final class CodedAtEnumTests: XCTestCase {
                         case .string(let _0):
                             try typeContainer.encode("string", forKey: CodingKeys.type)
                             try _0.encode(to: encoder)
-                        case .multi(_: let variable,val: let val,let _2):
+                        case .multi(_: let variable, val: let val, let _2):
                             try typeContainer.encode("multi", forKey: CodingKeys.type)
                             try _2.encode(to: encoder)
                             var container = encoder.container(keyedBy: CodingKeys.self)
@@ -212,7 +212,7 @@ final class CodedAtEnumTests: XCTestCase {
                             try typeContainer.encode("load", forKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
-                        case .store(key: let key,value: let value):
+                        case .store(key: let key, value: let value):
                             try typeContainer.encode("store", forKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
@@ -289,7 +289,7 @@ final class CodedAtEnumTests: XCTestCase {
                             try typeContainer.encode(1, forKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
-                        case .store(key: let key,value: let value):
+                        case .store(key: let key, value: let value):
                             try typeContainer.encode(2, forKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
@@ -366,7 +366,7 @@ final class CodedAtEnumTests: XCTestCase {
                             try LossySequenceCoder<[Int]>().encode([1, 2, 3], to: &typeContainer, atKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
-                        case .store(key: let key,value: let value):
+                        case .store(key: let key, value: let value):
                             try LossySequenceCoder<[Int]>().encode([4, 5, 6], to: &typeContainer, atKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)

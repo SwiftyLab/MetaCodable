@@ -52,7 +52,7 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
             changes: [
                 .replace(
                     oldNode: Syntax(macro),
-                    newNode: Syntax("" as DeclSyntax)
+                    newNode: Syntax([] as AttributeListSyntax)
                 )
             ]
         )
