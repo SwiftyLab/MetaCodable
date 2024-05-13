@@ -12,6 +12,19 @@ package struct IgnoreEncoding: PropertyAttribute {
     /// during initialization.
     let node: AttributeSyntax
 
+    /// Optional encoding condition closure specified.
+    ///
+    /// This closure may take one or multiple arguments depending on
+    /// whether attached to property or enum case.
+    ///
+    /// The return type of closure in `Bool`, based on this value encoding
+    /// is decided to be performed or ignored.
+    var conditionExpr: ExprSyntax? {
+        return node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
+            expr.label?.tokenKind == .identifier("if")
+        }?.expression
+    }
+
     /// Creates a new instance with the provided node.
     ///
     /// The initializer fails to create new instance if the name
@@ -41,7 +54,7 @@ package struct IgnoreEncoding: PropertyAttribute {
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
         return AggregatedDiagnosticProducer {
-            shouldNotDuplicate()
+            cantDuplicate()
             shouldNotBeCombined(with: IgnoreCoding.self)
             `if`(
                 isStruct || isClass || isActor || isEnum || isProtocol,

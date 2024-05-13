@@ -159,7 +159,7 @@ final class IgnoreInitializedTests: XCTestCase {
                         case .string(let _0):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                             try _0.encode(to: contentEncoder)
-                        case .multi(_: let variable,val: let val,_):
+                        case .multi(_: let variable, val: let val, _):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
                             try container.encode(variable, forKey: CodingKeys.variable)
@@ -256,7 +256,7 @@ final class IgnoreInitializedTests: XCTestCase {
                         case .string(let _0):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                             try _0.encode(to: contentEncoder)
-                        case .multi(_: let variable,val: let val,let _2):
+                        case .multi(_: let variable, val: let val, let _2):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
                             try _2.encode(to: contentEncoder)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)

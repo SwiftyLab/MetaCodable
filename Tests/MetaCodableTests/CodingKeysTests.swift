@@ -334,7 +334,7 @@ final class CodingKeysTests: XCTestCase {
                         case .string(let _0):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                             try _0.encode(to: contentEncoder)
-                        case .multi(_: let variable,val: let val,let _2):
+                        case .multi(_: let variable, val: let val, let _2):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
                             try _2.encode(to: contentEncoder)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
@@ -733,7 +733,7 @@ final class CodingKeysTests: XCTestCase {
                         case .string(let _0):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                             try _0.encode(to: contentEncoder)
-                        case .multi(_: let variable,val: let val,let _2):
+                        case .multi(_: let variable, val: let val, let _2):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
                             try _2.encode(to: contentEncoder)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)

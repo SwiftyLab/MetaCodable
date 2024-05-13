@@ -75,7 +75,11 @@ package struct IgnoreCoding: PropertyAttribute {
     }
 }
 
-extension Registration where Decl: AttributableDeclSyntax {
+extension Registration
+where
+    Decl: AttributableDeclSyntax, Var: ConditionalVariable,
+    Var.Generated: ConditionalVariableSyntax
+{
     /// The output registration variable type that handles conditional
     /// decoding/encoding data.
     typealias ConditionalOutput = ConditionalCodingVariable<Var>
@@ -97,10 +101,14 @@ extension Registration where Decl: AttributableDeclSyntax {
         typealias Output = ConditionalOutput
         let ignoreCoding = IgnoreCoding(from: self.decl) != nil
         let ignoreDecoding = IgnoreDecoding(from: self.decl) != nil
-        let ignoreEncoding = IgnoreEncoding(from: self.decl) != nil
+        let ignoreEncodingAttr = IgnoreEncoding(from: self.decl)
+        let conditionExpr = ignoreEncodingAttr?.conditionExpr
+        let ignoreEncoding = ignoreEncodingAttr != nil && conditionExpr == nil
         let decode = !ignoreCoding && !ignoreDecoding
         let encode = !ignoreCoding && !ignoreEncoding
-        let options = Output.Options(decode: decode, encode: encode)
+        let options = Output.Options(
+            decode: decode, encode: encode, encodingConditionExpr: conditionExpr
+        )
         let newVariable = Output(base: self.variable, options: options)
         return self.updating(with: newVariable)
     }

@@ -64,3 +64,4 @@ mergeBehavior
 lowercasing
 SwiftData
 SwiftUI
+IgnoreEncoding

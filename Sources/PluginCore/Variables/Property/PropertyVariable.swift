@@ -94,7 +94,26 @@ package enum PropertyCodingLocation {
     )
 }
 
+extension PropertyVariable
+where Self: ComposedVariable, Self.Wrapped: ConditionalVariable {
+    /// The arguments passed to encoding condition.
+    ///
+    /// Provides arguments of underlying variable value.
+    var conditionArguments: LabeledExprListSyntax {
+        return base.conditionArguments
+    }
+}
+
 extension PropertyVariable {
+    /// The arguments passed to encoding condition.
+    ///
+    /// Passes current variable as single argument.
+    var conditionArguments: LabeledExprListSyntax {
+        return [
+            .init(expression: "\(self.encodePrefix)\(self.name)" as ExprSyntax)
+        ]
+    }
+
     /// Check whether current type syntax
     /// represents an optional type.
     ///
@@ -146,5 +165,24 @@ extension PropertyVariable {
             dMethod = method
         }
         return (dType, dMethod)
+    }
+}
+
+extension CodeBlockItemListSyntax: ConditionalVariableSyntax {
+    /// Generates new syntax with provided condition.
+    ///
+    /// Wraps existing syntax with an if expression based on provided condition.
+    ///
+    /// - Parameter condition: The condition for the existing syntax.
+    /// - Returns: The new syntax.
+    func adding(condition: LabeledExprListSyntax) -> CodeBlockItemListSyntax {
+        let condition = ConditionElementListSyntax {
+            .init(condition: .expression("(\(condition))"))
+        }
+        return CodeBlockItemListSyntax {
+            IfExprSyntax(conditions: condition) {
+                self
+            }
+        }
     }
 }

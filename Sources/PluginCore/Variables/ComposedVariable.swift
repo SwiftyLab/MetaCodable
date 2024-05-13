@@ -89,6 +89,13 @@ where Self: ConditionalVariable, Wrapped: ConditionalVariable {
     ///
     /// Whether underlying wrapped variable is to be encoded.
     var encode: Bool? { base.encode }
+
+    /// The arguments passed to encoding condition.
+    ///
+    /// Provides arguments of underlying variable value.
+    var conditionArguments: LabeledExprListSyntax {
+        return base.conditionArguments
+    }
 }
 
 extension ComposedVariable

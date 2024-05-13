@@ -22,7 +22,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows specifying different case values with ``CodedAs(_:_:)`` and case value/protocol type identifier type different from `String` with ``CodedAs()``.
 - Allows specifying enum-case/protocol type identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
 - Allows decoding/encoding enums that lack distinct identifiers for each case data with ``UnTagged()``.
-- Allows to ignore specific properties/cases from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``IgnoreEncoding()``.
+- Allows to ignore specific properties/cases from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``IgnoreEncoding()``. Allows to ignore encoding based on custom conditions with ``IgnoreEncoding(if:)-1iuvv`` and ``IgnoreEncoding(if:)-7toka``.
 - Allows to use camel-case names for variables according to [Swift API Design Guidelines](https://www.swift.org/documentation/api-design-guidelines/#general-conventions), while enabling a type/case to work with different case style keys with ``CodingKeys(_:)``.
 - Allows to ignore all initialized properties of a type/case from decoding/encoding with ``IgnoreCodingInitialized()`` unless explicitly asked to decode/encode by attaching any coding attributes, i.e. ``CodedIn(_:)``, ``CodedAt(_:)``, ``CodedBy(_:)``, ``Default(_:)`` etc.
 - Allows to generate protocol decoding/encoding ``HelperCoder``s with `MetaProtocolCodable` build tool plugin from ``DynamicCodable`` types.
@@ -86,6 +86,8 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``IgnoreCoding()``
 - ``IgnoreDecoding()``
 - ``IgnoreEncoding()``
+- ``IgnoreEncoding(if:)-1iuvv``
+- ``IgnoreEncoding(if:)-7toka``
 - ``CodingKeys(_:)``
 - ``IgnoreCodingInitialized()``
 - ``Inherits(decodable:encodable:)``

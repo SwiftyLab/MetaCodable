@@ -598,12 +598,12 @@ final class UntaggedEnumTests: XCTestCase {
                             try container.encode(val, forKey: CodingKeys.val)
                         case .string(let _0):
                             try _0.encode(to: encoder)
-                        case .multiOpt(_: let variable,val: let val,str: let str):
+                        case .multiOpt(_: let variable, val: let val, str: let str):
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encodeIfPresent(variable, forKey: CodingKeys.variable)
                             try container.encodeIfPresent(val, forKey: CodingKeys.val)
                             try container.encodeIfPresent(str, forKey: CodingKeys.str)
-                        case .multi(_: let variable,val: let val,let _2):
+                        case .multi(_: let variable, val: let val, let _2):
                             try _2.encode(to: encoder)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(variable, forKey: CodingKeys.variable)

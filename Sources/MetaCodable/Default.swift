@@ -87,5 +87,7 @@ public macro Default<T>(ifMissing default: T) =
 ///   default value type `T` must be the same as field type.
 @attached(peer)
 @available(swift 5.9)
-public macro Default<T>(ifMissing missingDefault: T, forErrors errorDefault: T) =
+public macro Default<T>(
+    ifMissing missingDefault: T, forErrors errorDefault: T
+) =
     #externalMacro(module: "MacroPlugin", type: "Default")

@@ -75,13 +75,22 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         let codingKeys = CodingKeysMap(typeName: "CodingKeys")
         let caseDecodeExpr: CaseCode = { name, variables in
             let args = Self.decodingArgs(representing: variables)
-            let argExpr: ExprSyntax = !args.isEmpty ? "(\(args))" : ""
-            return "self = .\(name)\(argExpr)"
+            return if !args.isEmpty {
+                "self = .\(name)(\(args))"
+            } else {
+                "self = .\(name)"
+            }
         }
         let caseEncodeExpr: CaseCode = { name, variables in
             let args = Self.encodingArgs(representing: variables)
-            let argExpr: ExprSyntax = !args.isEmpty ? "(\(args))" : ""
-            return ".\(name)\(argExpr)"
+            let callee: ExprSyntax = ".\(name)"
+            let fExpr =
+                if !args.isEmpty {
+                    FunctionCallExprSyntax(callee: callee) { args }
+                } else {
+                    FunctionCallExprSyntax(calledExpression: callee) {}
+                }
+            return ExprSyntax(fExpr)
         }
         self.init(
             from: decl, in: context,
@@ -255,7 +264,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         if cases.contains(where: { $0.variable.decode ?? true }) {
             let switcherLoc = EnumSwitcherLocation(
                 coder: location.method.arg, container: "container",
-                keyType: codingKeys.type, selfType: selfType, selfValue: "",
+                keyType: codingKeys.type, selfType: selfType, selfValue: "_",
                 cases: cases, codeExpr: caseDecodeExpr,
                 hasDefaultCase: forceDefault
             )
@@ -458,8 +467,21 @@ package extension EnumVariable {
         return LabeledExprListSyntax {
             for variable in variables {
                 let encode = (variable.encode ?? true)
-                let expr: ExprSyntax = encode ? "let \(variable.name)" : "_"
                 let label = variable.label?.text
+                let expr: ExprSyntaxProtocol =
+                    if encode {
+                        PatternExprSyntax(
+                            pattern: ValueBindingPatternSyntax(
+                                bindingSpecifier: .keyword(
+                                    .let, trailingTrivia: .space),
+                                pattern: IdentifierPatternSyntax(
+                                    identifier: variable.name
+                                )
+                            )
+                        )
+                    } else {
+                        "_" as ExprSyntax
+                    }
                 LabeledExprSyntax(label: label, expression: expr)
             }
         }

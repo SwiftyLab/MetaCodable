@@ -1,9 +1,13 @@
+import SwiftSyntax
+import SwiftSyntaxMacros
+
 /// A variable value containing data whether to perform decoding/encoding.
 ///
 /// The `ConditionalCodingVariable` type forwards `Variable`
 /// decoding/encoding, initialization implementations and only
 /// decoding/encoding condition are customized.
-struct ConditionalCodingVariable<Var: Variable>: ComposedVariable, Variable {
+struct ConditionalCodingVariable<Var>: ComposedVariable, Variable
+where Var: ConditionalVariable, Var.Generated: ConditionalVariableSyntax {
     /// The customization options for `ConditionalCodingVariable`.
     ///
     /// `ConditionalCodingVariable` uses the instance of this type,
@@ -20,6 +24,11 @@ struct ConditionalCodingVariable<Var: Variable>: ComposedVariable, Variable {
         /// False for variables with `@IgnoreCoding`
         /// and `@IgnoreEncoding` attributes.
         let encode: Bool?
+        /// The condition expression based on which encoding is decided.
+        ///
+        /// This expression accepts arguments from this variable and resolves
+        /// to either `true` or `false` based on which encoding is done.
+        let encodingConditionExpr: ExprSyntax?
     }
 
     /// The value wrapped by this instance.
@@ -31,6 +40,38 @@ struct ConditionalCodingVariable<Var: Variable>: ComposedVariable, Variable {
     ///
     /// Options is provided during initialization.
     let options: Options
+
+    /// Provides the code syntax for encoding this variable
+    /// at the provided location.
+    ///
+    /// If any encoding condition expression is provided then based on the
+    /// result of the expression encoding is performed by generated syntax.
+    /// Otherwise, provides code syntax for encoding of the underlying
+    /// variable value.
+    ///
+    /// - Parameters:
+    ///   - context: The context in which to perform the macro expansion.
+    ///   - location: The encoding location for the variable.
+    ///
+    /// - Returns: The generated variable encoding code.
+    func encoding(
+        in context: some MacroExpansionContext,
+        to location: Var.CodingLocation
+    ) -> Var.Generated {
+        let syntax = base.encoding(in: context, to: location)
+        guard
+            let conditionExpr = options.encodingConditionExpr
+        else { return syntax }
+        let args = self.conditionArguments
+        let returnList = TupleTypeElementListSyntax {
+            for _ in args {
+                TupleTypeElementSyntax(type: "_" as TypeSyntax)
+            }
+        }
+        let expr: ExprSyntax =
+            "{ () -> (\(returnList)) -> Bool in \(conditionExpr) }()(\(args))"
+        return syntax.adding(condition: [.init(expression: expr)])
+    }
 }
 
 extension ConditionalCodingVariable: ConditionalVariable

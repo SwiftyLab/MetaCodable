@@ -86,6 +86,7 @@ extension EnumSwitcherVariable {
     ) -> SwitchExprSyntax {
         let cases = location.cases
         let allEncodable = cases.allSatisfy { $0.variable.encode ?? true }
+        var anyEncodeCondition = false
         return SwitchExprSyntax(subject: header) {
             for (`case`, value) in cases where `case`.encode ?? true {
                 let cLocation = EnumCaseCodingLocation(
@@ -94,7 +95,13 @@ extension EnumSwitcherVariable {
                 let generated = `case`.encoding(in: context, to: cLocation)
                 let expr = location.codeExpr(`case`.name, `case`.variables)
                 let pattern = ExpressionPatternSyntax(expression: expr)
-                let label = SwitchCaseLabelSyntax { .init(pattern: pattern) }
+                let whereClause = generated.label.caseItems.first { item in
+                    anyEncodeCondition = item.whereClause != nil
+                    return anyEncodeCondition
+                }?.whereClause
+                let label = SwitchCaseLabelSyntax {
+                    .init(pattern: pattern, whereClause: whereClause)
+                }
                 let caseSyntax = CodeBlockItemListSyntax {
                     preSyntax("\(value.encodeExprs.first!)")
                     generated.code.combined()
@@ -103,7 +110,7 @@ extension EnumSwitcherVariable {
                     !caseSyntax.isEmpty ? caseSyntax : "break"
                 }
             }
-            if `default` || !allEncodable {
+            if `default` || !allEncodable || anyEncodeCondition {
                 SwitchCaseSyntax(label: .default(.init())) { "break" }
             }
         }

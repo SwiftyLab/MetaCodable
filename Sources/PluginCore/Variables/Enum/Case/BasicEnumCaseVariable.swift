@@ -156,6 +156,8 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
             with: data, in: context,
             to: .coder(location.coder, keyType: codingKeys.type)
         )
-        return .init(label: .init(caseItems: []), code: generated)
+        let pattern = IdentifierPatternSyntax(identifier: "_")
+        let item = SwitchCaseItemSyntax(pattern: pattern)
+        return .init(label: .init(caseItems: [item]), code: generated)
     }
 }

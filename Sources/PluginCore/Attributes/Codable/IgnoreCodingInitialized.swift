@@ -68,7 +68,9 @@ extension Registration where Var: ValuedVariable {
         typealias Output = ConditionalCodingVariable<Var>
         let attr = IgnoreCodingInitialized(from: decl)
         let code = attr != nil ? self.variable.value == nil : nil
-        let options = Output.Options(decode: code, encode: code)
+        let options = Output.Options(
+            decode: code, encode: code, encodingConditionExpr: nil
+        )
         let newVariable = Output(base: self.variable, options: options)
         return self.updating(with: newVariable)
     }

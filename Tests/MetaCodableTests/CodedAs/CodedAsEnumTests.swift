@@ -237,7 +237,7 @@ final class CodedAsEnumTests: XCTestCase {
                             try LossySequenceCoder<[Int]>().encode(1, to: &typeContainer, atKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
-                        case .store(key: let key,value: let value):
+                        case .store(key: let key, value: let value):
                             try LossySequenceCoder<[Int]>().encode(2, to: &typeContainer, atKey: CodingKeys.type)
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             try container.encode(key, forKey: CodingKeys.key)
@@ -362,7 +362,7 @@ final class CodedAsEnumTests: XCTestCase {
                         case .string(let _0):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                             try _0.encode(to: contentEncoder)
-                        case .multi(_: let variable,val: let val,let _2):
+                        case .multi(_: let variable, val: let val, let _2):
                             let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
                             try _2.encode(to: contentEncoder)
                             var container = contentEncoder.container(keyedBy: CodingKeys.self)
@@ -483,7 +483,7 @@ final class CodedAsEnumTests: XCTestCase {
                         case .string(let _0):
                             try typeContainer.encode("string", forKey: CodingKeys.type)
                             try _0.encode(to: encoder)
-                        case .multi(_: let variable,val: let val,let _2):
+                        case .multi(_: let variable, val: let val, let _2):
                             try typeContainer.encode("multi", forKey: CodingKeys.type)
                             try _2.encode(to: encoder)
                             var container = encoder.container(keyedBy: CodingKeys.self)

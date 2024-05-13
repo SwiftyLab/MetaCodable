@@ -374,7 +374,13 @@ func assertMacroExpansion(
 
 extension Attribute {
     static var misuseID: MessageID {
-        return Self.init(from: .init(stringLiteral: Self.name))!.misuseMessageID
+        return Self.init(
+            from: .init(
+                attributeName: IdentifierTypeSyntax(
+                    name: .identifier(Self.name)
+                )
+            )
+        )!.misuseMessageID
     }
 }
 
