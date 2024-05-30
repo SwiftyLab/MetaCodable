@@ -152,6 +152,9 @@ extension PropertyVariable {
         if let type = type.as(OptionalTypeSyntax.self) {
             dType = type.wrappedType
             dMethod = "\(method)IfPresent"
+        } else if let type = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+            dType = type.wrappedType
+            dMethod = "\(method)IfPresent"
         } else if let type = type.as(IdentifierTypeSyntax.self),
             type.name.text == "Optional",
             let gArgs = type.genericArgumentClause?.arguments,
