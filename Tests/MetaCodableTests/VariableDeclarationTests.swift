@@ -414,6 +414,46 @@ final class VariableDeclarationTests: XCTestCase {
                 }
                 """
         )
+
+        assertMacroExpansion(
+            """
+            @Codable
+            @MemberInit
+            struct SomeCodable {
+                let value: String!
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let value: String!
+
+                    init(value: String! = nil) {
+                        self.value = value
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
+                    }
+                }
+
+                extension SomeCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
+                    }
+                }
+
+                extension SomeCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case value = "value"
+                    }
+                }
+                """
+        )
     }
 
     func testGenericSyntaxOptionalVariable() throws {
