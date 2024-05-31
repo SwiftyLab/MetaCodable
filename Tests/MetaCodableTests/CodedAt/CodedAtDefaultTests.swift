@@ -84,6 +84,44 @@ final class CodedAtDefaultTests: XCTestCase {
                 }
                 """
         )
+
+        assertMacroExpansion(
+            """
+            @Codable
+            @MemberInit
+            struct SomeCodable {
+                @Default("some")
+                @CodedAt
+                let value: String!
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let value: String!
+
+                    init(value: String! = "some") {
+                        self.value = value
+                    }
+                }
+
+                extension SomeCodable: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        do {
+                            self.value = try String??(from: decoder) ?? "some"
+                        } catch {
+                            self.value = "some"
+                        }
+                    }
+                }
+
+                extension SomeCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        try self.value.encode(to: encoder)
+                    }
+                }
+                """
+        )
     }
 
     func testWithSinglePath() throws {

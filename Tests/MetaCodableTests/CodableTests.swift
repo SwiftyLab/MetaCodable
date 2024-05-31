@@ -47,6 +47,53 @@ final class CodableTests: XCTestCase {
         )
     }
 
+    func testOptionalWithoutAnyCustomization() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            struct SomeCodable {
+                let value1: String?
+                let value2: String!
+                let value3: Optional<String>
+            }
+            """,
+            expandedSource:
+                """
+                struct SomeCodable {
+                    let value1: String?
+                    let value2: String!
+                    let value3: Optional<String>
+                }
+
+                extension SomeCodable: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                        self.value1 = try container.decodeIfPresent(String.self, forKey: CodingKeys.value1)
+                        self.value2 = try container.decodeIfPresent(String.self, forKey: CodingKeys.value2)
+                        self.value3 = try container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
+                    }
+                }
+
+                extension SomeCodable: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        try container.encodeIfPresent(self.value1, forKey: CodingKeys.value1)
+                        try container.encodeIfPresent(self.value2, forKey: CodingKeys.value2)
+                        try container.encodeIfPresent(self.value3, forKey: CodingKeys.value3)
+                    }
+                }
+
+                extension SomeCodable {
+                    enum CodingKeys: String, CodingKey {
+                        case value1 = "value1"
+                        case value2 = "value2"
+                        case value3 = "value3"
+                    }
+                }
+                """
+        )
+    }
+
     func testWithoutAnyCustomizationWithStaticVar() throws {
         assertMacroExpansion(
             """
