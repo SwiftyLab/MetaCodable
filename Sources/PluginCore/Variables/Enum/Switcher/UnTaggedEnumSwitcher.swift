@@ -126,8 +126,9 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         }
         return CodeBlockItemListSyntax {
             let `case` = `case`.variable
-            generated.code.syntax
+            generated.code.containerSyntax
             DoStmtSyntax(catchClauses: catchClauses) {
+                generated.code.codingSyntax
                 generated.code.conditionalSyntax
                 location.codeExpr(`case`.name, `case`.variables)
                 "return"

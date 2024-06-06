@@ -9,7 +9,11 @@ extension PropertyVariableTreeNode {
         /// The container retrieval syntax.
         ///
         /// Represents container retrieval syntax that can be shared.
-        let syntax: CodeBlockItemListSyntax
+        let containerSyntax: CodeBlockItemListSyntax
+        /// The decoding/encoding syntax for variables.
+        ///
+        /// Represents variable decoding/encoding syntax.
+        let codingSyntax: CodeBlockItemListSyntax
         /// The conditional syntax.
         ///
         /// Represents actual decoding/encoding syntax.
@@ -23,33 +27,39 @@ extension PropertyVariableTreeNode {
         /// - Returns: The combined code syntax.
         func combined() -> CodeBlockItemListSyntax {
             return CodeBlockItemListSyntax {
-                syntax
+                containerSyntax
+                codingSyntax
                 conditionalSyntax
             }
         }
     }
 }
 
-extension Sequence where Element == PropertyVariableTreeNode.Generated {
-    /// Combines all the generated syntax into single syntax.
+extension PropertyVariableTreeNode.Generated {
+    /// Adds two generated syntaxes into a single generation.
     ///
-    /// Combines all the container retrieval syntaxes and conditional syntaxes
-    /// into one container retrieval syntax and conditional syntax respectively.
+    /// The generated single syntax represents both the
+    /// generated syntaxes added.
     ///
-    /// - Returns: The combined generated syntax.
-    func aggregated() -> Element {
-        let initial = Element(syntax: "", conditionalSyntax: "")
-        return self.reduce(into: initial) { partialResult, generated in
-            partialResult = .init(
-                syntax: CodeBlockItemListSyntax {
-                    partialResult.syntax
-                    generated.syntax
-                },
-                conditionalSyntax: CodeBlockItemListSyntax {
-                    partialResult.conditionalSyntax
-                    generated.conditionalSyntax
-                }
-            )
-        }
+    /// - Parameters:
+    ///   - lhs: The first value to add.
+    ///   - rhs: The second value to add.
+    ///
+    /// - Returns: The final generated syntax.
+    static func + (lhs: Self, rhs: Self) -> Self {
+        return .init(
+            containerSyntax: CodeBlockItemListSyntax {
+                lhs.containerSyntax
+                rhs.containerSyntax
+            },
+            codingSyntax: CodeBlockItemListSyntax {
+                lhs.codingSyntax
+                rhs.codingSyntax
+            },
+            conditionalSyntax: CodeBlockItemListSyntax {
+                lhs.conditionalSyntax
+                rhs.conditionalSyntax
+            }
+        )
     }
 }

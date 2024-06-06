@@ -406,6 +406,7 @@ final class CodedAtDefaultChoiceTests: XCTestCase {
                             nested_deeply_containerMissing = true
                         }
                         if let deeply_container = deeply_container {
+                            self.value3 = try deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                             if let nested_deeply_container = nested_deeply_container {
                                 do {
                                     self.value1 = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
@@ -424,7 +425,6 @@ final class CodedAtDefaultChoiceTests: XCTestCase {
                                 self.value1 = "another"
                                 self.value2 = "another"
                             }
-                            self.value3 = try deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                         } else {
                             self.value1 = "some"
                             self.value2 = "some"
@@ -505,7 +505,9 @@ final class CodedAtDefaultChoiceTests: XCTestCase {
                             level_nested_deeply_container = nil
                             level_nested_deeply_containerMissing = true
                         }
+                        self.value4 = try deeply_container.decode(String.self, forKey: CodingKeys.value4)
                         if let nested_deeply_container = nested_deeply_container {
+                            self.value3 = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                             if let level_nested_deeply_container = level_nested_deeply_container {
                                 do {
                                     self.value1 = try level_nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
@@ -524,13 +526,11 @@ final class CodedAtDefaultChoiceTests: XCTestCase {
                                 self.value1 = "another"
                                 self.value2 = "another"
                             }
-                            self.value3 = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                         } else {
                             self.value1 = "some"
                             self.value2 = "some"
                             self.value3 = nil
                         }
-                        self.value4 = try deeply_container.decode(String.self, forKey: CodingKeys.value4)
                     }
                 }
 
@@ -600,7 +600,9 @@ final class CodedAtDefaultChoiceTests: XCTestCase {
                             level_nested_deeply_container = nil
                             level_nested_deeply_containerMissing = true
                         }
+                        self.value4 = try deeply_container.decode(String.self, forKey: CodingKeys.value4)
                         if let nested_deeply_container = nested_deeply_container {
+                            self.value3 = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                             if let level_nested_deeply_container = level_nested_deeply_container {
                                 do {
                                     self.value1 = try level_nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
@@ -619,13 +621,11 @@ final class CodedAtDefaultChoiceTests: XCTestCase {
                                 self.value1 = "another"
                                 self.value2 = "another"
                             }
-                            self.value3 = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                         } else {
                             self.value1 = "some"
                             self.value2 = "some"
                             self.value3 = nil
                         }
-                        self.value4 = try deeply_container.decode(String.self, forKey: CodingKeys.value4)
                     }
 
                     func encode(to encoder: any Encoder) throws {

@@ -568,8 +568,8 @@ final class UntaggedEnumTests: XCTestCase {
                                         let val: Int
                                         let _2: String
                                         do {
+                                            _2 = try String(from: decoder)
                                             if let container = container {
-                                                _2 = try String(from: decoder)
                                                 variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                                                 val = try container.decode(Int.self, forKey: CodingKeys.val)
                                             } else {

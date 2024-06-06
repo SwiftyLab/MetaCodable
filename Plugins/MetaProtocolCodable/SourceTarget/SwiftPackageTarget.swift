@@ -68,7 +68,8 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
         let contents = try fileManager.contentsOfDirectory(atPath: directory)
         let file = contents.first { file in
             let path = Path(file)
-            return name.lowercased() == path.stem
+            return name.lowercased()
+                == path.stem
                 .components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()
