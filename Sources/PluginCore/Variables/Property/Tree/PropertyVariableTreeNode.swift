@@ -108,12 +108,19 @@ extension PropertyVariableTreeNode {
                 node.linkedVariables.contains { $0.decode ?? true }
             }
         guard !(data?.children.isEmpty ?? children.isEmpty), childrenDecodable
-        else { return .init(syntax: "", conditionalSyntax: decodingSyntax) }
+        else {
+            return .init(
+                containerSyntax: "", codingSyntax: decodingSyntax,
+                conditionalSyntax: ""
+            )
+        }
+
         let decodableChildren = children.lazy
             .filter { data?.hasKey($0.key) ?? true }
         return decodableChildren.lazy
             .flatMap(\.value.linkedVariables)
-            .map(\.decodingFallback).reduce(.ifMissing([], ifError: []), +)
+            .map(\.decodingFallback)
+            .reduce(.ifMissing([], ifError: []), +)
             .represented(
                 location: location, nestedContainer: self.decodingContainer
             ) { container in
@@ -124,11 +131,19 @@ extension PropertyVariableTreeNode {
                         in: context,
                         from: .container(container, key: cKey)
                     )
-                }.aggregated()
+                }.reduce(
+                    .init(
+                        containerSyntax: "", codingSyntax: "",
+                        conditionalSyntax: ""
+                    ), +
+                )
                 return .init(
-                    syntax: generated.syntax,
+                    containerSyntax: CodeBlockItemListSyntax {
+                        generated.containerSyntax
+                    },
+                    codingSyntax: decodingSyntax,
                     conditionalSyntax: CodeBlockItemListSyntax {
-                        decodingSyntax
+                        generated.codingSyntax
                         generated.conditionalSyntax
                     }
                 )
@@ -219,7 +234,9 @@ extension PropertyVariableTreeNode {
                 }
             }
         }
-        return .init(syntax: syntax, conditionalSyntax: "")
+        return .init(
+            containerSyntax: "", codingSyntax: syntax, conditionalSyntax: ""
+        )
     }
 
     /// Provides the code block list syntax for encoding individual

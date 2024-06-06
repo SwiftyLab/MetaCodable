@@ -123,8 +123,8 @@ extension KeyedDecodingContainerProtocol {
                 .init(
                     codingPath: codingPath,
                     debugDescription: """
-                    Duplicate keys found, keys are case-insensitive.
-                    """
+                        Duplicate keys found, keys are case-insensitive.
+                        """
                 )
             )
         }

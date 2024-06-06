@@ -311,6 +311,7 @@ final class CodedAtHelperTests: XCTestCase {
                         let deeply_container = ((try? container.decodeNil(forKey: CodingKeys.deeply)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) : nil
                         let nested_deeply_container = ((try? deeply_container?.decodeNil(forKey: CodingKeys.nested)) == false) ? try deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) : nil
                         if let deeply_container = deeply_container {
+                            self.value3 = try LossySequenceCoder<[String]>().decodeIfPresent(from: deeply_container, forKey: CodingKeys.value3)
                             if let nested_deeply_container = nested_deeply_container {
                                 self.value1 = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value1)
                                 self.value2 = try LossySequenceCoder<[String]>().decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value2)
@@ -318,7 +319,6 @@ final class CodedAtHelperTests: XCTestCase {
                                 self.value1 = nil
                                 self.value2 = nil
                             }
-                            self.value3 = try LossySequenceCoder<[String]>().decodeIfPresent(from: deeply_container, forKey: CodingKeys.value3)
                         } else {
                             self.value1 = nil
                             self.value2 = nil

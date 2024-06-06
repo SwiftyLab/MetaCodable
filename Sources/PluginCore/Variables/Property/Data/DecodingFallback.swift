@@ -89,14 +89,14 @@ package enum DecodingFallback {
         let cToken = nestedContainer ?? "container"
         let container = Container(name: cToken, isOptional: isOptional)
         let generated = decoding(container)
-        let syntax = CodeBlockItemListSyntax {
+        let containerSyntax = CodeBlockItemListSyntax {
             if nestedContainer == nil {
                 let `try`: TokenSyntax = isOptional ? "try?" : "try"
                 """
                 let \(container.name) = \(`try`) \(decoder).container(keyedBy: \(type))
                 """
             }
-            generated.syntax
+            generated.containerSyntax
         }
         let conditionalSyntax = CodeBlockItemListSyntax {
             if isOptional {
@@ -113,7 +113,11 @@ package enum DecodingFallback {
                 generated.conditionalSyntax
             }
         }
-        return .init(syntax: syntax, conditionalSyntax: conditionalSyntax)
+        return .init(
+            containerSyntax: containerSyntax,
+            codingSyntax: generated.codingSyntax,
+            conditionalSyntax: conditionalSyntax
+        )
     }
 
     /// Provides the code block list syntax for decoding provided
@@ -133,31 +137,34 @@ package enum DecodingFallback {
         nestedDecoding decoding: (Container) -> Generated
     ) -> Generated {
         let nContainer = nestedContainer ?? "\(key.raw)_\(container.name)"
-        let syntax: CodeBlockItemListSyntax
+        let containerSyntax: CodeBlockItemListSyntax
+        let codingSyntax: CodeBlockItemListSyntax
         let conditionalSyntax: CodeBlockItemListSyntax
         switch self {
         case .throw:
             let generated = decoding(
                 .init(name: nContainer, isOptional: container.isOptional)
             )
-            syntax = CodeBlockItemListSyntax {
+            codingSyntax = generated.codingSyntax
+            containerSyntax = CodeBlockItemListSyntax {
                 if nestedContainer == nil {
                     """
                     let \(nContainer) = try \(container.syntax).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
                     """
                 }
-                generated.syntax
+                generated.containerSyntax
             }
             conditionalSyntax = generated.conditionalSyntax
         case .onlyIfMissing(let fallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
-            syntax = CodeBlockItemListSyntax {
+            codingSyntax = generated.codingSyntax
+            containerSyntax = CodeBlockItemListSyntax {
                 if nestedContainer == nil {
                     """
                     let \(nContainer) = ((try? \(container.syntax).decodeNil(forKey: \(key.expr))) == false) ? try \(container.syntax).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr)) : nil
                     """
                 }
-                generated.syntax
+                generated.containerSyntax
             }
             conditionalSyntax = CodeBlockItemListSyntax {
                 try! IfExprSyntax(
@@ -173,7 +180,8 @@ package enum DecodingFallback {
         case let .ifMissing(fallbacks, ifError: eFallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
             let containerMissing: TokenSyntax = "\(nContainer)Missing"
-            syntax = CodeBlockItemListSyntax {
+            codingSyntax = generated.codingSyntax
+            containerSyntax = CodeBlockItemListSyntax {
                 if nestedContainer == nil {
                     "let \(nContainer): KeyedDecodingContainer<\(key.typeName)>?"
                     "let \(containerMissing): Bool"
@@ -191,7 +199,7 @@ package enum DecodingFallback {
                         "\(containerMissing) = true"
                     }
                 }
-                generated.syntax
+                generated.containerSyntax
             }
             conditionalSyntax = CodeBlockItemListSyntax {
                 try! IfExprSyntax(
@@ -207,7 +215,10 @@ package enum DecodingFallback {
                 )
             }
         }
-        return .init(syntax: syntax, conditionalSyntax: conditionalSyntax)
+        return .init(
+            containerSyntax: containerSyntax, codingSyntax: codingSyntax,
+            conditionalSyntax: conditionalSyntax
+        )
     }
 }
 

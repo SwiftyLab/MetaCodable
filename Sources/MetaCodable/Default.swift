@@ -58,7 +58,7 @@ public macro Default<T>(ifMissing default: T) =
     #externalMacro(module: "MacroPlugin", type: "Default")
 
 /// Provides different `default` values to be used for missing value
-/// and decoding errors..
+/// and decoding errors.
 ///
 /// If the value is missing, the `missingDefault` value will be used,
 /// while for incorrect data type, `errorDefault` value will be used,

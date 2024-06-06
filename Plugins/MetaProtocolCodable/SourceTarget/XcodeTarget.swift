@@ -62,7 +62,8 @@ extension XcodeTarget: MetaProtocolCodableSourceTarget {
     /// - Returns: The config file path.
     func configPath(named name: String) -> String? {
         return inputFiles.first { file in
-            return name.lowercased() == file.path.stem
+            return name.lowercased()
+                == file.path.stem
                 .components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()

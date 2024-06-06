@@ -463,6 +463,7 @@ final class CodedInDefaultTests: XCTestCase {
                             nested_deeply_containerMissing = true
                         }
                         if let deeply_container = deeply_container {
+                            self.value3 = try deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                             if let nested_deeply_container = nested_deeply_container {
                                 do {
                                     self.value1 = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
@@ -481,7 +482,6 @@ final class CodedInDefaultTests: XCTestCase {
                                 self.value1 = "some"
                                 self.value2 = "some"
                             }
-                            self.value3 = try deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                         } else {
                             self.value1 = "some"
                             self.value2 = "some"
@@ -570,10 +570,10 @@ final class CodedInDefaultTests: XCTestCase {
                             level_value3_value4_container = nil
                             level_value3_value4_containerMissing = true
                         }
+                        self.value4 = try container.decode(String.self, forKey: CodingKeys.value4)
                         if let value4_container = value4_container {
-                            self.value4 = try container.decode(String.self, forKey: CodingKeys.value4)
+                            self.value3 = try value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                             if let value3_value4_container = value3_value4_container {
-                                self.value3 = try value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                                 if let level_value3_value4_container = level_value3_value4_container {
                                     do {
                                         self.value1 = try level_value3_value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"
@@ -679,10 +679,10 @@ final class CodedInDefaultTests: XCTestCase {
                             level_value3_value4_container = nil
                             level_value3_value4_containerMissing = true
                         }
+                        self.value4 = try container.decode(String.self, forKey: CodingKeys.value4)
                         if let value4_container = value4_container {
-                            self.value4 = try container.decode(String.self, forKey: CodingKeys.value4)
+                            self.value3 = try value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                             if let value3_value4_container = value3_value4_container {
-                                self.value3 = try value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value3)
                                 if let level_value3_value4_container = level_value3_value4_container {
                                     do {
                                         self.value1 = try level_value3_value4_container.decodeIfPresent(String.self, forKey: CodingKeys.value1) ?? "some"

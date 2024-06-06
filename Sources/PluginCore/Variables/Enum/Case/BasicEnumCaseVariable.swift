@@ -130,10 +130,11 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
             for variable in variables where variable.decode ?? true {
                 "let \(variable.name): \(variable.type)"
             }
-            generated.syntax
+            generated.containerSyntax
         }
         let code = PropertyVariableTreeNode.Generated(
-            syntax: newSyntax, conditionalSyntax: generated.conditionalSyntax
+            containerSyntax: newSyntax, codingSyntax: generated.codingSyntax,
+            conditionalSyntax: generated.conditionalSyntax
         )
         return .init(label: label, code: code)
     }
