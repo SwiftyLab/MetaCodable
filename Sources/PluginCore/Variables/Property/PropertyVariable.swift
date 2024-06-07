@@ -119,11 +119,14 @@ extension PropertyVariable {
     ///
     /// Checks whether the type syntax uses
     /// `?` optional type syntax (i.e. `Type?`) or
+    /// `!` implicitly unwrapped optional type syntax (i.e. `Type!`) or
     /// generic optional syntax (i.e. `Optional<Type>`).
     var hasOptionalType: Bool {
         if type.is(OptionalTypeSyntax.self) {
             return true
-        } else if let type = type.as(IdentifierTypeSyntax.self),
+        } else if type.is(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+            return true
+        }  else if let type = type.as(IdentifierTypeSyntax.self),
             type.name.text == "Optional",
             let gArgs = type.genericArgumentClause?.arguments,
             gArgs.count == 1
@@ -150,6 +153,9 @@ extension PropertyVariable {
     ) -> (TypeSyntax, ExprSyntax) {
         let (dType, dMethod): (TypeSyntax, ExprSyntax)
         if let type = type.as(OptionalTypeSyntax.self) {
+            dType = type.wrappedType
+            dMethod = "\(method)IfPresent"
+        } else if let type = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
             dType = type.wrappedType
             dMethod = "\(method)IfPresent"
         } else if let type = type.as(IdentifierTypeSyntax.self),

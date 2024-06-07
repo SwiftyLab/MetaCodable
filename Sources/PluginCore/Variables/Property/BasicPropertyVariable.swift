@@ -145,12 +145,13 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
     ) -> CodeBlockItemListSyntax {
         switch location {
         case .coder(let decoder, let passedMethod):
-            let optionalToken: TokenSyntax =
-                if passedMethod?.trimmedDescription == "decodeIfPresent" {
-                    "?"
-                } else {
-                    ""
-                }
+            let optionalToken: TokenSyntax = passedMethod?.trimmedDescription == "decodeIfPresent" ? "?" : ""
+
+            var type = type
+            if let implicitlyUnwrappedType = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+                type = TypeSyntax(OptionalTypeSyntax(wrappedType: implicitlyUnwrappedType.wrappedType))
+            }
+
             return CodeBlockItemListSyntax {
                 """
                 \(decodePrefix)\(name) = try \(type)\(optionalToken)(from: \(decoder))
