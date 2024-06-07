@@ -81,7 +81,7 @@ package struct Default: PropertyAttribute {
 extension Registration
 where
     Decl: AttributableDeclSyntax, Var: PropertyVariable,
-    Var.Initialization == RequiredInitialization
+    Var.Initialization: RequiredVariableInitialization
 {
     /// The variable data with default expression
     /// that output registration will have.
@@ -102,8 +102,31 @@ where
     }
 }
 
+extension AnyPropertyVariable: DefaultPropertyVariable {}
+
+extension Registration
+where
+    Decl: AttributableDeclSyntax, Var: PropertyVariable, 
+    Var.Initialization: RequiredVariableInitialization
+{
+    /// Update registration with binding initializer value. If the ``Default`` attribute is applied, it takes precedence.
+    ///
+    /// New registration is updated with default expression data that will be
+    /// used for decoding failure and memberwise initializer(s), if provided.
+    ///
+    /// - Parameter decl: The declaration to check for attribute.
+    /// - Returns: Newly built registration with default expression data or self.
+    func addDefaultValueIfInitializerExists() -> Registration<Decl, Key, AnyPropertyVariable<AnyRequiredVariableInitialization>> {
+        guard Default(from: decl) == nil, let value = self.variable.value?.trimmed else {
+            return self.updating(with: variable.any)
+        }
+        let newVar = variable.with(default: value)
+        return self.updating(with: newVar.any)
+    }
+}
+
 fileprivate extension PropertyVariable
-where Initialization == RequiredInitialization {
+where Initialization: RequiredVariableInitialization {
     /// Update variable data with the default value expression provided.
     ///
     /// `DefaultValueVariable` is created with this variable as base
