@@ -79,7 +79,11 @@ final class CodableInheritanceTests: XCTestCase {
 
                     required init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        do {
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? ""
+                        } catch {
+                            self.value = ""
+                        }
                     }
 
                     func encode(to encoder: any Encoder) throws {
@@ -122,7 +126,11 @@ final class CodableInheritanceTests: XCTestCase {
 
                     required init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        do {
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? ""
+                        } catch {
+                            self.value = ""
+                        }
                         try super.init(from: decoder)
                     }
 
@@ -161,7 +169,11 @@ final class CodableInheritanceTests: XCTestCase {
 
                     required init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        do {
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? ""
+                        } catch {
+                            self.value = ""
+                        }
                         try super.init(from: decoder)
                     }
 

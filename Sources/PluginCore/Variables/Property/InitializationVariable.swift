@@ -110,11 +110,7 @@ where
         in context: some MacroExpansionContext
     ) -> AnyInitialization {
         return if options.`init` {
-            if options.initialized {
-                base.initializing(in: context).optionalize.any
-            } else {
-                base.initializing(in: context).any
-            }
+            base.initializing(in: context).any
         } else {
             IgnoredInitialization().any
         }

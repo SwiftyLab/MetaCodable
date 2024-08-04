@@ -12,7 +12,7 @@ struct RequiredInitializationWithDefaultValue: RequiredVariableInitialization {
     /// syntax is fetched from this value and
     /// updated when adding this initialization
     /// type to init-generator.
-    let base: RequiredInitialization
+    let base: RequiredVariableInitialization
     /// The default expression when
     /// no value provided explicitly.
     ///
