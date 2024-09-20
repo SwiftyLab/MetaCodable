@@ -1,6 +1,6 @@
 {
     "name": "Swift 5.10-Ubuntu 22.04",
-    "image": "swift:5.10-jammy",
+    "image": "swift:6.0-jammy",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
             "installZsh": "false",
