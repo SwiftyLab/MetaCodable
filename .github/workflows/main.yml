@@ -41,9 +41,9 @@ jobs:
               "swift": "latest"
             },
             {
-              "os": "macos-13",
+              "os": "macos-latest",
               "language": "swift",
-              "xcode": "latest"
+              "swift": "latest"
             }
           ]
         }
@@ -55,7 +55,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Spellcheck Action
-      uses: rojopolis/spellcheck-github-actions@0.40.0
+      uses: rojopolis/spellcheck-github-actions@0.41.0
       with:
         config_path: .github/config/spellcheck.yaml
 
@@ -73,7 +73,11 @@ jobs:
             },
             {
               "os": "macos-13",
-              "xcode": "latest"
+              "swift": "5.9"
+            },
+            {
+              "os": "macos-latest",
+              "swift": "latest"
             }
           ]
         }
@@ -85,7 +89,7 @@ jobs:
       matrix:
         platforms: ['macos tvos', 'ios']
     with:
-      os: macos-13
+      os: macos-latest
       xcode: latest
       platforms: ${{ matrix.platforms }}
 
