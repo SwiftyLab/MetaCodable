@@ -68,12 +68,7 @@ final class GroupedMutableVariableTests: XCTestCase {
                 struct SomeCodable {
                     var one, two: String, three: String = ""
 
-                    init(one: String, two: String) {
-                        self.one = one
-                        self.two = two
-                    }
-
-                    init(one: String, two: String, three: String) {
+                    init(one: String, two: String, three: String = "") {
                         self.one = one
                         self.two = two
                         self.three = three
@@ -85,7 +80,11 @@ final class GroupedMutableVariableTests: XCTestCase {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.one = try container.decode(String.self, forKey: CodingKeys.one)
                         self.two = try container.decode(String.self, forKey: CodingKeys.two)
-                        self.three = try container.decode(String.self, forKey: CodingKeys.three)
+                        do {
+                            self.three = try container.decodeIfPresent(String.self, forKey: CodingKeys.three) ?? ""
+                        } catch {
+                            self.three = ""
+                        }
                     }
                 }
 
@@ -215,12 +214,7 @@ final class GroupedMutableVariableTests: XCTestCase {
                 struct SomeCodable {
                     var one: String, two: String = "", three: Int
 
-                    init(one: String, three: Int) {
-                        self.one = one
-                        self.three = three
-                    }
-
-                    init(one: String, two: String, three: Int) {
+                    init(one: String, two: String = "", three: Int) {
                         self.one = one
                         self.two = two
                         self.three = three
@@ -231,7 +225,11 @@ final class GroupedMutableVariableTests: XCTestCase {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.one = try container.decode(String.self, forKey: CodingKeys.one)
-                        self.two = try container.decode(String.self, forKey: CodingKeys.two)
+                        do {
+                            self.two = try container.decodeIfPresent(String.self, forKey: CodingKeys.two) ?? ""
+                        } catch {
+                            self.two = ""
+                        }
                         self.three = try container.decode(Int.self, forKey: CodingKeys.three)
                     }
                 }
@@ -270,12 +268,7 @@ final class GroupedMutableVariableTests: XCTestCase {
                 struct SomeCodable {
                     var one: String, two = "", three: Int
 
-                    init(one: String, three: Int) {
-                        self.one = one
-                        self.three = three
-                    }
-
-                    init(one: String, two: Int, three: Int) {
+                    init(one: String, two: Int = "", three: Int) {
                         self.one = one
                         self.two = two
                         self.three = three
@@ -286,7 +279,11 @@ final class GroupedMutableVariableTests: XCTestCase {
                     init(from decoder: any Decoder) throws {
                         let container = try decoder.container(keyedBy: CodingKeys.self)
                         self.one = try container.decode(String.self, forKey: CodingKeys.one)
-                        self.two = try container.decode(Int.self, forKey: CodingKeys.two)
+                        do {
+                            self.two = try container.decodeIfPresent(Int.self, forKey: CodingKeys.two) ?? ""
+                        } catch {
+                            self.two = ""
+                        }
                         self.three = try container.decode(Int.self, forKey: CodingKeys.three)
                     }
                 }

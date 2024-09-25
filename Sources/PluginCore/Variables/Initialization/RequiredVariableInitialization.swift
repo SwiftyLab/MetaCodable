@@ -20,12 +20,3 @@ package protocol RequiredVariableInitialization: VariableInitialization {
     /// generating initializer.
     var code: CodeBlockItemSyntax { get }
 }
-
-extension RequiredVariableInitialization {
-    /// Converts initialization to optional from required initialization.
-    ///
-    /// Wraps current instance in `OptionalInitialization`.
-    var optionalize: OptionalInitialization<Self> {
-        return .init(base: self)
-    }
-}
