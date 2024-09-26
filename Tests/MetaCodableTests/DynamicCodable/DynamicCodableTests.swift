@@ -1,81 +1,86 @@
-import XCTest
+import Foundation
+import MetaCodable
+import Testing
 
-final class DynamicCodableTests: XCTestCase {
-
-    func testPageWithExtPost() throws {
+struct DynamicCodableTests {
+    @Test
+    func pageWithExtPost() throws {
         let page = try JSONDecoder().decode(
             PageWithExtPosts.self, from: dataPageWithExtPosts
         )
         for (index, item) in page.items.enumerated() {
             switch index {
             case 0:
-                XCTAssertTrue(item is TextPost)
+                #expect(item is TextPost)
             case 1, 2:
-                XCTAssertTrue(item is PicturePost)
+                #expect(item is PicturePost)
             case 3:
-                XCTAssertTrue(item is AudioPost)
+                #expect(item is AudioPost)
             case 4:
-                XCTAssertTrue(item is VideoPost)
+                #expect(item is VideoPost)
             case 5:
-                XCTAssertTrue(item is Nested.ValidPost)
+                #expect(item is Nested.ValidPost)
             default:
-                XCTFail("Invalid post count")
+                Issue.record("Invalid post count")
             }
         }
     }
 
-    func testPageWithIntPost() throws {
+    @Test
+    func pageWithIntPost() throws {
         let page = try JSONDecoder().decode(
             PageWithIntPosts.self, from: dataPageWithIntPosts
         )
         for (index, item) in page.items.enumerated() {
             switch index {
             case 0:
-                XCTAssertTrue(item is TextPost)
+                #expect(item is TextPost)
             case 1, 2:
-                XCTAssertTrue(item is PicturePost)
+                #expect(item is PicturePost)
             case 3:
-                XCTAssertTrue(item is AudioPost)
+                #expect(item is AudioPost)
             case 4:
-                XCTAssertTrue(item is VideoPost)
+                #expect(item is VideoPost)
             case 5:
-                XCTAssertTrue(item is Nested.ValidPost)
+                #expect(item is Nested.ValidPost)
             default:
-                XCTFail("Invalid post count")
+                Issue.record("Invalid post count")
             }
         }
     }
 
-    func testPageWithAdjPost() throws {
+    @Test
+    func pageWithAdjPost() throws {
         let page = try JSONDecoder().decode(
             PageWithAdjPosts.self, from: dataPageWithAdjPosts
         )
         for (index, item) in page.items.enumerated() {
             switch index {
             case 0:
-                XCTAssertTrue(item is TextPost)
+                #expect(item is TextPost)
             case 1, 2:
-                XCTAssertTrue(item is PicturePost)
+                #expect(item is PicturePost)
             case 3:
-                XCTAssertTrue(item is AudioPost)
+                #expect(item is AudioPost)
             case 4:
-                XCTAssertTrue(item is VideoPost)
+                #expect(item is VideoPost)
             case 5:
-                XCTAssertTrue(item is Nested.ValidPost)
+                #expect(item is Nested.ValidPost)
             default:
-                XCTFail("Invalid post count")
+                Issue.record("Invalid post count")
             }
         }
     }
 
-    func testResponse() throws {
+    @Test
+    func response() throws {
         let rResponse = try JSONDecoder().decode(
             Response.self, from: registrationResponseAttributesData
         )
-        XCTAssertTrue(rResponse.attributes is RegistrationAttributes)
+        #expect(rResponse.attributes is RegistrationAttributes)
         let vResponse = try JSONDecoder().decode(
             Response.self, from: verificationResponseAttributesData
         )
-        XCTAssertTrue(vResponse.attributes is VerificationAttributes)
+        #expect(vResponse.attributes is VerificationAttributes)
     }
 }

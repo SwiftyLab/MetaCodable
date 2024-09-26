@@ -1,38 +1,40 @@
+import Foundation
 import HelperCoders
 import MetaCodable
-import XCTest
+import Testing
 
-final class DataCoderTests: XCTestCase {
-    func testDecoding() throws {
+struct DataCoderTests {
+    @Test
+    func decoding() throws {
         let jsonStr = """
             {
                 "data": "SGVsbG8h"
             }
             """
-        let json = try XCTUnwrap(jsonStr.data(using: .utf8))
+        let json = try #require(jsonStr.data(using: .utf8))
         let model = try JSONDecoder().decode(Model.self, from: json)
-        XCTAssertEqual(String(data: model.data, encoding: .utf8), "Hello!")
+        #expect(String(data: model.data, encoding: .utf8) == "Hello!")
         let encoded = try JSONEncoder().encode(model)
         let newModel = try JSONDecoder().decode(Model.self, from: encoded)
-        XCTAssertEqual(newModel, model)
+        #expect(newModel == model)
     }
 
-    func testInvalidDataDecoding() throws {
+    @Test
+    func invalidDataDecoding() throws {
         let jsonStr = """
             {
                 "data": "invalid data"
             }
             """
-        let json = try XCTUnwrap(jsonStr.data(using: .utf8))
-        do {
+        let json = try #require(jsonStr.data(using: .utf8))
+        #expect(throws: DecodingError.self) {
             let _ = try JSONDecoder().decode(Model.self, from: json)
-            XCTFail("Invalid Base64 conversion")
-        } catch {}
+        }
     }
-}
 
-@Codable
-fileprivate struct Model: Equatable {
-    @CodedBy(Base64Coder())
-    let data: Data
+    @Codable
+    struct Model: Equatable {
+        @CodedBy(Base64Coder())
+        let data: Data
+    }
 }

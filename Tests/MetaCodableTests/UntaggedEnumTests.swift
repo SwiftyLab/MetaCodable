@@ -1,19 +1,13 @@
+import Foundation
 import MetaCodable
+import Testing
 import XCTest
 
 @testable import PluginCore
 
-#if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
-import SwiftDiagnostics
-import SwiftSyntax
-import SwiftSyntaxMacros
-import SwiftSyntaxMacroExpansion
-import SwiftSyntaxMacrosTestSupport
-#endif
-
-final class UntaggedEnumTests: XCTestCase {
-    #if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
-    func testMisuseOnNonEnumDeclaration() throws {
+struct UntaggedEnumTests {
+    @Test
+    func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -62,7 +56,8 @@ final class UntaggedEnumTests: XCTestCase {
         )
     }
 
-    func testMisuseInCombinationWithCodedAtMacro() throws {
+    @Test
+    func misuseInCombinationWithCodedAtMacro() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -88,7 +83,7 @@ final class UntaggedEnumTests: XCTestCase {
                             codingPath: decoder.codingPath,
                             debugDescription: "Couldn't decode any case."
                         )
-                        let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(SomeEnum.self, context)
+                        let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(Self.self, context)
                         let _0: Bool
                         do {
                             _0 = try Bool(from: decoder)
@@ -150,7 +145,8 @@ final class UntaggedEnumTests: XCTestCase {
         )
     }
 
-    func testDuplicatedMisuse() throws {
+    @Test
+    func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -176,7 +172,7 @@ final class UntaggedEnumTests: XCTestCase {
                             codingPath: decoder.codingPath,
                             debugDescription: "Couldn't decode any case."
                         )
-                        let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(SomeEnum.self, context)
+                        let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(Self.self, context)
                         let _0: Bool
                         do {
                             _0 = try Bool(from: decoder)
@@ -240,24 +236,26 @@ final class UntaggedEnumTests: XCTestCase {
         )
     }
 
-    func testWithoutFallbackCase() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @UnTagged
-            enum CodableValue {
-                case bool(Bool)
-                case uint(UInt)
-                case int(Int)
-                case float(Float)
-                case double(Double)
-                case string(String)
-                case array([Self])
-                case dictionary([String: Self])
-            }
-            """,
-            expandedSource:
+    struct WithoutFallbackCase {
+        @Codable
+        @UnTagged
+        enum CodableValue {
+            case bool(Bool)
+            case uint(UInt)
+            case int(Int)
+            case float(Float)
+            case double(Double)
+            case string(String)
+            case array([Self])
+            case dictionary([String: Self])
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @UnTagged
                 enum CodableValue {
                     case bool(Bool)
                     case uint(UInt)
@@ -268,188 +266,73 @@ final class UntaggedEnumTests: XCTestCase {
                     case array([Self])
                     case dictionary([String: Self])
                 }
+                """,
+                expandedSource:
+                    """
+                    enum CodableValue {
+                        case bool(Bool)
+                        case uint(UInt)
+                        case int(Int)
+                        case float(Float)
+                        case double(Double)
+                        case string(String)
+                        case array([Self])
+                        case dictionary([String: Self])
+                    }
 
-                extension CodableValue: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let context = DecodingError.Context(
-                            codingPath: decoder.codingPath,
-                            debugDescription: "Couldn't decode any case."
-                        )
-                        let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(CodableValue.self, context)
-                        let _0: Bool
-                        do {
-                            _0 = try Bool(from: decoder)
-                            self = .bool(_0)
-                            return
-                        } catch {
-                            let _0: UInt
+                    extension CodableValue: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't decode any case."
+                            )
+                            let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(Self.self, context)
+                            let _0: Bool
                             do {
-                                _0 = try UInt(from: decoder)
-                                self = .uint(_0)
+                                _0 = try Bool(from: decoder)
+                                self = .bool(_0)
                                 return
                             } catch {
-                                let _0: Int
+                                let _0: UInt
                                 do {
-                                    _0 = try Int(from: decoder)
-                                    self = .int(_0)
+                                    _0 = try UInt(from: decoder)
+                                    self = .uint(_0)
                                     return
                                 } catch {
-                                    let _0: Float
+                                    let _0: Int
                                     do {
-                                        _0 = try Float(from: decoder)
-                                        self = .float(_0)
+                                        _0 = try Int(from: decoder)
+                                        self = .int(_0)
                                         return
                                     } catch {
-                                        let _0: Double
+                                        let _0: Float
                                         do {
-                                            _0 = try Double(from: decoder)
-                                            self = .double(_0)
+                                            _0 = try Float(from: decoder)
+                                            self = .float(_0)
                                             return
                                         } catch {
-                                            let _0: String
+                                            let _0: Double
                                             do {
-                                                _0 = try String(from: decoder)
-                                                self = .string(_0)
+                                                _0 = try Double(from: decoder)
+                                                self = .double(_0)
                                                 return
                                             } catch {
-                                                let _0: [Self]
+                                                let _0: String
                                                 do {
-                                                    _0 = try [Self] (from: decoder)
-                                                    self = .array(_0)
+                                                    _0 = try String(from: decoder)
+                                                    self = .string(_0)
                                                     return
                                                 } catch {
-                                                    let _0: [String: Self]
+                                                    let _0: [Self]
                                                     do {
-                                                        _0 = try [String: Self] (from: decoder)
-                                                        self = .dictionary(_0)
+                                                        _0 = try [Self](from: decoder)
+                                                        self = .array(_0)
                                                         return
                                                     } catch {
-                                                        throw __macro_local_13decodingErrorfMu0_
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                extension CodableValue: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        switch self {
-                        case .bool(let _0):
-                            try _0.encode(to: encoder)
-                        case .uint(let _0):
-                            try _0.encode(to: encoder)
-                        case .int(let _0):
-                            try _0.encode(to: encoder)
-                        case .float(let _0):
-                            try _0.encode(to: encoder)
-                        case .double(let _0):
-                            try _0.encode(to: encoder)
-                        case .string(let _0):
-                            try _0.encode(to: encoder)
-                        case .array(let _0):
-                            try _0.encode(to: encoder)
-                        case .dictionary(let _0):
-                            try _0.encode(to: encoder)
-                        }
-                    }
-                }
-                """
-        )
-    }
-
-    func testWithFallbackCase() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @UnTagged
-            enum CodableValue {
-                case bool(Bool)
-                case uint(UInt)
-                case int(Int)
-                case float(Float)
-                case double(Double)
-                case string(String)
-                case array([Self])
-                case dictionary([String: Self])
-                case `nil`
-            }
-            """,
-            expandedSource:
-                """
-                enum CodableValue {
-                    case bool(Bool)
-                    case uint(UInt)
-                    case int(Int)
-                    case float(Float)
-                    case double(Double)
-                    case string(String)
-                    case array([Self])
-                    case dictionary([String: Self])
-                    case `nil`
-                }
-
-                extension CodableValue: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let context = DecodingError.Context(
-                            codingPath: decoder.codingPath,
-                            debugDescription: "Couldn't decode any case."
-                        )
-                        let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(CodableValue.self, context)
-                        let _0: Bool
-                        do {
-                            _0 = try Bool(from: decoder)
-                            self = .bool(_0)
-                            return
-                        } catch {
-                            let _0: UInt
-                            do {
-                                _0 = try UInt(from: decoder)
-                                self = .uint(_0)
-                                return
-                            } catch {
-                                let _0: Int
-                                do {
-                                    _0 = try Int(from: decoder)
-                                    self = .int(_0)
-                                    return
-                                } catch {
-                                    let _0: Float
-                                    do {
-                                        _0 = try Float(from: decoder)
-                                        self = .float(_0)
-                                        return
-                                    } catch {
-                                        let _0: Double
-                                        do {
-                                            _0 = try Double(from: decoder)
-                                            self = .double(_0)
-                                            return
-                                        } catch {
-                                            let _0: String
-                                            do {
-                                                _0 = try String(from: decoder)
-                                                self = .string(_0)
-                                                return
-                                            } catch {
-                                                let _0: [Self]
-                                                do {
-                                                    _0 = try [Self] (from: decoder)
-                                                    self = .array(_0)
-                                                    return
-                                                } catch {
-                                                    let _0: [String: Self]
-                                                    do {
-                                                        _0 = try [String: Self] (from: decoder)
-                                                        self = .dictionary(_0)
-                                                        return
-                                                    } catch {
+                                                        let _0: [String: Self]
                                                         do {
-                                                            self = .`nil`
+                                                            _0 = try [String: Self](from: decoder)
+                                                            self = .dictionary(_0)
                                                             return
                                                         } catch {
                                                             throw __macro_local_13decodingErrorfMu0_
@@ -463,51 +346,199 @@ final class UntaggedEnumTests: XCTestCase {
                             }
                         }
                     }
-                }
 
-                extension CodableValue: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        switch self {
-                        case .bool(let _0):
-                            try _0.encode(to: encoder)
-                        case .uint(let _0):
-                            try _0.encode(to: encoder)
-                        case .int(let _0):
-                            try _0.encode(to: encoder)
-                        case .float(let _0):
-                            try _0.encode(to: encoder)
-                        case .double(let _0):
-                            try _0.encode(to: encoder)
-                        case .string(let _0):
-                            try _0.encode(to: encoder)
-                        case .array(let _0):
-                            try _0.encode(to: encoder)
-                        case .dictionary(let _0):
-                            try _0.encode(to: encoder)
-                        case .`nil`:
-                            break
+                    extension CodableValue: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            switch self {
+                            case .bool(let _0):
+                                try _0.encode(to: encoder)
+                            case .uint(let _0):
+                                try _0.encode(to: encoder)
+                            case .int(let _0):
+                                try _0.encode(to: encoder)
+                            case .float(let _0):
+                                try _0.encode(to: encoder)
+                            case .double(let _0):
+                                try _0.encode(to: encoder)
+                            case .string(let _0):
+                                try _0.encode(to: encoder)
+                            case .array(let _0):
+                                try _0.encode(to: encoder)
+                            case .dictionary(let _0):
+                                try _0.encode(to: encoder)
+                            }
                         }
                     }
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 
-    func testNestedDecoding() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @UnTagged
-            enum SomeEnum {
-                case bool(_ variable: Bool)
-                case int(val: Int)
-                case string(String)
-                case multiOpt(_ variable: Bool?, val: Int?, str: String?)
-                case multi(_ variable: Bool, val: Int, String)
-            }
-            """,
-            expandedSource:
+    struct WithFallbackCase {
+        @Codable
+        @UnTagged
+        enum CodableValue {
+            case bool(Bool)
+            case uint(UInt)
+            case int(Int)
+            case float(Float)
+            case double(Double)
+            case string(String)
+            case array([Self])
+            case dictionary([String: Self])
+            case `nil`
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @UnTagged
+                enum CodableValue {
+                    case bool(Bool)
+                    case uint(UInt)
+                    case int(Int)
+                    case float(Float)
+                    case double(Double)
+                    case string(String)
+                    case array([Self])
+                    case dictionary([String: Self])
+                    case `nil`
+                }
+                """,
+                expandedSource:
+                    """
+                    enum CodableValue {
+                        case bool(Bool)
+                        case uint(UInt)
+                        case int(Int)
+                        case float(Float)
+                        case double(Double)
+                        case string(String)
+                        case array([Self])
+                        case dictionary([String: Self])
+                        case `nil`
+                    }
+
+                    extension CodableValue: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't decode any case."
+                            )
+                            let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(Self.self, context)
+                            let _0: Bool
+                            do {
+                                _0 = try Bool(from: decoder)
+                                self = .bool(_0)
+                                return
+                            } catch {
+                                let _0: UInt
+                                do {
+                                    _0 = try UInt(from: decoder)
+                                    self = .uint(_0)
+                                    return
+                                } catch {
+                                    let _0: Int
+                                    do {
+                                        _0 = try Int(from: decoder)
+                                        self = .int(_0)
+                                        return
+                                    } catch {
+                                        let _0: Float
+                                        do {
+                                            _0 = try Float(from: decoder)
+                                            self = .float(_0)
+                                            return
+                                        } catch {
+                                            let _0: Double
+                                            do {
+                                                _0 = try Double(from: decoder)
+                                                self = .double(_0)
+                                                return
+                                            } catch {
+                                                let _0: String
+                                                do {
+                                                    _0 = try String(from: decoder)
+                                                    self = .string(_0)
+                                                    return
+                                                } catch {
+                                                    let _0: [Self]
+                                                    do {
+                                                        _0 = try [Self](from: decoder)
+                                                        self = .array(_0)
+                                                        return
+                                                    } catch {
+                                                        let _0: [String: Self]
+                                                        do {
+                                                            _0 = try [String: Self](from: decoder)
+                                                            self = .dictionary(_0)
+                                                            return
+                                                        } catch {
+                                                            do {
+                                                                self = .`nil`
+                                                                return
+                                                            } catch {
+                                                                throw __macro_local_13decodingErrorfMu0_
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    extension CodableValue: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            switch self {
+                            case .bool(let _0):
+                                try _0.encode(to: encoder)
+                            case .uint(let _0):
+                                try _0.encode(to: encoder)
+                            case .int(let _0):
+                                try _0.encode(to: encoder)
+                            case .float(let _0):
+                                try _0.encode(to: encoder)
+                            case .double(let _0):
+                                try _0.encode(to: encoder)
+                            case .string(let _0):
+                                try _0.encode(to: encoder)
+                            case .array(let _0):
+                                try _0.encode(to: encoder)
+                            case .dictionary(let _0):
+                                try _0.encode(to: encoder)
+                            case .`nil`:
+                                break
+                            }
+                        }
+                    }
+                    """
+            )
+        }
+    }
+
+    struct NestedDecoding {
+        @Codable
+        @UnTagged
+        enum SomeEnum {
+            case bool(_ variable: Bool)
+            case int(val: Int)
+            case string(String)
+            case multiOpt(_ variable: Bool?, val: Int?, str: String?)
+            case multi(_ variable: Bool, val: Int, String)
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                @UnTagged
                 enum SomeEnum {
                     case bool(_ variable: Bool)
                     case int(val: Int)
@@ -515,124 +546,135 @@ final class UntaggedEnumTests: XCTestCase {
                     case multiOpt(_ variable: Bool?, val: Int?, str: String?)
                     case multi(_ variable: Bool, val: Int, String)
                 }
+                """,
+                expandedSource:
+                    """
+                    enum SomeEnum {
+                        case bool(_ variable: Bool)
+                        case int(val: Int)
+                        case string(String)
+                        case multiOpt(_ variable: Bool?, val: Int?, str: String?)
+                        case multi(_ variable: Bool, val: Int, String)
+                    }
 
-                extension SomeEnum: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let context = DecodingError.Context(
-                            codingPath: decoder.codingPath,
-                            debugDescription: "Couldn't decode any case."
-                        )
-                        let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(SomeEnum.self, context)
-                        let variable: Bool
-                        let container = try? decoder.container(keyedBy: CodingKeys.self)
-                        do {
-                            if let container = container {
-                                variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            } else {
-                                throw __macro_local_13decodingErrorfMu0_
-                            }
-                            self = .bool(_: variable)
-                            return
-                        } catch {
-                            let val: Int
+                    extension SomeEnum: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't decode any case."
+                            )
+                            let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(Self.self, context)
+                            let variable: Bool
+                            let container = try? decoder.container(keyedBy: CodingKeys.self)
                             do {
                                 if let container = container {
-                                    val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                    variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                                 } else {
                                     throw __macro_local_13decodingErrorfMu0_
                                 }
-                                self = .int(val: val)
+                                self = .bool(_: variable)
                                 return
                             } catch {
-                                let _0: String
+                                let val: Int
                                 do {
-                                    _0 = try String(from: decoder)
-                                    self = .string(_0)
+                                    if let container = container {
+                                        val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                    } else {
+                                        throw __macro_local_13decodingErrorfMu0_
+                                    }
+                                    self = .int(val: val)
                                     return
                                 } catch {
-                                    let variable: Bool?
-                                    let val: Int?
-                                    let str: String?
+                                    let _0: String
                                     do {
-                                        if let container = container {
-                                            variable = try container.decodeIfPresent(Bool.self, forKey: CodingKeys.variable)
-                                            val = try container.decodeIfPresent(Int.self, forKey: CodingKeys.val)
-                                            str = try container.decodeIfPresent(String.self, forKey: CodingKeys.str)
-                                        } else {
-                                            throw __macro_local_13decodingErrorfMu0_
-                                        }
-                                        self = .multiOpt(_: variable, val: val, str: str)
+                                        _0 = try String(from: decoder)
+                                        self = .string(_0)
                                         return
                                     } catch {
-                                        let variable: Bool
-                                        let val: Int
-                                        let _2: String
+                                        let variable: Bool?
+                                        let val: Int?
+                                        let str: String?
                                         do {
-                                            _2 = try String(from: decoder)
                                             if let container = container {
-                                                variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                                                val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                                variable = try container.decodeIfPresent(Bool.self, forKey: CodingKeys.variable)
+                                                val = try container.decodeIfPresent(Int.self, forKey: CodingKeys.val)
+                                                str = try container.decodeIfPresent(String.self, forKey: CodingKeys.str)
                                             } else {
                                                 throw __macro_local_13decodingErrorfMu0_
                                             }
-                                            self = .multi(_: variable, val: val, _2)
+                                            self = .multiOpt(_: variable, val: val, str: str)
                                             return
                                         } catch {
-                                            throw __macro_local_13decodingErrorfMu0_
+                                            let variable: Bool
+                                            let val: Int
+                                            let _2: String
+                                            do {
+                                                _2 = try String(from: decoder)
+                                                if let container = container {
+                                                    variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                                                    val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                                } else {
+                                                    throw __macro_local_13decodingErrorfMu0_
+                                                }
+                                                self = .multi(_: variable, val: val, _2)
+                                                return
+                                            } catch {
+                                                throw __macro_local_13decodingErrorfMu0_
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                }
 
-                extension SomeEnum: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        switch self {
-                        case .bool(_: let variable):
-                            var container = encoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(variable, forKey: CodingKeys.variable)
-                        case .int(val: let val):
-                            var container = encoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(val, forKey: CodingKeys.val)
-                        case .string(let _0):
-                            try _0.encode(to: encoder)
-                        case .multiOpt(_: let variable, val: let val, str: let str):
-                            var container = encoder.container(keyedBy: CodingKeys.self)
-                            try container.encodeIfPresent(variable, forKey: CodingKeys.variable)
-                            try container.encodeIfPresent(val, forKey: CodingKeys.val)
-                            try container.encodeIfPresent(str, forKey: CodingKeys.str)
-                        case .multi(_: let variable, val: let val, let _2):
-                            try _2.encode(to: encoder)
-                            var container = encoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(variable, forKey: CodingKeys.variable)
-                            try container.encode(val, forKey: CodingKeys.val)
+                    extension SomeEnum: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            switch self {
+                            case .bool(_: let variable):
+                                var container = encoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(variable, forKey: CodingKeys.variable)
+                            case .int(val: let val):
+                                var container = encoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(val, forKey: CodingKeys.val)
+                            case .string(let _0):
+                                try _0.encode(to: encoder)
+                            case .multiOpt(_: let variable, val: let val, str: let str):
+                                var container = encoder.container(keyedBy: CodingKeys.self)
+                                try container.encodeIfPresent(variable, forKey: CodingKeys.variable)
+                                try container.encodeIfPresent(val, forKey: CodingKeys.val)
+                                try container.encodeIfPresent(str, forKey: CodingKeys.str)
+                            case .multi(_: let variable, val: let val, let _2):
+                                try _2.encode(to: encoder)
+                                var container = encoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(variable, forKey: CodingKeys.variable)
+                                try container.encode(val, forKey: CodingKeys.val)
+                            }
                         }
                     }
-                }
 
-                extension SomeEnum {
-                    enum CodingKeys: String, CodingKey {
-                        case variable = "variable"
-                        case val = "val"
-                        case str = "str"
+                    extension SomeEnum {
+                        enum CodingKeys: String, CodingKey {
+                            case variable = "variable"
+                            case val = "val"
+                            case str = "str"
+                        }
                     }
-                }
-                """
-        )
+                    """
+            )
+        }
     }
-    #endif
 
-    func testUnTaggedEnumDecoding() throws {
+    @Test
+    func unTaggedEnumDecoding() throws {
         let data = try JSONDecoder().decode(
             CodableValue.self, from: heterogenousJSONData
         )
         switch data {
         case .array(let values):
-            XCTAssertEqual(values.count, 7)
+            #expect(values.count == 7)
         default:
-            XCTFail("Invalid data decoded")
+            Issue.record("Invalid data decoded")
         }
     }
 }

@@ -1,11 +1,13 @@
-#if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
-import XCTest
+import Foundation
+import MetaCodable
+import Testing
 
 @testable import PluginCore
 
-final class IgnoreCodingTests: XCTestCase {
+struct IgnoreCodingTests {
 
-    func testMisuseOnUninitializedVariable() throws {
+    @Test
+    func misuseOnUninitializedVariable() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -81,7 +83,8 @@ final class IgnoreCodingTests: XCTestCase {
         )
     }
 
-    func testMisuseWithInvalidCombination() throws {
+    @Test
+    func misuseWithInvalidCombination() throws {
         assertMacroExpansion(
             """
             @Codable
@@ -130,688 +133,869 @@ final class IgnoreCodingTests: XCTestCase {
         )
     }
 
-    func testDecodingEncodingIgnore() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            struct SomeCodable {
-                @IgnoreCoding
-                var one: String = "some"
-            }
-            """,
-            expandedSource:
+    struct DecodingEncodingIgnore {
+        @Codable
+        struct SomeCodable {
+            @IgnoreCoding
+            var one: String = "some"
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
                 struct SomeCodable {
+                    @IgnoreCoding
                     var one: String = "some"
                 }
-
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var one: String = "some"
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                    }
-                }
-                """
-        )
-    }
-
-    func testEnumDecodingEncodingIgnore() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            enum SomeEnum {
-                @IgnoreCoding
-                case bool(_ variableBool: Bool)
-            }
-            """,
-            expandedSource:
-                """
-                enum SomeEnum {
-                    case bool(_ variableBool: Bool)
-                }
-
-                extension SomeEnum: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let context = DecodingError.Context(
-                            codingPath: decoder.codingPath,
-                            debugDescription: "No decodable case present."
-                        )
-                        throw DecodingError.typeMismatch(SomeEnum.self, context)
-                    }
-                }
-
-                extension SomeEnum: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                    }
-                }
-                """
-        )
-    }
-
-    func testDecodingIgnore() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            struct SomeCodable {
-                @IgnoreDecoding
-                var one: String = "some"
-            }
-            """,
-            expandedSource:
-                """
-                struct SomeCodable {
-                    var one: String = "some"
-                }
-
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                    }
-                }
-
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.one, forKey: CodingKeys.one)
-                    }
-                }
-
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                    }
-                }
-                """
-        )
-    }
-
-    func testEnumDecodingIgnore() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            enum SomeEnum {
-                @IgnoreDecoding
-                case bool(_ variableBool: Bool)
-            }
-            """,
-            expandedSource:
-                """
-                enum SomeEnum {
-                    case bool(_ variableBool: Bool)
-                }
-
-                extension SomeEnum: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let context = DecodingError.Context(
-                            codingPath: decoder.codingPath,
-                            debugDescription: "No decodable case present."
-                        )
-                        throw DecodingError.typeMismatch(SomeEnum.self, context)
-                    }
-                }
-
-                extension SomeEnum: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        switch self {
-                        case .bool(_: let variableBool):
-                            let contentEncoder = container.superEncoder(forKey: CodingKeys.bool)
-                            var container = contentEncoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(variableBool, forKey: CodingKeys.variableBool)
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
                         }
                     }
-                }
 
-                extension SomeEnum {
-                    enum CodingKeys: String, CodingKey {
-                        case variableBool = "variableBool"
-                        case bool = "bool"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                        }
                     }
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 
-    func testEncodingIgnore() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            struct SomeCodable {
-                @IgnoreEncoding
-                var one: String = "some"
-                @IgnoreEncoding
-                var two: String
-            }
-            """,
-            expandedSource:
+    struct EnumDecodingEncodingIgnore {
+        @Codable
+        enum SomeEnum {
+            @IgnoreCoding
+            case bool(_ variableBool: Bool)
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                enum SomeEnum {
+                    @IgnoreCoding
+                    case bool(_ variableBool: Bool)
+                }
+                """,
+                expandedSource:
+                    """
+                    enum SomeEnum {
+                        case bool(_ variableBool: Bool)
+                    }
+
+                    extension SomeEnum: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "No decodable case present."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
+                        }
+                    }
+
+                    extension SomeEnum: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                        }
+                    }
+                    """
+            )
+        }
+    }
+
+    struct DecodingIgnore {
+        @Codable
+        struct SomeCodable {
+            @IgnoreDecoding
+            var one: String = "some"
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
                 struct SomeCodable {
+                    @IgnoreDecoding
                     var one: String = "some"
+                }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var one: String = "some"
+                    }
+
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                        }
+                    }
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.one, forKey: CodingKeys.one)
+                        }
+                    }
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case one = "one"
+                        }
+                    }
+                    """
+            )
+        }
+    }
+
+    struct EnumDecodingIgnore {
+        @Codable
+        enum SomeEnum {
+            @IgnoreDecoding
+            case bool(_ variableBool: Bool)
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                enum SomeEnum {
+                    @IgnoreDecoding
+                    case bool(_ variableBool: Bool)
+                }
+                """,
+                expandedSource:
+                    """
+                    enum SomeEnum {
+                        case bool(_ variableBool: Bool)
+                    }
+
+                    extension SomeEnum: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "No decodable case present."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
+                        }
+                    }
+
+                    extension SomeEnum: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            switch self {
+                            case .bool(_: let variableBool):
+                                let contentEncoder = container.superEncoder(forKey: CodingKeys.bool)
+                                var container = contentEncoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(variableBool, forKey: CodingKeys.variableBool)
+                            }
+                        }
+                    }
+
+                    extension SomeEnum {
+                        enum CodingKeys: String, CodingKey {
+                            case variableBool = "variableBool"
+                            case bool = "bool"
+                        }
+                    }
+                    """
+            )
+        }
+    }
+
+    struct EncodingIgnore {
+        @Codable
+        struct SomeCodable {
+            @IgnoreEncoding
+            var one: String = "some"
+            @IgnoreEncoding
+            var two: String
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                struct SomeCodable {
+                    @IgnoreEncoding
+                    var one: String = "some"
+                    @IgnoreEncoding
                     var two: String
                 }
-
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
-                        self.two = try container.decode(String.self, forKey: CodingKeys.two)
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var one: String = "some"
+                        var two: String
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.one = try container.decode(String.self, forKey: CodingKeys.one)
+                            self.two = try container.decode(String.self, forKey: CodingKeys.two)
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                        case two = "two"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case one = "one"
+                            case two = "two"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testEncodingIgnoreWithCondition() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            struct SomeCodable {
-                @IgnoreEncoding
-                var one: String = "some"
-                @IgnoreEncoding(if: \\String.isEmpty)
-                var two: String
-            }
-            """,
-            expandedSource:
+    struct EncodingIgnoreWithCondition {
+        @Codable
+        struct SomeCodable {
+            @IgnoreEncoding
+            var one: String = "some"
+            @IgnoreEncoding(if: \String.isEmpty)
+            var two: String
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
                 struct SomeCodable {
+                    @IgnoreEncoding
                     var one: String = "some"
+                    @IgnoreEncoding(if: \\String.isEmpty)
                     var two: String
                 }
-
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.one = try container.decode(String.self, forKey: CodingKeys.one)
-                        self.two = try container.decode(String.self, forKey: CodingKeys.two)
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var one: String = "some"
+                        var two: String
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        if ({ () -> (_) -> Bool in
-                                \\String.isEmpty
-                            }()(self.two)) {
-                            try container.encode(self.two, forKey: CodingKeys.two)
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.one = try container.decode(String.self, forKey: CodingKeys.one)
+                            self.two = try container.decode(String.self, forKey: CodingKeys.two)
                         }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                        case two = "two"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            if (!{ () -> (_) -> Bool in
+                                    \\String.isEmpty
+                                }()(self.two)) {
+                                try container.encode(self.two, forKey: CodingKeys.two)
+                            }
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case one = "one"
+                            case two = "two"
+                        }
+                    }
+                    """
+            )
+        }
+
+        @Test
+        func ignore() throws {
+            let obj = SomeCodable(one: "", two: "")
+            let data = try JSONEncoder().encode(obj)
+            let value = try JSONSerialization.jsonObject(with: data)
+            let dict = try #require(value as? [String: String])
+            #expect(dict["one"] == nil)
+            #expect(dict["two"] == nil)
+        }
+
+        @Test
+        func encode() throws {
+            let obj = SomeCodable(one: "some", two: "some")
+            let data = try JSONEncoder().encode(obj)
+            let value = try JSONSerialization.jsonObject(with: data)
+            let dict = try #require(value as? [String: String])
+            #expect(dict["one"] == nil)
+            #expect(dict["two"] == "some")
+        }
+
+        @Test
+        func decode() throws {
+            let json = "{\"one\": \"\", \"two\": \"\"}".data(using: .utf8)!
+            let obj = try JSONDecoder().decode(SomeCodable.self, from: json)
+            #expect(obj.one == "")
+            #expect(obj.two == "")
+        }
     }
 
-    func testEnumEncodingIgnore() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            enum SomeEnum {
-                @IgnoreEncoding
-                case bool(_ variableBool: Bool)
-            }
-            """,
-            expandedSource:
+    struct EnumEncodingIgnore {
+        @Codable
+        enum SomeEnum {
+            @IgnoreEncoding
+            case bool(_ variableBool: Bool)
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
                 enum SomeEnum {
+                    @IgnoreEncoding
                     case bool(_ variableBool: Bool)
                 }
+                """,
+                expandedSource:
+                    """
+                    enum SomeEnum {
+                        case bool(_ variableBool: Bool)
+                    }
 
-                extension SomeEnum: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: DecodingKeys.self)
-                        guard container.allKeys.count == 1 else {
-                            let context = DecodingError.Context(
-                                codingPath: container.codingPath,
-                                debugDescription: "Invalid number of keys found, expected one."
-                            )
-                            throw DecodingError.typeMismatch(SomeEnum.self, context)
+                    extension SomeEnum: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: DecodingKeys.self)
+                            guard container.allKeys.count == 1 else {
+                                let context = DecodingError.Context(
+                                    codingPath: container.codingPath,
+                                    debugDescription: "Invalid number of keys found, expected one."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
+                            }
+                            let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
+                            switch container.allKeys.first.unsafelyUnwrapped {
+                            case DecodingKeys.bool:
+                                let variableBool: Bool
+                                let container = try contentDecoder.container(keyedBy: CodingKeys.self)
+                                variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
+                                self = .bool(_: variableBool)
+                            }
                         }
-                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
-                        switch container.allKeys.first.unsafelyUnwrapped {
-                        case DecodingKeys.bool:
-                            let variableBool: Bool
-                            let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
-                            self = .bool(_: variableBool)
+                    }
+
+                    extension SomeEnum: Encodable {
+                        func encode(to encoder: any Encoder) throws {
                         }
                     }
-                }
 
-                extension SomeEnum: Encodable {
-                    func encode(to encoder: any Encoder) throws {
+                    extension SomeEnum {
+                        enum CodingKeys: String, CodingKey {
+                            case variableBool = "variableBool"
+                        }
+                        enum DecodingKeys: String, CodingKey {
+                            case bool = "bool"
+                        }
                     }
-                }
-
-                extension SomeEnum {
-                    enum CodingKeys: String, CodingKey {
-                        case variableBool = "variableBool"
-                    }
-                    enum DecodingKeys: String, CodingKey {
-                        case bool = "bool"
-                    }
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 
-    func testEnumEncodingIgnoreWithCondition() throws {
-        assertMacroExpansion(
-            """
-            func encodeVariable(_ var1: Bool) -> Bool {
-                return var1
-            }
+    struct EnumEncodingIgnoreWithCondition {
+        @Codable
+        enum SomeEnum {
+            @IgnoreEncoding(if: ignoreEncodingVariable)
+            case bool(_ variableBool: Bool)
+            @IgnoreEncoding(if: ignoreEncodingVariables)
+            case multi(_ variable: Bool, val: Int, String)
+        }
 
-            func encodeVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
-                return var1
-            }
-
-            @Codable
-            enum SomeEnum {
-                @IgnoreEncoding(if: encodeVariable)
-                case bool(_ variableBool: Bool)
-                @IgnoreEncoding(if: encodeVariables)
-                case multi(_ variable: Bool, val: Int, String)
-            }
-            """,
-            expandedSource:
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
-                func encodeVariable(_ var1: Bool) -> Bool {
+                func ignoreEncodingVariable(_ var1: Bool) -> Bool {
                     return var1
                 }
 
-                func encodeVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
+                func ignoreEncodingVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
                     return var1
                 }
+
+                @Codable
                 enum SomeEnum {
+                    @IgnoreEncoding(if: ignoreEncodingVariable)
                     case bool(_ variableBool: Bool)
+                    @IgnoreEncoding(if: ignoreEncodingVariables)
                     case multi(_ variable: Bool, val: Int, String)
                 }
-
-                extension SomeEnum: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: DecodingKeys.self)
-                        guard container.allKeys.count == 1 else {
-                            let context = DecodingError.Context(
-                                codingPath: container.codingPath,
-                                debugDescription: "Invalid number of keys found, expected one."
-                            )
-                            throw DecodingError.typeMismatch(SomeEnum.self, context)
-                        }
-                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
-                        switch container.allKeys.first.unsafelyUnwrapped {
-                        case DecodingKeys.bool:
-                            let variableBool: Bool
-                            let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
-                            self = .bool(_: variableBool)
-                        case DecodingKeys.multi:
-                            let variable: Bool
-                            let val: Int
-                            let _2: String
-                            let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            _2 = try String(from: contentDecoder)
-                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            val = try container.decode(Int.self, forKey: CodingKeys.val)
-                            self = .multi(_: variable, val: val, _2)
-                        }
+                """,
+                expandedSource:
+                    """
+                    func ignoreEncodingVariable(_ var1: Bool) -> Bool {
+                        return var1
                     }
-                }
 
-                extension SomeEnum: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        switch self {
-                        case .bool(_: let variableBool) where ({ () -> (_) -> Bool in
-                                encodeVariable
-                            }()(variableBool)):
-                            let contentEncoder = container.superEncoder(forKey: CodingKeys.bool)
-                            var container = contentEncoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(variableBool, forKey: CodingKeys.variableBool)
-                        case .multi(_: let variable, val: let val, let _2) where ({ () -> (_, _, _) -> Bool in
-                                encodeVariables
-                            }()(variable, val, _2)):
-                            let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
-                            try _2.encode(to: contentEncoder)
-                            var container = contentEncoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(variable, forKey: CodingKeys.variable)
-                            try container.encode(val, forKey: CodingKeys.val)
-                        default:
-                            break
+                    func ignoreEncodingVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
+                        return var1
+                    }
+                    enum SomeEnum {
+                        case bool(_ variableBool: Bool)
+                        case multi(_ variable: Bool, val: Int, String)
+                    }
+
+                    extension SomeEnum: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: DecodingKeys.self)
+                            guard container.allKeys.count == 1 else {
+                                let context = DecodingError.Context(
+                                    codingPath: container.codingPath,
+                                    debugDescription: "Invalid number of keys found, expected one."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
+                            }
+                            let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
+                            switch container.allKeys.first.unsafelyUnwrapped {
+                            case DecodingKeys.bool:
+                                let variableBool: Bool
+                                let container = try contentDecoder.container(keyedBy: CodingKeys.self)
+                                variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
+                                self = .bool(_: variableBool)
+                            case DecodingKeys.multi:
+                                let variable: Bool
+                                let val: Int
+                                let _2: String
+                                let container = try contentDecoder.container(keyedBy: CodingKeys.self)
+                                _2 = try String(from: contentDecoder)
+                                variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                                val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                self = .multi(_: variable, val: val, _2)
+                            }
                         }
                     }
-                }
 
-                extension SomeEnum {
-                    enum CodingKeys: String, CodingKey {
-                        case variableBool = "variableBool"
-                        case bool = "bool"
-                        case variable = "variable"
-                        case val = "val"
-                        case multi = "multi"
+                    extension SomeEnum: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            switch self {
+                            case .bool(_: let variableBool) where (!{ () -> (_) -> Bool in
+                                    ignoreEncodingVariable
+                                }()(variableBool)):
+                                let contentEncoder = container.superEncoder(forKey: CodingKeys.bool)
+                                var container = contentEncoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(variableBool, forKey: CodingKeys.variableBool)
+                            case .multi(_: let variable, val: let val, let _2) where (!{ () -> (_, _, _) -> Bool in
+                                    ignoreEncodingVariables
+                                }()(variable, val, _2)):
+                                let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
+                                try _2.encode(to: contentEncoder)
+                                var container = contentEncoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(variable, forKey: CodingKeys.variable)
+                                try container.encode(val, forKey: CodingKeys.val)
+                            default:
+                                break
+                            }
+                        }
                     }
-                    enum DecodingKeys: String, CodingKey {
-                        case bool = "bool"
-                        case multi = "multi"
+
+                    extension SomeEnum {
+                        enum CodingKeys: String, CodingKey {
+                            case variableBool = "variableBool"
+                            case bool = "bool"
+                            case variable = "variable"
+                            case val = "val"
+                            case multi = "multi"
+                        }
+                        enum DecodingKeys: String, CodingKey {
+                            case bool = "bool"
+                            case multi = "multi"
+                        }
                     }
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 
-    func testEnumEncodingIgnoreWithConditionCombined() throws {
-        assertMacroExpansion(
-            """
-            func encodeVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
-                return var1
-            }
+    struct EnumEncodingIgnoreWithConditionCombined {
+        @Codable
+        enum SomeEnum {
+            @IgnoreEncoding
+            case bool(_ variableBool: Bool)
+            @IgnoreEncoding(if: ignoreEncodingVariables)
+            case multi(_ variable: Bool, val: Int, String)
+        }
 
-            @Codable
-            enum SomeEnum {
-                @IgnoreEncoding
-                case bool(_ variableBool: Bool)
-                @IgnoreEncoding(if: encodeVariables)
-                case multi(_ variable: Bool, val: Int, String)
-            }
-            """,
-            expandedSource:
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
-                func encodeVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
+                func ignoreEncodingVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
                     return var1
                 }
+
+                @Codable
                 enum SomeEnum {
+                    @IgnoreEncoding
                     case bool(_ variableBool: Bool)
+                    @IgnoreEncoding(if: ignoreEncodingVariables)
                     case multi(_ variable: Bool, val: Int, String)
                 }
-
-                extension SomeEnum: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: DecodingKeys.self)
-                        guard container.allKeys.count == 1 else {
-                            let context = DecodingError.Context(
-                                codingPath: container.codingPath,
-                                debugDescription: "Invalid number of keys found, expected one."
-                            )
-                            throw DecodingError.typeMismatch(SomeEnum.self, context)
-                        }
-                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
-                        switch container.allKeys.first.unsafelyUnwrapped {
-                        case DecodingKeys.bool:
-                            let variableBool: Bool
-                            let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
-                            self = .bool(_: variableBool)
-                        case DecodingKeys.multi:
-                            let variable: Bool
-                            let val: Int
-                            let _2: String
-                            let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            _2 = try String(from: contentDecoder)
-                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            val = try container.decode(Int.self, forKey: CodingKeys.val)
-                            self = .multi(_: variable, val: val, _2)
-                        }
+                """,
+                expandedSource:
+                    """
+                    func ignoreEncodingVariables(_ var1: Bool, var2: Int, _ var3: String) -> Bool {
+                        return var1
                     }
-                }
+                    enum SomeEnum {
+                        case bool(_ variableBool: Bool)
+                        case multi(_ variable: Bool, val: Int, String)
+                    }
 
-                extension SomeEnum: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        switch self {
-                        case .multi(_: let variable, val: let val, let _2) where ({ () -> (_, _, _) -> Bool in
-                                encodeVariables
-                            }()(variable, val, _2)):
-                            let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
-                            try _2.encode(to: contentEncoder)
-                            var container = contentEncoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(variable, forKey: CodingKeys.variable)
-                            try container.encode(val, forKey: CodingKeys.val)
-                        default:
-                            break
+                    extension SomeEnum: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: DecodingKeys.self)
+                            guard container.allKeys.count == 1 else {
+                                let context = DecodingError.Context(
+                                    codingPath: container.codingPath,
+                                    debugDescription: "Invalid number of keys found, expected one."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
+                            }
+                            let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
+                            switch container.allKeys.first.unsafelyUnwrapped {
+                            case DecodingKeys.bool:
+                                let variableBool: Bool
+                                let container = try contentDecoder.container(keyedBy: CodingKeys.self)
+                                variableBool = try container.decode(Bool.self, forKey: CodingKeys.variableBool)
+                                self = .bool(_: variableBool)
+                            case DecodingKeys.multi:
+                                let variable: Bool
+                                let val: Int
+                                let _2: String
+                                let container = try contentDecoder.container(keyedBy: CodingKeys.self)
+                                _2 = try String(from: contentDecoder)
+                                variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                                val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                self = .multi(_: variable, val: val, _2)
+                            }
                         }
                     }
-                }
 
-                extension SomeEnum {
-                    enum CodingKeys: String, CodingKey {
-                        case variableBool = "variableBool"
-                        case variable = "variable"
-                        case val = "val"
-                        case multi = "multi"
+                    extension SomeEnum: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            switch self {
+                            case .multi(_: let variable, val: let val, let _2) where (!{ () -> (_, _, _) -> Bool in
+                                    ignoreEncodingVariables
+                                }()(variable, val, _2)):
+                                let contentEncoder = container.superEncoder(forKey: CodingKeys.multi)
+                                try _2.encode(to: contentEncoder)
+                                var container = contentEncoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(variable, forKey: CodingKeys.variable)
+                                try container.encode(val, forKey: CodingKeys.val)
+                            default:
+                                break
+                            }
+                        }
                     }
-                    enum DecodingKeys: String, CodingKey {
-                        case bool = "bool"
-                        case multi = "multi"
+
+                    extension SomeEnum {
+                        enum CodingKeys: String, CodingKey {
+                            case variableBool = "variableBool"
+                            case variable = "variable"
+                            case val = "val"
+                            case multi = "multi"
+                        }
+                        enum DecodingKeys: String, CodingKey {
+                            case bool = "bool"
+                            case multi = "multi"
+                        }
                     }
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 
-    func testCombinationWithOtherMacros() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            struct SomeCodable {
-                @IgnoreDecoding
-                @CodedIn("deeply", "nested")
-                var one: String = "some"
-                @IgnoreDecoding
-                @CodedAt("deeply", "nested", "key")
-                var two: String = "some"
-                @IgnoreEncoding
-                @CodedIn("deeply", "nested")
-                var three: String = "some"
-                @IgnoreEncoding
-                @CodedAt("deeply", "nested", "key")
-                var four: String = "some"
-            }
-            """,
-            expandedSource:
+    struct CombinationWithOtherMacros {
+        @Codable
+        struct SomeCodable {
+            @IgnoreDecoding
+            @CodedIn("deeply", "nested")
+            var one: String = "some"
+            @IgnoreDecoding
+            @CodedAt("deeply", "nested", "key")
+            var two: String = "some"
+            @IgnoreEncoding
+            @CodedIn("deeply", "nested")
+            var three: String = "some"
+            @IgnoreEncoding
+            @CodedAt("deeply", "nested", "key")
+            var four: String = "some"
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
                 struct SomeCodable {
+                    @IgnoreDecoding
+                    @CodedIn("deeply", "nested")
                     var one: String = "some"
+                    @IgnoreDecoding
+                    @CodedAt("deeply", "nested", "key")
                     var two: String = "some"
+                    @IgnoreEncoding
+                    @CodedIn("deeply", "nested")
                     var three: String = "some"
+                    @IgnoreEncoding
+                    @CodedAt("deeply", "nested", "key")
                     var four: String = "some"
                 }
-
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
-                        self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var one: String = "some"
+                        var two: String = "some"
+                        var three: String = "some"
+                        var four: String = "some"
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
-                        try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                            let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                            self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
+                            self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                        case deeply = "deeply"
-                        case nested = "nested"
-                        case two = "key"
-                        case three = "three"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                            var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                            try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
+                            try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case one = "one"
+                            case deeply = "deeply"
+                            case nested = "nested"
+                            case two = "key"
+                            case three = "three"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testClassCombinationWithOtherMacros() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            class SomeCodable {
-                @IgnoreDecoding
-                @CodedIn("deeply", "nested")
-                var one: String = "some"
-                @IgnoreDecoding
-                @CodedAt("deeply", "nested", "key")
-                var two: String = "some"
-                @IgnoreEncoding
-                @CodedIn("deeply", "nested")
-                var three: String = "some"
-                @IgnoreEncoding
-                @CodedAt("deeply", "nested", "key")
-                var four: String = "some"
-            }
-            """,
-            expandedSource:
+    struct ClassCombinationWithOtherMacros {
+        @Codable
+        class SomeCodable {
+            @IgnoreDecoding
+            @CodedIn("deeply", "nested")
+            var one: String = "some"
+            @IgnoreDecoding
+            @CodedAt("deeply", "nested", "key")
+            var two: String = "some"
+            @IgnoreEncoding
+            @CodedIn("deeply", "nested")
+            var three: String = "some"
+            @IgnoreEncoding
+            @CodedAt("deeply", "nested", "key")
+            var four: String = "some"
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
                 class SomeCodable {
+                    @IgnoreDecoding
+                    @CodedIn("deeply", "nested")
                     var one: String = "some"
+                    @IgnoreDecoding
+                    @CodedAt("deeply", "nested", "key")
                     var two: String = "some"
+                    @IgnoreEncoding
+                    @CodedIn("deeply", "nested")
                     var three: String = "some"
+                    @IgnoreEncoding
+                    @CodedAt("deeply", "nested", "key")
                     var four: String = "some"
+                }
+                """,
+                expandedSource:
+                    """
+                    class SomeCodable {
+                        var one: String = "some"
+                        var two: String = "some"
+                        var three: String = "some"
+                        var four: String = "some"
 
-                    required init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
-                        self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
+                        required init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            let deeply_container = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                            let nested_deeply_container = try deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                            self.four = try nested_deeply_container.decode(String.self, forKey: CodingKeys.two)
+                            self.three = try nested_deeply_container.decode(String.self, forKey: CodingKeys.three)
+                        }
+
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
+                            var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
+                            try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
+                            try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
+                        }
+
+                        enum CodingKeys: String, CodingKey {
+                            case one = "one"
+                            case deeply = "deeply"
+                            case nested = "nested"
+                            case two = "key"
+                            case three = "three"
+                        }
                     }
 
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
-                        var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
-                        try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
-                        try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
+                    extension SomeCodable: Decodable {
                     }
 
-                    enum CodingKeys: String, CodingKey {
-                        case one = "one"
-                        case deeply = "deeply"
-                        case nested = "nested"
-                        case two = "key"
-                        case three = "three"
+                    extension SomeCodable: Encodable {
                     }
-                }
-
-                extension SomeCodable: Decodable {
-                }
-
-                extension SomeCodable: Encodable {
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 
-    func testEnumCombinationWithOtherMacros() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            enum SomeEnum {
-                @IgnoreCoding
-                case bool(_ variableBool: Bool)
-                @IgnoreDecoding
-                @CodedAs("altInt")
-                case int(val: Int)
-                @IgnoreEncoding
-                @CodedAs("altString")
-                case string(String)
-                @IgnoreEncoding
-                case multi(_ variable: Bool, val: Int, String)
-            }
-            """,
-            expandedSource:
+    struct EnumCombinationWithOtherMacros {
+        @Codable
+        enum SomeEnum {
+            @IgnoreCoding
+            case bool(_ variableBool: Bool)
+            @IgnoreDecoding
+            @CodedAs("altInt")
+            case int(val: Int)
+            @IgnoreEncoding
+            @CodedAs("altString")
+            case string(String)
+            @IgnoreEncoding
+            case multi(_ variable: Bool, val: Int, String)
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
                 enum SomeEnum {
+                    @IgnoreCoding
                     case bool(_ variableBool: Bool)
+                    @IgnoreDecoding
+                    @CodedAs("altInt")
                     case int(val: Int)
+                    @IgnoreEncoding
+                    @CodedAs("altString")
                     case string(String)
+                    @IgnoreEncoding
                     case multi(_ variable: Bool, val: Int, String)
                 }
-
-                extension SomeEnum: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: DecodingKeys.self)
-                        guard container.allKeys.count == 1 else {
-                            let context = DecodingError.Context(
-                                codingPath: container.codingPath,
-                                debugDescription: "Invalid number of keys found, expected one."
-                            )
-                            throw DecodingError.typeMismatch(SomeEnum.self, context)
-                        }
-                        let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
-                        switch container.allKeys.first.unsafelyUnwrapped {
-                        case DecodingKeys.string:
-                            let _0: String
-                            _0 = try String(from: contentDecoder)
-                            self = .string(_0)
-                        case DecodingKeys.multi:
-                            let variable: Bool
-                            let val: Int
-                            let _2: String
-                            let container = try contentDecoder.container(keyedBy: CodingKeys.self)
-                            _2 = try String(from: contentDecoder)
-                            variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                            val = try container.decode(Int.self, forKey: CodingKeys.val)
-                            self = .multi(_: variable, val: val, _2)
-                        }
+                """,
+                expandedSource:
+                    """
+                    enum SomeEnum {
+                        case bool(_ variableBool: Bool)
+                        case int(val: Int)
+                        case string(String)
+                        case multi(_ variable: Bool, val: Int, String)
                     }
-                }
 
-                extension SomeEnum: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        switch self {
-                        case .int(val: let val):
-                            let contentEncoder = container.superEncoder(forKey: CodingKeys.int)
-                            var container = contentEncoder.container(keyedBy: CodingKeys.self)
-                            try container.encode(val, forKey: CodingKeys.val)
-                        default:
-                            break
+                    extension SomeEnum: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: DecodingKeys.self)
+                            guard container.allKeys.count == 1 else {
+                                let context = DecodingError.Context(
+                                    codingPath: container.codingPath,
+                                    debugDescription: "Invalid number of keys found, expected one."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
+                            }
+                            let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
+                            switch container.allKeys.first.unsafelyUnwrapped {
+                            case DecodingKeys.string:
+                                let _0: String
+                                _0 = try String(from: contentDecoder)
+                                self = .string(_0)
+                            case DecodingKeys.multi:
+                                let variable: Bool
+                                let val: Int
+                                let _2: String
+                                let container = try contentDecoder.container(keyedBy: CodingKeys.self)
+                                _2 = try String(from: contentDecoder)
+                                variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                                val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                self = .multi(_: variable, val: val, _2)
+                            }
                         }
                     }
-                }
 
-                extension SomeEnum {
-                    enum CodingKeys: String, CodingKey {
-                        case val = "val"
-                        case int = "altInt"
-                        case variable = "variable"
+                    extension SomeEnum: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            switch self {
+                            case .int(val: let val):
+                                let contentEncoder = container.superEncoder(forKey: CodingKeys.int)
+                                var container = contentEncoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(val, forKey: CodingKeys.val)
+                            default:
+                                break
+                            }
+                        }
                     }
-                    enum DecodingKeys: String, CodingKey {
-                        case string = "altString"
-                        case multi = "multi"
+
+                    extension SomeEnum {
+                        enum CodingKeys: String, CodingKey {
+                            case val = "val"
+                            case int = "altInt"
+                            case variable = "variable"
+                        }
+                        enum DecodingKeys: String, CodingKey {
+                            case string = "altString"
+                            case multi = "multi"
+                        }
                     }
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 }
-#endif
+
+fileprivate func ignoreEncodingVariable(_ var1: Bool) -> Bool {
+    return var1
+}
+
+fileprivate func ignoreEncodingVariables(
+    _ var1: Bool, var2: Int, _ var3: String
+) -> Bool {
+    return var1
+}

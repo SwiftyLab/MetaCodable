@@ -1,12 +1,10 @@
-#if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
-import SwiftDiagnostics
-import XCTest
+import Testing
 
 @testable import PluginCore
 
-final class DefaultTests: XCTestCase {
-
-    func testMisuseOnNonVariableDeclaration() throws {
+struct DefaultTests {
+    @Test
+    func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
             struct SomeCodable {
@@ -36,7 +34,8 @@ final class DefaultTests: XCTestCase {
         )
     }
 
-    func testMisuseOnStaticVariable() throws {
+    @Test
+    func misuseOnStaticVariable() throws {
         assertMacroExpansion(
             """
             struct SomeCodable {
@@ -64,7 +63,8 @@ final class DefaultTests: XCTestCase {
         )
     }
 
-    func testDuplicatedMisuse() throws {
+    @Test
+    func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
             struct SomeCodable {
@@ -102,4 +102,3 @@ final class DefaultTests: XCTestCase {
         )
     }
 }
-#endif

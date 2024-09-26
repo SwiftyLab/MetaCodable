@@ -43,7 +43,7 @@ jobs:
             {
               "os": "macos-latest",
               "language": "swift",
-              "swift": "latest"
+              "swift": "6.0.0"
             }
           ]
         }
@@ -77,7 +77,7 @@ jobs:
             },
             {
               "os": "macos-latest",
-              "swift": "latest"
+              "swift": "6.0.0"
             }
           ]
         }
@@ -87,11 +87,11 @@ jobs:
     uses: SwiftyLab/ci/.github/workflows/cocoapods.yml@main
     strategy:
       matrix:
-        platforms: ['macos tvos', 'ios']
+        platform: ['macOS', 'iOS']
     with:
       os: macos-latest
-      xcode: latest
-      platforms: ${{ matrix.platforms }}
+      swift: 6.0.0
+      platforms: ${{ matrix.platform }}
 
   ci:
     name: CI

@@ -77,7 +77,6 @@ where
     /// `DefaultSequenceElementCoding`.
     ///
     /// - Parameters:
-    ///   - output: The resulting sequence type.
     ///   - configuration: The configuration for decoding and encoding.
     public init(configuration: Configuration)
     where ElementHelper == DefaultSequenceElementCoding<Sequence.Element> {

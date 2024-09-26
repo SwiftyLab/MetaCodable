@@ -1,220 +1,274 @@
-#if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
-import XCTest
+import MetaCodable
+import Testing
 
 @testable import PluginCore
 
-final class VariableDeclarationTests: XCTestCase {
+struct VariableDeclarationTests {
 
-    func testInitializedImmutableVariable() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                let value: String = "some"
-            }
-            """,
-            expandedSource:
+    struct InitializedImmutableVariable {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            let value: String = "some"
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     let value: String = "some"
-
-                    init() {
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        let value: String = "some"
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
+                        init() {
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value, forKey: CodingKeys.value)
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value, forKey: CodingKeys.value)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testInitializedMutableVariable() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                var value: String = "some"
-            }
-            """,
-            expandedSource:
+    struct InitializedMutableVariable {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            var value: String = "some"
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     var value: String = "some"
-
-                    init() {
-                    }
-
-                    init(value: String) {
-                        self.value = value
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var value: String = "some"
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
-                    }
-                }
+                        init() {
+                        }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value, forKey: CodingKeys.value)
+                        init(value: String) {
+                            self.value = value
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value, forKey: CodingKeys.value)
+                        }
+                    }
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testGetterOnlyVariable() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                var value: String { "some" }
-            }
-            """,
-            expandedSource:
+    struct GetterOnlyVariable {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            var value: String { "some" }
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     var value: String { "some" }
-
-                    init() {
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var value: String { "some" }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
+                        init() {
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testExplicitGetterOnlyVariable() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                var value: String {
-                    get {
-                        "some"
-                    }
+    struct ExplicitGetterOnlyVariable {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            var value: String {
+                get {
+                    "some"
                 }
             }
-            """,
-            expandedSource:
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     var value: String {
                         get {
                             "some"
                         }
                     }
-
-                    init() {
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var value: String {
+                            get {
+                                "some"
+                            }
+                        }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
+                        init() {
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testGetterOnlyVariableWithMultiLineStatements() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                var value: String {
-                    let val = "Val"
-                    return "some\\(val)"
-                }
+    struct GetterOnlyVariableWithMultiLineStatements {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            var value: String {
+                let val = "Val"
+                return "some\(val)"
             }
-            """,
-            expandedSource:
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     var value: String {
                         let val = "Val"
                         return "some\\(val)"
                     }
-
-                    init() {
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var value: String {
+                            let val = "Val"
+                            return "some\\(val)"
+                        }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
+                        init() {
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testVariableWithPropertyObservers() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                var value1: String {
-                    didSet {
-                    }
-                }
-
-                var value2: String {
-                    willSet {
-                    }
+    struct VariableWithPropertyObservers {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            var value1: String {
+                didSet {
                 }
             }
-            """,
-            expandedSource:
+
+            var value2: String {
+                willSet {
+                }
+            }
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     var value1: String {
                         didSet {
@@ -225,58 +279,75 @@ final class VariableDeclarationTests: XCTestCase {
                         willSet {
                         }
                     }
-
-                    init(value1: String, value2: String) {
-                        self.value1 = value1
-                        self.value2 = value2
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var value1: String {
+                            didSet {
+                            }
+                        }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
-                        self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
-                    }
-                }
+                        var value2: String {
+                            willSet {
+                            }
+                        }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value1, forKey: CodingKeys.value1)
-                        try container.encode(self.value2, forKey: CodingKeys.value2)
+                        init(value1: String, value2: String) {
+                            self.value1 = value1
+                            self.value2 = value2
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value1 = "value1"
-                        case value2 = "value2"
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
+                            self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value1, forKey: CodingKeys.value1)
+                            try container.encode(self.value2, forKey: CodingKeys.value2)
+                        }
+                    }
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value1 = "value1"
+                            case value2 = "value2"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testInitializedVariableWithPropertyObservers() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                var value1: String = "some" {
-                    didSet {
-                    }
-                }
-
-                var value2: String = "some" {
-                    willSet {
-                    }
+    struct InitializedVariableWithPropertyObservers {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            var value1: String = "some" {
+                didSet {
                 }
             }
-            """,
-            expandedSource:
+
+            var value2: String = "some" {
+                willSet {
+                }
+            }
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     var value1: String = "some" {
                         didSet {
@@ -287,67 +358,84 @@ final class VariableDeclarationTests: XCTestCase {
                         willSet {
                         }
                     }
-
-                    init() {
-                    }
-
-                    init(value1: String) {
-                        self.value1 = value1
-                    }
-
-                    init(value2: String) {
-                        self.value2 = value2
-                    }
-
-                    init(value1: String, value2: String) {
-                        self.value1 = value1
-                        self.value2 = value2
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var value1: String = "some" {
+                            didSet {
+                            }
+                        }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
-                        self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
-                    }
-                }
+                        var value2: String = "some" {
+                            willSet {
+                            }
+                        }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value1, forKey: CodingKeys.value1)
-                        try container.encode(self.value2, forKey: CodingKeys.value2)
-                    }
-                }
+                        init() {
+                        }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value1 = "value1"
-                        case value2 = "value2"
+                        init(value1: String) {
+                            self.value1 = value1
+                        }
+
+                        init(value2: String) {
+                            self.value2 = value2
+                        }
+
+                        init(value1: String, value2: String) {
+                            self.value1 = value1
+                            self.value2 = value2
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value1 = try container.decode(String.self, forKey: CodingKeys.value1)
+                            self.value2 = try container.decode(String.self, forKey: CodingKeys.value2)
+                        }
+                    }
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value1, forKey: CodingKeys.value1)
+                            try container.encode(self.value2, forKey: CodingKeys.value2)
+                        }
+                    }
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value1 = "value1"
+                            case value2 = "value2"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testComputedProperty() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                var value: String {
-                    get {
-                        "some"
-                    }
-                    set {
-                    }
+    struct ComputedProperty {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            var value: String {
+                get {
+                    "some"
+                }
+                set {
                 }
             }
-            """,
-            expandedSource:
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     var value: String {
                         get {
@@ -356,146 +444,176 @@ final class VariableDeclarationTests: XCTestCase {
                         set {
                         }
                     }
-
-                    init() {
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        var value: String {
+                            get {
+                                "some"
+                            }
+                            set {
+                            }
+                        }
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
+                        init() {
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testOptionalSyntaxVariable() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                let value: String?
-            }
-            """,
-            expandedSource:
+    struct OptionalSyntaxVariable {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            let value: String?
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     let value: String?
-
-                    init(value: String? = nil) {
-                        self.value = value
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        let value: String?
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
+                        init(value: String? = nil) {
+                            self.value = value
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
+                        }
                     }
-                }
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+
+            assertMacroExpansion(
                 """
-        )
-
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                let value: String!
-            }
-            """,
-            expandedSource:
-                """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     let value: String!
-
-                    init(value: String! = nil) {
-                        self.value = value
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        let value: String!
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
+                        init(value: String! = nil) {
+                            self.value = value
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testGenericSyntaxOptionalVariable() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            struct SomeCodable {
-                let value: Optional<String>
-            }
-            """,
-            expandedSource:
+    struct GenericSyntaxOptionalVariable {
+        @Codable
+        @MemberInit
+        struct SomeCodable {
+            let value: Optional<String>
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 struct SomeCodable {
                     let value: Optional<String>
-
-                    init(value: Optional<String> = nil) {
-                        self.value = value
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    struct SomeCodable {
+                        let value: Optional<String>
 
-                extension SomeCodable: Decodable {
-                    init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
+                        init(value: Optional<String> = nil) {
+                            self.value = value
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
+                    extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decodeIfPresent(String.self, forKey: CodingKeys.value)
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encodeIfPresent(self.value, forKey: CodingKeys.value)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
     }
 }
-#endif

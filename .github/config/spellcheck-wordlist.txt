@@ -65,3 +65,4 @@ lowercasing
 SwiftData
 SwiftUI
 IgnoreEncoding
+VSCode

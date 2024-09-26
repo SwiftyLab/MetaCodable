@@ -1,9 +1,11 @@
+import Foundation
 import HelperCoders
 import MetaCodable
-import XCTest
+import Testing
 
-final class DateCoderTests: XCTestCase {
-    func testDecoding() throws {
+struct DateCoderTests {
+    @Test
+    func decoding() throws {
         let jsonStr = """
             {
                 "epochSeconds": 878639901,
@@ -14,21 +16,22 @@ final class DateCoderTests: XCTestCase {
                 "formattedDate": "1997-11-04T10:38:21+00:00"
             }
             """
-        let json = try XCTUnwrap(jsonStr.data(using: .utf8))
+        let json = try #require(jsonStr.data(using: .utf8))
         let model = try JSONDecoder().decode(Model.self, from: json)
         let epoch: Double = 878639901
-        XCTAssertEqual(model.epochSeconds.timeIntervalSince1970, epoch)
-        XCTAssertEqual(model.epochMilliSeconds.timeIntervalSince1970, epoch)
-        XCTAssertEqual(model.epochMicroSeconds.timeIntervalSince1970, epoch)
-        XCTAssertEqual(model.epochNanoSeconds.timeIntervalSince1970, epoch)
-        XCTAssertEqual(model.iso8601Date.timeIntervalSince1970, epoch)
-        XCTAssertEqual(model.formattedDate.timeIntervalSince1970, epoch)
+        #expect(model.epochSeconds.timeIntervalSince1970 == epoch)
+        #expect(model.epochMilliSeconds.timeIntervalSince1970 == epoch)
+        #expect(model.epochMicroSeconds.timeIntervalSince1970 == epoch)
+        #expect(model.epochNanoSeconds.timeIntervalSince1970 == epoch)
+        #expect(model.iso8601Date.timeIntervalSince1970 == epoch)
+        #expect(model.formattedDate.timeIntervalSince1970 == epoch)
         let encoded = try JSONEncoder().encode(model)
         let newModel = try JSONDecoder().decode(Model.self, from: encoded)
-        XCTAssertEqual(newModel, model)
+        #expect(newModel == model)
     }
 
-    func testInvalidDecoding() throws {
+    @Test
+    func invalidDecoding() throws {
         let jsonStr = """
             {
                 "epochSeconds": 878639901,
@@ -39,29 +42,28 @@ final class DateCoderTests: XCTestCase {
                 "formattedDate": "1997-11-04T10:38:21+00:00"
             }
             """
-        let json = try XCTUnwrap(jsonStr.data(using: .utf8))
-        do {
+        let json = try #require(jsonStr.data(using: .utf8))
+        #expect(throws: DecodingError.self) {
             let _ = try JSONDecoder().decode(Model.self, from: json)
-            XCTFail("Invalid date time conversion")
-        } catch {}
+        }
     }
-}
 
-@Codable
-fileprivate struct Model: Equatable {
-    @CodedBy(Since1970DateCoder())
-    let epochSeconds: Date
-    @CodedBy(Since1970DateCoder(intervalType: .milliseconds))
-    let epochMilliSeconds: Date
-    @CodedBy(Since1970DateCoder(intervalType: .microseconds))
-    let epochMicroSeconds: Date
-    @CodedBy(Since1970DateCoder(intervalType: .nanoseconds))
-    let epochNanoSeconds: Date
+    @Codable
+    struct Model: Equatable {
+        @CodedBy(Since1970DateCoder())
+        let epochSeconds: Date
+        @CodedBy(Since1970DateCoder(intervalType: .milliseconds))
+        let epochMilliSeconds: Date
+        @CodedBy(Since1970DateCoder(intervalType: .microseconds))
+        let epochMicroSeconds: Date
+        @CodedBy(Since1970DateCoder(intervalType: .nanoseconds))
+        let epochNanoSeconds: Date
 
-    @CodedBy(ISO8601DateCoder())
-    let iso8601Date: Date
-    @CodedBy(DateCoder(formatter: RFC3339DateFormatter))
-    let formattedDate: Date
+        @CodedBy(ISO8601DateCoder())
+        let iso8601Date: Date
+        @CodedBy(DateCoder(formatter: RFC3339DateFormatter))
+        let formattedDate: Date
+    }
 }
 
 private let RFC3339DateFormatter: DateFormatter = {

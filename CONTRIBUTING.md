@@ -18,11 +18,11 @@ You can contribute by fixing bugs or adding new features. For larger code change
   * Xcode and [CocoaPods], to test [CocoaPods] integration
   * [Node], to use helper scripts in [package.json](package.json) folder.
 
-### Setting up dev environment
+### Setting up development environment
 
 #### VSCode
 
-This repository contains necessary configurations and extesnions required for development in VSCode.
+This repository contains necessary configurations and extensions required for development in VSCode.
 
 #### Xcode
 

@@ -1,0 +1,44 @@
+MACOSX_DEPLOYMENT_TARGET = '11'
+IPHONEOS_DEPLOYMENT_TARGET = '14.0'
+
+GITHUB_REPOSITORY = ENV['GITHUB_REPOSITORY'] || 'SwiftyLab/MetaCodable'
+GITHUB_SERVER_URL = ENV['GITHUB_SERVER_URL'] || 'https://github.com'
+METACODABLE_DEV_BRANCH = ENV['GITHUB_HEAD_REF'] || ENV['GITHUB_REF_NAME']
+DEV_SOURCE = METACODABLE_DEV_BRANCH ? { :git => "#{GITHUB_SERVER_URL}/#{GITHUB_REPOSITORY}.git", :branch => METACODABLE_DEV_BRANCH } : { :path => "../" }
+
+def add_metacodable
+  pod 'MetaCodable', :subspecs => ['Macro', 'HelperCoders'], :testspecs => ['HelperCodersTests'], **DEV_SOURCE
+end
+
+abstract_target 'Workspace' do
+  platform :macos, MACOSX_DEPLOYMENT_TARGET
+  pod 'MetaCodableHelperCoders', **DEV_SOURCE
+  pod 'MetaCodableMacro', **DEV_SOURCE
+  pod 'MetaCodableMacroPluginCore', **DEV_SOURCE
+  pod 'MetaCodableMacroPlugin', **DEV_SOURCE
+end
+
+target 'MetaCodableiOS' do
+  platform :ios, IPHONEOS_DEPLOYMENT_TARGET
+  use_frameworks!
+
+  # Pods for MetaCodableiOS
+  add_metacodable
+end
+
+target 'MetaCodablemacOS' do
+  platform :macos, MACOSX_DEPLOYMENT_TARGET
+  use_frameworks!
+
+  # Pods for MetaCodablemacOS
+  add_metacodable
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = IPHONEOS_DEPLOYMENT_TARGET
+      config.build_settings["MACOSX_DEPLOYMENT_TARGET"] = MACOSX_DEPLOYMENT_TARGET
+    end
+  end
+end

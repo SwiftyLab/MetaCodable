@@ -1,147 +1,160 @@
+import Foundation
 import HelperCoders
 import MetaCodable
-import XCTest
+import Testing
 
-final class SequenceCoderTests: XCTestCase {
+struct SequenceCoderTests {
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
 
-    func testInvalidDataType() throws {
-        do {
+    @Test
+    func invalidDataType() throws {
+        #expect(throws: DecodingError.self) {
             let json = #"{"data":1}"#.data(using: .utf8)!
             let _ = try decoder.decode(Container.self, from: json)
-            XCTFail("Invalid data type instead of array")
-        } catch {}
+        }
     }
 
-    func testEmptyData() throws {
+    @Test
+    func emptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(Container.self, from: json)
-        XCTAssertEqual(val.data, [])
+        #expect(val.data.isEmpty)
     }
 
-    func testValidData() throws {
+    @Test
+    func validData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(Container.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let data = try encoder.encode(val)
-        XCTAssertEqual(data, json)
+        #expect(data == json)
     }
 
-    func testInvalidData() throws {
-        let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
-        do {
+    @Test
+    func invalidData() throws {
+        #expect(throws: DecodingError.self) {
+            let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
             let _ = try decoder.decode(Container.self, from: json)
-            XCTFail("Invalid sequence decoding")
-        } catch {}
+        }
     }
 
-    func testLossyInvalidDataType() throws {
-        do {
+    @Test
+    func lossyInvalidDataType() throws {
+        #expect(throws: DecodingError.self) {
             let json = #"{"data":1}"#.data(using: .utf8)!
             let _ = try decoder.decode(LossyContainer.self, from: json)
-            XCTFail("Invalid data type instead of array")
-        } catch {}
+        }
     }
 
-    func testLossyEmptyData() throws {
+    @Test
+    func lossyEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyContainer.self, from: json)
-        XCTAssertEqual(val.data, [])
+        #expect(val.data.isEmpty)
     }
 
-    func testLossyValidData() throws {
+    @Test
+    func lossyValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let data = try encoder.encode(val)
-        XCTAssertEqual(data, json)
+        #expect(data == json)
     }
 
-    func testLossyInvalidData() throws {
+    @Test
+    func lossyInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
     }
 
-    func testDefaultInvalidDataType() throws {
+    @Test
+    func defaultInvalidDataType() throws {
         let json = #"{"data":1}"#.data(using: .utf8)!
         let val = try decoder.decode(DefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["some"])
+        #expect(val.data == ["some"])
     }
 
-    func testDefaultEmptyData() throws {
+    @Test
+    func defaultEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(DefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["some"])
+        #expect(val.data == ["some"])
     }
 
-    func testDefaultValidData() throws {
+    @Test
+    func defaultValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(DefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let data = try encoder.encode(val)
-        XCTAssertEqual(data, json)
+        #expect(data == json)
     }
 
-    func testDefaultInvalidData() throws {
-        let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
-        do {
+    @Test
+    func defaultInvalidData() throws {
+        #expect(throws: DecodingError.self) {
+            let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
             let _ = try decoder.decode(DefaultContainer.self, from: json)
-            XCTFail("Invalid sequence decoding")
-        } catch {}
+        }
     }
 
-    func testLossyDefaultInvalidDataType() throws {
+    @Test
+    func lossyDefaultInvalidDataType() throws {
         let json = #"{"data":1}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["some"])
+        #expect(val.data == ["some"])
     }
 
-    func testLossyDefaultEmptyData() throws {
+    @Test
+    func lossyDefaultEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["some"])
+        #expect(val.data == ["some"])
     }
 
-    func testLossyDefaultValidData() throws {
+    @Test
+    func lossyDefaultValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let data = try encoder.encode(val)
-        XCTAssertEqual(data, json)
+        #expect(data == json)
     }
 
-    func testLossyDefaultInvalidData() throws {
+    @Test
+    func lossyDefaultInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let _ = try encoder.encode(val)
     }
-}
 
-@Codable
-fileprivate struct Container {
-    @CodedBy(SequenceCoder(output: [String].self))
-    let data: [String]
-}
+    @Codable
+    struct Container {
+        @CodedBy(SequenceCoder(output: [String].self))
+        let data: [String]
+    }
 
-@Codable
-fileprivate struct LossyContainer {
-    @CodedBy(SequenceCoder(output: [String].self, configuration: .lossy))
-    let data: [String]
-}
+    @Codable
+    struct LossyContainer {
+        @CodedBy(SequenceCoder(output: [String].self, configuration: .lossy))
+        let data: [String]
+    }
 
-@Codable
-@MemberInit
-fileprivate struct DefaultContainer {
-    @CodedBy(SequenceCoder(configuration: .default(["some"])))
-    let data: [String]
-}
+    @Codable
+    @MemberInit
+    struct DefaultContainer {
+        @CodedBy(SequenceCoder(configuration: .default(["some"])))
+        let data: [String]
+    }
 
-@Codable
-@MemberInit
-fileprivate struct LossyDefaultContainer {
-    @CodedBy(SequenceCoder(configuration: [.lossy, .default(["some"])]))
-    let data: [String]
+    @Codable
+    @MemberInit
+    struct LossyDefaultContainer {
+        @CodedBy(SequenceCoder(configuration: [.lossy, .default(["some"])]))
+        let data: [String]
+    }
 }

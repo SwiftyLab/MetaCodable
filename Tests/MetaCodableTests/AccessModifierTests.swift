@@ -1,133 +1,183 @@
-#if SWIFT_SYNTAX_EXTENSION_MACRO_FIXED
-import XCTest
+import MetaCodable
+import Testing
 
 @testable import PluginCore
 
-final class AccessModifierTests: XCTestCase {
+struct AccessModifierTests {
+    struct Open {
+        @Codable
+        open class SomeCodable {
+            let value: String
+        }
 
-    func testOpen() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            open class SomeCodable {
-                let value: String
-            }
-            """,
-            expandedSource:
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
                 open class SomeCodable {
                     let value: String
+                }
+                """,
+                expandedSource:
+                    """
+                    open class SomeCodable {
+                        let value: String
 
-                    public required init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        public required init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        }
+
+                        public func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value, forKey: CodingKeys.value)
+                        }
+
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
                     }
 
-                    public func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value, forKey: CodingKeys.value)
+                    extension SomeCodable: Decodable {
                     }
 
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Encodable {
                     }
-                }
-
-                extension SomeCodable: Decodable {
-                }
-
-                extension SomeCodable: Encodable {
-                }
-                """
-        )
+                    """
+            )
+        }
     }
 
-    func testPublic() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            public struct SomeCodable {
-                let value: String
-            }
-            """,
-            expandedSource:
+    struct Public {
+        @Codable
+        @MemberInit
+        public struct SomeCodable {
+            let value: String
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 public struct SomeCodable {
                     let value: String
-
-                    public init(value: String) {
-                        self.value = value
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    public struct SomeCodable {
+                        let value: String
 
-                extension SomeCodable: Decodable {
-                    public init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        public init(value: String) {
+                            self.value = value
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    public func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value, forKey: CodingKeys.value)
+                    extension SomeCodable: Decodable {
+                        public init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Encodable {
+                        public func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value, forKey: CodingKeys.value)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testPackage() throws {
-        assertMacroExpansion(
-            """
-            @Codable
-            @MemberInit
-            package struct SomeCodable {
-                let value: String
-            }
-            """,
-            expandedSource:
+    struct Package {
+        @Codable
+        @MemberInit
+        package struct SomeCodable {
+            let value: String
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
                 """
+                @Codable
+                @MemberInit
                 package struct SomeCodable {
                     let value: String
-
-                    package init(value: String) {
-                        self.value = value
-                    }
                 }
+                """,
+                expandedSource:
+                    """
+                    package struct SomeCodable {
+                        let value: String
 
-                extension SomeCodable: Decodable {
-                    package init(from decoder: any Decoder) throws {
-                        let container = try decoder.container(keyedBy: CodingKeys.self)
-                        self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        package init(value: String) {
+                            self.value = value
+                        }
                     }
-                }
 
-                extension SomeCodable: Encodable {
-                    package func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
-                        try container.encode(self.value, forKey: CodingKeys.value)
+                    extension SomeCodable: Decodable {
+                        package init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        }
                     }
-                }
 
-                extension SomeCodable {
-                    enum CodingKeys: String, CodingKey {
-                        case value = "value"
+                    extension SomeCodable: Encodable {
+                        package func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value, forKey: CodingKeys.value)
+                        }
                     }
-                }
-                """
-        )
+
+                    extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
     }
 
-    func testOthers() throws {
-        for modifier in ["internal", "fileprivate", "private", ""] {
+    struct Others {
+        struct Internal {
+            @Codable
+            @MemberInit
+            internal struct SomeCodable {
+                let value: String
+            }
+        }
+
+        struct FilePrivate {
+            @Codable
+            @MemberInit
+            fileprivate struct SomeCodable {
+                let value: String
+            }
+        }
+
+        struct None {
+            @Codable
+            @MemberInit
+            struct SomeCodable {
+                let value: String
+            }
+        }
+
+        @Test(arguments: ["internal", "fileprivate", "private", ""])
+        func expansion(_ modifier: String) throws {
             let prefix = modifier.isEmpty ? "" : "\(modifier) "
             assertMacroExpansion(
                 """
@@ -171,4 +221,9 @@ final class AccessModifierTests: XCTestCase {
         }
     }
 }
-#endif
+
+@Codable
+@MemberInit
+private struct SomeCodable {
+    let value: String
+}

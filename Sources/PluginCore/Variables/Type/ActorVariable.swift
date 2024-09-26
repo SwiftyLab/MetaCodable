@@ -27,6 +27,61 @@ struct ActorVariable: TypeVariable, DeclaredVariable, ComposedVariable,
         self.base = .init(from: decl, in: context)
     }
 
+    /// Provides the syntax for decoding at the provided location.
+    ///
+    /// Uses member group to generate syntax, adding `@preconcrrency`
+    /// attribute for Swift 6 and above.
+    ///
+    /// - Parameters:
+    ///   - context: The context in which to perform the macro expansion.
+    ///   - location: The decoding location.
+    ///
+    /// - Returns: The generated decoding syntax.
+    func decoding(
+        in context: some MacroExpansionContext,
+        from location: TypeCodingLocation
+    ) -> TypeGenerated? {
+        guard
+            let generated = base.decoding(in: context, from: location)
+        else { return nil }
+
+        #if swift(>=6)
+        let preconcurrency: AttributeSyntax = "@preconcurrency"
+        var inheritanceClause = generated.inheritanceClause
+        let types = inheritanceClause?.inheritedTypes ?? []
+        inheritedTypes: for (index, var inheritedType) in types.enumerated() {
+            var type =
+                inheritedType.type.as(AttributedTypeSyntax.self)
+                ?? AttributedTypeSyntax(
+                    specifiers: [], baseType: inheritedType.type
+                )
+            let attribute = type.attributes.first { attribute in
+                return switch attribute {
+                case .attribute(let attr):
+                    attr.attributeName.trimmedDescription
+                        == preconcurrency.attributeName.trimmedDescription
+                default:
+                    false
+                }
+            }
+
+            guard attribute == nil else { continue inheritedTypes }
+            let index = inheritanceClause!.inheritedTypes.index(at: index)
+            type.attributes.append(.attribute(preconcurrency))
+            inheritedType.type = .init(type)
+            inheritanceClause!.inheritedTypes[index] = inheritedType
+        }
+        #else
+        let inheritanceClause = generated.inheritanceClause
+        #endif
+
+        return .init(
+            code: generated.code, modifiers: generated.modifiers,
+            whereClause: generated.whereClause,
+            inheritanceClause: inheritanceClause
+        )
+    }
+
     /// Provides the syntax for encoding at the provided location.
     ///
     /// Uses member group to generate syntax, the implementation is added
