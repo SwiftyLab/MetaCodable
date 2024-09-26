@@ -1,0 +1,164 @@
+PODS:
+  - _SwiftSyntaxTestSupport (509.1.0):
+    - SwiftBasicFormat (= 509.1.0)
+    - SwiftSyntaxBuilder (= 509.1.0)
+    - SwiftSyntaxLib (= 509.1.0)
+  - MetaCodable/HelperCoders (1.3.0):
+    - MetaCodableHelperCoders (= 1.3.0)
+  - MetaCodable/HelperCodersTests (1.3.0):
+    - MetaCodable/HelperCoders (= 1.3.0)
+    - MetaCodable/Macro (= 1.3.0)
+    - MetaCodableMacroPlugin (= 1.3.0)
+    - MetaCodableMacroPluginCore (= 1.3.0)
+    - SwiftSyntax/MacrosTestSupport (< 601.0.0, >= 509.1.0)
+  - MetaCodable/Macro (1.3.0):
+    - MetaCodableMacro (= 1.3.0)
+  - MetaCodableHelperCoders (1.3.0):
+    - MetaCodableMacro (= 1.3.0)
+  - MetaCodableMacro (1.3.0)
+  - MetaCodableMacroPlugin (1.3.0):
+    - MetaCodableMacroPluginCore (= 1.3.0)
+    - SwiftSyntax/CompilerPlugin (< 601.0.0, >= 509.1.0)
+    - SwiftSyntax/Lib (< 601.0.0, >= 509.1.0)
+    - SwiftSyntax/Macros (< 601.0.0, >= 509.1.0)
+  - MetaCodableMacroPluginCore (1.3.0):
+    - SwiftSyntax/Builder (< 601.0.0, >= 509.1.0)
+    - SwiftSyntax/Diagnostics (< 601.0.0, >= 509.1.0)
+    - SwiftSyntax/Lib (< 601.0.0, >= 509.1.0)
+    - SwiftSyntax/Macros (< 601.0.0, >= 509.1.0)
+    - SwiftyCollections/OrderedCollections (~> 1.0.4)
+  - OrderedCollections (1.0.4)
+  - SwiftBasicFormat (509.1.0):
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftCompilerPlugin (509.1.0):
+    - SwiftCompilerPluginMessageHandling (= 509.1.0)
+    - SwiftSyntaxMacros (= 509.1.0)
+  - SwiftCompilerPluginMessageHandling (509.1.0):
+    - SwiftDiagnostics (= 509.1.0)
+    - SwiftOperators (= 509.1.0)
+    - SwiftParser (= 509.1.0)
+    - SwiftSyntaxLib (= 509.1.0)
+    - SwiftSyntaxMacroExpansion (= 509.1.0)
+    - SwiftSyntaxMacros (= 509.1.0)
+  - SwiftDiagnostics (509.1.0):
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftOperators (509.1.0):
+    - SwiftDiagnostics (= 509.1.0)
+    - SwiftParser (= 509.1.0)
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftParser (509.1.0):
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftParserDiagnostics (509.1.0):
+    - SwiftBasicFormat (= 509.1.0)
+    - SwiftDiagnostics (= 509.1.0)
+    - SwiftParser (= 509.1.0)
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftSyntax/Builder (509.1.0):
+    - SwiftSyntaxBuilder (= 509.1.0)
+  - SwiftSyntax/CompilerPlugin (509.1.0):
+    - SwiftCompilerPlugin (= 509.1.0)
+  - SwiftSyntax/Diagnostics (509.1.0):
+    - SwiftDiagnostics (= 509.1.0)
+  - SwiftSyntax/Lib (509.1.0):
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftSyntax/Macros (509.1.0):
+    - SwiftSyntaxMacros (= 509.1.0)
+  - SwiftSyntax/MacrosTestSupport (509.1.0):
+    - SwiftSyntaxMacrosTestSupport (= 509.1.0)
+  - SwiftSyntax509 (509.1.0)
+  - SwiftSyntaxBuilder (509.1.0):
+    - SwiftBasicFormat (= 509.1.0)
+    - SwiftDiagnostics (= 509.1.0)
+    - SwiftParser (= 509.1.0)
+    - SwiftParserDiagnostics (= 509.1.0)
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftSyntaxLib (509.1.0):
+    - SwiftSyntax509 (= 509.1.0)
+  - SwiftSyntaxMacroExpansion (509.1.0):
+    - SwiftDiagnostics (= 509.1.0)
+    - SwiftOperators (= 509.1.0)
+    - SwiftSyntaxBuilder (= 509.1.0)
+    - SwiftSyntaxLib (= 509.1.0)
+    - SwiftSyntaxMacros (= 509.1.0)
+  - SwiftSyntaxMacros (509.1.0):
+    - SwiftDiagnostics (= 509.1.0)
+    - SwiftParser (= 509.1.0)
+    - SwiftSyntaxBuilder (= 509.1.0)
+    - SwiftSyntaxLib (= 509.1.0)
+  - SwiftSyntaxMacrosTestSupport (509.1.0):
+    - _SwiftSyntaxTestSupport (= 509.1.0)
+    - SwiftDiagnostics (= 509.1.0)
+    - SwiftParser (= 509.1.0)
+    - SwiftSyntaxMacroExpansion (= 509.1.0)
+    - SwiftSyntaxMacros (= 509.1.0)
+  - SwiftyCollections/OrderedCollections (1.0.4):
+    - OrderedCollections (= 1.0.4)
+
+DEPENDENCIES:
+  - MetaCodable/HelperCoders (from `../`)
+  - MetaCodable/HelperCodersTests (from `../`)
+  - MetaCodable/Macro (from `../`)
+  - MetaCodableHelperCoders (from `../`)
+  - MetaCodableMacro (from `../`)
+  - MetaCodableMacroPlugin (from `../`)
+  - MetaCodableMacroPluginCore (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - _SwiftSyntaxTestSupport
+    - OrderedCollections
+    - SwiftBasicFormat
+    - SwiftCompilerPlugin
+    - SwiftCompilerPluginMessageHandling
+    - SwiftDiagnostics
+    - SwiftOperators
+    - SwiftParser
+    - SwiftParserDiagnostics
+    - SwiftSyntax
+    - SwiftSyntax509
+    - SwiftSyntaxBuilder
+    - SwiftSyntaxLib
+    - SwiftSyntaxMacroExpansion
+    - SwiftSyntaxMacros
+    - SwiftSyntaxMacrosTestSupport
+    - SwiftyCollections
+
+EXTERNAL SOURCES:
+  MetaCodable:
+    :path: "../"
+  MetaCodableHelperCoders:
+    :path: "../"
+  MetaCodableMacro:
+    :path: "../"
+  MetaCodableMacroPlugin:
+    :path: "../"
+  MetaCodableMacroPluginCore:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  _SwiftSyntaxTestSupport: c1e92136de032fb0c6bcd631d115e32b56c79081
+  MetaCodable: 428689f5eaaf8da18a8ec5fda7420a6284fa38cc
+  MetaCodableHelperCoders: cfc2a67f1887711885c332ec2cf05dff48494a27
+  MetaCodableMacro: 9e7a045343a3c870f6a512395a7eb502ddb0feb2
+  MetaCodableMacroPlugin: a7f329a42bec526dc3214c81d1c6a2e049cd73d4
+  MetaCodableMacroPluginCore: c649aa5e789114dfe8c35164ab051a12c3fda4f1
+  OrderedCollections: c754ce5f9e42cf22b73afd73582317347903ab6d
+  SwiftBasicFormat: 7a036edb269a4c473fe7121ed342f5eac88f1c77
+  SwiftCompilerPlugin: 7dba33b3ff085451ac1800372e6a6f8a2ad1e6b6
+  SwiftCompilerPluginMessageHandling: 34d194fd7864154fee88225b8d29baa31317df7e
+  SwiftDiagnostics: 73846c99808b454ba617c56c20593884f831393a
+  SwiftOperators: 97eb698da3cd577359cb3284f7e454f4dac40f2d
+  SwiftParser: 32d2df3f08bb0d6c6341399026d9c7fba4a18c0b
+  SwiftParserDiagnostics: e9adca533b3e1e58f062a7f9051899a87ebc5d17
+  SwiftSyntax: 1d42b704fa38597ef2b972ba8e7735a86cb56383
+  SwiftSyntax509: 8f1a57a1ba4bd6634697ec194474a0a109ae9fe0
+  SwiftSyntaxBuilder: deb89291a76adfc175ceeceae4d1d86bdc954dd9
+  SwiftSyntaxLib: 753c51892b84be6175d99c798b94382f6ed5077a
+  SwiftSyntaxMacroExpansion: f63df320598947ad28a6a1da56f63db93e61c052
+  SwiftSyntaxMacros: d4f82904c17d69bbafa5087a469dbdcbba190a70
+  SwiftSyntaxMacrosTestSupport: b08d784da733e27bd58bb86a607d2c5860ce0c20
+  SwiftyCollections: b03cc2d1eae10be4b882e0be836c3f1acb5737e2
+
+PODFILE CHECKSUM: 39ca2044c061f6e71a4474ed894863c2d0da41f7
+
+COCOAPODS: 1.15.2

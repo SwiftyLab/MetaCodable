@@ -1,109 +1,134 @@
+import Foundation
 import MetaCodable
-import XCTest
+import Testing
 
-final class LossySequenceTests: XCTestCase {
-
-    func testInvalidDataType() throws {
-        do {
+struct LossySequenceTests {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func invalidDataType() throws {
+        #expect(throws: DecodingError.self) {
             let json = #"{"data":1}"#.data(using: .utf8)!
             let _ = try JSONDecoder().decode(Container.self, from: json)
-            XCTFail("Invalid data type instead of array")
-        } catch {}
+        }
     }
 
-    func testEmptyData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func emptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(Container.self, from: json)
-        XCTAssertEqual(val.data, [])
+        #expect(val.data == [])
     }
 
-    func testValidData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func validData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(Container.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let data = try JSONEncoder().encode(val)
-        XCTAssertEqual(data, json)
+        #expect(data == json)
     }
 
-    func testInvalidData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func invalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(Container.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
     }
 
-    func testOptionalInvalidDataType() throws {
-        do {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func optionalInvalidDataType() throws {
+        #expect(throws: DecodingError.self) {
             let json = #"{"data":1}"#.data(using: .utf8)!
             let _ = try JSONDecoder().decode(
                 OptionalContainer.self, from: json
             )
-            XCTFail("Invalid data type instead of array")
-        } catch {}
+        }
     }
 
-    func testOptionalEmptyData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func optionalEmptyData() throws {
         let json = "{}".data(using: .utf8)!
         let val = try JSONDecoder().decode(OptionalContainer.self, from: json)
-        XCTAssertNil(val.data)
+        #expect(val.data == nil)
     }
 
-    func testOptionalValidData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func optionalValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(OptionalContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let data = try JSONEncoder().encode(val)
-        XCTAssertEqual(data, json)
+        #expect(data == json)
     }
 
-    func testOptionalInvalidData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func optionalInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(OptionalContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
     }
 
-    func testDefaultInvalidDataType() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func defaultInvalidDataType() throws {
         let json = #"{"data":1}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(DefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["some"])
+        #expect(val.data == ["some"])
     }
 
-    func testDefaultEmptyData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func defaultEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(DefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, [])
+        #expect(val.data == [])
     }
 
-    func testDefaultValidData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func defaultValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(DefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
         let data = try JSONEncoder().encode(val)
-        XCTAssertEqual(data, json)
+        #expect(data == json)
     }
 
-    func testDefaultInvalidData() throws {
+    @Test
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    func defaultInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(DefaultContainer.self, from: json)
-        XCTAssertEqual(val.data, ["1", "2"])
+        #expect(val.data == ["1", "2"])
     }
-}
 
-@Codable
-fileprivate struct Container {
-    @CodedBy(LossySequenceCoder<[String]>())
-    let data: [String]
-}
+    @Codable
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    struct Container {
+        @CodedBy(LossySequenceCoder<[String]>())
+        let data: [String]
+    }
 
-@Codable
-@MemberInit
-fileprivate struct DefaultContainer {
-    @Default(["some"])
-    @CodedBy(LossySequenceCoder<[String]>())
-    let data: [String]
-}
+    @Codable
+    @MemberInit
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    struct DefaultContainer {
+        @Default(["some"])
+        @CodedBy(LossySequenceCoder<[String]>())
+        let data: [String]
+    }
 
-@Codable
-fileprivate struct OptionalContainer {
-    @CodedBy(LossySequenceCoder<[String]>())
-    let data: [String]?
+    @Codable
+    @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    struct OptionalContainer {
+        @CodedBy(LossySequenceCoder<[String]>())
+        let data: [String]?
+    }
 }

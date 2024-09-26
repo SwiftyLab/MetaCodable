@@ -23,7 +23,6 @@ where S: Codable, S.Element: Codable {
     /// for sequence.
     ///
     /// - Parameter default: The default value.
-    /// - Returns: A new lossy sequence decoder/encoder.
     public init(default: S = .init([])) {
         self.default = `default`
     }

@@ -10,7 +10,7 @@ public struct PropertyWrapperCoder<Wrapper: PropertyWrappable>: HelperCoder {
     /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// using existing property wrappers.
     ///
-    /// - Returns: A new property wrapper based decoder/encoder.
+    /// The property wrapper type `Wrapper` is used for decoding/encoding.
     public init() {}
 
     /// Decodes using `Wrapper` type from the given `decoder`.

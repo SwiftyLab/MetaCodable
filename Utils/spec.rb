@@ -45,7 +45,7 @@ module MetaCodable
     end
 
     def swift_syntax_constraint
-      return '~> 509.1.0'
+      return '>= 509.1.0', '<601.0.0'
     end
   end
 end

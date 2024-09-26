@@ -9,7 +9,7 @@ public struct ValueCoder<Strategy: ValueCodingStrategy>: HelperCoder {
     /// Creates a new instance of `HelperCoder` that decodes/encodes
     /// basic value types.
     ///
-    /// - Returns: A new basic value type decoder/encoder.
+    /// The `Strategy` passed is used for decoding/encoding.
     public init() {}
 
     /// Decodes value with the provided `Strategy` from the given `decoder`.

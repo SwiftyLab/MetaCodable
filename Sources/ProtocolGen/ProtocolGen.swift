@@ -3,7 +3,11 @@ import Foundation
 import SwiftSyntax
 
 /// The default file manager used for this module.
+#if swift(>=6)
 nonisolated(unsafe) internal var fileManager = FileManager.default
+#else
+internal var fileManager = FileManager.default
+#endif
 
 /// The root command for this module that can be executed asynchronously.
 ///

@@ -79,7 +79,7 @@ where Value: ExpressibleByNilLiteral {
     /// Creates single identifier with the specified `nil` literal.
     ///
     /// - Parameter value: The `nil` value to assign.
-    public init(nilLiteral: ()) {
-        self = .one(.init(nilLiteral: nilLiteral))
+    public init(nilLiteral value: ()) {
+        self = .one(.init(nilLiteral: value))
     }
 }
