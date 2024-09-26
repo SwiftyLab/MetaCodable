@@ -11,12 +11,31 @@ You can contribute by fixing bugs or adding new features. For larger code change
 
 ### Things you will need
 
- * Linux, Mac OS (preferred), or Windows.
- * Git
- * [Swift](https://www.swift.org/getting-started/#installing-swift)
- * Optional
-   * Xcode and [CocoaPods], to test [CocoaPods] integration
-   * [Node], to use helper scripts in [package.json](package.json) folder.
+* Linux, Mac OS (preferred), or Windows.
+* Git
+* [Swift](https://www.swift.org/getting-started/#installing-swift)
+* Optional
+  * Xcode and [CocoaPods], to test [CocoaPods] integration
+  * [Node], to use helper scripts in [package.json](package.json) folder.
+
+### Setting up dev environment
+
+#### VSCode
+
+This repository contains necessary configurations and extesnions required for development in VSCode.
+
+#### Xcode
+
+For development in Xcode you have to set `METACODABLE_CI` environment variable. You can do so by launching Xcode with following command:
+
+```sh
+open $PATH_TO_XCODE_INSTALLATION --env METACODABLE_CI=1
+# i.e. open /Applications/Xcode.app --env METACODABLE_CI=1
+```
+
+> [!IMPORTANT]  
+> Make sure that Xcode is not running before this command executed.
+> Otherwise, this command will have no effect.
 
 ### Automated Tests
 
@@ -24,7 +43,7 @@ GitHub action is already setup to run tests on pull requests targeting `main` br
 
 | Test category | With [Node] | Manually |
 | --- | --- | --- |
-| SPM integration | Run `npm run test` | Run `swift test` |
+| SPM integration | Run `npm run test` | Run `METACODABLE_CI=true swift test` |
 | [CocoaPods] integration (Requires Xcode) | Run `npm run pod-lint` | Run `pod lib lint --no-clean --allow-warnings` |
 
 ## Developer's Certificate of Origin 1.1

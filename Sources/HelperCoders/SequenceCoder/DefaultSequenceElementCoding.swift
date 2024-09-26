@@ -4,7 +4,7 @@ import MetaCodable
 ///
 /// This type doesn't provide any customization and used only to opt out of
 /// decoding/encoding customizations.
-@_documentation(visibility:internal)
+@_documentation(visibility: internal)
 public struct DefaultSequenceElementCoding<Coded: Codable>: HelperCoder {
     /// Decodes value from the given `decoder`.
     ///

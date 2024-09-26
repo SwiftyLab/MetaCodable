@@ -25,6 +25,8 @@
 ///   * Use ``IgnoreCoding()``, ``IgnoreDecoding()`` and
 ///     ``IgnoreEncoding()`` to ignore specific properties/cases/types from
 ///     decoding/encoding or both.
+///   * Use ``IgnoreEncoding(if:)-1iuvv`` and ``IgnoreEncoding(if:)-7toka``
+///     to ignore encoding based on custom conditions.
 ///   * Use ``CodingKeys(_:)`` to work with different case style `CodingKey`s.
 ///   * Use ``IgnoreCodingInitialized()`` to ignore decoding and encoding
 ///     all initialized properties/case associated variables.

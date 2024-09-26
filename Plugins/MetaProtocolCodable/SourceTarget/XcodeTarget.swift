@@ -48,7 +48,13 @@ extension XcodeTarget: MetaProtocolCodableSourceTarget {
     /// - Parameter suffix: The name suffix.
     /// - Returns: The matching files.
     func sourceFiles(withSuffix suffix: String) -> [FileList.Element] {
-        return self.inputFiles.filter { $0.path.string.hasSuffix(suffix) }
+        return self.inputFiles.filter {
+            #if swift(>=6)
+            $0.url.path.hasSuffix(suffix)
+            #else
+            $0.path.string.hasSuffix(suffix)
+            #endif
+        }
     }
 
     /// The absolute path to config file if provided.
@@ -61,13 +67,22 @@ extension XcodeTarget: MetaProtocolCodableSourceTarget {
     /// - Parameter name: The config file name.
     /// - Returns: The config file path.
     func configPath(named name: String) -> String? {
-        return inputFiles.first { file in
-            return name.lowercased()
-                == file.path.stem
-                .components(separatedBy: .alphanumerics.inverted)
+        let file = inputFiles.first { file in
+            #if swift(>=6)
+            let path = file.url.lastPathComponent
+            #else
+            let path = file.path.stem
+            #endif
+            let fileName = path.components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()
-        }?.path.string
+            return name.lowercased() == fileName
+        }
+        #if swift(>=6)
+        return file?.url.lastPathComponent
+        #else
+        return file?.path.stem
+        #endif
     }
 }
 #endif

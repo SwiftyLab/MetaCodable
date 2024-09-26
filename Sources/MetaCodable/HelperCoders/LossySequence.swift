@@ -55,8 +55,11 @@ where S: Codable, S.Element: Codable {
     }
 }
 
+@available(*, deprecated, message: "Use SequenceCoder from HelperCoders")
+extension LossySequenceCoder: Sendable where S: Sendable {}
+
 /// A sequence type that can be initialized from another sequence.
-@_documentation(visibility:internal)
+@_documentation(visibility: internal)
 public protocol SequenceInitializable: Sequence {
     /// Creates a new instance of a sequence containing the elements of
     /// provided sequence.

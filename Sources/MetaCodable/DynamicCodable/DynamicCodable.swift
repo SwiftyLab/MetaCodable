@@ -138,7 +138,7 @@ public protocol DynamicCodable<IdentifierValue> {
     /// - Important: This type must match ``CodedAs()`` or ``CodedBy(_:)``
     ///   requirements if these macros are attached to the original dynamic
     ///   `protocol`, otherwise this type must be `String`.
-    associatedtype IdentifierValue: Equatable
+    associatedtype IdentifierValue: Equatable & Sendable
     /// The identifier value(s) for this type.
     ///
     /// Type can declare one or many identifier values. In case of multiple

@@ -1,28 +1,22 @@
 {
-    "configurations": [
-        {
-            "type": "swift-lldb",
-            "request": "launch",
-            "sourceLanguages": [
-                "swift"
-            ],
-            "args": [],
-            "cwd": "${workspaceFolder:MetaCodable}",
-            "name": "Debug ProtocolGen",
-            "program": "${workspaceFolder:MetaCodable}/.build/debug/ProtocolGen",
-            "preLaunchTask": "swift: Build Debug ProtocolGen"
-        },
-        {
-            "type": "swift-lldb",
-            "request": "launch",
-            "sourceLanguages": [
-                "swift"
-            ],
-            "args": [],
-            "cwd": "${workspaceFolder:MetaCodable}",
-            "name": "Release ProtocolGen",
-            "program": "${workspaceFolder:MetaCodable}/.build/release/ProtocolGen",
-            "preLaunchTask": "swift: Build Release ProtocolGen"
-        }
-    ]
+  "configurations": [
+    {
+      "type": "swift-lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:MetaCodable}",
+      "name": "Debug ProtocolGen",
+      "program": "${workspaceFolder:MetaCodable}/.build/debug/ProtocolGen",
+      "preLaunchTask": "swift: Build Debug ProtocolGen"
+    },
+    {
+      "type": "swift-lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "${workspaceFolder:MetaCodable}",
+      "name": "Release ProtocolGen",
+      "program": "${workspaceFolder:MetaCodable}/.build/release/ProtocolGen",
+      "preLaunchTask": "swift: Build Release ProtocolGen"
+    }
+  ]
 }
