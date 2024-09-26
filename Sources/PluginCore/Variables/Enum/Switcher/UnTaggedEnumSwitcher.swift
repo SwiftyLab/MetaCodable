@@ -85,7 +85,6 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
         var cases = location.cases
-        let selfType = location.selfType
         return CodeBlockItemListSyntax {
             """
             let context = DecodingError.Context(
@@ -93,7 +92,7 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
                 debugDescription: "Couldn't decode any case."
             )
             """
-            "let \(error) =  DecodingError.typeMismatch(\(selfType), context)"
+            "let \(error) =  DecodingError.typeMismatch(Self.self, context)"
             decodingSyntax(for: &cases, from: location, in: context)
         }
     }

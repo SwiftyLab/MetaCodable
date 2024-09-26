@@ -46,7 +46,6 @@ extension TaggedEnumSwitcherVariable {
                 }
             }
             if `default` {
-                let type = location.selfType
                 SwitchCaseSyntax(label: .default(.init())) {
                     """
                     let context = DecodingError.Context(
@@ -54,7 +53,7 @@ extension TaggedEnumSwitcherVariable {
                         debugDescription: "Couldn't match any cases."
                     )
                     """
-                    "throw DecodingError.typeMismatch(\(type), context)"
+                    "throw DecodingError.typeMismatch(Self.self, context)"
                 }
             }
         }

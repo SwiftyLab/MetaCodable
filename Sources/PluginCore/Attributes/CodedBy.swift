@@ -41,8 +41,6 @@ package struct CodedBy: PropertyAttribute {
     /// * If attached declaration is enum/protocol declaration:
     ///   * This attribute must be combined with `Codable`
     ///     and `CodedAt` attribute.
-    ///   * This attribute mustn't be combined with `CodedAs`
-    ///     attribute.
     /// * If macro has one argument provided:
     ///   * Attached declaration is a variable declaration.
     ///   * Attached declaration is not a static variable
@@ -59,7 +57,6 @@ package struct CodedBy: PropertyAttribute {
                 AggregatedDiagnosticProducer {
                     mustBeCombined(with: Codable.self)
                     mustBeCombined(with: CodedAt.self)
-                    cantBeCombined(with: CodedAs.self)
                 },
                 else: AggregatedDiagnosticProducer {
                     expect(syntaxes: VariableDeclSyntax.self)

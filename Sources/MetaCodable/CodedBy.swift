@@ -20,6 +20,9 @@
 /// - Important: The `helper`'s ``HelperCoder/Coded``
 ///   associated type must be the same as field type.
 ///
+/// - Important: When using with enums and protocols if ``HelperCoder/Coded``
+///   is other than `String` type must be provided with ``CodedAs()`` macro.
+///
 /// - Important: This attribute must be used combined with ``Codable()``
 ///   and ``CodedAt(_:)`` when applying to enums/protocols.
 @attached(peer)

@@ -279,7 +279,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     debugDescription: "No decodable case present."
                 )
                 """
-                "throw DecodingError.typeMismatch(\(selfType), context)"
+                "throw DecodingError.typeMismatch(Self.self, context)"
             }
         }
         return .init(

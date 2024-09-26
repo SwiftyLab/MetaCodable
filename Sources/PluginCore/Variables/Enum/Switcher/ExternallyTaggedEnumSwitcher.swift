@@ -116,7 +116,6 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
         let coder = location.coder
         let container = location.container
         let keyType = decodingKeys.type
-        let selfType = location.selfType
         let expr: ExprSyntax = "\(container).allKeys.first.unsafelyUnwrapped"
         return CodeBlockItemListSyntax {
             "let \(container) = try \(coder).container(keyedBy: \(keyType))"
@@ -126,7 +125,7 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
                     codingPath: \(container).codingPath,
                     debugDescription: "Invalid number of keys found, expected one."
                 )
-                throw DecodingError.typeMismatch(\(selfType), context)
+                throw DecodingError.typeMismatch(Self.self, context)
             }
             """
             """

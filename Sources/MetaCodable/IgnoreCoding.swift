@@ -116,7 +116,7 @@ public macro IgnoreEncoding() =
     #externalMacro(module: "MacroPlugin", type: "IgnoreEncoding")
 
 /// Indicates the field/case needs to be encoded only if provided condition
-/// is satisfied.
+/// is not satisfied.
 ///
 /// This macro can be applied to variables to ignore them from encoding.
 /// ```swift
@@ -126,7 +126,7 @@ public macro IgnoreEncoding() =
 ///
 /// The decoding data needs to have applicable data in `field` key.
 /// But the encoded data might not have any `field` key for specific values
-/// if the condition for those values return `false`.
+/// if the condition for those values return `true`.
 ///
 /// Similarly, for enums this macro can be applied to cases
 /// to ignore them from encoding.
@@ -139,8 +139,8 @@ public macro IgnoreEncoding() =
 /// case field(String)
 /// ```
 ///
-/// This case will never be encoded. But `field` case will be decoded
-/// if case related data is present.
+/// This case will never be encoded if associated `String` data is empty.
+/// But `field` case will be decoded if case related data is present.
 ///
 /// - Parameter condition: The condition to be checked.
 ///
@@ -158,7 +158,7 @@ public macro IgnoreEncoding<each T>(if condition: (repeat each T) -> Bool) =
     #externalMacro(module: "MacroPlugin", type: "IgnoreEncoding")
 
 /// Indicates the field needs to be encoded only if provided condition
-/// is satisfied.
+/// is not satisfied.
 ///
 /// Provides same functionality as ``IgnoreEncoding(if:)-1iuvv``
 /// for fields, provided as separate macro to allow usage in case of

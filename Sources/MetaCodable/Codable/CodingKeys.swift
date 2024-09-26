@@ -106,7 +106,7 @@ public macro CodingKeys(_ strategy: CodingKeyNameStrategy) =
 /// Property names are transformed into string
 /// value based on the case strategy to be used
 /// as `CodingKey`.
-public enum CodingKeyNameStrategy {
+public enum CodingKeyNameStrategy: Sendable {
     /// A strategy that converts property names to camel-case keys.
     ///
     /// The [Swift API Design Guidelines] recommend using camel-case names.

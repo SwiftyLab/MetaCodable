@@ -85,11 +85,21 @@ extension ProtocolGen {
                 type: method.argType
             )
 
+            #if canImport(SwiftSyntax600)
+            let signature = FunctionSignatureSyntax(
+                parameterClause: .init(parameters: .init([arg])),
+                effectSpecifiers: .init(
+                    throwsClause: .init(throwsSpecifier: .keyword(.throws))
+                ),
+                returnClause: .init(type: result)
+            )
+            #else
             let signature = FunctionSignatureSyntax(
                 parameterClause: .init(parameters: .init([arg])),
                 effectSpecifiers: .init(throwsSpecifier: .keyword(.throws)),
                 returnClause: .init(type: result)
             )
+            #endif
             return FunctionDeclSyntax(name: method.name, signature: signature) {
                 code
             }
@@ -122,10 +132,19 @@ extension ProtocolGen {
                 )
             }
 
+            #if canImport(SwiftSyntax600)
+            let signature = FunctionSignatureSyntax(
+                parameterClause: paramClause,
+                effectSpecifiers: .init(
+                    throwsClause: .init(throwsSpecifier: .keyword(.throws))
+                )
+            )
+            #else
             let signature = FunctionSignatureSyntax(
                 parameterClause: paramClause,
                 effectSpecifiers: .init(throwsSpecifier: .keyword(.throws))
             )
+            #endif
             return FunctionDeclSyntax(name: method.name, signature: signature) {
                 code
             }

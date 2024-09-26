@@ -101,10 +101,19 @@ struct AttributeExpander {
             type: method.argType
         )
 
+        #if canImport(SwiftSyntax600)
+        let signature = FunctionSignatureSyntax(
+            parameterClause: .init(parameters: .init([param])),
+            effectSpecifiers: .init(
+                throwsClause: .init(throwsSpecifier: .keyword(.throws))
+            )
+        )
+        #else
         let signature = FunctionSignatureSyntax(
             parameterClause: .init(parameters: .init([param])),
             effectSpecifiers: .init(throwsSpecifier: .keyword(.throws))
         )
+        #endif
 
         let modifiers = DeclModifierListSyntax {
             options.modifiersGenerator.generated
@@ -154,10 +163,19 @@ struct AttributeExpander {
             type: method.argType
         )
 
+        #if canImport(SwiftSyntax600)
+        let signature = FunctionSignatureSyntax(
+            parameterClause: .init(parameters: .init([param])),
+            effectSpecifiers: .init(
+                throwsClause: .init(throwsSpecifier: .keyword(.throws))
+            )
+        )
+        #else
         let signature = FunctionSignatureSyntax(
             parameterClause: .init(parameters: .init([param])),
             effectSpecifiers: .init(throwsSpecifier: .keyword(.throws))
         )
+        #endif
 
         let modifiers = DeclModifierListSyntax {
             options.modifiersGenerator.generated

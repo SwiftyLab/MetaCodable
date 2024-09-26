@@ -1,7 +1,8 @@
 /// The identifier option for ``DynamicCodable`` types.
 ///
 /// The identifier has option of one value or a group of values.
-public enum DynamicCodableIdentifier<Value: Equatable> {
+public enum DynamicCodableIdentifier<Value>: Equatable, Sendable
+where Value: Equatable & Sendable {
     /// Represents identifier with a single value.
     ///
     /// The ``DynamicCodable`` type is decoded if this value is matched.

@@ -27,7 +27,7 @@ where Var: ConditionalVariable, Var.Generated: ConditionalVariableSyntax {
         /// The condition expression based on which encoding is decided.
         ///
         /// This expression accepts arguments from this variable and resolves
-        /// to either `true` or `false` based on which encoding is done.
+        /// to either `true` or `false` based on which encoding is ignored.
         let encodingConditionExpr: ExprSyntax?
     }
 
@@ -69,7 +69,7 @@ where Var: ConditionalVariable, Var.Generated: ConditionalVariableSyntax {
             }
         }
         let expr: ExprSyntax =
-            "{ () -> (\(returnList)) -> Bool in \(conditionExpr) }()(\(args))"
+            "!{ () -> (\(returnList)) -> Bool in \(conditionExpr) }()(\(args))"
         return syntax.adding(condition: [.init(expression: expr)])
     }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "Swift 5.10-Ubuntu 22.04",
+    "name": "Swift 6.0-Ubuntu 22.04",
     "image": "swift:6.0-jammy",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {

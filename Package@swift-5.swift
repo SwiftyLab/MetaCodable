@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
 
 import Foundation
 import PackageDescription
@@ -19,11 +19,10 @@ let package = Package(
         .plugin(name: "MetaProtocolCodable", targets: ["MetaProtocolCodable"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", "509.1.0"..<"601.0.0"),
+        .package(url: "https://github.com/apple/swift-syntax.git", "509.1.0"..<"601.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
         .package(url: "https://github.com/swiftlang/swift-format", from: "600.0.0"),
-        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0"),
     ],
     targets: [
         // MARK: Core
@@ -68,17 +67,28 @@ let package = Package(
         ),
 
         // MARK: Test
+        .macro(
+            name: "TestingMacroPlugin",
+            dependencies: [
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+            ]
+        ),
+        .target(
+            name: "Testing",
+            dependencies: ["TestingMacroPlugin"]
+        ),
         .testTarget(
             name: "MetaCodableTests",
             dependencies: [
-                "PluginCore", "MacroPlugin", "MetaCodable", "HelperCoders",
+                "PluginCore", "MacroPlugin", "MetaCodable", "HelperCoders", "Testing",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
                 .product(name: "SwiftSyntaxMacrosGenericTestSupport", package: "swift-syntax"),
             ],
             plugins: ["MetaProtocolCodable"]
         ),
-    ],
-    swiftLanguageModes: [.v6, .v5]
+    ]
 )
 
 extension Package.Dependency.Kind {
@@ -98,7 +108,7 @@ var unusedDeps: Set<String> = []
 var includeTargets: Set<String> = []
 var includeProducts: Set<String> = []
 
-if Context.environment["METACODABLE_BEING_USED_FROM_COCOAPODS"] != nil { // CocoaPods specific
+if Context.environment["METACODABLE_BEING_USED_FROM_COCOAPODS"] != nil {
     unusedDeps.formUnion(["swift-format", "swift-docc-plugin"])
     includeTargets.formUnion(["PluginCore", "MacroPlugin"])
     includeProducts.insert("MacroPlugin")
@@ -130,23 +140,19 @@ if Context.environment["METACODABLE_BEING_USED_FROM_COCOAPODS"] != nil { // Coco
     } else {
         unusedDeps.insert("swift-argument-parser")
     }
-} else if Context.environment["METACODABLE_CI"] == nil { // SPM specific
+} else if Context.environment["METACODABLE_CI"] == nil {
     unusedDeps.insert("swift-format")
     package.targets.removeAll { $0.name == "MetaCodableTests" }
     package.targets.append(
         .testTarget(
             name: "MetaCodableTests",
             dependencies: [
-                "PluginCore", "MacroPlugin", "MetaCodable", "HelperCoders",
+                "PluginCore", "MacroPlugin", "MetaCodable", "HelperCoders", "Testing",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
             ],
             plugins: ["MetaProtocolCodable"]
         )
     )
-
-    if Context.environment["SPI_GENERATE_DOCS"] == nil {
-        unusedDeps.insert("swift-docc-plugin")
-    }
 }
 
 package.dependencies.removeAll { unusedDeps.contains($0.kind.repoName ?? "") }
