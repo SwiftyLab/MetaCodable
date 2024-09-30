@@ -1,3 +1,33 @@
+## [1.4.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.3.0...v1.4.0) (2024-09-30)
+
+
+### 🚀 Features
+
+* added ignoring encoding based on condition over value ([#84](https://github.com/SwiftyLab/MetaCodable/issues/84)) ([83ea43a](https://github.com/SwiftyLab/MetaCodable/commit/83ea43ad539713e25480a81675c12829ce5c2567))
+* added separate default value options for missing value and other errors ([#81](https://github.com/SwiftyLab/MetaCodable/issues/81)) ([69cc0de](https://github.com/SwiftyLab/MetaCodable/commit/69cc0de0b022255f58b6950d93bce30a669c40f4))
+* added support for implicitly unwrapped optional type ([#87](https://github.com/SwiftyLab/MetaCodable/issues/87)) ([29b9f00](https://github.com/SwiftyLab/MetaCodable/commit/29b9f00e5965ce042ca304a48b835d2fcf37a5e2))
+* added untagged enum support ([#78](https://github.com/SwiftyLab/MetaCodable/issues/78)) ([c1fe6f4](https://github.com/SwiftyLab/MetaCodable/commit/c1fe6f427bb5eaa4f3d73278895ba7ecc90b7dbf))
+
+
+### 🐛 Fixes
+
+* provided `Inherits` macro as workaround for class conformance error in SwiftUI ([#71](https://github.com/SwiftyLab/MetaCodable/issues/71)) ([c27e3a8](https://github.com/SwiftyLab/MetaCodable/commit/c27e3a80e4c0517591bdba5e8953bb22c70844e0))
+
+
+### 🛠 Build System
+
+* added migration for Swift 6 language mode ([13f4be6](https://github.com/SwiftyLab/MetaCodable/commit/13f4be6b8d78d5e5991cd387329d74774f6af732))
+
+
+### 🛠 Dependency
+
+* switch to using `swiftlang` repo instead of `apple`, as Apple transitioned already ([#96](https://github.com/SwiftyLab/MetaCodable/issues/96)) ([b929e06](https://github.com/SwiftyLab/MetaCodable/commit/b929e06f10fec51e2cabdad4732db6190544c297))
+
+
+### ✅ Tests
+
+* migrated to swift-testing ([ca493e4](https://github.com/SwiftyLab/MetaCodable/commit/ca493e4e106f40251edf3df47cdca1823b90634e))
+
 ## [1.3.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.2.1...v1.3.0) (2024-02-29)
 
 
