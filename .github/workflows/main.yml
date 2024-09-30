@@ -111,6 +111,7 @@ jobs:
     needs: [analyze, spell-check, swift-package-test, cocoapods-test, ci]
     uses: SwiftyLab/ci/.github/workflows/cd.yml@main
     with:
+      swift: '6.0.0'
       version: ${{ github.event.inputs.version }}
     secrets:
       COCOAPODS_TRUNK_TOKEN: ${{ secrets.COCOAPODS_TRUNK_TOKEN }}
