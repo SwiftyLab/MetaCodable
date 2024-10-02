@@ -33,7 +33,7 @@ open $PATH_TO_XCODE_INSTALLATION --env METACODABLE_CI=1
 # i.e. open /Applications/Xcode.app --env METACODABLE_CI=1
 ```
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > Make sure that Xcode is not running before this command executed.
 > Otherwise, this command will have no effect.
 

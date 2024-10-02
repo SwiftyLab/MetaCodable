@@ -24,7 +24,7 @@ final class PropertyVariableTreeNode: Variable {
     /// This is used for caching the container variable name to be reused,
     /// allowing not to retrieve container repeatedly.
     private var decodingContainer: TokenSyntax?
-    /// Whether the encoding container variable  linked to this node
+    /// Whether the encoding container variable linked to this node
     /// should be declared as immutable.
     ///
     /// This is used to suppress mutability warning in case of
