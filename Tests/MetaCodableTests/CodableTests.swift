@@ -14,6 +14,69 @@ import SwiftSyntaxMacrosTestSupport
 #endif
 
 struct CodableTests {
+    struct WithoutAvailableAttribute {
+        @Codable
+        @available(*, deprecated, message: "Deprecated")
+        struct SomeCodable {
+            let value: String
+            static let other: String = "other"
+            public private(set) static var otherM: String {
+                get { "otherM" }
+                set { Issue.record("Invalid setter invocation") }
+            }
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                @available(*, deprecated, message: "Deprecated")
+                struct SomeCodable {
+                    let value: String
+                    static let other: String = "other"
+                    public private(set) static var otherM: String {
+                        get { "otherM" }
+                        set { Issue.record("Invalid setter invocation") }
+                    }
+                }
+                """,
+                expandedSource:
+                    """
+                    @available(*, deprecated, message: "Deprecated")
+                    struct SomeCodable {
+                        let value: String
+                        static let other: String = "other"
+                        public private(set) static var otherM: String {
+                            get { "otherM" }
+                            set { Issue.record("Invalid setter invocation") }
+                        }
+                    }
+
+                    @available(*, deprecated, message: "Deprecated") extension SomeCodable: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            self.value = try container.decode(String.self, forKey: CodingKeys.value)
+                        }
+                    }
+
+                    @available(*, deprecated, message: "Deprecated") extension SomeCodable: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(self.value, forKey: CodingKeys.value)
+                        }
+                    }
+
+                    @available(*, deprecated, message: "Deprecated") extension SomeCodable {
+                        enum CodingKeys: String, CodingKey {
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
+    }
+
     struct WithoutAnyCustomization {
         @Codable
         struct SomeCodable {

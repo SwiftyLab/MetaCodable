@@ -423,11 +423,6 @@ struct UntaggedEnumTests {
 
                     extension CodableValue: Decodable {
                         init(from decoder: any Decoder) throws {
-                            let context = DecodingError.Context(
-                                codingPath: decoder.codingPath,
-                                debugDescription: "Couldn't decode any case."
-                            )
-                            let __macro_local_13decodingErrorfMu0_ =  DecodingError.typeMismatch(Self.self, context)
                             let _0: Bool
                             do {
                                 _0 = try Bool(from: decoder)
@@ -476,12 +471,8 @@ struct UntaggedEnumTests {
                                                             self = .dictionary(_0)
                                                             return
                                                         } catch {
-                                                            do {
-                                                                self = .`nil`
-                                                                return
-                                                            } catch {
-                                                                throw __macro_local_13decodingErrorfMu0_
-                                                            }
+                                                            self = .`nil`
+                                                            return
                                                         }
                                                     }
                                                 }
@@ -519,6 +510,19 @@ struct UntaggedEnumTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decoding() throws {
+            let data = try JSONDecoder().decode(
+                CodableValue.self, from: heterogenousJSONData
+            )
+            switch data {
+            case .array(let values):
+                #expect(values.count == 7)
+            default:
+                Issue.record("Invalid data decoded")
+            }
         }
     }
 
@@ -664,32 +668,6 @@ struct UntaggedEnumTests {
             )
         }
     }
-
-    @Test
-    func unTaggedEnumDecoding() throws {
-        let data = try JSONDecoder().decode(
-            CodableValue.self, from: heterogenousJSONData
-        )
-        switch data {
-        case .array(let values):
-            #expect(values.count == 7)
-        default:
-            Issue.record("Invalid data decoded")
-        }
-    }
-}
-
-@Codable
-@UnTagged
-enum CodableValue {
-    case bool(Bool)
-    case uint(UInt)
-    case int(Int)
-    case float(Float)
-    case double(Double)
-    case string(String)
-    case array([Self])
-    case dictionary([String: Self])
 }
 
 let heterogenousJSONData = """

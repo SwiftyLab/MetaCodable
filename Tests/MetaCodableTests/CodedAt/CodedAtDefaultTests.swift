@@ -399,8 +399,8 @@ struct CodedAtDefaultTests {
                                 nested_deeply_container = nil
                                 nested_deeply_containerMissing = true
                             }
-                            if let container = container {
-                                if let deeply_container = deeply_container {
+                            if let _ = container {
+                                if let _ = deeply_container {
                                     if let nested_deeply_container = nested_deeply_container {
                                         do {
                                             self.value = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
@@ -496,8 +496,8 @@ struct CodedAtDefaultTests {
                                 nested_deeply_container = nil
                                 nested_deeply_containerMissing = true
                             }
-                            if let container = container {
-                                if let deeply_container = deeply_container {
+                            if let _ = container {
+                                if let _ = deeply_container {
                                     if let nested_deeply_container = nested_deeply_container {
                                         do {
                                             self.value = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
@@ -592,8 +592,8 @@ struct CodedAtDefaultTests {
                                     nested_deeply_container = nil
                                     nested_deeply_containerMissing = true
                                 }
-                                if let container = container {
-                                    if let deeply_container = deeply_container {
+                                if let _ = container {
+                                    if let _ = deeply_container {
                                         if let nested_deeply_container = nested_deeply_container {
                                             do {
                                                 self.value = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"

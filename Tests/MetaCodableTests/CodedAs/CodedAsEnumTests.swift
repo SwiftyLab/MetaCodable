@@ -248,7 +248,7 @@ struct CodedAsEnumTests {
 
                     extension Command: Encodable {
                         func encode(to encoder: any Encoder) throws {
-                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            let container = encoder.container(keyedBy: CodingKeys.self)
                             var typeContainer = container
                             switch self {
                             case .load(key: let key):
@@ -493,7 +493,7 @@ struct CodedAsEnumTests {
 
                     extension SomeEnum: Encodable {
                         func encode(to encoder: any Encoder) throws {
-                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            let container = encoder.container(keyedBy: CodingKeys.self)
                             var typeContainer = container
                             switch self {
                             case .bool(_: let variable):

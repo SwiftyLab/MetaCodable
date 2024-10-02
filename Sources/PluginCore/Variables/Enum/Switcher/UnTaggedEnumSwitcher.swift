@@ -85,15 +85,18 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
         var cases = location.cases
+        let result = decodingSyntax(for: &cases, from: location, in: context)
         return CodeBlockItemListSyntax {
-            """
-            let context = DecodingError.Context(
-                codingPath: \(location.coder).codingPath,
-                debugDescription: "Couldn't decode any case."
-            )
-            """
-            "let \(error) =  DecodingError.typeMismatch(Self.self, context)"
-            decodingSyntax(for: &cases, from: location, in: context)
+            if result.usesError {
+                """
+                let context = DecodingError.Context(
+                    codingPath: \(location.coder).codingPath,
+                    debugDescription: "Couldn't decode any case."
+                )
+                """
+                "let \(error) =  DecodingError.typeMismatch(Self.self, context)"
+            }
+            result.syntax
         }
     }
 
@@ -107,32 +110,54 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
     ///   - location: The decoding location.
     ///   - context: The context in which to perform the macro expansion.
     ///
-    /// - Returns: The generated decoding syntax.
+    /// - Returns: Whether `error` value is used and generated decoding syntax.
     private func decodingSyntax(
         for cases: inout [EnumVariable.Case],
         from location: EnumSwitcherLocation,
         in context: some MacroExpansionContext
-    ) -> CodeBlockItemListSyntax {
-        guard !cases.isEmpty else { return "throw \(error)" }
+    ) -> (usesError: Bool, syntax: CodeBlockItemListSyntax) {
+        guard !cases.isEmpty else { return (true, "throw \(error)") }
+
         let `case` = cases.removeFirst()
         let coder = location.coder
         let cLocation = EnumCaseCodingLocation(coder: coder, values: [])
         let generated = `case`.variable.decoding(in: context, from: cLocation)
+        let nResult = decodingSyntax(for: &cases, from: location, in: context)
         let catchClauses = CatchClauseListSyntax {
             CatchClauseSyntax {
-                decodingSyntax(for: &cases, from: location, in: context)
+                nResult.syntax
             }
         }
-        return CodeBlockItemListSyntax {
-            let `case` = `case`.variable
+
+        let eCase = `case`.variable
+        let tVisitor = ThrowingSyntaxVisitor(viewMode: .sourceAccurate)
+        let doBlock = CodeBlockItemListSyntax {
+            generated.code.codingSyntax
+            generated.code.conditionalSyntax
+            location.codeExpr(eCase.name, eCase.variables)
+            "return"
+        }
+
+        tVisitor.walk(doBlock)
+        let nUsesError = tVisitor.throws && nResult.usesError
+        let eVisitor = ErrorUsageSyntaxVisitor(
+            error: error, usesProvidedError: nUsesError,
+            viewMode: .sourceAccurate
+        )
+        eVisitor.walk(doBlock)
+
+        let syntax = CodeBlockItemListSyntax {
             generated.code.containerSyntax
-            DoStmtSyntax(catchClauses: catchClauses) {
-                generated.code.codingSyntax
-                generated.code.conditionalSyntax
-                location.codeExpr(`case`.name, `case`.variables)
-                "return"
+            if tVisitor.throws {
+                DoStmtSyntax(catchClauses: catchClauses) {
+                    doBlock
+                }
+            } else {
+                doBlock
             }
         }
+
+        return (eVisitor.usesProvidedError || nUsesError, syntax)
     }
 
     /// Provides the syntax for encoding at the provided location.
@@ -167,5 +192,183 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         in context: some MacroExpansionContext
     ) -> MemberBlockItemListSyntax {
         return []
+    }
+}
+
+fileprivate extension UnTaggedEnumSwitcher {
+    /// A `SyntaxVisitor` that checks provided syntax throwing behaviour.
+    ///
+    /// This `SyntaxVisitor` checks whether syntax has any un-caught error.
+    final class ThrowingSyntaxVisitor: SyntaxVisitor {
+        /// Whether the syntax has un-handled errors.
+        private(set) var `throws` = false
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// If any unhandled error is already detected, visiting is skipped.
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        func visit<S: SyntaxProtocol>(node: S) -> SyntaxVisitorContinueKind {
+            guard !`throws` else { return .skipChildren }
+            return .visitChildren
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// Sets un-handled error status to `true`.
+        ///
+        /// - Parameter n: The node to visit.
+        /// - Returns: To skip visiting children of node.
+        override func visit(_ n: TryExprSyntax) -> SyntaxVisitorContinueKind {
+            `throws` = true
+            return .skipChildren
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// Sets un-handled error status to `true`.
+        ///
+        /// - Parameter n: The node to visit.
+        /// - Returns: To skip visiting children of node.
+        override func visit(_ n: ThrowStmtSyntax) -> SyntaxVisitorContinueKind {
+            `throws` = true
+            return .skipChildren
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// Skips visiting children nodes:
+        /// * If any unhandled error is already detected.
+        /// * If node is inside a `do` statement.
+        ///
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        override func visit(
+            _ node: CodeBlockSyntax
+        ) -> SyntaxVisitorContinueKind {
+            guard !`throws` else { return .skipChildren }
+            return node.parent?.kind == .doStmt ? .skipChildren : .visitChildren
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// If any unhandled error is already detected, visiting is skipped.
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        override func visit(
+            _ node: CodeBlockItemListSyntax
+        ) -> SyntaxVisitorContinueKind {
+            return self.visit(node: node)
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// If any unhandled error is already detected, visiting is skipped.
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        override func visit(
+            _ node: CodeBlockItemSyntax
+        ) -> SyntaxVisitorContinueKind {
+            return self.visit(node: node)
+        }
+    }
+
+    /// A `SyntaxVisitor` that checks provided syntax error usage.
+    ///
+    /// This `SyntaxVisitor` checks whether syntax uses provided error value.
+    final class ErrorUsageSyntaxVisitor: SyntaxVisitor {
+        /// The error variable usage is checked of.
+        let error: TokenSyntax
+        /// Whether any usage is detected.
+        private(set) var usesProvidedError = false
+
+        /// Creates a new visitor with provided parameters.
+        ///
+        /// - Parameters:
+        ///   - error: The error variable usage is checked of.
+        ///   - usesProvidedError: Whether any usage is detected already.
+        ///   - viewMode: The visit mode when traversing syntax tree.
+        init(
+            error: TokenSyntax, usesProvidedError: Bool,
+            viewMode: SyntaxTreeViewMode = .sourceAccurate
+        ) {
+            self.error = error
+            self.usesProvidedError = usesProvidedError
+            super.init(viewMode: viewMode)
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// If error usage is already detected, visiting is skipped.
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        func visit<S: SyntaxProtocol>(node: S) -> SyntaxVisitorContinueKind {
+            guard !usesProvidedError else { return .skipChildren }
+            return .visitChildren
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// Updates error usage status if uses in the throwing statement.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: To skip visiting children of node.
+        override func visit(
+            _ node: ThrowStmtSyntax
+        ) -> SyntaxVisitorContinueKind {
+            usesProvidedError =
+                usesProvidedError
+                || node.expression.trimmed.description == error.trimmed.text
+            return .skipChildren
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// If error usage is already detected, visiting is skipped.
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        override func visit(
+            _ node: CodeBlockSyntax
+        ) -> SyntaxVisitorContinueKind {
+            return self.visit(node: node)
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// If error usage is already detected, visiting is skipped.
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        override func visit(
+            _ node: CodeBlockItemListSyntax
+        ) -> SyntaxVisitorContinueKind {
+            return self.visit(node: node)
+        }
+
+        /// Decides whether to visit or skip children of provided node.
+        ///
+        /// If error usage is already detected, visiting is skipped.
+        /// Otherwise children are visited.
+        ///
+        /// - Parameter node: The node to visit.
+        /// - Returns: Whether to visit or skip children of node.
+        override func visit(
+            _ node: CodeBlockItemSyntax
+        ) -> SyntaxVisitorContinueKind {
+            return self.visit(node: node)
+        }
     }
 }

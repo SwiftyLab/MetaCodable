@@ -50,11 +50,18 @@ struct ActorVariable: TypeVariable, DeclaredVariable, ComposedVariable,
         var inheritanceClause = generated.inheritanceClause
         let types = inheritanceClause?.inheritedTypes ?? []
         inheritedTypes: for (index, var inheritedType) in types.enumerated() {
+            #if canImport(SwiftSyntax600)
+            let fallbackType = AttributedTypeSyntax(
+                specifiers: [], baseType: inheritedType.type
+            )
+            #else
+            let fallbackType = AttributedTypeSyntax(
+                baseType: inheritedType.type
+            )
+            #endif
+
             var type =
-                inheritedType.type.as(AttributedTypeSyntax.self)
-                ?? AttributedTypeSyntax(
-                    specifiers: [], baseType: inheritedType.type
-                )
+                inheritedType.type.as(AttributedTypeSyntax.self) ?? fallbackType
             let attribute = type.attributes.first { attribute in
                 return switch attribute {
                 case .attribute(let attr):
@@ -66,7 +73,14 @@ struct ActorVariable: TypeVariable, DeclaredVariable, ComposedVariable,
             }
 
             guard attribute == nil else { continue inheritedTypes }
+            #if canImport(SwiftSyntax510)
             let index = inheritanceClause!.inheritedTypes.index(at: index)
+            #else
+            let inheritedTypes = inheritanceClause!.inheritedTypes
+            let index = inheritedTypes.index(
+                inheritedTypes.startIndex, offsetBy: index
+            )
+            #endif
             type.attributes.append(.attribute(preconcurrency))
             inheritedType.type = .init(type)
             inheritanceClause!.inheritedTypes[index] = inheritedType

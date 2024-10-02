@@ -163,3 +163,7 @@ package struct TypeCodingLocation {
         self.conformance = conformance
     }
 }
+
+#if !canImport(SwiftSyntax600)
+extension TypeCodingLocation.Method: @unchecked Sendable {}
+#endif

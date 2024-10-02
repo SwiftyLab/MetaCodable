@@ -1,3 +1,4 @@
+import SwiftOperators
 import SwiftSyntax
 import SwiftSyntaxMacros
 
@@ -117,7 +118,17 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         let label = SwitchCaseLabelSyntax(
             caseItems: .init {
                 for value in location.values {
-                    let pattern = ExpressionPatternSyntax(expression: value)
+                    let expr =
+                        OperatorTable.standardOperators
+                        .foldAll(value) { _ in }.as(ExprSyntax.self) ?? value
+                    let pattern =
+                        if let asExpr = expr.as(AsExprSyntax.self) {
+                            ExpressionPatternSyntax(
+                                expression: asExpr.expression.trimmed
+                            )
+                        } else {
+                            ExpressionPatternSyntax(expression: expr)
+                        }
                     SwitchCaseItemSyntax(pattern: pattern)
                 }
             }

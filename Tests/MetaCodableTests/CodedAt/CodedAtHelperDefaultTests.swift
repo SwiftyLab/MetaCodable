@@ -306,8 +306,8 @@ struct CodedAtHelperDefaultTests {
                                 nested_deeply_container = nil
                                 nested_deeply_containerMissing = true
                             }
-                            if let container = container {
-                                if let deeply_container = deeply_container {
+                            if let _ = container {
+                                if let _ = deeply_container {
                                     if let nested_deeply_container = nested_deeply_container {
                                         do {
                                             self.value = try SequenceCoder(output: [String].self, configuration: .lossy).decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value) ?? ["some"]
@@ -407,8 +407,8 @@ struct CodedAtHelperDefaultTests {
                                 nested_deeply_container = nil
                                 nested_deeply_containerMissing = true
                             }
-                            if let container = container {
-                                if let deeply_container = deeply_container {
+                            if let _ = container {
+                                if let _ = deeply_container {
                                     if let nested_deeply_container = nested_deeply_container {
                                         do {
                                             self.value = try SequenceCoder(output: [String].self, configuration: .lossy).decodeIfPresent(from: nested_deeply_container, forKey: CodingKeys.value) ?? ["some"]
