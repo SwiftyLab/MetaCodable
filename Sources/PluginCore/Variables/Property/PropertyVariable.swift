@@ -121,21 +121,7 @@ extension PropertyVariable {
     /// `?` optional type syntax (i.e. `Type?`) or
     /// `!` implicitly unwrapped optional type syntax (i.e. `Type!`) or
     /// generic optional syntax (i.e. `Optional<Type>`).
-    var hasOptionalType: Bool {
-        if type.is(OptionalTypeSyntax.self) {
-            return true
-        } else if type.is(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-            return true
-        } else if let type = type.as(IdentifierTypeSyntax.self),
-            type.name.text == "Optional",
-            let gArgs = type.genericArgumentClause?.arguments,
-            gArgs.count == 1
-        {
-            return true
-        } else {
-            return false
-        }
-    }
+    var hasOptionalType: Bool { type.isOptionalTypeSyntax }
 
     /// Provides type and method expression to use
     /// with container expression for decoding/encoding.
@@ -190,6 +176,38 @@ extension CodeBlockItemListSyntax: ConditionalVariableSyntax {
             IfExprSyntax(conditions: condition) {
                 self
             }
+        }
+    }
+}
+
+extension TypeSyntax {
+    /// Check whether current type syntax represents an optional type.
+    ///
+    /// Checks whether the type syntax uses
+    /// `?` optional type syntax (i.e. `Type?`) or
+    /// `!` implicitly unwrapped optional type syntax (i.e. `Type!`) or
+    /// generic optional syntax (i.e. `Optional<Type>`).
+    var isOptionalTypeSyntax: Bool {
+        if self.is(OptionalTypeSyntax.self) {
+            return true
+        } else if self.is(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
+            return true
+        } else if let type = self.as(IdentifierTypeSyntax.self),
+            type.name.trimmed.text == "Optional",
+            let gArgs = type.genericArgumentClause?.arguments,
+            gArgs.count == 1
+        {
+            return true
+        } else if let type = self.as(MemberTypeSyntax.self),
+            let baseType = type.baseType.as(IdentifierTypeSyntax.self),
+            baseType.trimmed.name.text == "Swift",
+            type.trimmed.name.text == "Optional",
+            let gArgs = type.genericArgumentClause?.arguments,
+            gArgs.count == 1
+        {
+            return true
+        } else {
+            return false
         }
     }
 }

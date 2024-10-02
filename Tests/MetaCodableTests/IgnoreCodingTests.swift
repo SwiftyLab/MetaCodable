@@ -16,14 +16,16 @@ struct IgnoreCodingTests {
                 var one: String
                 @IgnoreDecoding
                 var two: String
-                @IgnoreCoding
-                var three: String { "some" }
                 @IgnoreDecoding
-                var four: String { get { "some" } }
+                let three: String?
                 @IgnoreCoding
-                var five: String = "some" {
+                var four: String { "some" }
+                @IgnoreDecoding
+                var five: String { get { "some" } }
+                @IgnoreCoding
+                var six: String = "some" {
                     didSet {
-                        print(five)
+                        print(six)
                     }
                 }
             }
@@ -33,11 +35,12 @@ struct IgnoreCodingTests {
                 struct SomeCodable {
                     var one: String
                     var two: String
-                    var three: String { "some" }
-                    var four: String { get { "some" } }
-                    var five: String = "some" {
+                    let three: String?
+                    var four: String { "some" }
+                    var five: String { get { "some" } }
+                    var six: String = "some" {
                         didSet {
-                            print(five)
+                            print(six)
                         }
                     }
                 }
@@ -51,12 +54,14 @@ struct IgnoreCodingTests {
                     func encode(to encoder: any Encoder) throws {
                         var container = encoder.container(keyedBy: CodingKeys.self)
                         try container.encode(self.two, forKey: CodingKeys.two)
+                        try container.encodeIfPresent(self.three, forKey: CodingKeys.three)
                     }
                 }
 
                 extension SomeCodable {
                     enum CodingKeys: String, CodingKey {
                         case two = "two"
+                        case three = "three"
                     }
                 }
                 """,
@@ -64,7 +69,7 @@ struct IgnoreCodingTests {
                 .init(
                     id: IgnoreCoding.misuseID,
                     message:
-                        "@IgnoreCoding can't be used with uninitialized variable one",
+                        "@IgnoreCoding can't be used with uninitialized non-optional variable one",
                     line: 3, column: 5,
                     fixIts: [
                         .init(message: "Remove @IgnoreCoding attribute")
@@ -73,8 +78,17 @@ struct IgnoreCodingTests {
                 .init(
                     id: IgnoreDecoding.misuseID,
                     message:
-                        "@IgnoreDecoding can't be used with uninitialized variable two",
+                        "@IgnoreDecoding can't be used with uninitialized non-optional variable two",
                     line: 5, column: 5,
+                    fixIts: [
+                        .init(message: "Remove @IgnoreDecoding attribute")
+                    ]
+                ),
+                .init(
+                    id: IgnoreDecoding.misuseID,
+                    message:
+                        "@IgnoreDecoding can't be used with uninitialized non-optional variable three",
+                    line: 7, column: 5,
                     fixIts: [
                         .init(message: "Remove @IgnoreDecoding attribute")
                     ]
@@ -167,6 +181,86 @@ struct IgnoreCodingTests {
                     }
                     """
             )
+        }
+
+        struct Optional {
+            @Codable
+            struct SomeCodable {
+                @IgnoreCoding
+                var one: String?
+                @IgnoreCoding
+                var two: String!
+                // @IgnoreCoding
+                // var three: Swift.Optional<String>
+                let four: String
+            }
+
+            @Test
+            func expansion() throws {
+                assertMacroExpansion(
+                    """
+                    @Codable
+                    struct SomeCodable {
+                        @IgnoreCoding
+                        var one: String?
+                        @IgnoreCoding
+                        var two: String!
+                        @IgnoreCoding
+                        var three: Optional<String>
+                        let four: String
+                    }
+                    """,
+                    expandedSource:
+                        """
+                        struct SomeCodable {
+                            var one: String?
+                            var two: String!
+                            var three: Optional<String>
+                            let four: String
+                        }
+
+                        extension SomeCodable: Decodable {
+                            init(from decoder: any Decoder) throws {
+                                let container = try decoder.container(keyedBy: CodingKeys.self)
+                                self.four = try container.decode(String.self, forKey: CodingKeys.four)
+                            }
+                        }
+
+                        extension SomeCodable: Encodable {
+                            func encode(to encoder: any Encoder) throws {
+                                var container = encoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(self.four, forKey: CodingKeys.four)
+                            }
+                        }
+
+                        extension SomeCodable {
+                            enum CodingKeys: String, CodingKey {
+                                case four = "four"
+                            }
+                        }
+                        """
+                )
+            }
+
+            @Test
+            func decoding() throws {
+                let json = try #require("{\"four\":\"som\"}".data(using: .utf8))
+                let obj = try JSONDecoder().decode(SomeCodable.self, from: json)
+                #expect(obj.one == nil)
+                #expect(obj.two == nil)
+                // #expect(obj.three == nil)
+                #expect(obj.four == "som")
+            }
+
+            @Test
+            func encoding() throws {
+                let obj = SomeCodable(one: "one", two: "two", four: "some")
+                let json = try JSONEncoder().encode(obj)
+                let jObj = try JSONSerialization.jsonObject(with: json)
+                let dict = try #require(jObj as? [String: Any])
+                #expect(dict.count == 1)
+                #expect(dict["four"] as? String == "some")
+            }
         }
     }
 
@@ -736,7 +830,7 @@ struct IgnoreCodingTests {
             var one: String = "some"
             @IgnoreDecoding
             @CodedAt("deeply", "nested", "key")
-            var two: String = "some"
+            var two: String!
             @IgnoreEncoding
             @CodedIn("deeply", "nested")
             var three: String = "some"
@@ -756,7 +850,7 @@ struct IgnoreCodingTests {
                     var one: String = "some"
                     @IgnoreDecoding
                     @CodedAt("deeply", "nested", "key")
-                    var two: String = "some"
+                    var two: String!
                     @IgnoreEncoding
                     @CodedIn("deeply", "nested")
                     var three: String = "some"
@@ -769,7 +863,7 @@ struct IgnoreCodingTests {
                     """
                     struct SomeCodable {
                         var one: String = "some"
-                        var two: String = "some"
+                        var two: String!
                         var three: String = "some"
                         var four: String = "some"
                     }
@@ -790,7 +884,7 @@ struct IgnoreCodingTests {
                             var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                             var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                             try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
-                            try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
+                            try nested_deeply_container.encodeIfPresent(self.two, forKey: CodingKeys.two)
                         }
                     }
 
@@ -816,7 +910,7 @@ struct IgnoreCodingTests {
             var one: String = "some"
             @IgnoreDecoding
             @CodedAt("deeply", "nested", "key")
-            var two: String = "some"
+            var two: String!
             @IgnoreEncoding
             @CodedIn("deeply", "nested")
             var three: String = "some"
@@ -836,7 +930,7 @@ struct IgnoreCodingTests {
                     var one: String = "some"
                     @IgnoreDecoding
                     @CodedAt("deeply", "nested", "key")
-                    var two: String = "some"
+                    var two: String!
                     @IgnoreEncoding
                     @CodedIn("deeply", "nested")
                     var three: String = "some"
@@ -849,7 +943,7 @@ struct IgnoreCodingTests {
                     """
                     class SomeCodable {
                         var one: String = "some"
-                        var two: String = "some"
+                        var two: String!
                         var three: String = "some"
                         var four: String = "some"
 
@@ -866,7 +960,7 @@ struct IgnoreCodingTests {
                             var deeply_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply)
                             var nested_deeply_container = deeply_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested)
                             try nested_deeply_container.encode(self.one, forKey: CodingKeys.one)
-                            try nested_deeply_container.encode(self.two, forKey: CodingKeys.two)
+                            try nested_deeply_container.encodeIfPresent(self.two, forKey: CodingKeys.two)
                         }
 
                         enum CodingKeys: String, CodingKey {

@@ -62,7 +62,8 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
         guard !base.produce(for: syntax, in: context) else { return true }
 
         var result = false
-        for binding in syntax.as(VariableDeclSyntax.self)!.bindings {
+        let decl = syntax.as(VariableDeclSyntax.self)!
+        for binding in decl.bindings {
             switch binding.accessorBlock?.accessors {
             case .getter:
                 continue
@@ -78,10 +79,17 @@ struct UninitializedVariableDecl<Attr: PropertyAttribute>: DiagnosticProducer {
                 guard computed else { fallthrough }
                 continue
             default:
-                guard binding.initializer == nil else { continue }
+                let type = binding.typeAnnotation?.type
+                let isOptional = type?.isOptionalTypeSyntax ?? false
+                let mutable = decl.bindingSpecifier.tokenKind == .keyword(.var)
+                guard
+                    binding.initializer == nil && !(isOptional && mutable)
+                else { continue }
             }
 
-            var msg = "@\(attr.name) can't be used with uninitialized variable"
+            var msg = """
+                @\(attr.name) can't be used with uninitialized non-optional variable
+                """
             if let varName = binding.pattern.as(IdentifierPatternSyntax.self)?
                 .identifier.text
             {

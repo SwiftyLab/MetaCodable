@@ -1,7 +1,7 @@
 /// Indicates the field/case/type needs to ignored from decoding and encoding.
 ///
-/// This macro can be applied to initialized variables to ignore them
-/// from both decoding and encoding.
+/// This macro can be applied to initialized variables or mutable optional
+/// variables to ignore them from both decoding and encoding.
 /// ```swift
 /// @IgnoreCoding
 /// var field: String = "some"
@@ -39,8 +39,8 @@ public macro IgnoreCoding() =
 
 /// Indicates the field/case/type needs to ignored from decoding.
 ///
-/// This macro can be applied to initialized mutable variables to ignore
-/// them from decoding.
+/// This macro can be applied to initialized or optional mutable variables
+/// to ignore them from decoding.
 /// ```swift
 /// @IgnoreDecoding
 /// var field: String = "some"
