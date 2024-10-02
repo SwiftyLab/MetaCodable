@@ -64,11 +64,22 @@ struct AttributeExpander {
         let decodable = variable.protocol(named: dProtocol, in: protocols)
         let encodable = variable.protocol(named: eProtocol, in: protocols)
 
-        return [
+        var extensions = [
             decoding(type: type, conformingTo: decodable, in: context),
             encoding(type: type, conformingTo: encodable, in: context),
             codingKeys(for: type, confirmingTo: protocols, in: context),
         ].compactMap { $0 }
+        for index in extensions.indices {
+            // attach available attributes from original declaration
+            // to generated expanded declaration
+            extensions[index].attributes = AttributeListSyntax {
+                for attr in options.availableAttributes {
+                    .attribute(attr)
+                }
+                extensions[index].attributes
+            }
+        }
+        return extensions
     }
 
     /// Provides the `Decodable` extension declaration.

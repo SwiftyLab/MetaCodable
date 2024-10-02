@@ -101,12 +101,17 @@ extension EnumSwitcherVariable {
                 let label = SwitchCaseLabelSyntax {
                     .init(pattern: pattern, whereClause: whereClause)
                 }
-                let caseSyntax = CodeBlockItemListSyntax {
-                    preSyntax("\(value.encodeExprs.first!)")
-                    generated.code.combined()
-                }
+
+                let generatedCode = generated.code.combined()
                 SwitchCaseSyntax(label: .case(label)) {
-                    !caseSyntax.isEmpty ? caseSyntax : "break"
+                    if !generatedCode.isEmpty {
+                        CodeBlockItemListSyntax {
+                            preSyntax("\(value.encodeExprs.first!)")
+                            generatedCode
+                        }
+                    } else {
+                        "break"
+                    }
                 }
             }
             if `default` || !allEncodable || anyEncodeCondition {

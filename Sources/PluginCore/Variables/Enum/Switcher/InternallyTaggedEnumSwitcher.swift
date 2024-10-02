@@ -114,7 +114,10 @@ where Variable: PropertyVariable {
         let containerVariable = ContainerVariable(
             encodeContainer: encodeContainer, base: output.variable
         )
-        node.register(variable: containerVariable, keyPath: keys)
+        node.register(
+            variable: containerVariable, keyPath: keys,
+            immutableEncodeContainer: true
+        )
         self.node = node
     }
 

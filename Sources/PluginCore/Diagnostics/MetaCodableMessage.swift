@@ -98,10 +98,11 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
         message: String, id: MessageID
     ) -> MetaCodableMessage {
         return .init(
-            macro: macro,
-            message: message,
-            messageID: id,
-            severity: .warning
+            macro: macro, message: message, messageID: id, severity: .warning
         )
     }
 }
+
+#if !canImport(SwiftSyntax600)
+extension MetaCodableMessage: @unchecked Sendable {}
+#endif

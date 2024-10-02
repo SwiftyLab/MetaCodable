@@ -105,7 +105,7 @@ struct CodedAtEnumTests {
 
                 extension SomeEnum: Encodable {
                     func encode(to encoder: any Encoder) throws {
-                        var container = encoder.container(keyedBy: CodingKeys.self)
+                        let container = encoder.container(keyedBy: CodingKeys.self)
                         var typeContainer = container
                         switch self {
                         case .bool(_: let variable):
@@ -216,7 +216,7 @@ struct CodedAtEnumTests {
 
                     extension Command: Encodable {
                         func encode(to encoder: any Encoder) throws {
-                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            let container = encoder.container(keyedBy: CodingKeys.self)
                             var typeContainer = container
                             switch self {
                             case .load(key: let key):
@@ -306,7 +306,7 @@ struct CodedAtEnumTests {
 
                     extension Command: Encodable {
                         func encode(to encoder: any Encoder) throws {
-                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            let container = encoder.container(keyedBy: CodingKeys.self)
                             var typeContainer = container
                             switch self {
                             case .load(key: let key):
@@ -398,7 +398,7 @@ struct CodedAtEnumTests {
 
                     extension Command: Encodable {
                         func encode(to encoder: any Encoder) throws {
-                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            let container = encoder.container(keyedBy: CodingKeys.self)
                             var typeContainer = container
                             switch self {
                             case .load(key: let key):
@@ -570,7 +570,7 @@ struct CodedAtEnumTests {
                             let container = try decoder.container(keyedBy: CodingKeys.self)
                             let data_container = ((try? container.decodeNil(forKey: CodingKeys.data)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data) : nil
                             let attributes_data_container = ((try? data_container?.decodeNil(forKey: CodingKeys.attributes)) == false) ? try data_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes) : nil
-                            if let data_container = data_container {
+                            if let _ = data_container {
                                 if let attributes_data_container = attributes_data_container {
                                     type = try attributes_data_container.decodeIfPresent(String.self, forKey: CodingKeys.type)
                                 } else {
@@ -584,7 +584,7 @@ struct CodedAtEnumTests {
                                 let _0: Registration
                                 _0 = try Registration(from: decoder)
                                 self = .registration(_0)
-                            case nil as String?:
+                            case nil:
                                 let _0: Expiry
                                 _0 = try Expiry(from: decoder)
                                 self = .expiry(_0)
@@ -602,7 +602,7 @@ struct CodedAtEnumTests {
                         func encode(to encoder: any Encoder) throws {
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             var data_container = container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data)
-                            var attributes_data_container = data_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes)
+                            let attributes_data_container = data_container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes)
                             var typeContainer = attributes_data_container
                             switch self {
                             case .registration(let _0):

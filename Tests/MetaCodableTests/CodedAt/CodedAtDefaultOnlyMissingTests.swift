@@ -347,7 +347,7 @@ struct CodedAtDefaultOnlyMissingTests {
                             let container = try decoder.container(keyedBy: CodingKeys.self)
                             let deeply_container = ((try? container.decodeNil(forKey: CodingKeys.deeply)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) : nil
                             let nested_deeply_container = ((try? deeply_container?.decodeNil(forKey: CodingKeys.nested)) == false) ? try deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) : nil
-                            if let deeply_container = deeply_container {
+                            if let _ = deeply_container {
                                 if let nested_deeply_container = nested_deeply_container {
                                     self.value = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
                                 } else {
@@ -416,7 +416,7 @@ struct CodedAtDefaultOnlyMissingTests {
                             let container = try decoder.container(keyedBy: CodingKeys.self)
                             let deeply_container = ((try? container.decodeNil(forKey: CodingKeys.deeply)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) : nil
                             let nested_deeply_container = ((try? deeply_container?.decodeNil(forKey: CodingKeys.nested)) == false) ? try deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) : nil
-                            if let deeply_container = deeply_container {
+                            if let _ = deeply_container {
                                 if let nested_deeply_container = nested_deeply_container {
                                     self.value = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
                                 } else {
@@ -484,7 +484,7 @@ struct CodedAtDefaultOnlyMissingTests {
                                 let container = try decoder.container(keyedBy: CodingKeys.self)
                                 let deeply_container = ((try? container.decodeNil(forKey: CodingKeys.deeply)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.deeply) : nil
                                 let nested_deeply_container = ((try? deeply_container?.decodeNil(forKey: CodingKeys.nested)) == false) ? try deeply_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.nested) : nil
-                                if let deeply_container = deeply_container {
+                                if let _ = deeply_container {
                                     if let nested_deeply_container = nested_deeply_container {
                                         self.value = try nested_deeply_container.decodeIfPresent(String.self, forKey: CodingKeys.value) ?? "some"
                                     } else {

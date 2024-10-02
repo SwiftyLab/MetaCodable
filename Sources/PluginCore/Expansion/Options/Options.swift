@@ -11,6 +11,9 @@ extension AttributeExpander {
         /// The list of modifiers generator for
         /// conformance implementation declarations.
         let modifiersGenerator: DeclModifiersGenerator
+        /// The list of `@available` attributes attached to
+        /// original expanded declaration.
+        let availableAttributes: [AttributeSyntax]
 
         /// Memberwise initialization generator with provided options.
         ///
@@ -29,6 +32,17 @@ extension AttributeExpander {
         /// - Returns: The newly created options.
         init(for decl: some DeclGroupSyntax) {
             self.modifiersGenerator = .init(decl: decl)
+            self.availableAttributes = decl.attributes.compactMap { attribute in
+                switch attribute {
+                case .attribute(let attr):
+                    guard
+                        attr.attributeName.trimmed.description == "available"
+                    else { fallthrough }
+                    return attr
+                default:
+                    return nil
+                }
+            }
         }
     }
 }

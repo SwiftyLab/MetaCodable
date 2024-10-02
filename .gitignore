@@ -58,7 +58,7 @@ Package.resolved
 .build/
 *.o
 *.d
-*.swiftdeps
+*.swiftdeps*
 
 # CocoaPods
 #
