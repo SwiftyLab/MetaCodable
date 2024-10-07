@@ -51,7 +51,7 @@ protocol AdjacentlyTaggableSwitcher: EnumSwitcherVariable {
     ///     will be decode/encoded.
     ///
     /// - Returns: Newly created variable updating registration.
-    func registering(
+    mutating func registering(
         variable: AdjacentlyTaggedEnumSwitcher<Self>.CoderVariable,
         keyPath: [CodingKeysMap.Key]
     ) -> Self
@@ -72,7 +72,7 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
     ///     will be decode/encoded.
     ///
     /// - Returns: Newly created variable updating registration.
-    func registering(
+    mutating func registering(
         variable: AdjacentlyTaggedEnumSwitcher<Self>.CoderVariable,
         keyPath: [CodingKeysMap.Key]
     ) -> Self {
@@ -100,7 +100,7 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
         return CodeBlockItemListSyntax {
             "let \(identifier): \(identifierType)"
             node.decoding(
-                in: context, from: .coder(coder, keyType: location.keyType)
+                in: context, from: .withCoder(coder, keyType: location.keyType)
             ).combined()
             self.decodeSwitchExpression(
                 over: "\(identifier)", at: location, from: decoder,
@@ -128,7 +128,7 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
         let coder = location.coder
         return CodeBlockItemListSyntax {
             node.encoding(
-                in: context, to: .coder(coder, keyType: location.keyType)
+                in: context, to: .withCoder(coder, keyType: location.keyType)
             ).combined()
             self.encodeSwitchExpression(
                 over: location.selfValue, at: location, from: encoder,

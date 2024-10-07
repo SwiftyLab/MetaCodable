@@ -35,6 +35,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         keyPath: [String], codingKeys: CodingKeysMap,
         context: some MacroExpansionContext
     ) {
+        var base = base
         let keys = codingKeys.add(keys: keyPath, context: context)
         self.variable = .init(decoder: contentDecoder, encoder: contentEncoder)
         self.base = base.registering(variable: variable, keyPath: keys)

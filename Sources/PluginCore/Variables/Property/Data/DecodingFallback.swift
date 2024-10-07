@@ -28,7 +28,8 @@ package enum DecodingFallback {
     case ifMissing(CodeBlockItemListSyntax, ifError: CodeBlockItemListSyntax)
 
     /// Represents container for decoding/encoding properties.
-    typealias Container = PropertyVariableTreeNode.CodingLocation.Container
+    typealias Container = PropertyVariableTreeNode.CodingLocation.Context
+        .Container
     /// Represents generated syntax for decoding/encoding properties.
     typealias Generated = PropertyVariableTreeNode.Generated
 
@@ -36,7 +37,7 @@ package enum DecodingFallback {
     /// decoding location applying current fallback options.
     ///
     /// - Parameters:
-    ///   - location: The decoding location to decode from.
+    ///   - context: The decoding context to decode from.
     ///   - nestedContainer: The nested container name to use if present.
     ///   - nestedContainerHasVariables: Whether nested container has
     ///     some variables as direct children.
@@ -45,12 +46,12 @@ package enum DecodingFallback {
     ///
     /// - Returns: The generated code block.
     func represented(
-        location: PropertyVariableTreeNode.CodingLocation,
+        context: PropertyVariableTreeNode.CodingLocation.Context,
         nestedContainer: TokenSyntax?,
         nestedContainerHasVariables: Bool,
         nestedDecoding decoding: (Container) -> Generated
     ) -> Generated {
-        return switch location {
+        return switch context {
         case .coder(let coder, let kType):
             represented(
                 decoder: coder, keyType: kType,
@@ -112,7 +113,14 @@ package enum DecodingFallback {
             generated.containerSyntax
         }
 
-        let cBinding = nestedContainerHasVariables ? container.name : "_"
+        let ifSyntax = generated.conditionalSyntax
+        let cBinding =
+            if nestedContainerHasVariables && !ifSyntax.isEmpty {
+                container.name
+            } else {
+                "_" as TokenSyntax
+            }
+
         let conditionalSyntax = CodeBlockItemListSyntax {
             if isOptional {
                 try! IfExprSyntax(
@@ -120,12 +128,12 @@ package enum DecodingFallback {
                     if let \(cBinding) = \(container.name)
                     """
                 ) {
-                    generated.conditionalSyntax
+                    ifSyntax
                 } else: {
                     fallbacks
                 }
             } else {
-                generated.conditionalSyntax
+                ifSyntax
             }
         }
         return .init(
@@ -156,7 +164,6 @@ package enum DecodingFallback {
         nestedDecoding decoding: (Container) -> Generated
     ) -> Generated {
         let nContainer = nestedContainer ?? "\(key.raw)_\(container.name)"
-        let nContainerBinding = nestedContainerHasVariables ? nContainer : "_"
         let containerSyntax: CodeBlockItemListSyntax
         let codingSyntax: CodeBlockItemListSyntax
         let conditionalSyntax: CodeBlockItemListSyntax
@@ -177,6 +184,14 @@ package enum DecodingFallback {
             conditionalSyntax = generated.conditionalSyntax
         case .onlyIfMissing(let fallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
+            let ifSyntax = generated.conditionalSyntax
+            let nContainerBinding =
+                if nestedContainerHasVariables && !ifSyntax.isEmpty {
+                    nContainer
+                } else {
+                    "_" as TokenSyntax
+                }
+
             codingSyntax = generated.codingSyntax
             containerSyntax = CodeBlockItemListSyntax {
                 if nestedContainer == nil {
@@ -192,13 +207,21 @@ package enum DecodingFallback {
                     if let \(nContainerBinding) = \(nContainer)
                     """
                 ) {
-                    generated.conditionalSyntax
+                    ifSyntax
                 } else: {
                     fallbacks
                 }
             }
         case let .ifMissing(fallbacks, ifError: eFallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
+            let ifSyntax = generated.conditionalSyntax
+            let nContainerBinding =
+                if nestedContainerHasVariables && !ifSyntax.isEmpty {
+                    nContainer
+                } else {
+                    "_" as TokenSyntax
+                }
+
             let containerMissing: TokenSyntax = "\(nContainer)Missing"
             codingSyntax = generated.codingSyntax
             containerSyntax = CodeBlockItemListSyntax {
@@ -225,7 +248,7 @@ package enum DecodingFallback {
                 try! IfExprSyntax(
                     "if let \(nContainerBinding) = \(nContainer)",
                     bodyBuilder: {
-                        generated.conditionalSyntax
+                        ifSyntax
                     },
                     elseIf: IfExprSyntax("if \(containerMissing)") {
                         fallbacks

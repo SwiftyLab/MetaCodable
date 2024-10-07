@@ -75,7 +75,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         self.decode = nil
         self.encode = nil
         self.codingKeys = decl.codingKeys
-        let node = switcher.node(for: decl, in: context)
+        var node = switcher.node(for: decl, in: context)
         var data = PropertyVariableTreeNode.CodingData()
         var variables: [any AssociatedVariable] = []
         for member in decl.codableMembers() {
@@ -135,7 +135,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         )
         let generated = node.decoding(
             with: data, in: context,
-            from: .coder(location.coder, keyType: codingKeys.type)
+            from: .withCoder(location.coder, keyType: codingKeys.type)
         )
         let newSyntax = CodeBlockItemListSyntax {
             for variable in variables where variable.decode ?? true {
@@ -166,7 +166,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     ) -> EnumCaseGenerated {
         let generated = node.encoding(
             with: data, in: context,
-            to: .coder(location.coder, keyType: codingKeys.type)
+            to: .withCoder(location.coder, keyType: codingKeys.type)
         )
         let pattern = IdentifierPatternSyntax(identifier: "_")
         let item = SwitchCaseItemSyntax(pattern: pattern)

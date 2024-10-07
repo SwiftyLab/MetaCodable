@@ -12,12 +12,12 @@ import SwiftSyntaxMacros
 ///
 /// See https://en.wikipedia.org/wiki/Trie
 /// for more information.
-final class PropertyVariableTreeNode: Variable {
+final class PropertyVariableTreeNode: Variable, VariableTreeNode {
     /// All the variables registered at this node.
-    private(set) var variables: [any PropertyVariable]
+    var variables: [any PropertyVariable] = []
     /// Nested registration node associated with keys.
-    private(set) var children:
-        OrderedDictionary<CodingKeysMap.Key, PropertyVariableTreeNode>
+    var children:
+        OrderedDictionary<CodingKeysMap.Key, PropertyVariableTreeNode> = [:]
 
     /// The container for decoding variables linked to this node.
     ///
@@ -29,71 +29,7 @@ final class PropertyVariableTreeNode: Variable {
     ///
     /// This is used to suppress mutability warning in case of
     /// internally tagged enums.
-    private var immutableEncodeContainer: Bool = false
-
-    /// List of all the linked variables registered.
-    ///
-    /// Gets all variables at current node
-    /// and children nodes.
-    var linkedVariables: [any PropertyVariable] {
-        return variables + children.flatMap { $1.linkedVariables }
-    }
-
-    /// Creates a new node with provided variables and and linked nodes.
-    ///
-    /// - Parameters:
-    ///   - variables: The list of variables.
-    ///   - children: The list of linked nodes associated with keys.
-    ///
-    /// - Returns: The newly created node instance.
-    init(
-        variables: [any PropertyVariable] = [],
-        children: OrderedDictionary<
-            CodingKeysMap.Key, PropertyVariableTreeNode
-        > = [:]
-    ) {
-        self.variables = variables
-        self.children = children
-    }
-
-    /// Register variable for the provided `CodingKey` path.
-    ///
-    /// Create node at the `CodingKey` path if doesn't exist
-    /// and register the variable at the node.
-    ///
-    /// - Parameters:
-    ///   - variable: The variable data, i.e. name, type and
-    ///     additional macro metadata.
-    ///   - keyPath: The `CodingKey` path where the value
-    ///     will be decode/encoded.
-    ///   - immutableEncodeContainer: Whether the encoding container variable
-    ///     direct parent of `variable` should be declared as immutable.
-    func register(
-        variable: any PropertyVariable,
-        keyPath: [CodingKeysMap.Key],
-        immutableEncodeContainer: Bool = false
-    ) {
-        guard !keyPath.isEmpty else { variables.append(variable); return }
-
-        let key = keyPath.first!
-        if children[key] == nil {
-            children[key] = .init(variables: [], children: [:])
-        }
-
-        if keyPath.count == 1 {
-            precondition(
-                !immutableEncodeContainer
-                    || linkedVariables.filter { $0.encode ?? true }.isEmpty
-            )
-            self.immutableEncodeContainer = immutableEncodeContainer
-        }
-
-        children[key]!.register(
-            variable: variable,
-            keyPath: Array(keyPath.dropFirst()),
-            immutableEncodeContainer: immutableEncodeContainer
-        )
-    }
+    var immutableEncodeContainer: Bool = false
 }
 
 // MARK: Decoding
@@ -112,12 +48,19 @@ extension PropertyVariableTreeNode {
         in context: some MacroExpansionContext,
         from location: CodingLocation
     ) -> Generated {
+        let varLocation = location.context.forVariable
         let decodingSyntax = CodeBlockItemListSyntax {
             for variable in data?.variables ?? variables
             where variable.decode ?? true {
-                variable.decoding(in: context, from: location.forVariable)
+                if variable.dependenciesCount == 0 {
+                    variable.decoding(in: context, from: varLocation)
+                    let _ = location.coded(variable)
+                } else {
+                    let _ = location.pending(variable)
+                }
             }
         }
+
         let childrenDecodable =
             data?.children.contains { _, node in
                 node.linkedVariables.contains { $0.decode ?? true }
@@ -137,10 +80,19 @@ extension PropertyVariableTreeNode {
             .filter { data?.hasKey($0.key) ?? true }
         return decodableChildren.lazy
             .flatMap(\.value.linkedVariables)
-            .map(\.decodingFallback)
+            .map { variable in
+                switch variable.decodingFallback {
+                case .ifMissing where variable.dependenciesCount > 0:
+                    return .ifMissing("", ifError: "")
+                case .onlyIfMissing where variable.dependenciesCount > 0:
+                    return .onlyIfMissing("")
+                default:
+                    return variable.decodingFallback
+                }
+            }
             .reduce(.ifMissing([], ifError: []), +)
             .represented(
-                location: location, nestedContainer: self.decodingContainer,
+                context: location.context, nestedContainer: decodingContainer,
                 nestedContainerHasVariables: !self.children.lazy
                     .flatMap(\.value.variables)
                     .filter { $0.decode ?? true }.isEmpty
@@ -150,7 +102,7 @@ extension PropertyVariableTreeNode {
                     return node.decoding(
                         with: data?.children[cKey],
                         in: context,
-                        from: .container(container, key: cKey)
+                        from: location.withContainer(container, key: cKey)
                     )
                 }.reduce(
                     .init(
@@ -203,11 +155,13 @@ extension PropertyVariableTreeNode {
         in context: some MacroExpansionContext,
         to location: CodingLocation
     ) -> Generated {
+        let varLocation = location.context.forVariable
         let specifier: TokenSyntax = immutableEncodeContainer ? "let" : "var"
         let syntax = CodeBlockItemListSyntax {
             for variable in data?.variables ?? variables
             where variable.encode ?? true {
-                variable.encoding(in: context, to: location.forVariable)
+                variable.encoding(in: context, to: varLocation)
+                let _ = location.coded(variable)
             }
 
             let childrenEncodable =
@@ -219,7 +173,7 @@ extension PropertyVariableTreeNode {
                 }
             if !(data?.children.isEmpty ?? children.isEmpty), childrenEncodable
             {
-                switch location {
+                switch location.context {
                 case .coder(let encoder, let type):
                     let container: TokenSyntax = "container"
                     """
@@ -230,7 +184,7 @@ extension PropertyVariableTreeNode {
                         node.encoding(
                             with: data?.children[cKey],
                             in: context,
-                            to: .container(
+                            to: location.withContainer(
                                 .init(name: container, isOptional: false),
                                 key: cKey
                             )
@@ -247,7 +201,7 @@ extension PropertyVariableTreeNode {
                         node.encoding(
                             with: data?.children[cKey],
                             in: context,
-                            to: .container(
+                            to: location.withContainer(
                                 .init(name: nestedContainer, isOptional: false),
                                 key: cKey
                             )

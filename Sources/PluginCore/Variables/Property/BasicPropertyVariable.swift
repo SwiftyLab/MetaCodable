@@ -211,6 +211,21 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
             }
         }
     }
+
+    /// The number of variables this variable depends on.
+    ///
+    /// Doesn't depend on any variables.
+    var dependenciesCount: UInt { 0 }
+
+    /// Checks whether this variable is dependent on the provided variable.
+    ///
+    /// Doesn't depend on any provided variable.
+    ///
+    /// - Parameter variable: The variable to check for.
+    /// - Returns: Whether this variable is dependent on the provided variable.
+    func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
+        return false
+    }
 }
 
 extension BasicPropertyVariable: InitializableVariable {

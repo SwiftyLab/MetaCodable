@@ -10,11 +10,9 @@ package struct CodedBy: PropertyAttribute {
     /// during initialization.
     let node: AttributeSyntax
 
-    /// The helper coding instance
-    /// expression provided.
-    var expr: ExprSyntax {
-        return node.arguments!
-            .as(LabeledExprListSyntax.self)!.first!.expression
+    /// The helper coding arguments provided.
+    var args: LabeledExprListSyntax {
+        return node.arguments!.as(LabeledExprListSyntax.self)!
     }
 
     /// Creates a new instance with the provided node.
@@ -76,29 +74,29 @@ where
     /// The optional variable data with helper expression
     /// that output registration will have.
     typealias CodedByOutput = AnyPropertyVariable<Var.Initialization>
-    /// Update registration with helper expression data.
+    /// Update registration with helper expressions data.
     ///
-    /// New registration is updated with helper expression data that will be
+    /// New registration is updated with helper expressions data that will be
     /// used for decoding/encoding, if provided.
     ///
-    /// - Returns: Newly built registration with helper expression data.
+    /// - Returns: Newly built registration with helper expressions data.
     func useHelperCoderIfExists() -> Registration<Decl, Key, CodedByOutput> {
         guard let attr = CodedBy(from: self.decl)
         else { return self.updating(with: self.variable.any) }
-        let newVar = self.variable.with(helper: attr.expr)
+        let newVar = self.variable.with(helper: attr.args)
         return self.updating(with: newVar.any)
     }
 }
 
 fileprivate extension DefaultPropertyVariable {
-    /// Update variable data with the helper instance expression provided.
+    /// Update variable data with the helper instance expressions provided.
     ///
     /// `HelperCodedVariable` is created with this variable as base
-    /// and helper expression provided.
+    /// and helper expressions provided.
     ///
-    /// - Parameter expr: The helper expression to add.
+    /// - Parameter args: The helper coding arguments provided.
     /// - Returns: Created variable data with helper expression.
-    func with(helper expr: ExprSyntax) -> HelperCodedVariable<Self> {
-        return .init(base: self, options: .init(expr: expr))
+    func with(helper args: LabeledExprListSyntax) -> HelperCodedVariable<Self> {
+        return .init(base: self, options: .init(parsing: args))
     }
 }

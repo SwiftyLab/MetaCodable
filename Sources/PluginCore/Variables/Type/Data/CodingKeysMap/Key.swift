@@ -74,9 +74,18 @@ extension CodingKeysMap {
         /// - Parameter token: The input token to create from.
         /// - Returns: The created trimmed token.
         static func name(for token: TokenSyntax) -> TokenSyntax {
-            let trimmedChars = CharacterSet(arrayLiteral: "`")
-            let name = token.text.trimmingCharacters(in: trimmedChars)
+            let name = token.trimmed.text.trimmingBackTicks
             return .identifier(name)
         }
+    }
+}
+
+extension String {
+    /// Trim ` characters.
+    ///
+    /// Uses for getting actual variable name.
+    var trimmingBackTicks: Self {
+        let trimmedChars = CharacterSet(arrayLiteral: "`")
+        return self.trimmingCharacters(in: trimmedChars)
     }
 }

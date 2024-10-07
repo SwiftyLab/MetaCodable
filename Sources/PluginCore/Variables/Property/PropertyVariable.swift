@@ -62,6 +62,20 @@ where
     /// In the event this decoding this variable is failed,
     /// appropriate fallback would be applied.
     var decodingFallback: DecodingFallback { get }
+
+    /// The number of variables this variable depends on.
+    ///
+    /// The number of variables that this variable depends
+    /// on to be decoded first, before decoding this variable.
+    var dependenciesCount: UInt { get }
+    /// Checks whether this variable is dependent on the provided variable.
+    ///
+    /// Whether provided variable needs to be decoded first,
+    /// before decoding this variable.
+    ///
+    /// - Parameter variable: The variable to check for.
+    /// - Returns: Whether this variable is dependent on the provided variable.
+    func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool
 }
 
 /// Represents the location for decoding/encoding for `Variable`s.
@@ -211,3 +225,23 @@ extension TypeSyntax {
         }
     }
 }
+
+#if swift(<6.0)
+extension Collection {
+    /// Returns the number of elements in the sequence that satisfy
+    /// the given predicate.
+    ///
+    /// This method can be used to count the number of elements
+    /// that pass a test.
+    ///
+    /// - Parameter predicate: A closure that takes each element
+    ///   of the sequence as its argument and returns a Boolean
+    ///   value indicating whether the element should be included
+    ///   in the count.
+    /// - Returns: The number of elements in the sequence that satisfy
+    ///   the given predicate.
+    func count(where predicate: (Element) -> Bool) -> Int {
+        return self.filter(predicate).count
+    }
+}
+#endif

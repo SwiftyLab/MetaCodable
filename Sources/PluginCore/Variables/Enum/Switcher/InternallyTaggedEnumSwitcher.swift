@@ -44,7 +44,7 @@ where Variable: PropertyVariable {
     /// Identifier variable is registered with the path at this node
     /// during initialization. This node is used to generate identifier
     /// variable decoding/encoding implementations.
-    let node: PropertyVariableTreeNode
+    var node: PropertyVariableTreeNode
     /// The builder action for building identifier variable.
     ///
     /// This builder action is used to create and use identifier variable
@@ -100,7 +100,7 @@ where Variable: PropertyVariable {
         self.identifierType = identifierType
         self.decl = decl
         self.variableBuilder = variableBuilder
-        let node = PropertyVariableTreeNode()
+        var node = PropertyVariableTreeNode()
         let variable = BasicPropertyVariable(
             name: identifier, type: self.identifierType, value: nil,
             decodePrefix: "", encodePrefix: "",
