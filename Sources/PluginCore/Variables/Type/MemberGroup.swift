@@ -41,7 +41,7 @@ where
         ) -> PathRegistration<MemberSyntax, Output>
     ) {
         self.constraintGenerator = .init(decl: decl)
-        let node = PropertyVariableTreeNode()
+        var node = PropertyVariableTreeNode()
         for member in decl.codableMembers(input: memberInput) {
             let `var` = member.codableVariable(in: context)
             let key = [CodingKeysMap.Key.name(for: `var`.name).text]
@@ -75,12 +75,15 @@ where
         from location: TypeCodingLocation
     ) -> TypeGenerated? {
         guard let conformance = location.conformance else { return nil }
+        let syntax = CodeBlockItemListSyntax {
+            let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
+                location.method.arg, keyType: codingKeys.type
+            )
+            node.decoding(in: context, from: nLocation).combined()
+            nLocation.decoding(in: context)
+        }
         return .init(
-            code: node.decoding(
-                in: context,
-                from: .coder(location.method.arg, keyType: codingKeys.type)
-            ).combined(),
-            modifiers: [],
+            code: syntax, modifiers: [],
             whereClause: constraintGenerator.decodingClause(
                 withVariables: node.linkedVariables,
                 conformingTo: conformance
@@ -104,12 +107,15 @@ where
         to location: TypeCodingLocation
     ) -> TypeGenerated? {
         guard let conformance = location.conformance else { return nil }
+        let syntax = CodeBlockItemListSyntax {
+            let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
+                location.method.arg, keyType: codingKeys.type
+            )
+            node.encoding(in: context, to: nLocation).combined()
+            nLocation.encoding(in: context)
+        }
         return .init(
-            code: node.encoding(
-                in: context,
-                to: .coder(location.method.arg, keyType: codingKeys.type)
-            ).combined(),
-            modifiers: [],
+            code: syntax, modifiers: [],
             whereClause: constraintGenerator.encodingClause(
                 withVariables: node.linkedVariables,
                 conformingTo: conformance

@@ -86,7 +86,7 @@ where
         )
     }
 
-    /// Create a array decoder and encoder based on provided data.
+    /// Create an array decoder and encoder based on provided data.
     ///
     /// By default, no additional customizations configuration is used.
     ///
@@ -161,5 +161,77 @@ where
             let encoder = container.superEncoder()
             try elementHelper.encode(element, to: encoder)
         }
+    }
+}
+
+extension SequenceCoder {
+    /// Create a sequence decoder and encoder based on provided data.
+    ///
+    /// - Parameters:
+    ///   - output: The resulting sequence type.
+    ///   - elementHelperCreation: The `HelperCoder` creation function.
+    ///   - configuration: The configuration for decoding and encoding.
+    ///   - properties: Values that can be passed to creation function.
+    public init<each Property>(
+        output: Sequence.Type,
+        elementHelperCreation: (repeat each Property) -> ElementHelper,
+        configuration: Configuration,
+        properties: repeat each Property
+    ) {
+        self.init(
+            output: output,
+            elementHelper: elementHelperCreation(repeat each properties),
+            configuration: configuration
+        )
+    }
+
+    /// Create an array decoder and encoder based on provided data.
+    ///
+    /// - Parameters:
+    ///   - elementHelperCreation: The `HelperCoder` creation function.
+    ///   - configuration: The configuration for decoding and encoding.
+    ///   - properties: Values that can be passed to creation function.
+    public init<each Property>(
+        elementHelperCreation: (repeat each Property) -> ElementHelper,
+        configuration: Configuration,
+        properties: repeat each Property
+    ) where Sequence == Array<ElementHelper.Coded> {
+        #if swift(>=5.10)
+        self.init(
+            output: Sequence.self, elementHelperCreation: elementHelperCreation,
+            configuration: configuration, properties: repeat each properties
+        )
+        #else
+        self.init(
+            output: Sequence.self,
+            elementHelper: elementHelperCreation(repeat each properties),
+            configuration: configuration
+        )
+        #endif
+    }
+
+    /// Create an array decoder and encoder based on provided data.
+    ///
+    /// By default, no additional customizations configuration is used.
+    ///
+    /// - Parameters:
+    ///   - elementHelperCreation: The `HelperCoder` creation function.
+    ///   - properties: Values that can be passed to creation function.
+    public init<each Property>(
+        elementHelperCreation: (repeat each Property) -> ElementHelper,
+        properties: repeat each Property
+    ) where Sequence == Array<ElementHelper.Coded> {
+        #if swift(>=5.10)
+        self.init(
+            elementHelperCreation: elementHelperCreation,
+            configuration: .init(), properties: repeat each properties
+        )
+        #else
+        self.init(
+            output: Sequence.self,
+            elementHelper: elementHelperCreation(repeat each properties),
+            configuration: .init()
+        )
+        #endif
     }
 }

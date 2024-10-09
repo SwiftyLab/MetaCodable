@@ -147,6 +147,22 @@ where Initialization: VariableInitialization {
     ) -> CodeBlockItemListSyntax {
         return base.encoding(in: context, to: location)
     }
+
+    /// The number of variables this variable depends on.
+    ///
+    /// Provides the number of variables underlying variable depends on.
+    var dependenciesCount: UInt { base.dependenciesCount }
+
+    /// Checks whether this variable is dependent on the provided variable.
+    ///
+    /// Provides whether provided variable needs to be decoded first,
+    /// before decoding underlying variable value.
+    ///
+    /// - Parameter variable: The variable to check for.
+    /// - Returns: Whether this variable is dependent on the provided variable.
+    func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
+        return base.depends(on: variable)
+    }
 }
 
 extension AnyPropertyVariable: AssociatedVariable

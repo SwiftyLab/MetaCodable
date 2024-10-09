@@ -18,7 +18,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
 - Allows to read data from additional fallback `CodingKey`s provided with ``CodedAs(_:_:)``.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``, or only in case of failures when missing value with ``Default(ifMissing:)``. Different default values can also be used for value missing and other errors respectively with ``Default(ifMissing:forErrors:)``.
-- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``. i.e. ``LossySequenceCoder`` etc.
+- Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``, ``CodedBy(_:properties:)`` or others. i.e. ``LossySequenceCoder`` etc.
 - Allows specifying different case values with ``CodedAs(_:_:)`` and case value/protocol type identifier type different from `String` with ``CodedAs()``.
 - Allows specifying enum-case/protocol type identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
 - Allows decoding/encoding enums that lack distinct identifiers for each case data with ``UnTagged()``.
@@ -75,27 +75,38 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 - ``CodedAt(_:)``
 - ``CodedIn(_:)``
-- ``Default(_:)``
-- ``Default(ifMissing:)``
-- ``Default(ifMissing:forErrors:)``
-- ``CodedBy(_:)``
 - ``CodedAs()``
 - ``CodedAs(_:_:)``
 - ``ContentAt(_:_:)``
 - ``UnTagged()``
+- ``CodingKeys(_:)``
+- ``Inherits(decodable:encodable:)``
+
+### Helpers
+
+- ``CodedBy(_:)``
+- ``CodedBy(_:properties:)``
+- ``CodedBy(_:arguments:properties:)-7j53l``
+- ``CodedBy(_:arguments:properties:)-47t86``
+- ``CodedBy(_:arguments:_:properties:)``
+- ``CodedBy(_:arguments:_:_:properties:)``
+- ``HelperCoder``
+- ``LossySequenceCoder``
+
+### Fallback value
+
+- ``Default(_:)``
+- ``Default(ifMissing:)``
+- ``Default(ifMissing:forErrors:)``
+
+### Ignoring
+
 - ``IgnoreCoding()``
 - ``IgnoreDecoding()``
 - ``IgnoreEncoding()``
 - ``IgnoreEncoding(if:)-1iuvv``
 - ``IgnoreEncoding(if:)-7toka``
-- ``CodingKeys(_:)``
 - ``IgnoreCodingInitialized()``
-- ``Inherits(decodable:encodable:)``
-
-### Helpers
-
-- ``HelperCoder``
-- ``LossySequenceCoder``
 
 ### Dynamic Coding
 
