@@ -1,6 +1,14 @@
 import Foundation
 import PackagePlugin
 
+/// This is a workaround because PackageDescription.Target.directoryURL will not be available until version 6.1
+/// See:  https://github.com/swiftlang/swift-package-manager/blob/735ddd97fa651729921315c8e46bd790429362cb/Sources/PackagePlugin/PackageModel.swift#L184-L186///
+/// The workaround defines a custom protocol that adds the missing property, and then introduces
+/// a new initializer that accepts the actual target protocol and attempts to downcast.
+protocol CompatSourceModuleTarget: SourceModuleTarget {
+    var directoryURL: URL { get }
+}
+
 /// Represents an SwiftPM target.
 ///
 /// Uses `SourceModuleTarget` to provide conformances.
@@ -8,8 +16,27 @@ struct SwiftPackageTarget {
     /// The actual module for this target.
     ///
     /// The conformances provided uses this module.
-    let module: any SourceModuleTarget
+    let module: any CompatSourceModuleTarget
+    
 }
+
+/// Workaround for 6.1 compatibility
+extension ClangSourceModuleTarget: CompatSourceModuleTarget {}
+extension SwiftSourceModuleTarget: CompatSourceModuleTarget {}
+
+extension SwiftPackageTarget {
+init<M>(module: M) where M: SourceModuleTarget {
+    switch module {
+    case let module as ClangSourceModuleTarget:
+        self.module = module
+        case let module as SwiftSourceModuleTarget:
+        self.module = module
+    default:
+        fatalError("Unsupported module type")
+    }
+}
+}
+    
 
 extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     /// The name of the module produced
@@ -29,7 +56,7 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
             default:
                 nil
             }
-        }.map { Self.init(module: $0) }
+        }.map { (target: any SourceModuleTarget) in  Self.init(module: target) }
     }
 
     /// All the targets on which current target depends on.
@@ -64,17 +91,16 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     /// - Returns: The config file path.
     func configPath(named name: String) throws -> String? {
         let fileManager = FileManager.default
-        let directory = module.directory.string
-        let contents = try fileManager.contentsOfDirectory(atPath: directory)
+        let directory = module.directoryURL
+        let contents = try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         let file = contents.first { file in
-            let path = Path(file)
             return name.lowercased()
-                == path.stem
+                == file.lastPathComponent
                 .components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()
         }
         guard let file else { return nil }
-        return module.directory.appending([file]).string
+        return directory.appending(path: file.absoluteString).absoluteString
     }
 }
