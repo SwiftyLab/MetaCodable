@@ -1,4 +1,5 @@
 import PackagePlugin
+import Foundation
 
 /// Provides information about the package for which the plugin is invoked,
 /// as well as contextual information based on the plugin's stated intent
@@ -24,6 +25,8 @@ protocol MetaProtocolCodablePluginContext {
     /// directories for cache files and other file system content that either
     /// it or the command will need.
     var pluginWorkDirectory: Path { get }
+    var pluginWorkDirectoryURL: URL { get }
+    
     /// The targets which are local to current context.
     ///
     /// These targets are included in the same package/project as this context.
