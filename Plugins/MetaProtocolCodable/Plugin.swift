@@ -46,6 +46,11 @@ struct MetaProtocolCodable: BuildToolPlugin {
     ) throws -> [Command] where Context: MetaProtocolCodablePluginContext {
         // Get config
         let tool = try context.tool(named: "ProtocolGen")
+#if swift(<6)
+        let toolUrl = URL(string: tool.path.string)!
+#else
+        let toolUrl = tool.url
+        #endif
         let config = try fetchConfig(for: target)
         let (allTargets, imports) = config.scanInput(for: target, in: context)
 
@@ -61,25 +66,28 @@ struct MetaProtocolCodable: BuildToolPlugin {
             return target.sourceFiles(withSuffix: "swift").map { file in
                 let moduleName = target.moduleName
                 #if swift(<6)
-                let fileName = URL(string: file.path.string)!
+                let fileUrl = URL(string: file.path.string)!
                 #else
-                let fileName = file.url.lastPathComponent
+                let fileUrl = file.url
                 #endif
+                let fileName = fileUrl.deletingPathExtension().lastPathComponent
                 let genFileName = "\(moduleName)-\(fileName)-gen.json"
                 let genFile = genFolder.appending(path: genFileName)
                 intermFiles.append(genFile)
+                
+                
                 return Command.buildCommand(
                     displayName: """
                         Parse source file "\(fileName)" in module "\(moduleName)"
                         """,
-                    executable: tool.url,
+                    executable: toolUrl,
                     arguments: [
                         "parse",
-                        file.url.absoluteString,
+                        fileUrl.absoluteString,
                         "--output",
                         genFile.absoluteString,
                     ],
-                    inputFiles: [file.url],
+                    inputFiles: [fileUrl],
                     outputFiles: [genFile]
                 )
             }
@@ -88,7 +96,7 @@ struct MetaProtocolCodable: BuildToolPlugin {
         // Create syntax generation command
         let moduleName = target.moduleName
         let genFileName = "\(moduleName)+ProtocolHelperCoders.swift"
-        let genPath = genFolder.appending(path:genFileName)
+        let genPath = genFolder.appending(path: genFileName)
         var genArgs = ["generate", "--output", genPath.absoluteString]
         for `import` in imports {
             genArgs.append(contentsOf: ["--module", `import`])
@@ -101,7 +109,7 @@ struct MetaProtocolCodable: BuildToolPlugin {
                 displayName: """
                     Generate protocol decoding/encoding syntax for "\(moduleName)"
                     """,
-                executable: tool.url,
+                executable: toolUrl,
                 arguments: genArgs,
                 inputFiles: intermFiles,
                 outputFiles: [genPath]
