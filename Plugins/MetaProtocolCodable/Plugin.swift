@@ -46,9 +46,9 @@ struct MetaProtocolCodable: BuildToolPlugin {
     ) throws -> [Command] where Context: MetaProtocolCodablePluginContext {
         // Get config
         let tool = try context.tool(named: "ProtocolGen")
-#if swift(<6)
+        #if swift(<6)
         let toolUrl = URL(string: tool.path.string)!
-#else
+        #else
         let toolUrl = tool.url
         #endif
         let config = try fetchConfig(for: target)
