@@ -9,7 +9,6 @@ struct SwiftPackageTarget {
     ///
     /// The conformances provided uses this module.
     let module: any SourceModuleTarget
-    
 }
 
 /// This is a workaround because PackageDescription.Target.directoryURL will not be available until version 6.1
@@ -54,7 +53,7 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
             default:
                 nil
             }
-        }.map { (target: any SourceModuleTarget) in  Self.init(module: target) }
+        }.map { Self.init(module: $0) }
     }
 
     /// All the targets on which current target depends on.
@@ -93,7 +92,7 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
         let contents = try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         let file = contents.first { file in
             return name.lowercased()
-                == file.lastPathComponent
+                == file.deletingPathExtension().lastPathComponent
                 .components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()
