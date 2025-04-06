@@ -1,14 +1,6 @@
 import Foundation
 import PackagePlugin
 
-/// This is a workaround because PackageDescription.Target.directoryURL will not be available until version 6.1
-/// See:  https://github.com/swiftlang/swift-package-manager/blob/735ddd97fa651729921315c8e46bd790429362cb/Sources/PackagePlugin/PackageModel.swift#L184-L186///
-/// The workaround defines a custom protocol that adds the missing property, and then introduces
-/// a new initializer that accepts the actual target protocol and attempts to downcast.
-protocol CompatSourceModuleTarget: SourceModuleTarget {
-    var directoryURL: URL { get }
-}
-
 /// Represents an SwiftPM target.
 ///
 /// Uses `SourceModuleTarget` to provide conformances.
@@ -16,27 +8,33 @@ struct SwiftPackageTarget {
     /// The actual module for this target.
     ///
     /// The conformances provided uses this module.
-    let module: any CompatSourceModuleTarget
+    let module: any SourceModuleTarget
     
 }
 
-/// Workaround for 6.1 compatibility
-extension ClangSourceModuleTarget: CompatSourceModuleTarget {}
-extension SwiftSourceModuleTarget: CompatSourceModuleTarget {}
-
-extension SwiftPackageTarget {
-init<M>(module: M) where M: SourceModuleTarget {
-    switch module {
-    case let module as ClangSourceModuleTarget:
-        self.module = module
-        case let module as SwiftSourceModuleTarget:
-        self.module = module
-    default:
-        fatalError("Unsupported module type")
+/// This is a workaround because PackageDescription.Target.directoryURL will not be available until version 6.1
+/// See:  https://github.com/swiftlang/swift-package-manager/blob/735ddd97fa651729921315c8e46bd790429362cb/Sources/PackagePlugin/PackageModel.swift#L184-L186///
+#if swift(<6.1)
+extension Target {
+    var directoryURL: URL {
+        #if swift(<6)
+        // No `directoryURL` but `Path` is not deprecated yet
+        return URL(string: directory.string)!
+#else
+        // Concrete types have `directoryURL`
+        switch self {
+        case let target as ClangSourceModuleTarget:
+            return target.directoryURL
+        case let target as SwiftSourceModuleTarget:
+            return target.directoryURL
+        default:
+            fatalError("Unsupported target type")
+        }
+#endif
     }
 }
-}
-    
+#endif
+
 
 extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     /// The name of the module produced

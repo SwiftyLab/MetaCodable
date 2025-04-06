@@ -50,7 +50,7 @@ struct MetaProtocolCodable: BuildToolPlugin {
         let (allTargets, imports) = config.scanInput(for: target, in: context)
 
         // Setup folder
-        let genFolder = context.pluginWorkDirectoryURL
+        let genFolder = context.pluginWorkDirectoryURL.appending(path: "ProtocolGen")
         try FileManager.default.createDirectory(
             at: genFolder, withIntermediateDirectories: true
         )
@@ -60,7 +60,11 @@ struct MetaProtocolCodable: BuildToolPlugin {
         var buildCommands = allTargets.flatMap { target in
             return target.sourceFiles(withSuffix: "swift").map { file in
                 let moduleName = target.moduleName
+                #if swift(<6)
+                let fileName = URL(string: file.path.string)!
+                #else
                 let fileName = file.url.lastPathComponent
+                #endif
                 let genFileName = "\(moduleName)-\(fileName)-gen.json"
                 let genFile = genFolder.appending(path: genFileName)
                 intermFiles.append(genFile)
