@@ -23,8 +23,9 @@ package struct CodedAs: PropertyAttribute {
     /// Used for enums with internal/adjacent tagging to decode
     /// the identifier to this type.
     var type: TypeSyntax? {
-        return node.attributeName.as(IdentifierTypeSyntax.self)?
+        let argument = node.attributeName.as(IdentifierTypeSyntax.self)?
             .genericArgumentClause?.arguments.first?.argument
+        return TypeSyntax(argument)
     }
 
     /// Creates a new instance with the provided node.

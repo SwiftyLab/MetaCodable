@@ -165,7 +165,10 @@ extension PropertyVariable {
             gArgs.count == 1,
             let type = gArgs.first?.argument
         {
-            dType = type
+            guard let castType = TypeSyntax(type) else {
+                preconditionFailure("Unable to create TypeSyntax from '\(type.trimmedDescription)'")
+            }
+            dType = castType
             dMethod = "\(method)IfPresent"
         } else {
             dType = type
