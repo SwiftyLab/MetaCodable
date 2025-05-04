@@ -36,12 +36,7 @@ jobs:
         {
           "include": [
             {
-              "os": "ubuntu-latest",
-              "language": "swift",
-              "swift": "latest"
-            },
-            {
-              "os": "macos-latest",
+              "os": "macos-15",
               "language": "swift",
               "swift": "latest"
             }
@@ -76,7 +71,7 @@ jobs:
               "swift": "5.9"
             },
             {
-              "os": "macos-latest",
+              "os": "macos-15",
               "swift": "latest"
             }
           ]
