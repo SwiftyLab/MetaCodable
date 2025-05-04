@@ -1,6 +1,6 @@
 {
-    "name": "Swift 6.0-Ubuntu 22.04",
-    "image": "swift:6.0-jammy",
+    "name": "Swift 6.1-Ubuntu 24.04",
+    "image": "swift:6.1-noble",
     "features": {
         "ghcr.io/devcontainers/features/common-utils:2": {
             "installZsh": "false",
@@ -22,7 +22,7 @@
                 "lldb.library": "/usr/lib/liblldb.so"
             },
             "extensions": [
-                "sswg.swift-lang",
+                "swiftlang.swift-vscode",
                 "vadimcn.vscode-lldb",
                 "eamodio.gitlens",
                 "github.vscode-github-actions"
