@@ -67,12 +67,12 @@ public macro Codable(commonStrategies: [CodableCommonStrategy] = []) =
 
 /// Indicates whether super class conforms to `Codable` or not.
 ///
-/// By default, ``Codable()`` assumes class inherits `Decodable`
+/// By default, ``Codable(commonStrategies:)`` assumes class inherits `Decodable`
 /// or `Encodable` conformance if it doesn't receive protocol needs
 /// to be conformed from the compiler. Using this macro, it can be explicitly
 /// indicated that the class doesn't inherit conformance in such cases.
 ///
-/// Following code indicates ``Codable()`` that `Item` class doesn't
+/// Following code indicates ``Codable(commonStrategies:)`` that `Item` class doesn't
 /// inherit conformance:
 /// ```swift
 /// @Codable
@@ -91,7 +91,7 @@ public macro Codable(commonStrategies: [CodableCommonStrategy] = []) =
 ///   - encodable: Whether super class conforms to `Encodable`.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a class declaration. ``Codable()`` macro uses this macro
+///   is a class declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)

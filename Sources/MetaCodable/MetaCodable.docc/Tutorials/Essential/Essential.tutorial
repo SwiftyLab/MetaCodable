@@ -16,7 +16,7 @@
 
     @Section(title: "Create Codable type and customize CodingKey of fields") {
         @ContentAndMedia {
-            The simplest way to generate `Codable` implementation is to attach ``Codable()`` macro to type definition, provided all its properties using types that are already `Codable`.
+            The simplest way to generate `Codable` implementation is to attach ``Codable(commonStrategies:)`` macro to type definition, provided all its properties using types that are already `Codable`.
 
             These types include standard library types like `String`, `Int`, and `Double` and `Foundation` types like `Date`, `Data`, and `URL`. Any type whose properties are `Codable` automatically conforms to `Codable` just by attaching this macro.
 
@@ -43,7 +43,7 @@
             }
 
             @Step {
-                Attach ``Codable()`` macro to type definition.
+                Attach ``Codable(commonStrategies:)`` macro to type definition.
 
                 @Code(name: Post.swift, file: Post-02.swift) {
                     @Image(source: Post-01.png, alt: "Basic post JSON representation")

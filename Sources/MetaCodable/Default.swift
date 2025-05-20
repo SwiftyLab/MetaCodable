@@ -18,7 +18,7 @@
 /// - Parameter default: The default value to use.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable` and
@@ -47,7 +47,7 @@ public macro Default<T>(_ default: T) =
 /// - Parameter default: The default value to use.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable` and
@@ -80,7 +80,7 @@ public macro Default<T>(ifMissing default: T) =
 ///   - errorDefault: The default value to use for other errors.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable` and

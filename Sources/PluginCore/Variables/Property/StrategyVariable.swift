@@ -129,4 +129,13 @@ where Initialization: VariableInitialization {
     }
 }
 
+extension StrategyVariable: AssociatedVariable
+where Initialization: RequiredVariableInitialization {
+    /// The label of the variable.
+    ///
+    /// Provides label of the underlying associated variable value,
+    /// `nil` if underlying variable not associated variable.
+    var label: TokenSyntax? { base.label }
+}
+
 extension StrategyVariable: DefaultPropertyVariable {}

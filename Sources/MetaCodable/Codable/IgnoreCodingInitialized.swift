@@ -57,10 +57,10 @@
 /// while `notIgnored` is decoded and encoded.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
-/// - Important: This attribute must be used combined with ``Codable()``.
+/// - Important: This attribute must be used combined with ``Codable(commonStrategies:)``.
 @attached(peer)
 @available(swift 5.9)
 public macro IgnoreCodingInitialized() =

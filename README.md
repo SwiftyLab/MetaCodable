@@ -14,7 +14,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ## Overview
 
-`MetaCodable` framework exposes custom macros which can be used to generate dynamic `Codable` implementations. The core of the framework is ``Codable()`` macro which generates the implementation aided by data provided with using other macros.
+`MetaCodable` framework exposes custom macros which can be used to generate dynamic `Codable` implementations. The core of the framework is ``Codable(commonStrategies:)`` macro which generates the implementation aided by data provided with using other macros.
 
 `MetaCodable` aims to supercharge your `Codable` implementations by providing these inbox features:
 
@@ -24,6 +24,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to read data from additional fallback `CodingKey`s provided with ``CodedAs(_:_:)``.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``, or only in case of failures when missing value with ``Default(ifMissing:)``. Different default values can also be used for value missing and other errors respectively with ``Default(ifMissing:forErrors:)``.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``, ``CodedBy(_:properties:)`` or others. i.e. ``LossySequenceCoder`` etc.
+- Allows applying common strategies like `ValueCoder` to all properties of a type through the ``Codable(commonStrategies:)`` parameter, reducing the need for repetitive property annotations.
 - Allows specifying different case values with ``CodedAs(_:_:)`` and case value/protocol type identifier type different from `String` with ``CodedAs()``.
 - Allows specifying enum-case/protocol type identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
 - Allows decoding/encoding enums that lack distinct identifiers for each case data with ``UnTagged()``.
