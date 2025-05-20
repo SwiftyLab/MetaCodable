@@ -1,8 +1,9 @@
 // swift-tools-version: 6.0
+// swift-format-ignore-file
 
+import CompilerPluginSupport
 import Foundation
 import PackageDescription
-import CompilerPluginSupport
 
 let package = Package(
     name: "MetaCodable",

@@ -46,6 +46,10 @@
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
 ///
+/// - Parameters:
+///   - commonStrategies: An array of CodableCommonStrategy values specifying
+///   type conversion strategies to be automatically applied to all properties of the type.
+///
 /// - Important: The attached declaration must be of a `struct`, `class`, `enum`
 ///   or `actor` type. [See the limitations for this macro](<doc:Limitations>).
 @attached(
@@ -58,7 +62,7 @@
     names: named(CodingKeys), named(init(from:)), named(encode(to:))
 )
 @available(swift 5.9)
-public macro Codable() =
+public macro Codable(commonStrategies: [CodableCommonStrategy] = []) =
     #externalMacro(module: "MacroPlugin", type: "Codable")
 
 /// Indicates whether super class conforms to `Codable` or not.

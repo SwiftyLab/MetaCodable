@@ -68,7 +68,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 ### Macros
 
-- ``Codable()``
+- ``Codable(commonStrategies:)``
 - ``MemberInit()``
 
 ### Strategies
@@ -81,6 +81,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``UnTagged()``
 - ``CodingKeys(_:)``
 - ``Inherits(decodable:encodable:)``
+- ``CodableCommonStrategy``
 
 ### Helpers
 
