@@ -40,7 +40,7 @@
 /// - Parameter values: The values to use.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The value type must be `String` when used in
@@ -103,7 +103,7 @@ public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
 /// ```
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: For each case ``CodedAs(_:_:)`` macro with values
@@ -116,7 +116,7 @@ public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
 ///   type must be same as the type defined with this macro, in absence of this macro
 ///   ``DynamicCodable/IdentifierValue`` type must be `String`.
 ///
-/// - Important: This attribute must be used combined with ``Codable()``
+/// - Important: This attribute must be used combined with ``Codable(commonStrategies:)``
 ///   and ``CodedAt(_:)``.
 @attached(peer)
 @available(swift 5.9)

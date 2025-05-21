@@ -30,7 +30,7 @@
 /// the data for `field` case or `Load` type respectively.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
@@ -71,7 +71,7 @@ public macro IgnoreCoding() =
 /// type will be encoded.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
@@ -108,7 +108,7 @@ public macro IgnoreDecoding() =
 /// type will be decoded if case related data is present.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
@@ -145,7 +145,7 @@ public macro IgnoreEncoding() =
 /// - Parameter condition: The condition to be checked.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The condition argument types must confirm to `Codable`
@@ -167,7 +167,7 @@ public macro IgnoreEncoding<each T>(if condition: (repeat each T) -> Bool) =
 /// - Parameter condition: The condition to be checked.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable` and

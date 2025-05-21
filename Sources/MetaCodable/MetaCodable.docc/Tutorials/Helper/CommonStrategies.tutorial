@@ -1,0 +1,91 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Using Common Strategies") {
+        Learn how to apply strategies like `ValueCoder` to all properties automatically.
+        
+        @Comment {
+            Add image asset here!
+        }
+    }
+    
+    @Section(title: "Applying Common Strategies") {
+        @ContentAndMedia {
+            Learn how to use common strategies to automatically apply certain coding behaviors to all properties
+            in a type, reducing the need for repetitive property annotations.
+            
+            @Image(source: "common-strategies", alt: "An illustration showing common strategies.")
+        }
+        
+        @Steps {
+            @Step {
+                First, let's look at a model type without common strategies:
+                
+                @Code(name: "Product.swift", file: "Product-01.swift")
+            }
+            
+            @Step {
+                Now, let's use ValueCoder for all properties using commonStrategies:
+                
+                @Code(name: "Product.swift", file: "Product-02.swift")
+            }
+            
+            @Step {
+                Finally, let's see how we can override common strategies for specific properties:
+                
+                @Code(name: "Product.swift", file: "Product-03.swift")
+            }
+        }
+    }
+
+    @Section(title: "Available Common Strategies") {
+        @ContentAndMedia {
+            Learn about the different common strategies that can be applied to your types.
+        }
+        
+        @Steps {
+            @Step {
+                The ValueCoder strategy can be applied to all properties:
+                
+                @Code(name: "User.swift", file: "CommonStrategies-01.swift")
+            }
+            
+            @Step {
+                You can also combine multiple strategies in future:
+                
+                @Code(name: "User.swift", file: "CommonStrategies-02.swift")
+            }
+        }
+    }
+
+    @Assessments {
+        @MultipleChoice {
+            What is the benefit of using common strategies with the `@Codable` macro?
+            
+            @Choice(isCorrect: false) {
+                It makes the code compile faster.
+                
+                @Justification(reaction: "Try again!") {
+                    While common strategies don't impact compile time significantly,
+                    they help reduce code repetition.
+                }
+            }
+            
+            @Choice(isCorrect: true) {
+                It reduces the need to annotate each property individually with the same strategy.
+                
+                @Justification(reaction: "Correct!") {
+                    Common strategies allow you to apply the same coding behavior to all properties
+                    without repeating annotations.
+                }
+            }
+            
+            @Choice(isCorrect: false) {
+                It improves runtime performance of coding operations.
+                
+                @Justification(reaction: "Try again!") {
+                    Common strategies don't affect runtime performance, they just make
+                    the code more maintainable by reducing repetition.
+                }
+            }
+        }
+    }
+}

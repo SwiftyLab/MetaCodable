@@ -158,6 +158,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     provider: CodedAt(from: input.decl)
                         ?? CodedIn(from: input.decl) ?? CodedIn()
                 )
+                .detectCommonStrategies(from: decl)
                 .useHelperCoderIfExists()
                 .checkForAlternateKeyValues(addTo: codingKeys, context: context)
                 .addDefaultValueIfExists()

@@ -16,7 +16,7 @@ import SwiftSyntax
 ///     methods.
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
-package struct Codable: Attribute {
+package struct Codable: PeerAttribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax

@@ -15,6 +15,7 @@
         }
 
         @TutorialReference(tutorial: "doc:Essential")
+        @TutorialReference(tutorial: "doc:CommonStrategies")
         @TutorialReference(tutorial: "doc:Enum")
     }
 

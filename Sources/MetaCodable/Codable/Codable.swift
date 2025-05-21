@@ -46,6 +46,10 @@
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
 ///
+/// - Parameters:
+///   - commonStrategies: An array of CodableCommonStrategy values specifying
+///   type conversion strategies to be automatically applied to all properties of the type.
+///
 /// - Important: The attached declaration must be of a `struct`, `class`, `enum`
 ///   or `actor` type. [See the limitations for this macro](<doc:Limitations>).
 @attached(
@@ -58,17 +62,17 @@
     names: named(CodingKeys), named(init(from:)), named(encode(to:))
 )
 @available(swift 5.9)
-public macro Codable() =
+public macro Codable(commonStrategies: [CodableCommonStrategy] = []) =
     #externalMacro(module: "MacroPlugin", type: "Codable")
 
 /// Indicates whether super class conforms to `Codable` or not.
 ///
-/// By default, ``Codable()`` assumes class inherits `Decodable`
+/// By default, ``Codable(commonStrategies:)`` assumes class inherits `Decodable`
 /// or `Encodable` conformance if it doesn't receive protocol needs
 /// to be conformed from the compiler. Using this macro, it can be explicitly
 /// indicated that the class doesn't inherit conformance in such cases.
 ///
-/// Following code indicates ``Codable()`` that `Item` class doesn't
+/// Following code indicates ``Codable(commonStrategies:)`` that `Item` class doesn't
 /// inherit conformance:
 /// ```swift
 /// @Codable
@@ -87,7 +91,7 @@ public macro Codable() =
 ///   - encodable: Whether super class conforms to `Encodable`.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a class declaration. ``Codable()`` macro uses this macro
+///   is a class declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
