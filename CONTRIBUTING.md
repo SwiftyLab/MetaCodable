@@ -5,9 +5,24 @@ Please read it before you start participating.
 
 _See also: [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md)_
 
+## Developer Documentation
+
+Detailed documentation for contributors is available in the [Contributing](Contributing/README.md) folder:
+
+- [Architecture Overview](Contributing/ARCHITECTURE.md) - Core components and system design
+- [Macro Processing Pipeline](Contributing/MACRO_PROCESSING.md) - Class hierarchy and code generation
+- [Coding Strategies](Contributing/CODING_STRATEGIES.md) - Implementation patterns and helper systems
+- [Build Plugin System](Contributing/BUILD_PLUGIN.md) - Plugin architecture and integration
+- [Testing and Development](Contributing/TESTING.md) - Testing methodology and best practices
+- [Troubleshooting](Contributing/TROUBLESHOOTING.md) - Common issues and solutions
+
 ## Submitting Pull Requests
 
-You can contribute by fixing bugs or adding new features. For larger code changes, we first recommend discussing them in our [Github issues](https://github.com/SwiftyLab/MetaCodable/issues). When submitting a pull request, please add relevant tests and ensure your changes don't break any existing tests (see [Automated Tests](#automated-tests) below).
+You can contribute by fixing bugs or adding new features. For larger code changes, we first recommend:
+1. Review the [Architecture Overview](Contributing/ARCHITECTURE.md) to understand the system
+2. Discuss your proposed changes in our [Github issues](https://github.com/SwiftyLab/MetaCodable/issues)
+3. Read the relevant documentation in the [Contributing](Contributing/README.md) folder
+4. Submit your pull request with appropriate tests (see [Testing](Contributing/TESTING.md))
 
 ### Things you will need
 
@@ -39,7 +54,9 @@ open $PATH_TO_XCODE_INSTALLATION --env METACODABLE_CI=1
 
 ### Automated Tests
 
-GitHub action is already setup to run tests on pull requests targeting `main` branch. However, to reduce heavy usage of GitHub runners, run the following commands in your terminal to test:
+GitHub action is already setup to run tests on pull requests targeting `main` branch. For detailed testing instructions and methodology, see our [Testing Guide](Contributing/TESTING.md).
+
+To run tests locally and reduce usage of GitHub runners:
 
 | Test category | With [Node] | Manually |
 | --- | --- | --- |
