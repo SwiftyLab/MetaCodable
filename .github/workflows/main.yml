@@ -64,11 +64,91 @@ jobs:
           "include": [
             {
               "os": "ubuntu-latest",
-              "swift": "latest"
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
             },
             {
-              "os": "macos-13",
-              "swift": "5.9"
+              "os": "ubuntu-latest",
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "latest"
             },
             {
               "os": "macos-15",
@@ -76,6 +156,36 @@ jobs:
             }
           ]
         }
+  
+            # todo: inverestigate failure on swift 5.10
+            # {
+            #   "os": "ubuntu-latest",
+            #   "swift": "5.10",
+            #   "dependencies": {
+            #     "swift-syntax": "509.1.1"
+            #   }
+            # },
+            # {
+            #   "os": "ubuntu-latest",
+            #   "swift": "5.10",
+            #   "dependencies": {
+            #     "swift-syntax": "510.0.3"
+            #   }
+            # },
+            # {
+            #   "os": "ubuntu-latest",
+            #   "swift": "5.10",
+            #   "dependencies": {
+            #     "swift-syntax": "600.0.1"
+            #   }
+            # },
+            # {
+            #   "os": "ubuntu-latest",
+            #   "swift": "5.10",
+            #   "dependencies": {
+            #     "swift-syntax": "601.0.1"
+            #   }
+            # },
 
   cocoapods-test:
     name: CocoaPods
