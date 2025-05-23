@@ -91,6 +91,34 @@ jobs:
               }
             },
             {
+              "os": "ubuntu-22.04",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
+            },
+            {
+              "os": "ubuntu-22.04t",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-22.04",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-22.04",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
               "os": "ubuntu-latest",
               "swift": "6.0",
               "dependencies": {
@@ -156,36 +184,6 @@ jobs:
             }
           ]
         }
-  
-            # todo: inverestigate failure on swift 5.10
-            # {
-            #   "os": "ubuntu-latest",
-            #   "swift": "5.10",
-            #   "dependencies": {
-            #     "swift-syntax": "509.1.1"
-            #   }
-            # },
-            # {
-            #   "os": "ubuntu-latest",
-            #   "swift": "5.10",
-            #   "dependencies": {
-            #     "swift-syntax": "510.0.3"
-            #   }
-            # },
-            # {
-            #   "os": "ubuntu-latest",
-            #   "swift": "5.10",
-            #   "dependencies": {
-            #     "swift-syntax": "600.0.1"
-            #   }
-            # },
-            # {
-            #   "os": "ubuntu-latest",
-            #   "swift": "5.10",
-            #   "dependencies": {
-            #     "swift-syntax": "601.0.1"
-            #   }
-            # },
 
   cocoapods-test:
     name: CocoaPods
