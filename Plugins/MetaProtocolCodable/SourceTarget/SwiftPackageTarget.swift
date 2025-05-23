@@ -11,6 +11,30 @@ struct SwiftPackageTarget {
     let module: any SourceModuleTarget
 }
 
+/// This is a workaround because PackageDescription.Target.directoryURL will not be available until version 6.1
+/// See:  https://github.com/swiftlang/swift-package-manager/blob/735ddd97fa651729921315c8e46bd790429362cb/Sources/PackagePlugin/PackageModel.swift#L184-L186///
+#if swift(<6.1)
+extension Target {
+    var directoryURL: URL {
+        #if swift(<6)
+        // No `directoryURL` but `Path` is not deprecated yet
+        return URL(string: directory.string)!
+#else
+        // Concrete types have `directoryURL`
+        switch self {
+        case let target as ClangSourceModuleTarget:
+            return target.directoryURL
+        case let target as SwiftSourceModuleTarget:
+            return target.directoryURL
+        default:
+            fatalError("Unsupported target type")
+        }
+#endif
+    }
+}
+#endif
+
+
 extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     /// The name of the module produced
     /// by the target.
@@ -64,17 +88,16 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     /// - Returns: The config file path.
     func configPath(named name: String) throws -> String? {
         let fileManager = FileManager.default
-        let directory = module.directory.string
-        let contents = try fileManager.contentsOfDirectory(atPath: directory)
+        let directory = module.directoryURL
+        let contents = try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         let file = contents.first { file in
-            let path = Path(file)
             return name.lowercased()
-                == path.stem
+                == file.deletingPathExtension().lastPathComponent
                 .components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()
         }
         guard let file else { return nil }
-        return module.directory.appending([file]).string
+        return directory.appending(path: file.absoluteString).absoluteString
     }
 }
