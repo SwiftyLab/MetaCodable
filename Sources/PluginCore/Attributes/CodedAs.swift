@@ -24,7 +24,8 @@ package struct CodedAs: PropertyAttribute {
     /// the identifier to this type.
     var type: TypeSyntax? {
         return node.attributeName.as(IdentifierTypeSyntax.self)?
-            .genericArgumentClause?.arguments.first?.argument.as(TypeSyntax.self)
+            .genericArgumentClause?.arguments
+            .first?.argument.as(TypeSyntax.self)
     }
 
     /// Creates a new instance with the provided node.

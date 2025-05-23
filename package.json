@@ -30,7 +30,7 @@
     "test": "METACODABLE_CI=true npm exec --package=swiftylab-ci -- test.mjs",
     "archive": "echo implement",
     "generate": "echo implement",
-    "format": "METACODABLE_CI=true npm exec --package=swiftylab-ci -- format.mjs",
+    "format": "METACODABLE_CI=true swift format --in-place --recursive .",
     "pod-lint": "Utils/pod_lint.rb",
     "preview-doc": "METACODABLE_CI=true SPI_GENERATE_DOCS=true npm exec --package=swiftylab-ci -- preview-doc.mjs MetaCodable",
     "build-doc": "METACODABLE_CI=true SPI_GENERATE_DOCS=true npm exec --package=swiftylab-ci -- build-doc.mjs MetaCodable HelperCoders",

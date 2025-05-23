@@ -414,7 +414,9 @@ struct CommonStrategiesValueCoderTests {
             // Test encoding
             let encoder = JSONEncoder()
             encoder.outputFormatting = .sortedKeys
-            let encoded = try String(data: encoder.encode(status), encoding: .utf8)
+            let encoded = try String(
+                data: encoder.encode(status), encoding: .utf8
+            )
             #expect(encoded == #"{"since":"20250520","type":"active"}"#)
 
             // Test decoding other cases with numeric values
@@ -425,7 +427,9 @@ struct CommonStrategiesValueCoderTests {
                 }
                 """
             let inactiveData = try #require(inactiveJson.data(using: .utf8))
-            let inactiveStatus = try decoder.decode(Status.self, from: inactiveData)
+            let inactiveStatus = try decoder.decode(
+                Status.self, from: inactiveData
+            )
             if case .inactive(let reason) = inactiveStatus {
                 #expect(reason == "404")
             } else {
@@ -440,7 +444,9 @@ struct CommonStrategiesValueCoderTests {
                 }
                 """
             let pendingData = try #require(pendingJson.data(using: .utf8))
-            let pendingStatus = try decoder.decode(Status.self, from: pendingData)
+            let pendingStatus = try decoder.decode(
+                Status.self, from: pendingData
+            )
             if case .pending(let until) = pendingStatus {
                 #expect(until == "20251231")
             } else {
@@ -553,16 +559,20 @@ struct CommonStrategiesValueCoderTests {
 
             let jsonData = try #require(json.data(using: .utf8))
             let decoder = JSONDecoder()
-            let model = try decoder.decode(ModelWithOverride.self, from: jsonData)
+            let model = try decoder.decode(
+                ModelWithOverride.self, from: jsonData
+            )
 
-            #expect(model.id == 42) // Due to CustomIntCoder doubling the value
-            #expect(model.count == 42) // Normal ValueCoder behavior
+            #expect(model.id == 42)  // Due to CustomIntCoder doubling the value
+            #expect(model.count == 42)  // Normal ValueCoder behavior
 
             // Test encoding
             let encoder = JSONEncoder()
             encoder.outputFormatting = .sortedKeys
-            let encoded = try String(data: encoder.encode(model), encoding: .utf8)
-            #expect(encoded == #"{"count":42,"id":"21"}"#) // CustomIntCoder halves the value for id
+            let encoded = try String(
+                data: encoder.encode(model), encoding: .utf8
+            )
+            #expect(encoded == #"{"count":42,"id":"21"}"#)  // CustomIntCoder halves the value for id
         }
 
         @Test
@@ -632,11 +642,11 @@ fileprivate struct CustomIntCoder: HelperCoder {
                 debugDescription: "Could not decode value"
             )
         }
-        return intValue * 2 // Double the value during decoding
+        return intValue * 2  // Double the value during decoding
     }
 
     func encode(_ value: Int, to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(String(value / 2)) // Halve the value during encoding
+        try container.encode(String(value / 2))  // Halve the value during encoding
     }
 }
