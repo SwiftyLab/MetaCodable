@@ -151,6 +151,7 @@ extension PropertyVariable {
     func codingTypeMethod(
         forMethod method: ExprSyntax
     ) -> (TypeSyntax, ExprSyntax) {
+        #if canImport(SwiftSyntax601)
         let (dType, dMethod): (TypeSyntax, ExprSyntax)
         if let type = type.as(OptionalTypeSyntax.self) {
             dType = type.wrappedType
@@ -172,6 +173,29 @@ extension PropertyVariable {
             dMethod = method
         }
         return (dType, dMethod)
+        #else
+        let (dType, dMethod): (TypeSyntax, ExprSyntax)
+        if let type = type.as(OptionalTypeSyntax.self) {
+            dType = type.wrappedType
+            dMethod = "\(method)IfPresent"
+        } else if let type = type.as(ImplicitlyUnwrappedOptionalTypeSyntax.self)
+        {
+            dType = type.wrappedType
+            dMethod = "\(method)IfPresent"
+        } else if let type = type.as(IdentifierTypeSyntax.self),
+            type.name.text == "Optional",
+            let gArgs = type.genericArgumentClause?.arguments,
+            gArgs.count == 1,
+            let type = gArgs.first?.argument
+        {
+            dType = type
+            dMethod = "\(method)IfPresent"
+        } else {
+            dType = type
+            dMethod = method
+        }
+        return (dType, dMethod)
+        #endif
     }
 }
 

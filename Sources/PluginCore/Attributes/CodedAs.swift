@@ -23,9 +23,13 @@ package struct CodedAs: PropertyAttribute {
     /// Used for enums with internal/adjacent tagging to decode
     /// the identifier to this type.
     var type: TypeSyntax? {
+        #if canImport(SwiftSyntax601)
         return node.attributeName.as(IdentifierTypeSyntax.self)?
-            .genericArgumentClause?.arguments
-            .first?.argument.as(TypeSyntax.self)
+            .genericArgumentClause?.arguments.first?.argument.as(TypeSyntax.self)
+        #else
+        return node.attributeName.as(IdentifierTypeSyntax.self)?
+            .genericArgumentClause?.arguments.first?.argument
+        #endif
     }
 
     /// Creates a new instance with the provided node.
