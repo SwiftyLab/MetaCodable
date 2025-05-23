@@ -135,3 +135,11 @@ struct ExpectThrows: ExpressionMacro {
         )
     }
 }
+
+#if !canImport(SwiftSyntax510)
+extension FreestandingMacroExpansionSyntax {
+    var arguments: LabeledExprListSyntax {
+        return self.argumentList
+    }
+}
+#endif

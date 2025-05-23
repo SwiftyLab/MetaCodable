@@ -1,5 +1,5 @@
-import MetaCodable
 import HelperCoders
+import MetaCodable
 
 @Codable
 struct Product {
