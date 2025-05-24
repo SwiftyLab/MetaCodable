@@ -98,7 +98,7 @@ jobs:
               }
             },
             {
-              "os": "ubuntu-22.04t",
+              "os": "ubuntu-22.04",
               "swift": "5.10",
               "dependencies": {
                 "swift-syntax": "510.0.3"
