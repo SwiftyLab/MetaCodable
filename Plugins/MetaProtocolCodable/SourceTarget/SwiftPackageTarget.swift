@@ -1,6 +1,7 @@
 import Foundation
 import PackagePlugin
 
+
 /// Represents an SwiftPM target.
 ///
 /// Uses `SourceModuleTarget` to provide conformances.
@@ -12,9 +13,8 @@ struct SwiftPackageTarget {
 }
 
 /// This is a workaround because PackageDescription.Target.directoryURL will not be available until version 6.1
-/// See:  https://github.com/swiftlang/swift-package-manager/blob/735ddd97fa651729921315c8e46bd790429362cb/Sources/PackagePlugin/PackageModel.swift#L184-L186///
-#if swift(<6.1)
-extension Target {
+/// See:  https://github.com/swiftlang/swift-package-manager/blob/735ddd97fa651729921315c8e46bd790429362cb/Sources/PackagePlugin/PackageModel.swift#L184-L186
+extension PackagePlugin.Target {
     var directoryURL: URL {
         #if swift(<6)
         // No `directoryURL` but `Path` is not deprecated yet
@@ -32,8 +32,6 @@ extension Target {
 #endif
     }
 }
-#endif
-
 
 extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     /// The name of the module produced
@@ -89,6 +87,7 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     func configPath(named name: String) throws -> String? {
         let fileManager = FileManager.default
         let directory = module.directoryURL
+//        let directory = URL(string: module.directory.string)!
         let contents = try fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
         let file = contents.first { file in
             return name.lowercased()
