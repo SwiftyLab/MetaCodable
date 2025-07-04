@@ -1,22 +1,18 @@
 import SwiftSyntax
 
-/// Attribute type for `Codable` macro-attribute.
+/// Attribute type for `ConformEncodable` macro-attribute.
 ///
-/// Describes a macro that validates `Codable` macro usage
-/// and generates `Codable` conformances and implementations.
+/// Describes a macro that validates `ConformEncodable` macro usage
+/// and generates `Encodable` conformance and implementation.
 ///
-/// This macro performs extension macro expansion depending on `Codable`
-/// conformance of type:
-///   * Extension macro expansion, to confirm to `Decodable` or `Encodable`
-///     protocols depending on whether type doesn't already conform to `Decodable`
-///     or `Encodable` respectively.
+/// This macro performs extension macro expansion to confirm to `Encodable`
+/// protocol if the type doesn't already conform to `Encodable`:
 ///   * Extension macro expansion, to generate custom `CodingKey` type for
 ///     the attached declaration named `CodingKeys` and use this type for
-///     `Codable` implementation of both `init(from:)` and `encode(to:)`
-///     methods.
-///   * If attached declaration already conforms to `Codable` this macro expansion
+///     `Encodable` implementation of `encode(to:)` method.
+///   * If attached declaration already conforms to `Encodable` this macro expansion
 ///     is skipped.
-package struct Codable: PeerAttribute {
+package struct ConformEncodable: PeerAttribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
@@ -39,9 +35,10 @@ package struct Codable: PeerAttribute {
     /// Builds diagnoser that can validate this macro
     /// attached declaration.
     ///
-    /// Builds diagnoser that validates attached declaration
-    /// is `struct`/`class`/`enum`/`protocol` declaration
-    /// and macro usage is not duplicated for the same declaration.
+    /// Builds diagnoser that validates:
+    /// * Attached declaration is `struct`/`class`/`enum`/`protocol` declaration
+    /// * This attribute mustn't be combined with `Codable` attribute.
+    /// * Macro usage is not duplicated for the same declaration.
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
@@ -51,8 +48,8 @@ package struct Codable: PeerAttribute {
                 EnumDeclSyntax.self, ActorDeclSyntax.self,
                 ProtocolDeclSyntax.self
             )
+            cantBeCombined(with: Codable.self)
             cantBeCombined(with: ConformDecodable.self)
-            cantBeCombined(with: ConformEncodable.self)
             cantDuplicate()
         }
     }

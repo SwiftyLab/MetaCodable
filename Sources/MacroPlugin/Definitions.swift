@@ -608,3 +608,121 @@ struct UnTagged: PeerMacro {
         )
     }
 }
+
+/// A declaration macro that generates `Decodable`
+/// protocol conformance.
+///
+/// This implementation will delegate to the plugin core
+/// implementation depending on the type of attached declaration:
+///   * `struct`/`class`/`enum`/`actor` types: Expansion of `Decodable`
+///     protocol conformance members.
+public struct ConformDecodable: MemberMacro, ExtensionMacro {
+    /// Expand to produce members for `Decodable`.
+    ///
+    /// Membership macro expansion for `ConformDecodable` macro
+    /// will delegate to `PluginCore.ConformDecodable`.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Delegated member expansion from `PluginCore.ConformDecodable`.
+    public static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.ConformDecodable.expansion(
+            of: node, providingMembersOf: declaration, in: context
+        )
+    }
+
+    /// Expand to produce extensions for `Decodable`.
+    ///
+    /// Extension macro expansion for `ConformDecodable` macro
+    /// will delegate to `PluginCore.ConformDecodable`.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - type: The type to provide extensions of.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Delegated extension expansion from `PluginCore.ConformDecodable`.
+    public static func expansion(
+        of node: AttributeSyntax,
+        attachedTo declaration: some DeclGroupSyntax,
+        providingExtensionsOf type: some TypeSyntaxProtocol,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [ExtensionDeclSyntax] {
+        return try PluginCore.ConformDecodable.expansion(
+            of: node, attachedTo: declaration,
+            providingExtensionsOf: type, conformingTo: protocols,
+            in: context
+        )
+    }
+}
+
+/// A declaration macro that generates `Encodable`
+/// protocol conformance.
+///
+/// This implementation will delegate to the plugin core
+/// implementation depending on the type of attached declaration:
+///   * `struct`/`class`/`enum`/`actor` types: Expansion of `Encodable`
+///     protocol conformance members.
+public struct ConformEncodable: MemberMacro, ExtensionMacro {
+    /// Expand to produce members for `Encodable`.
+    ///
+    /// Membership macro expansion for `ConformEncodable` macro
+    /// will delegate to `PluginCore.ConformEncodable`.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Delegated member expansion from `PluginCore.ConformEncodable`.
+    public static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.ConformEncodable.expansion(
+            of: node, providingMembersOf: declaration, in: context
+        )
+    }
+
+    /// Expand to produce extensions for `Encodable`.
+    ///
+    /// Extension macro expansion for `ConformEncodable` macro
+    /// will delegate to `PluginCore.ConformEncodable`.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - type: The type to provide extensions of.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Delegated extension expansion from `PluginCore.ConformEncodable`.
+    public static func expansion(
+        of node: AttributeSyntax,
+        attachedTo declaration: some DeclGroupSyntax,
+        providingExtensionsOf type: some TypeSyntaxProtocol,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [ExtensionDeclSyntax] {
+        return try PluginCore.ConformEncodable.expansion(
+            of: node, attachedTo: declaration,
+            providingExtensionsOf: type, conformingTo: protocols,
+            in: context
+        )
+    }
+}

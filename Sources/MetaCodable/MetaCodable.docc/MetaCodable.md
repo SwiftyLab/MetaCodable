@@ -70,6 +70,8 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 ### Macros
 
 - ``Codable(commonStrategies:)``
+- ``ConformDecodable(commonStrategies:)``
+- ``ConformEncodable(commonStrategies:)``
 - ``MemberInit()``
 
 ### Strategies
