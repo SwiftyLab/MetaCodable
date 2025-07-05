@@ -22,7 +22,7 @@
 ///   * Use ``CodedAt(_:)`` to provide enum-case/protocol identifier tag path.
 ///   * Use ``CodedAs()`` to provide enum-case/protocol identifier tag type.
 ///   * Use ``ContentAt(_:_:)`` to provided enum-case/protocol content path.
-///   * Use ``IgnoreCoding()``, ``IgnoreEncoding()`` to ignore specific 
+///   * Use ``IgnoreCoding()``, ``IgnoreEncoding()`` to ignore specific
 ///     properties/cases/types from encoding.
 ///   * Use ``IgnoreEncoding(if:)-1iuvv`` and ``IgnoreEncoding(if:)-7toka``
 ///     to ignore encoding based on custom conditions.

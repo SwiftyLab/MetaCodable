@@ -42,7 +42,9 @@ package struct ContentAt: PropertyAttribute {
         return AggregatedDiagnosticProducer {
             expect(syntaxes: EnumDeclSyntax.self, ProtocolDeclSyntax.self)
             mustBeCombined(with: Codable.self)
-            mustBeCombined(with: CodedAt.self)
+            mustBeCombined(
+                with: CodedAt.self, or: DecodedAt.self, EncodedAt.self
+            )
             cantDuplicate()
         }
     }

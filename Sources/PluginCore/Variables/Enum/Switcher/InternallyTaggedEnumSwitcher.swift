@@ -33,18 +33,29 @@ where Variable: PropertyVariable {
     /// This declaration is used for additional attributes data
     /// for customizing generated code.
     let decl: EnumDeclSyntax
-    /// The key path at which identifier variable is registered.
+    /// The key path at which identifier variable is registered for decoding.
     ///
-    /// Identifier variable is registered with this path at `node`
+    /// Identifier variable is registered with this path at `decodingNode`
+    /// during initialization.
+    let decodingKeys: [CodingKeysMap.Key]
+    /// The key path at which identifier variable is registered for encoding.
+    ///
+    /// Identifier variable is registered with this path at `encodingNode`
     /// during initialization. This path is used for encode callback
     /// provided to enum-cases.
-    let keys: [CodingKeysMap.Key]
-    /// The node at which identifier variable is registered.
+    let encodingKeys: [CodingKeysMap.Key]
+    /// The node at which identifier variable is registered for decoding.
     ///
     /// Identifier variable is registered with the path at this node
     /// during initialization. This node is used to generate identifier
-    /// variable decoding/encoding implementations.
-    var node: PropertyVariableTreeNode
+    /// variable decoding implementations.
+    var decodingNode: PropertyVariableTreeNode
+    /// The node at which identifier variable is registered for encoding.
+    ///
+    /// Identifier variable is registered with the path at this node
+    /// during initialization. This node is used to generate identifier
+    /// variable encoding implementations.
+    var encodingNode: PropertyVariableTreeNode
     /// The builder action for building identifier variable.
     ///
     /// This builder action is used to create and use identifier variable
@@ -54,25 +65,41 @@ where Variable: PropertyVariable {
     /// Creates switcher variable with provided data.
     ///
     /// - Parameters:
-    ///   - encodeContainer: The container for case variation encoding.
-    ///   - identifier: The identifier name to use.
-    ///   - identifierType: The identifier type to use.
-    ///   - node: The node at which identifier variable is registered.
-    ///   - keys: The key path at which identifier variable is registered.
-    ///   - decl: The declaration for which code generated.
-    ///   - variableBuilder: The builder action for building identifier.
+    ///   - encodeContainer: The container for case variation encoding. Used as variable name
+    ///     in the generated code for handling the encoding container.
+    ///   - identifier: The identifier name to use as the variable name in the generated code
+    ///     for the enum case identifier.
+    ///   - identifierType: The identifier type to use as the variable type in the generated code
+    ///     for the enum case identifier.
+    ///   - decodingNode: The node at which identifier variable is registered for decoding.
+    ///     Contains the structure for all variables that need to be decoded.
+    ///   - encodingNode: The node at which identifier variable is registered for encoding.
+    ///     Contains the structure for all variables that need to be encoded.
+    ///   - decodingKeys: The key path at which the identifier variable is registered for decoding.
+    ///     Specifies the exact location in the decoder where the identifier should be read from.
+    ///   - encodingKeys: The key path at which the identifier variable is registered for encoding.
+    ///     Specifies the exact location in the encoder where the identifier should be written to.
+    ///   - decl: The declaration for which code is generated. Used to access additional
+    ///     attributes and customize the generated code.
+    ///   - variableBuilder: The builder action for creating and processing the identifier variable.
+    ///     Takes a basic property variable registration and transforms it into the final variable type.
     init(
         encodeContainer: TokenSyntax,
         identifier: TokenSyntax, identifierType: TypeSyntax,
-        node: PropertyVariableTreeNode, keys: [CodingKeysMap.Key],
+        decodingNode: PropertyVariableTreeNode,
+        encodingNode: PropertyVariableTreeNode,
+        decodingKeys: [CodingKeysMap.Key],
+        encodingKeys: [CodingKeysMap.Key],
         decl: EnumDeclSyntax, variableBuilder: @escaping VariableBuilder
     ) {
         self.encodeContainer = encodeContainer
         self.identifier = identifier
         self.identifierType = identifierType
         self.decl = decl
-        self.node = node
-        self.keys = keys
+        self.decodingNode = decodingNode
+        self.encodingNode = encodingNode
+        self.decodingKeys = decodingKeys
+        self.encodingKeys = encodingKeys
         self.variableBuilder = variableBuilder
     }
 
@@ -90,17 +117,20 @@ where Variable: PropertyVariable {
     init(
         encodeContainer: TokenSyntax,
         identifier: TokenSyntax, identifierType: TypeSyntax,
-        keyPath: [String], codingKeys: CodingKeysMap,
+        keyPath: PathKey, codingKeys: CodingKeysMap,
         decl: EnumDeclSyntax, context: some MacroExpansionContext,
         variableBuilder: @escaping VariableBuilder
     ) {
-        precondition(!keyPath.isEmpty)
+        precondition(!keyPath.decoding.isEmpty && !keyPath.encoding.isEmpty)
         self.encodeContainer = encodeContainer
         self.identifier = identifier
         self.identifierType = identifierType
         self.decl = decl
         self.variableBuilder = variableBuilder
-        var node = PropertyVariableTreeNode()
+
+        var decodingNode = PropertyVariableTreeNode()
+        var encodingNode = PropertyVariableTreeNode()
+
         let variable = BasicPropertyVariable(
             name: identifier, type: self.identifierType, value: nil,
             decodePrefix: "", encodePrefix: "",
@@ -110,15 +140,32 @@ where Variable: PropertyVariable {
         let output = variableBuilder(input)
         let key = output.key
         let field = self.identifier
-        self.keys = codingKeys.add(keys: key, field: field, context: context)
+
+        // Get separate keys for decoding and encoding
+        let decodingPathKeys = codingKeys.add(keys: key.decoding, field: field, context: context)
+        let encodingPathKeys = codingKeys.add(keys: key.encoding, field: field, context: context)
+
+        self.decodingKeys = decodingPathKeys
+        self.encodingKeys = encodingPathKeys
+
         let containerVariable = ContainerVariable(
             encodeContainer: encodeContainer, base: output.variable
         )
-        node.register(
-            variable: containerVariable, keyPath: keys,
+
+        // Register for decoding using decodingKeys
+        decodingNode.register(
+            variable: containerVariable, keyPath: decodingKeys,
             immutableEncodeContainer: true
         )
-        self.node = node
+
+        // Register for encoding using encodingKeys
+        encodingNode.register(
+            variable: containerVariable, keyPath: encodingKeys,
+            immutableEncodeContainer: true
+        )
+
+        self.decodingNode = decodingNode
+        self.encodingNode = encodingNode
     }
 
     /// Create basic identifier variable.

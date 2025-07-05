@@ -29,22 +29,37 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     /// during initialization.
     let encode: Bool?
 
-    /// The node at which variables are registered.
+    /// The node at which variables are registered for decoding.
     ///
     /// Associated variables are registered with the path at this node
     /// during initialization. This node is used to generate associated
-    /// variables decoding/encoding implementations.
-    let node: PropertyVariableTreeNode
+    /// variables decoding implementations.
+    let decodingNode: PropertyVariableTreeNode
+
+    /// The node at which variables are registered for encoding.
+    ///
+    /// Associated variables are registered with the path at this node
+    /// during initialization. This node is used to generate associated
+    /// variables encoding implementations.
+    let encodingNode: PropertyVariableTreeNode
+
     /// All the associated variables available for this case.
     ///
-    /// While only decodable/encodable variables are registered on `node`,
+    /// While only decodable/encodable variables are registered on nodes,
     /// this list maintains all variables in the order of their appearance.
     let variables: [any AssociatedVariable]
-    /// The associated attributes decoding and encoding data.
+
+    /// The associated attributes decoding data.
     ///
-    /// Only variables registered with this data will be decoded/encoded
-    /// from the `node`.
-    let data: PropertyVariableTreeNode.CodingData
+    /// Only variables registered with this data will be decoded
+    /// from the decoding node.
+    let decodingData: PropertyVariableTreeNode.CodingData
+
+    /// The associated attributes encoding data.
+    ///
+    /// Only variables registered with this data will be encoded
+    /// from the encoding node.
+    let encodingData: PropertyVariableTreeNode.CodingData
 
     /// The `CodingKeys` map that generates keys.
     ///
@@ -75,12 +90,17 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         self.decode = nil
         self.encode = nil
         self.codingKeys = decl.codingKeys
-        var node = switcher.node(for: decl, in: context)
-        var data = PropertyVariableTreeNode.CodingData()
+
+        var decodingNode = switcher.node(for: decl, in: context)
+        var encodingNode = switcher.node(for: decl, in: context)
+        var decodingData = PropertyVariableTreeNode.CodingData()
+        var encodingData = PropertyVariableTreeNode.CodingData()
         var variables: [any AssociatedVariable] = []
+
         for member in decl.codableMembers() {
+            let key = PathKey(decoding: member.path, encoding: member.path)
             let iReg = Registration(
-                decl: member, key: member.path, context: context
+                decl: member, key: key, context: context
             )
             let newVar = switcher.transform(variable: iReg.variable)
             let reg = iReg.updating(with: newVar)
@@ -88,16 +108,31 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
             let path = registration.key
             let variable = registration.variable
             variables.append(variable)
-            guard
-                (variable.decode ?? true) || (variable.encode ?? true)
-            else { continue }
+
             let name = variable.name
-            let keys = codingKeys.add(keys: path, field: name, context: context)
-            data.register(variable: variable, keyPath: keys)
-            node.register(variable: variable, keyPath: keys)
+
+            // Register in the appropriate node based on decode/encode flags
+            if variable.decode ?? true {
+                let decodingKeys = codingKeys.add(
+                    keys: path.decoding, field: name, context: context
+                )
+                decodingData.register(variable: variable, keyPath: decodingKeys)
+                decodingNode.register(variable: variable, keyPath: decodingKeys)
+            }
+
+            if variable.encode ?? true {
+                let encodingKeys = codingKeys.add(
+                    keys: path.encoding, field: name, context: context
+                )
+                encodingData.register(variable: variable, keyPath: encodingKeys)
+                encodingNode.register(variable: variable, keyPath: encodingKeys)
+            }
         }
-        self.data = data
-        self.node = node
+
+        self.decodingData = decodingData
+        self.encodingData = encodingData
+        self.decodingNode = decodingNode
+        self.encodingNode = encodingNode
         self.variables = variables
     }
 
@@ -133,8 +168,8 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
                 }
             }
         )
-        let generated = node.decoding(
-            with: data, in: context,
+        let generated = decodingNode.decoding(
+            with: decodingData, in: context,
             from: .withCoder(location.coder, keyType: codingKeys.type)
         )
         let newSyntax = CodeBlockItemListSyntax {
@@ -164,8 +199,8 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         in context: some MacroExpansionContext,
         to location: EnumCaseCodingLocation
     ) -> EnumCaseGenerated {
-        let generated = node.encoding(
-            with: data, in: context,
+        let generated = encodingNode.encoding(
+            with: encodingData, in: context,
             to: .withCoder(location.coder, keyType: codingKeys.type)
         )
         let pattern = IdentifierPatternSyntax(identifier: "_")

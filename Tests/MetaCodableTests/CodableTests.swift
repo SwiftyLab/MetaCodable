@@ -508,6 +508,8 @@ struct CodableTests {
 
 let allMacros: [String: Macro.Type] = [
     "CodedAt": MacroPlugin.CodedAt.self,
+    "DecodedAt": MacroPlugin.DecodedAt.self,
+    "EncodedAt": MacroPlugin.EncodedAt.self,
     "CodedIn": MacroPlugin.CodedIn.self,
     "Default": MacroPlugin.Default.self,
     "CodedBy": MacroPlugin.CodedBy.self,
@@ -528,6 +530,8 @@ let allMacros: [String: Macro.Type] = [
 #else
 let allMacros: [String: Macro.Type] = [
     "CodedAt": CodedAt.self,
+    "DecodedAt": DecodedAt.self,
+    "EncodedAt": EncodedAt.self,
     "CodedIn": CodedIn.self,
     "Default": Default.self,
     "CodedBy": CodedBy.self,

@@ -198,6 +198,72 @@ struct CodedAt: PeerMacro {
     }
 }
 
+/// Attribute type for `DecodedAt` macro-attribute.
+///
+/// This type can validate`DecodedAt` macro-attribute
+/// usage and extract data for `Codable` macro to
+/// generate implementation.
+struct DecodedAt: PeerMacro {
+    /// Provide metadata to `Codable` macro for final expansion
+    /// and verify proper usage of this macro.
+    ///
+    /// This macro doesn't perform any expansion rather `Codable` macro
+    /// uses when performing expansion.
+    ///
+    /// This macro verifies that macro usage condition is met by attached
+    /// declaration by using the `validate` implementation provided.
+    ///
+    /// - Parameters:
+    ///   - node: The attribute describing this macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: No declaration is returned, only attached declaration is
+    ///            analyzed.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingPeersOf declaration: some DeclSyntaxProtocol,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.DecodedAt.expansion(
+            of: node, providingPeersOf: declaration, in: context
+        )
+    }
+}
+
+/// Attribute type for `EncodedAt` macro-attribute.
+///
+/// This type can validate `EncodedAt` macro-attribute
+/// usage and extract data for `Codable` macro to
+/// generate implementation.
+struct EncodedAt: PeerMacro {
+    /// Provide metadata to `Codable` macro for final expansion
+    /// and verify proper usage of this macro.
+    ///
+    /// This macro doesn't perform any expansion rather `Codable` macro
+    /// uses when performing expansion.
+    ///
+    /// This macro verifies that macro usage condition is met by attached
+    /// declaration by using the `validate` implementation provided.
+    ///
+    /// - Parameters:
+    ///   - node: The attribute describing this macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: No declaration is returned, only attached declaration is
+    ///            analyzed.
+    static func expansion(
+        of node: AttributeSyntax,
+        providingPeersOf declaration: some DeclSyntaxProtocol,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        return try PluginCore.EncodedAt.expansion(
+            of: node, providingPeersOf: declaration, in: context
+        )
+    }
+}
+
 /// Attribute type for `CodedIn` macro-attribute.
 ///
 /// This type can validate`CodedIn` macro-attribute
