@@ -54,7 +54,9 @@ package struct CodedBy: PropertyAttribute {
                 isEnum || isProtocol,
                 AggregatedDiagnosticProducer {
                     mustBeCombined(with: Codable.self)
-                    mustBeCombined(with: CodedAt.self)
+                    mustBeCombined(
+                        with: CodedAt.self, or: DecodedAt.self, EncodedAt.self
+                    )
                 },
                 else: AggregatedDiagnosticProducer {
                     expect(syntaxes: VariableDeclSyntax.self)

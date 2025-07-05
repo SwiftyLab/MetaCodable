@@ -77,11 +77,29 @@ struct Registration<Decl, Key, Var: Variable> {
     }
 }
 
+/// A structure for holding separate key paths
+/// for decoding and encoding.
+struct PathKey {
+    /// The key path used during decoding operations.
+    ///
+    /// This array represents a path of string keys that specifies where in the
+    /// encoded data the decoder should look to find the value. Each element in
+    /// the array represents one level of nesting in the coding path.
+    let decoding: [String]
+
+    /// The key path used during encoding operations.
+    ///
+    /// This array represents a path of string keys that specifies where in the
+    /// output data structure the encoder should place the value. Each element in
+    /// the array represents one level of nesting in the coding path.
+    let encoding: [String]
+}
+
 /// A type representing property variable registration for code generation.
 ///
 /// This type contains variable and `CodingKey` path data that is necessary
 /// for syntax generation.
-typealias PathRegistration<Decl, Var> = Registration<Decl, [String], Var>
+typealias PathRegistration<Decl, Var> = Registration<Decl, PathKey, Var>
 where Var: Variable
 
 /// A type representing enum case variable registration for code generation.

@@ -240,7 +240,7 @@ struct ConformEncodableTests {
         struct SomeEncodable {
             @CodedAt("custom_value")
             let value: String
-            
+
             @CodedIn("nested", "path")
             let count: Int
         }
@@ -411,7 +411,7 @@ struct ConformDecodableTests {
         struct SomeEncodable {
             @CodedAt("custom_value")
             let value: String
-            
+
             @CodedIn("nested", "path")
             let count: Int
         }

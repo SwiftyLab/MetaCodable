@@ -60,6 +60,8 @@ package struct CodedIn: PropertyAttribute {
             cantDuplicate()
             attachedToNonStaticVariable()
             cantBeCombined(with: CodedAt.self)
+            cantBeCombined(with: DecodedAt.self)
+            cantBeCombined(with: EncodedAt.self)
             cantBeCombined(with: IgnoreCoding.self)
         }
     }

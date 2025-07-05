@@ -156,7 +156,9 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 .checkInitializedCodingIgnored(attachedAt: parent)
                 .registerKeyPath(
                     provider: CodedAt(from: input.decl)
-                        ?? CodedIn(from: input.decl) ?? CodedIn()
+                        ?? CodedIn(from: input.decl) ?? CodedIn(),
+                    forDecoding: DecodedAt(from: input.decl),
+                    forEncoding: EncodedAt(from: input.decl)
                 )
                 .detectCommonStrategies(from: decl)
                 .useHelperCoderIfExists()
@@ -214,7 +216,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         self.caseEncodeExpr = caseEncodeExpr
         self.encodeSwitchExpr = encodeSwitchExpr
         self.forceDefault = forceDefault
-        let reg = PathRegistration(decl: decl, key: [], variable: switcher)
+        let key = PathKey(decoding: [], encoding: [])
+        let reg = PathRegistration(decl: decl, key: key, variable: switcher)
         let switcher = switcherBuilder(reg).variable
         self.switcher = switcher
         self.codingKeys = codingKeys

@@ -32,13 +32,16 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     ///   - context: The context in which to perform the macro expansion.
     init(
         base: Wrapped, contentDecoder: TokenSyntax, contentEncoder: TokenSyntax,
-        keyPath: [String], codingKeys: CodingKeysMap,
+        keyPath: PathKey, codingKeys: CodingKeysMap,
         context: some MacroExpansionContext
     ) {
         var base = base
-        let keys = codingKeys.add(keys: keyPath, context: context)
+        let decodingKeys = codingKeys.add(keys: keyPath.decoding, context: context)
+        let encodingKeys = codingKeys.add(keys: keyPath.encoding, context: context)
         self.variable = .init(decoder: contentDecoder, encoder: contentEncoder)
-        self.base = base.registering(variable: variable, keyPath: keys)
+        base.registering(variable: variable, decodingKeyPath: decodingKeys)
+        base.registering(variable: variable, encodingKeyPath: encodingKeys)
+        self.base = base
     }
 
     /// Provides node at which case associated variables are registered.
