@@ -336,7 +336,7 @@ extension ProtocolGen {
                 )
             ).description
             let sourceData = sourceText.data(using: .utf8)
-            fileManager.createFile(atPath: output, contents: sourceData)
+            _ = fileManager.createFile(atPath: output, contents: sourceData)
         }
     }
 }
