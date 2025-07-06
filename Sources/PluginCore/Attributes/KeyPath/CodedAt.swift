@@ -56,10 +56,14 @@ package struct CodedAt: PropertyAttribute {
                 AggregatedDiagnosticProducer {
                     mustBeCombined(with: Codable.self)
                     cantBeCombined(with: UnTagged.self)
+                    cantBeCombined(with: DecodedAt.self)
+                    cantBeCombined(with: EncodedAt.self)
                 },
                 else: AggregatedDiagnosticProducer {
                     attachedToUngroupedVariable()
                     attachedToNonStaticVariable()
+                    cantBeCombined(with: DecodedAt.self)
+                    cantBeCombined(with: EncodedAt.self)
                     cantBeCombined(with: CodedIn.self)
                     cantBeCombined(with: IgnoreCoding.self)
                 }
@@ -99,16 +103,25 @@ where Var == ExternallyTaggedEnumSwitcher, Decl == EnumDeclSyntax {
         ) -> Registration<Decl, Key, Switcher>
     ) -> Registration<Decl, Key, AnyEnumSwitcher>
     where Variable: PropertyVariable, Switcher: EnumSwitcherVariable {
+        let tagAttr = CodedAt(from: decl)
+        let decodeTagAttr = DecodedAt(from: decl)
+        let encodeTagAttr = EncodedAt(from: decl)
+        let path = tagAttr?.keyPath(withExisting: []) ?? []
+        let decodedPath = decodeTagAttr?.keyPath(withExisting: path) ?? path
+        let encodedPath = encodeTagAttr?.keyPath(withExisting: path) ?? path
+
         guard
-            let tagAttr = CodedAt(from: decl)
+          !decodedPath.isEmpty && !encodedPath.isEmpty
         else { return self.updating(with: variable.any) }
         let typeAttr = CodedAs(from: decl)
+        let keyPath = PathKey(decoding: decodedPath, encoding: encodedPath)
         let variable = InternallyTaggedEnumSwitcher(
             encodeContainer: encodeContainer, identifier: identifier,
             identifierType: typeAttr?.type ?? fallbackType,
-            keyPath: tagAttr.keyPath(withExisting: []), codingKeys: codingKeys,
+            keyPath: keyPath, codingKeys: codingKeys,
             decl: decl, context: context, variableBuilder: variableBuilder
         )
+
         let newRegistration = switcherBuilder(self.updating(with: variable))
         return newRegistration.updating(with: newRegistration.variable.any)
     }

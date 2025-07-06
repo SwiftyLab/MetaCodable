@@ -59,7 +59,7 @@ package struct CodingKeys: PeerAttribute {
     }
 }
 
-extension Registration where Key == [String] {
+extension Registration where Key == PathKey {
     /// Update current registration `CodingKey` path data.
     ///
     /// New registration is updated with the transformed `CodingKey` path
@@ -72,6 +72,10 @@ extension Registration where Key == [String] {
     ) -> Self where D: AttributableDeclSyntax {
         guard let attr = CodingKeys(from: decl) else { return self }
         let strategy = attr.strategy
-        return self.updating(with: strategy.transform(keyPath: self.key))
+        let newKey = PathKey(
+            decoding: strategy.transform(keyPath: self.key.decoding),
+            encoding: strategy.transform(keyPath: self.key.encoding)
+        )
+        return self.updating(with: newKey)
     }
 }

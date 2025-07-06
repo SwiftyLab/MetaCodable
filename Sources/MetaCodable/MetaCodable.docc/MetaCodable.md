@@ -77,6 +77,8 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 ### Strategies
 
 - ``CodedAt(_:)``
+- ``DecodedAt(_:)``
+- ``EncodedAt(_:)``
 - ``CodedIn(_:)``
 - ``CodedAs()``
 - ``CodedAs(_:_:)``

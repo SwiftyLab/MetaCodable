@@ -1,5 +1,6 @@
 import SwiftSyntax
 import SwiftSyntaxMacros
+import OrderedCollections
 
 /// A `TypeVariable` that provides `Codable` conformance
 /// for a group of properties.
@@ -16,9 +17,10 @@ where
 
     /// The where clause generator for generic type arguments.
     let constraintGenerator: ConstraintGenerator
-    /// The root node containing all the keys
-    /// and associated field metadata maps.
-    let node: PropertyVariableTreeNode
+    /// The root node containing all the keys and associated field metadata maps for decoding.
+    let decodingNode: PropertyVariableTreeNode
+    /// The root node containing all the keys and associated field metadata maps for encoding.
+    let encodingNode: PropertyVariableTreeNode
     /// The `CodingKeys` map containing keys
     /// and generated case names.
     let codingKeys: CodingKeysMap
@@ -41,22 +43,32 @@ where
         ) -> PathRegistration<MemberSyntax, Output>
     ) {
         self.constraintGenerator = .init(decl: decl)
-        var node = PropertyVariableTreeNode()
+        var decodingNode = PropertyVariableTreeNode()
+        var encodingNode = PropertyVariableTreeNode()
         for member in decl.codableMembers(input: memberInput) {
             let `var` = member.codableVariable(in: context)
-            let key = [CodingKeysMap.Key.name(for: `var`.name).text]
+            let path = [CodingKeysMap.Key.name(for: `var`.name).text]
+            let key = PathKey(decoding: path, encoding: path)
             let reg = Registration(decl: member, key: key, context: context)
             let registration = builder(reg)
-            let path = registration.key
             let variable = registration.variable
-            guard
-                (variable.decode ?? true) || (variable.encode ?? true)
-            else { continue }
+            let decodingPath = registration.key.decoding
+            let encodingPath = registration.key.encoding
             let name = variable.name
-            let keys = codingKeys.add(keys: path, field: name, context: context)
-            node.register(variable: variable, keyPath: keys)
+
+            // Register in the appropriate node based on decode/encode flags
+            if variable.decode ?? true {
+                let keys = codingKeys.add(keys: decodingPath, field: name, context: context)
+                decodingNode.register(variable: variable, keyPath: keys)
+            }
+
+            if variable.encode ?? true {
+                let keys = codingKeys.add(keys: encodingPath, field: name, context: context)
+                encodingNode.register(variable: variable, keyPath: keys)
+            }
         }
-        self.node = node
+        self.decodingNode = decodingNode
+        self.encodingNode = encodingNode
         self.codingKeys = codingKeys
     }
 
@@ -79,13 +91,13 @@ where
             let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
                 location.method.arg, keyType: codingKeys.type
             )
-            node.decoding(in: context, from: nLocation).combined()
+            decodingNode.decoding(in: context, from: nLocation).combined()
             nLocation.decoding(in: context)
         }
         return .init(
             code: syntax, modifiers: [],
             whereClause: constraintGenerator.decodingClause(
-                withVariables: node.linkedVariables,
+                withVariables: decodingNode.linkedVariables,
                 conformingTo: conformance
             ),
             inheritanceClause: .init { .init(type: conformance) }
@@ -111,13 +123,13 @@ where
             let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
                 location.method.arg, keyType: codingKeys.type
             )
-            node.encoding(in: context, to: nLocation).combined()
+            encodingNode.encoding(in: context, to: nLocation).combined()
             nLocation.encoding(in: context)
         }
         return .init(
             code: syntax, modifiers: [],
             whereClause: constraintGenerator.encodingClause(
-                withVariables: node.linkedVariables,
+                withVariables: encodingNode.linkedVariables,
                 conformingTo: conformance
             ),
             inheritanceClause: .init { .init(type: conformance) }
@@ -159,7 +171,17 @@ where
     func initializing(
         in context: some MacroExpansionContext
     ) -> [AnyInitialization] {
-        return node.linkedVariables.map { $0.initializing(in: context).any }
+        // Combine variables from both nodes for initialization
+        let decodingVars = decodingNode.linkedVariables
+        let encodingVars = encodingNode.linkedVariables
+
+        // Create a dictionary to deduplicate variables by name
+        var variableDict: OrderedDictionary<TokenSyntax, any PropertyVariable> = [:]
+        for variable in (decodingVars + encodingVars) where variableDict[variable.name] == nil {
+            variableDict[variable.name] = variable
+        }
+
+        return variableDict.values.map { $0.initializing(in: context).any }
     }
 }
 
@@ -193,7 +215,9 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
                 .checkInitializedCodingIgnored(attachedAt: decl)
                 .registerKeyPath(
                     provider: CodedAt(from: input.decl)
-                        ?? CodedIn(from: input.decl) ?? CodedIn()
+                        ?? CodedIn(from: input.decl) ?? CodedIn(),
+                    forDecoding: DecodedAt(from: input.decl),
+                    forEncoding: EncodedAt(from: input.decl)
                 )
                 .detectCommonStrategies(from: decl)
                 .useHelperCoderIfExists()
