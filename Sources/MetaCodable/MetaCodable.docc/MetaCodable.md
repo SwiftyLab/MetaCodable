@@ -112,6 +112,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``IgnoreEncoding()``
 - ``IgnoreEncoding(if:)-1iuvv``
 - ``IgnoreEncoding(if:)-7toka``
+- ``IgnoreEncoding(basedOn:)``
 - ``IgnoreCodingInitialized()``
 
 ### Dynamic Coding

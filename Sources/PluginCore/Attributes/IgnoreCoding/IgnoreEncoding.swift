@@ -12,17 +12,20 @@ package struct IgnoreEncoding: PropertyAttribute {
     /// during initialization.
     let node: AttributeSyntax
 
-    /// Optional encoding condition closure specified.
+    /// Optional encoding condition closure expression with label specified.
     ///
     /// This closure may take one or multiple arguments depending on
-    /// whether attached to property or enum case.
-    ///
-    /// The return type of closure in `Bool`, based on this value encoding
-    /// is decided to be performed or ignored.
-    var conditionExpr: ExprSyntax? {
-        return node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
-            expr.label?.tokenKind == .identifier("if")
-        }?.expression
+    /// whether attached to property or enum case, and includes information
+    /// about whether it's an 'if' or 'basedOn' condition.
+    var conditionExpr: LabeledExprSyntax? {
+        guard let args = node.arguments?.as(LabeledExprListSyntax.self) else {
+            return nil
+        }
+
+        return args.first { expr in
+            expr.label?.tokenKind == .identifier("if") ||
+            expr.label?.tokenKind == .identifier("basedOn")
+        }
     }
 
     /// Creates a new instance with the provided node.

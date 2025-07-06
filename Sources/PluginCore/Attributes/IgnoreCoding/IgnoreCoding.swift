@@ -106,8 +106,23 @@ where
         let ignoreEncoding = ignoreEncodingAttr != nil && conditionExpr == nil
         let decode = !ignoreCoding && !ignoreDecoding
         let encode = !ignoreCoding && !ignoreEncoding
+
+        let encodingCondition: Output.Options.Condition?
+        if let conditionExpr = conditionExpr {
+            switch conditionExpr.label?.tokenKind {
+            case .identifier("if"):
+                encodingCondition = .if(conditionExpr.expression)
+            case .identifier("basedOn"):
+                encodingCondition = .basedOn(conditionExpr.expression)
+            default:
+                encodingCondition = nil
+            }
+        } else {
+            encodingCondition = nil
+        }
+
         let options = Output.Options(
-            decode: decode, encode: encode, encodingConditionExpr: conditionExpr
+            decode: decode, encode: encode, encodingCondition: encodingCondition
         )
         let newVariable = Output(base: self.variable, options: options)
         return self.updating(with: newVariable)

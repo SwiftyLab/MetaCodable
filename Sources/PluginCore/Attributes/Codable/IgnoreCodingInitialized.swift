@@ -69,7 +69,7 @@ extension Registration where Var: ValuedVariable {
         let attr = IgnoreCodingInitialized(from: decl)
         let code = attr != nil ? self.variable.value == nil : nil
         let options = Output.Options(
-            decode: code, encode: code, encodingConditionExpr: nil
+            decode: code, encode: code, encodingCondition: nil
         )
         let newVariable = Output(base: self.variable, options: options)
         return self.updating(with: newVariable)
