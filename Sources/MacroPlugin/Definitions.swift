@@ -47,7 +47,7 @@ struct Codable: MemberMacro, ExtensionMacro {
         providingMembersOf declaration: some DeclGroupSyntax,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.Codable.expansion(
+        try PluginCore.Codable.expansion(
             of: node, providingMembersOf: declaration, in: context
         )
     }
@@ -83,7 +83,7 @@ struct Codable: MemberMacro, ExtensionMacro {
         conformingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.Codable.expansion(
+        try PluginCore.Codable.expansion(
             of: node, providingMembersOf: declaration,
             conformingTo: protocols, in: context
         )
@@ -123,7 +123,7 @@ struct Codable: MemberMacro, ExtensionMacro {
         conformingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
     ) throws -> [ExtensionDeclSyntax] {
-        return try PluginCore.Codable.expansion(
+        try PluginCore.Codable.expansion(
             of: node, attachedTo: declaration, providingExtensionsOf: type,
             conformingTo: protocols, in: context
         )
@@ -157,7 +157,32 @@ struct MemberInit: MemberMacro {
         providingMembersOf declaration: some DeclGroupSyntax,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.MemberInit.expansion(
+        try PluginCore.MemberInit.expansion(
+            of: node, providingMembersOf: declaration, in: context
+        )
+    }
+
+    /// Expand to produce memberwise initializer(s) for attached struct.
+    ///
+    /// The `AttributeExpander` instance provides declarations based on
+    /// whether declaration is supported.
+    ///
+    /// - Parameters:
+    ///   - node: The attribute describing this macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Memberwise initializer(s) declaration(s).
+    static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        try PluginCore.MemberInit.expansion(
             of: node, providingMembersOf: declaration, in: context
         )
     }
@@ -192,7 +217,7 @@ struct CodedAt: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.CodedAt.expansion(
+        try PluginCore.CodedAt.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -225,7 +250,7 @@ struct DecodedAt: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.DecodedAt.expansion(
+        try PluginCore.DecodedAt.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -258,7 +283,7 @@ struct EncodedAt: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.EncodedAt.expansion(
+        try PluginCore.EncodedAt.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -291,7 +316,7 @@ struct CodedIn: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.CodedIn.expansion(
+        try PluginCore.CodedIn.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -324,7 +349,7 @@ struct CodedBy: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.CodedBy.expansion(
+        try PluginCore.CodedBy.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -357,7 +382,7 @@ struct Default: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.Default.expansion(
+        try PluginCore.Default.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -390,7 +415,7 @@ struct CodedAs: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.CodedAs.expansion(
+        try PluginCore.CodedAs.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -423,7 +448,7 @@ struct ContentAt: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.ContentAt.expansion(
+        try PluginCore.ContentAt.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -456,7 +481,7 @@ struct IgnoreCoding: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.IgnoreCoding.expansion(
+        try PluginCore.IgnoreCoding.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -489,7 +514,7 @@ struct IgnoreDecoding: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.IgnoreDecoding.expansion(
+        try PluginCore.IgnoreDecoding.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -522,7 +547,7 @@ struct IgnoreEncoding: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.IgnoreEncoding.expansion(
+        try PluginCore.IgnoreEncoding.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -559,7 +584,7 @@ struct CodingKeys: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.CodingKeys.expansion(
+        try PluginCore.CodingKeys.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -596,7 +621,7 @@ struct IgnoreCodingInitialized: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.IgnoreCodingInitialized.expansion(
+        try PluginCore.IgnoreCodingInitialized.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -633,7 +658,7 @@ struct Inherits: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.Inherits.expansion(
+        try PluginCore.Inherits.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -669,7 +694,7 @@ struct UnTagged: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.UnTagged.expansion(
+        try PluginCore.UnTagged.expansion(
             of: node, providingPeersOf: declaration, in: context
         )
     }
@@ -699,7 +724,32 @@ public struct ConformDecodable: MemberMacro, ExtensionMacro {
         providingMembersOf declaration: some DeclGroupSyntax,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.ConformDecodable.expansion(
+        try PluginCore.ConformDecodable.expansion(
+            of: node, providingMembersOf: declaration, in: context
+        )
+    }
+
+    /// Expand to produce members for `Decodable`.
+    ///
+    /// Membership macro expansion for `ConformDecodable` macro
+    /// will delegate to `PluginCore.ConformDecodable`.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Delegated member expansion from `PluginCore.ConformDecodable`.
+    public static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        try PluginCore.ConformDecodable.expansion(
             of: node, providingMembersOf: declaration, in: context
         )
     }
@@ -726,7 +776,7 @@ public struct ConformDecodable: MemberMacro, ExtensionMacro {
         conformingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
     ) throws -> [ExtensionDeclSyntax] {
-        return try PluginCore.ConformDecodable.expansion(
+        try PluginCore.ConformDecodable.expansion(
             of: node, attachedTo: declaration,
             providingExtensionsOf: type, conformingTo: protocols,
             in: context
@@ -758,7 +808,32 @@ public struct ConformEncodable: MemberMacro, ExtensionMacro {
         providingMembersOf declaration: some DeclGroupSyntax,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return try PluginCore.ConformEncodable.expansion(
+        try PluginCore.ConformEncodable.expansion(
+            of: node, providingMembersOf: declaration, in: context
+        )
+    }
+
+    /// Expand to produce members for `Encodable`.
+    ///
+    /// Membership macro expansion for `ConformEncodable` macro
+    /// will delegate to `PluginCore.ConformEncodable`.
+    ///
+    /// - Parameters:
+    ///   - node: The custom attribute describing this attached macro.
+    ///   - declaration: The declaration this macro attribute is attached to.
+    ///   - protocols: The list of protocols to add conformances to. These will
+    ///     always be protocols that `type` does not already state a conformance
+    ///     to.
+    ///   - context: The context in which to perform the macro expansion.
+    ///
+    /// - Returns: Delegated member expansion from `PluginCore.ConformEncodable`.
+    public static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        try PluginCore.ConformEncodable.expansion(
             of: node, providingMembersOf: declaration, in: context
         )
     }
@@ -785,7 +860,7 @@ public struct ConformEncodable: MemberMacro, ExtensionMacro {
         conformingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
     ) throws -> [ExtensionDeclSyntax] {
-        return try PluginCore.ConformEncodable.expansion(
+        try PluginCore.ConformEncodable.expansion(
             of: node, attachedTo: declaration,
             providingExtensionsOf: type, conformingTo: protocols,
             in: context

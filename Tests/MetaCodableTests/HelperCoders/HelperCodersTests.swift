@@ -13,7 +13,7 @@ struct HelperCodersTests {
             """
         let json = try #require(jsonStr.data(using: .utf8))
         let model = try JSONDecoder().decode(Model.self, from: json)
-        let epoch: Double = 878639901
+        let epoch: Double = 878_639_901
         #expect(model.date.timeIntervalSince1970 == epoch)
         #expect(model.optionalDate == nil)
         let encoded = try JSONEncoder().encode(model)

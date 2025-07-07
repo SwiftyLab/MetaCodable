@@ -67,7 +67,7 @@ extension Attribute {
         Condition: DiagnosticCondition, Producer: DiagnosticProducer,
         Fallback: DiagnosticProducer
     {
-        return .init(
+        .init(
             condition: condition, producer: producer, fallback: fallback
         )
     }

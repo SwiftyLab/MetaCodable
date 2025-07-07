@@ -49,7 +49,7 @@ package struct CodedAt: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantDuplicate()
             `if`(
                 isEnum || isProtocol,
@@ -111,7 +111,7 @@ where Var == ExternallyTaggedEnumSwitcher, Decl == EnumDeclSyntax {
         let encodedPath = encodeTagAttr?.keyPath(withExisting: path) ?? path
 
         guard
-          !decodedPath.isEmpty && !encodedPath.isEmpty
+            !decodedPath.isEmpty && !encodedPath.isEmpty
         else { return self.updating(with: variable.any) }
         let typeAttr = CodedAs(from: decl)
         let keyPath = PathKey(decoding: decodedPath, encoding: encodedPath)

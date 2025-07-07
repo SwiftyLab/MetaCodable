@@ -1,3 +1,4 @@
+import Foundation
 import PackagePlugin
 
 /// Provides information about the package for which the plugin is invoked,
@@ -23,7 +24,7 @@ protocol MetaProtocolCodablePluginContext {
     /// write its outputs to that directory. The plugin may also create other
     /// directories for cache files and other file system content that either
     /// it or the command will need.
-    var pluginWorkDirectory: Path { get }
+    var pluginWorkDirectoryURL: URL { get }
     /// The targets which are local to current context.
     ///
     /// These targets are included in the same package/project as this context.
@@ -45,7 +46,7 @@ extension PluginContext: MetaProtocolCodablePluginContext {
     ///
     /// Includes all the source code targets of the package.
     var localTargets: [SwiftPackageTarget] {
-        return `package`.targets.compactMap { target in
+        `package`.targets.compactMap { target in
             guard let sourceModule = target.sourceModule else { return nil }
             return SwiftPackageTarget(module: sourceModule)
         }

@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct GroupedVariableTests {
-
     struct WithoutAnyCustomization {
         @Codable
         @MemberInit

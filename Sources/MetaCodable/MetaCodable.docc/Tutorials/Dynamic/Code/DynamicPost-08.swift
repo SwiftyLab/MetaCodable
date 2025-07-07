@@ -18,7 +18,7 @@ struct InvalidPost: Post {
 @Codable
 struct TextPost: Post, DynamicCodable {
     static var identifier: Identifier {
-        return "text"
+        "text"
     }
 
     let id: UUID
@@ -28,7 +28,7 @@ struct TextPost: Post, DynamicCodable {
 @Codable
 struct PicturePost: Post, DynamicCodable {
     static var identifier: Identifier {
-        return ["picture", "photo"]
+        ["picture", "photo"]
     }
 
     let id: UUID
@@ -39,7 +39,7 @@ struct PicturePost: Post, DynamicCodable {
 @Codable
 struct AudioPost: Post, DynamicCodable {
     static var identifier: Identifier {
-        return "audio"
+        "audio"
     }
 
     let id: UUID
@@ -50,7 +50,7 @@ struct AudioPost: Post, DynamicCodable {
 @Codable
 struct VideoPost: Post, DynamicCodable {
     static var identifier: Identifier {
-        return "video"
+        "video"
     }
 
     let id: UUID

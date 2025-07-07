@@ -39,7 +39,7 @@ package struct ContentAt: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(syntaxes: EnumDeclSyntax.self, ProtocolDeclSyntax.self)
             mustBeCombined(with: Codable.self)
             mustBeCombined(

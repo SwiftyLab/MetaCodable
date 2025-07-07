@@ -22,7 +22,7 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     ///
     /// Represents direct dependencies of the target.
     var dependencyTargets: [Self] {
-        return module.dependencies.lazy.compactMap { dependency in
+        module.dependencies.lazy.compactMap { dependency in
             return switch dependency {
             case .target(let target):
                 target.sourceModule
@@ -36,7 +36,7 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     ///
     /// Represents direct and transient dependencies of the target.
     var recursiveTargets: [Self] {
-        return module.recursiveTargetDependencies.lazy
+        module.recursiveTargetDependencies.lazy
             .compactMap { $0.sourceModule }
             .map { Self.init(module: $0) }
     }
@@ -49,7 +49,7 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     /// - Parameter suffix: The name suffix.
     /// - Returns: The matching files.
     func sourceFiles(withSuffix suffix: String) -> FileList {
-        return module.sourceFiles(withSuffix: suffix)
+        module.sourceFiles(withSuffix: suffix)
     }
 
     /// The absolute path to config file if provided.
@@ -62,19 +62,18 @@ extension SwiftPackageTarget: MetaProtocolCodableSourceTarget {
     ///
     /// - Parameter name: The config file name.
     /// - Returns: The config file path.
-    func configPath(named name: String) throws -> String? {
+    func configPath(named name: String) throws -> URL? {
         let fileManager = FileManager.default
-        let directory = module.directory.string
-        let contents = try fileManager.contentsOfDirectory(atPath: directory)
-        let file = contents.first { file in
-            let path = Path(file)
-            return name.lowercased()
-                == path.stem
+        let directory = module.directoryURL
+        let contents = try fileManager.contentsOfDirectory(
+            at: directory, includingPropertiesForKeys: nil
+        )
+        return contents.first { file in
+            name.lowercased()
+                == file.deletingPathExtension().lastPathComponent
                 .components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()
         }
-        guard let file else { return nil }
-        return module.directory.appending([file]).string
     }
 }

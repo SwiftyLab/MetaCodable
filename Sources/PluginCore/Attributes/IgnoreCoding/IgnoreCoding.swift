@@ -56,7 +56,7 @@ package struct IgnoreCoding: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantBeCombined(with: CodedIn.self)
             cantBeCombined(with: CodedAt.self)
             cantBeCombined(with: CodedAs.self)
@@ -134,7 +134,7 @@ where
 ///
 /// Attaching attributes of this type to computed properties indicates
 /// this variable should be encoded for the type.
-fileprivate protocol CodingAttribute: PropertyAttribute {}
+private protocol CodingAttribute: PropertyAttribute {}
 extension CodedIn: CodingAttribute {}
 extension CodedAt: CodingAttribute {}
 extension CodedBy: CodingAttribute {}

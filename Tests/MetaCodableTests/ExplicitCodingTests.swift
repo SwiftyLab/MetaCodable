@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct ExplicitCodingTests {
-
     struct GetterOnlyVariable {
         @Codable
         struct SomeCodable {
@@ -55,9 +54,7 @@ struct ExplicitCodingTests {
         struct SomeCodable {
             @CodedIn
             var value: String {
-                get {
-                    "some"
-                }
+                "some"
             }
         }
 

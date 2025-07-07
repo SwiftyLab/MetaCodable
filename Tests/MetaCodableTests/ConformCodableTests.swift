@@ -1,11 +1,11 @@
-import MetaCodable
 import Foundation
+import HelperCoders
+import MetaCodable
 import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxMacroExpansion
 import SwiftSyntaxMacros
 import Testing
-import HelperCoders
 
 @testable import PluginCore
 
@@ -173,7 +173,8 @@ struct ConformEncodableTests {
 
         @Test
         func testParsing() throws {
-            let model = Model(bool: true, int: 42, double: 3.1416, string: "5265762156")
+            let model = Model(
+                bool: true, int: 42, double: 3.1416, string: "5265762156")
 
             #expect(model.bool)
             #expect(model.int == 42)
@@ -184,7 +185,8 @@ struct ConformEncodableTests {
             let encoder = JSONEncoder()
             encoder.outputFormatting = .sortedKeys
             let encoded = try encoder.encode(model)
-            let reDecoded = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+            let reDecoded = try #require(
+                JSONSerialization.jsonObject(with: encoded) as? [String: Any])
             #expect(reDecoded["bool"] as? Bool ?? false)
             #expect(reDecoded["int"] as? Int == 42)
             #expect(reDecoded["double"] as? Double == 3.1416)

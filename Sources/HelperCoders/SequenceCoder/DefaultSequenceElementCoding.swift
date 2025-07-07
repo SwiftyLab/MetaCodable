@@ -15,7 +15,7 @@ public struct DefaultSequenceElementCoding<Coded: Codable>: HelperCoder {
     /// - Throws: If decoding fails due to corrupted or invalid data.
     @inlinable
     public func decode(from decoder: Decoder) throws -> Coded {
-        return try Coded(from: decoder)
+        try Coded(from: decoder)
     }
 
     /// Decodes optional value from the given `decoder`.
@@ -27,7 +27,7 @@ public struct DefaultSequenceElementCoding<Coded: Codable>: HelperCoder {
     /// - Throws: If decoding fails due to corrupted or invalid data.
     @inlinable
     public func decodeIfPresent(from decoder: Decoder) throws -> Coded? {
-        return try Coded?(from: decoder)
+        try Coded?(from: decoder)
     }
 
     /// Decodes value of the from the given `container` and specified `key`.
@@ -46,7 +46,7 @@ public struct DefaultSequenceElementCoding<Coded: Codable>: HelperCoder {
         from container: DecodingContainer,
         forKey key: DecodingContainer.Key
     ) throws -> Coded {
-        return try container.decode(Coded.self, forKey: key)
+        try container.decode(Coded.self, forKey: key)
     }
 
     /// Decodes optional value of the from the given `container` and
@@ -65,7 +65,7 @@ public struct DefaultSequenceElementCoding<Coded: Codable>: HelperCoder {
     public func decodeIfPresent<DecodingContainer>(
         from container: DecodingContainer, forKey key: DecodingContainer.Key
     ) throws -> Coded? where DecodingContainer: KeyedDecodingContainerProtocol {
-        return try container.decodeIfPresent(Coded.self, forKey: key)
+        try container.decodeIfPresent(Coded.self, forKey: key)
     }
 
     /// Encodes given value to the provided `encoder`.

@@ -1,4 +1,5 @@
 #if canImport(XcodeProjectPlugin)
+import Foundation
 import PackagePlugin
 import XcodeProjectPlugin
 
@@ -14,7 +15,7 @@ extension XcodeTarget: MetaProtocolCodableSourceTarget {
     ///
     /// Represents direct dependencies of the target.
     var dependencyTargets: [Self] {
-        return dependencies.compactMap { dependency in
+        dependencies.compactMap { dependency in
             return switch dependency {
             case .target(let target):
                 target
@@ -28,7 +29,7 @@ extension XcodeTarget: MetaProtocolCodableSourceTarget {
     ///
     /// Represents direct and transient dependencies of the target.
     var recursiveTargets: [Self] {
-        return dependencies.flatMap { dependency in
+        dependencies.flatMap { dependency in
             switch dependency {
             case .target(let target):
                 var targets = [target]
@@ -48,7 +49,7 @@ extension XcodeTarget: MetaProtocolCodableSourceTarget {
     /// - Parameter suffix: The name suffix.
     /// - Returns: The matching files.
     func sourceFiles(withSuffix suffix: String) -> [FileList.Element] {
-        return self.inputFiles.filter {
+        self.inputFiles.filter {
             #if swift(>=6)
             $0.url.path.hasSuffix(suffix)
             #else
@@ -66,23 +67,14 @@ extension XcodeTarget: MetaProtocolCodableSourceTarget {
     ///
     /// - Parameter name: The config file name.
     /// - Returns: The config file path.
-    func configPath(named name: String) -> String? {
-        let file = inputFiles.first { file in
-            #if swift(>=6)
-            let path = file.url.lastPathComponent
-            #else
-            let path = file.path.stem
-            #endif
-            let fileName = path.components(separatedBy: .alphanumerics.inverted)
+    func configPath(named name: String) -> URL? {
+        inputFiles.first { file in
+            name.lowercased()
+                == file.url.deletingPathExtension().lastPathComponent
+                .components(separatedBy: .alphanumerics.inverted)
                 .joined(separator: "")
                 .lowercased()
-            return name.lowercased() == fileName
-        }
-        #if swift(>=6)
-        return file?.url.lastPathComponent
-        #else
-        return file?.path.stem
-        #endif
+        }?.url
     }
 }
 #endif

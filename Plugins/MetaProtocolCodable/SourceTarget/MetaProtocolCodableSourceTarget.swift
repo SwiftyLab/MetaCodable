@@ -1,3 +1,4 @@
+import Foundation
 import PackagePlugin
 
 /// Represents a target consisting of a source code module,
@@ -42,7 +43,7 @@ protocol MetaProtocolCodableSourceTarget {
     ///
     /// - Parameter name: The config file name.
     /// - Returns: The config file path.
-    func configPath(named name: String) throws -> String?
+    func configPath(named name: String) throws -> URL?
 }
 
 extension Config {
@@ -71,12 +72,12 @@ extension Config {
             allTargets = targets
         case .local:
             allTargets = context.localTargets.filter { localTarget in
-                return target.recursiveTargets.contains { target in
-                    return target.moduleName == localTarget.moduleName
+                target.recursiveTargets.contains { target in
+                    target.moduleName == localTarget.moduleName
                 }
             }
             modules = allTargets.lazy.map(\.moduleName).filter { module in
-                return module != target.moduleName
+                module != target.moduleName
             }
         case .recursive:
             var targets = target.recursiveTargets

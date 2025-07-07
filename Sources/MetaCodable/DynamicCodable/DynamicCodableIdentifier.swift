@@ -30,7 +30,7 @@ where Value: Equatable & Sendable {
     ///
     /// - Returns: Whether identifier value is equivalent.
     public static func ~= (left: Self, right: Value) -> Bool {
-        return switch left {
+        switch left {
         case .one(let value):
             value == right
         case .many(let values):
@@ -54,7 +54,7 @@ where Value: Equatable & Sendable {
     public static func ~= (
         left: Self, right: Self
     ) -> Bool where Value: Hashable {
-        return switch (left, right) {
+        switch (left, right) {
         case let (.one(left), .one(right)):
             left == right
         case let (.one(value), .many(values)):

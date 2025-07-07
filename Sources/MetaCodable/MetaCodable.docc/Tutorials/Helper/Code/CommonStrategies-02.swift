@@ -4,7 +4,7 @@ import MetaCodable
 @Codable(commonStrategies: [
     .codedBy(.valueCoder()),
     .codedBy(
-        .sequenceCoder(elementHelper: .valueCoder(), configuration: .lossy
+        .sequenceCoder(elementHelper: .valueCoder(), configuration: .lossy)
     ),
 ])
 struct User {

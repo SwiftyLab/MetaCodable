@@ -80,9 +80,10 @@ struct CombinedUsage<Attr: Attribute>: DiagnosticProducer {
             }
         let attrNames: String
         if types.count > 1 {
-            attrNames = types[0..<(types.count - 1)]
-              .map { "@\($0.name)" }
-              .joined(separator: ", ") + " or @\(types.last!.name)"
+            attrNames =
+                types[0..<(types.count - 1)]
+                .map { "@\($0.name)" }
+                .joined(separator: ", ") + " or @\(types.last!.name)"
         } else {
             attrNames = "@\(types[0].name)"
         }

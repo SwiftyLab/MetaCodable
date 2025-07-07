@@ -756,11 +756,11 @@ struct CodedByActionTests {
                 }
 
                 func decode(from decoder: any Decoder) throws -> Int {
-                    return try multipliers.reduce(Int(from: decoder), *)
+                    try multipliers.reduce(Int(from: decoder), *)
                 }
 
                 func encode(_ value: Int, to encoder: any Encoder) throws {
-                    return try multipliers.reduce(value, /).encode(to: encoder)
+                    try multipliers.reduce(value, /).encode(to: encoder)
                 }
             }
         }
@@ -1292,7 +1292,7 @@ struct CodedByActionTests {
     }
 }
 
-fileprivate func dogJSON(version: Int?) -> Data? {
+private func dogJSON(version: Int?) -> Data? {
     let versionStr =
         if let version {
             "\"version\": \(version),"
@@ -1310,26 +1310,26 @@ fileprivate func dogJSON(version: Int?) -> Data? {
         """.data(using: .utf8)
 }
 
-fileprivate func itemJSON(id: String) -> Data? {
-    return """
-        {
-          "id": "\(id)",
-          "title": "Great",
-          "images": {
-            "original": {
-              "height": 1080,
-              "width": 1920
-            },
-            "small": {
-              "height": 108,
-              "width": 192
-            }
-          }
+private func itemJSON(id: String) -> Data? {
+    """
+    {
+      "id": "\(id)",
+      "title": "Great",
+      "images": {
+        "original": {
+          "height": 1080,
+          "width": 1920
+        },
+        "small": {
+          "height": 108,
+          "width": 192
         }
-        """.data(using: .utf8)
+      }
+    }
+    """.data(using: .utf8)
 }
 
-fileprivate func itemImagesJSON(id: String, count: UInt) -> Data? {
+private func itemImagesJSON(id: String, count: UInt) -> Data? {
     let imagesJSON = (0..<count).map { _ in
         return "{\"height\": 1080,\"width\": 1920}"
     }.joined(separator: ",")

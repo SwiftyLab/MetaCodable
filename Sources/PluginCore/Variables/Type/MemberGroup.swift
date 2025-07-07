@@ -1,6 +1,6 @@
+import OrderedCollections
 import SwiftSyntax
 import SwiftSyntaxMacros
-import OrderedCollections
 
 /// A `TypeVariable` that provides `Codable` conformance
 /// for a group of properties.
@@ -58,12 +58,14 @@ where
 
             // Register in the appropriate node based on decode/encode flags
             if variable.decode ?? true {
-                let keys = codingKeys.add(keys: decodingPath, field: name, context: context)
+                let keys = codingKeys.add(
+                    keys: decodingPath, field: name, context: context)
                 decodingNode.register(variable: variable, keyPath: keys)
             }
 
             if variable.encode ?? true {
-                let keys = codingKeys.add(keys: encodingPath, field: name, context: context)
+                let keys = codingKeys.add(
+                    keys: encodingPath, field: name, context: context)
                 encodingNode.register(variable: variable, keyPath: keys)
             }
         }
@@ -176,8 +178,10 @@ where
         let encodingVars = encodingNode.linkedVariables
 
         // Create a dictionary to deduplicate variables by name
-        var variableDict: OrderedDictionary<TokenSyntax, any PropertyVariable> = [:]
-        for variable in (decodingVars + encodingVars) where variableDict[variable.name] == nil {
+        var variableDict: OrderedDictionary<TokenSyntax, any PropertyVariable> =
+            [:]
+        for variable in (decodingVars + encodingVars)
+        where variableDict[variable.name] == nil {
             variableDict[variable.name] = variable
         }
 
@@ -209,8 +213,7 @@ where Decl.ChildSyntaxInput == Void, Decl.MemberSyntax == PropertyDeclSyntax {
             from: decl, in: context,
             codingKeys: codingKeys, memberInput: ()
         ) { input in
-            return
-                input
+            input
                 .transformKeysAccordingToStrategy(attachedTo: decl)
                 .checkInitializedCodingIgnored(attachedAt: decl)
                 .registerKeyPath(

@@ -29,7 +29,7 @@ struct BasicAssociatedVariable: AssociatedVariable, ComposedVariable,
     /// If any fallback behavior provided it is used, otherwise
     /// fallback for the underlying variable value is used.
     var decodingFallback: DecodingFallback {
-        return fallback ?? base.decodingFallback
+        fallback ?? base.decodingFallback
     }
 
     /// Creates a new variable with provided data.

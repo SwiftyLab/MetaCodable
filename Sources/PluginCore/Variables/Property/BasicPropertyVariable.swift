@@ -224,7 +224,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
     /// - Parameter variable: The variable to check for.
     /// - Returns: Whether this variable is dependent on the provided variable.
     func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
-        return false
+        false
     }
 }
 

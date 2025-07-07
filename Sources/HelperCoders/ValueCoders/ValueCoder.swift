@@ -20,7 +20,7 @@ public struct ValueCoder<Strategy: ValueCodingStrategy>: HelperCoder {
     /// - Throws: If the provided `Strategy` fails decoding.
     @inlinable
     public func decode(from decoder: Decoder) throws -> Strategy.Value {
-        return try Strategy.decode(from: decoder)
+        try Strategy.decode(from: decoder)
     }
 
     /// Encodes value with the provided `Strategy` to the given `encoder`.
@@ -32,7 +32,7 @@ public struct ValueCoder<Strategy: ValueCodingStrategy>: HelperCoder {
     /// - Throws: If the provided `Strategy` fails encoding.
     @inlinable
     public func encode(_ value: Strategy.Value, to encoder: Encoder) throws {
-        return try Strategy.encode(value, to: encoder)
+        try Strategy.encode(value, to: encoder)
     }
 }
 

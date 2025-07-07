@@ -95,7 +95,7 @@ where
     ///   - configuration: The configuration for decoding and encoding.
     public init(
         elementHelper: ElementHelper, configuration: Configuration = .init()
-    ) where Sequence == Array<ElementHelper.Coded> {
+    ) where Sequence == [ElementHelper.Coded] {
         self.init(
             output: Sequence.self, elementHelper: elementHelper,
             configuration: configuration
@@ -195,7 +195,7 @@ extension SequenceCoder {
         elementHelperCreation: (repeat each Property) -> ElementHelper,
         configuration: Configuration,
         properties: repeat each Property
-    ) where Sequence == Array<ElementHelper.Coded> {
+    ) where Sequence == [ElementHelper.Coded] {
         #if swift(>=5.10)
         self.init(
             output: Sequence.self, elementHelperCreation: elementHelperCreation,
@@ -220,7 +220,7 @@ extension SequenceCoder {
     public init<each Property>(
         elementHelperCreation: (repeat each Property) -> ElementHelper,
         properties: repeat each Property
-    ) where Sequence == Array<ElementHelper.Coded> {
+    ) where Sequence == [ElementHelper.Coded] {
         #if swift(>=5.10)
         self.init(
             elementHelperCreation: elementHelperCreation,

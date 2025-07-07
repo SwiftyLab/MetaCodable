@@ -50,7 +50,7 @@ extension VariableTreeNode {
     /// Gets all variables at current node
     /// and children nodes.
     var linkedVariables: [any PropertyVariable] {
-        return variables + children.flatMap { $1.linkedVariables }
+        variables + children.flatMap { $1.linkedVariables }
     }
 
     /// Register variable for the provided `CodingKey` path.

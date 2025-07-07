@@ -114,7 +114,7 @@ where Self: ComposedVariable, Self.Wrapped: ConditionalVariable {
     ///
     /// Provides arguments of underlying variable value.
     var conditionArguments: LabeledExprListSyntax {
-        return base.conditionArguments
+        base.conditionArguments
     }
 }
 
@@ -123,7 +123,7 @@ extension PropertyVariable {
     ///
     /// Passes current variable as single argument.
     var conditionArguments: LabeledExprListSyntax {
-        return [
+        [
             .init(expression: "\(self.encodePrefix)\(self.name)" as ExprSyntax)
         ]
     }
@@ -241,7 +241,7 @@ extension Collection {
     /// - Returns: The number of elements in the sequence that satisfy
     ///   the given predicate.
     func count(where predicate: (Element) -> Bool) -> Int {
-        return self.filter(predicate).count
+        self.filter(predicate).count
     }
 }
 #endif

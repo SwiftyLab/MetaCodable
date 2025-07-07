@@ -58,7 +58,7 @@ extension ProtocolGen {
                 }
                 var data = SourceData.aggregate(datas: datas)
                 data.protocols = data.protocols.filter { _, value in
-                    return !value.types.isEmpty && !value.attributes.isEmpty
+                    !value.types.isEmpty && !value.attributes.isEmpty
                 }
                 return data
             }
@@ -336,7 +336,7 @@ extension ProtocolGen {
                 )
             ).description
             let sourceData = sourceText.data(using: .utf8)
-            fileManager.createFile(atPath: output, contents: sourceData)
+            _ = fileManager.createFile(atPath: output, contents: sourceData)
         }
     }
 }

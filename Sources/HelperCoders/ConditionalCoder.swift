@@ -36,7 +36,7 @@ where D.Coded == E.Coded {
     /// - Throws: If the underlying `HelperCoder` throws error.
     @inlinable
     public func decode(from decoder: Decoder) throws -> D.Coded {
-        return try self.decoder.decode(from: decoder)
+        try self.decoder.decode(from: decoder)
     }
 
     /// Decodes optional value using the decode specific
@@ -47,7 +47,7 @@ where D.Coded == E.Coded {
     /// - Throws: If the underlying `HelperCoder` throws error.
     @inlinable
     public func decodeIfPresent(from decoder: Decoder) throws -> D.Coded? {
-        return try self.decoder.decodeIfPresent(from: decoder)
+        try self.decoder.decodeIfPresent(from: decoder)
     }
 
     /// Encodes using the encode specific `HelperCoder`

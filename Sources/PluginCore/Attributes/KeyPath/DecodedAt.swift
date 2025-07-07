@@ -51,7 +51,7 @@ package struct DecodedAt: PropertyAttribute {
     ///   * This attribute isn't used combined with `CodedIn`
     ///     `CodedAt` and `IgnoreCoding` attribute.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantDuplicate()
             `if`(
                 isEnum || isProtocol,

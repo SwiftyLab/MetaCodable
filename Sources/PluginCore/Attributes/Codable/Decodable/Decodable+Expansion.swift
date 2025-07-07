@@ -28,7 +28,7 @@ extension ConformDecodable: MemberMacro, ExtensionMacro {
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         let defaultProtocols: [TypeSyntax] = [
-            .init(stringLiteral: TypeCodingLocation.Method.decode().protocol),
+            .init(stringLiteral: TypeCodingLocation.Method.decode().protocol)
         ]
         return try Self.expansion(
             of: node, providingMembersOf: declaration,

@@ -33,7 +33,7 @@ extension TaggedEnumSwitcherVariable {
         withDefaultCase default: Bool,
         preSyntax: (TokenSyntax) -> CodeBlockItemListSyntax
     ) -> SwitchExprSyntax {
-        return SwitchExprSyntax(subject: header) {
+        SwitchExprSyntax(subject: header) {
             for (`case`, value) in location.cases where `case`.decode ?? true {
                 let cLocation = EnumCaseCodingLocation(
                     coder: coder, values: value.decodeExprs

@@ -44,7 +44,7 @@ package struct UnTagged: PeerAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             shouldNotDuplicate()
             mustBeCombined(with: Codable.self)
             cantBeCombined(with: CodedAt.self)

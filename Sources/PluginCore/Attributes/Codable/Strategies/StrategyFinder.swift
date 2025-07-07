@@ -17,7 +17,8 @@ struct StrategyFinder {
     /// - Parameter decl: The declaration to extract strategies from.
     init(decl: some AttributableDeclSyntax) {
         guard
-            let attr: any PeerAttribute = Codable(from: decl) ?? ConformDecodable(from: decl) ?? ConformEncodable(from: decl),
+            let attr: any PeerAttribute = Codable(from: decl)
+                ?? ConformDecodable(from: decl) ?? ConformEncodable(from: decl),
             let arguments = attr.node.arguments?.as(LabeledExprListSyntax.self),
             let arg = arguments.first(where: {
                 $0.label?.text == "commonStrategies"

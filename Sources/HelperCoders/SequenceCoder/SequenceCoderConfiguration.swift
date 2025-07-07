@@ -58,7 +58,7 @@ extension SequenceCoder.Configuration: OptionSet {
     /// - Parameter value: The sequence to use.
     /// - Returns: The created configuration.
     public static func `default`(_ value: Sequence) -> Self {
-        return [.defaultWhenInvalid(value), .defaultWhenEmpty(value)]
+        [.defaultWhenInvalid(value), .defaultWhenEmpty(value)]
     }
     /// Configuration with default value when invalid data type encountered.
     ///
@@ -68,7 +68,7 @@ extension SequenceCoder.Configuration: OptionSet {
     /// - Parameter value: The sequence to use.
     /// - Returns: The created configuration.
     public static func defaultWhenInvalid(_ value: Sequence) -> Self {
-        return .init(lossy: false, invalidDefault: value, emptyDefault: nil)
+        .init(lossy: false, invalidDefault: value, emptyDefault: nil)
     }
     /// Configuration with default value when empty data encountered.
     ///
@@ -78,7 +78,7 @@ extension SequenceCoder.Configuration: OptionSet {
     /// - Parameter value: The sequence to use.
     /// - Returns: The created configuration.
     public static func defaultWhenEmpty(_ value: Sequence) -> Self {
-        return .init(lossy: false, invalidDefault: nil, emptyDefault: value)
+        .init(lossy: false, invalidDefault: nil, emptyDefault: value)
     }
 
     /// Creates a new configuration from provided configuration.
@@ -130,7 +130,7 @@ extension SequenceCoder.Configuration: OptionSet {
     /// - Returns: Whether two values are equal.
     private static func areEqual(_ lhs: Sequence?, _ rhs: Sequence?) -> Bool {
         func `is`<T: Equatable>(value lhs: T, equalTo rhs: Any?) -> Bool {
-            return lhs == (rhs as? T)
+            lhs == (rhs as? T)
         }
 
         guard
@@ -191,7 +191,7 @@ extension SequenceCoder.Configuration: OptionSet {
     ///
     /// - Returns: True only if all the configuration data match.
     public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.lossy == rhs.lossy
+        lhs.lossy == rhs.lossy
             && areEqual(lhs.invalidDefault, rhs.invalidDefault)
             && areEqual(lhs.emptyDefault, rhs.emptyDefault)
     }

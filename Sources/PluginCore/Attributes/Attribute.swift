@@ -58,7 +58,7 @@ extension Attribute {
     /// - Parameters id: The message id.
     /// - Returns: Created message id.
     func messageID(_ id: String) -> MessageID {
-        return .init(
+        .init(
             domain: "com.SwiftyLab.MetaCodable",
             id: id
         )
@@ -78,12 +78,11 @@ extension Attribute {
         else { return [] }
 
         let declSyntaxChoice = choices.first { choice in
-            if case .node(let type) = choice {
-                return type is AttributableDeclSyntax.Type
-                    && syntax.is(type)
-            } else {
+            guard case .node(let type) = choice else {
                 return false
             }
+            return type is AttributableDeclSyntax.Type
+                && syntax.is(type)
         }
 
         guard
@@ -106,7 +105,7 @@ extension Attribute {
     ///   is attached to.
     /// - Returns: Whether this attribute is applied more than once.
     func isDuplicated(in declaration: some SyntaxProtocol) -> Bool {
-        return Self.attributes(attachedTo: declaration).count > 1
+        Self.attributes(attachedTo: declaration).count > 1
     }
 
     /// Creates a new diagnostic message instance at current attribute node
@@ -122,7 +121,7 @@ extension Attribute {
         message: String, id: MessageID,
         severity: DiagnosticSeverity
     ) -> MetaCodableMessage {
-        return .init(
+        .init(
             macro: self.node,
             message: message,
             messageID: id,

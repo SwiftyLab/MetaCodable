@@ -16,6 +16,7 @@
 ///   the default variable name or any encoding path specified with ``EncodedAt(_:)``.
 @attached(peer)
 @available(swift 5.9)
-public macro DecodedAt(_ path: StaticString...) = #externalMacro(
-    module: "MacroPlugin", type: "DecodedAt"
-)
+public macro DecodedAt(_ path: StaticString...) =
+    #externalMacro(
+        module: "MacroPlugin", type: "DecodedAt"
+    )

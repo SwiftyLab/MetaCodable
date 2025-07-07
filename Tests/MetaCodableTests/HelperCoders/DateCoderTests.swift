@@ -18,7 +18,7 @@ struct DateCoderTests {
             """
         let json = try #require(jsonStr.data(using: .utf8))
         let model = try JSONDecoder().decode(Model.self, from: json)
-        let epoch: Double = 878639901
+        let epoch: Double = 878_639_901
         #expect(model.epochSeconds.timeIntervalSince1970 == epoch)
         #expect(model.epochMilliSeconds.timeIntervalSince1970 == epoch)
         #expect(model.epochMicroSeconds.timeIntervalSince1970 == epoch)

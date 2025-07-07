@@ -16,6 +16,6 @@ public extension CodableCommonStrategy {
     /// - Parameter helperCoderStrategy: The helper coder strategy to apply (e.g., `.valueCoder()`).
     /// - Returns: A `CodableCommonStrategy` value for use in the `commonStrategies` parameter of `@Codable`.
     static func codedBy(_ helperCoderStrategy: HelperCoderStrategy) -> Self {
-        return .init()
+        .init()
     }
 }

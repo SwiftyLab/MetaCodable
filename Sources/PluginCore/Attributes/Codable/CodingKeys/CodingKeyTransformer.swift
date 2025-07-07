@@ -150,7 +150,7 @@ extension CodingKeys.Strategy.Capitalization {
     /// - Parameter str: The input `String`.
     /// - Returns: The created `String`.
     func lowercasingFirst(in str: String) -> String {
-        return str.prefix(1).lowercased() + str.dropFirst()
+        str.prefix(1).lowercased() + str.dropFirst()
     }
 
     /// Creates `String` the first letter of uppercase.
@@ -161,6 +161,6 @@ extension CodingKeys.Strategy.Capitalization {
     /// - Parameter str: The input `String`.
     /// - Returns: The created `String`.
     func uppercasingFirst(in str: String) -> String {
-        return str.prefix(1).uppercased() + str.dropFirst()
+        str.prefix(1).uppercased() + str.dropFirst()
     }
 }
