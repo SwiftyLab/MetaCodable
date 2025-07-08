@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct VariableDeclarationTests {
-
     struct InitializedImmutableVariable {
         @Codable
         @MemberInit
@@ -152,9 +151,7 @@ struct VariableDeclarationTests {
         @MemberInit
         struct SomeCodable {
             var value: String {
-                get {
-                    "some"
-                }
+                "some"
             }
         }
 
@@ -570,7 +567,7 @@ struct VariableDeclarationTests {
         @Codable
         @MemberInit
         struct SomeCodable {
-            let value: Optional<String>
+            let value: String?
         }
 
         @Test

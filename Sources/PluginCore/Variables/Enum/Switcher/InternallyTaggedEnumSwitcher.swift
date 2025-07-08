@@ -142,8 +142,10 @@ where Variable: PropertyVariable {
         let field = self.identifier
 
         // Get separate keys for decoding and encoding
-        let decodingPathKeys = codingKeys.add(keys: key.decoding, field: field, context: context)
-        let encodingPathKeys = codingKeys.add(keys: key.encoding, field: field, context: context)
+        let decodingPathKeys = codingKeys.add(
+            keys: key.decoding, field: field, context: context)
+        let encodingPathKeys = codingKeys.add(
+            keys: key.encoding, field: field, context: context)
 
         self.decodingKeys = decodingPathKeys
         self.encodingKeys = encodingPathKeys
@@ -176,7 +178,7 @@ where Variable: PropertyVariable {
     /// - Parameter name: The variable name to use.
     /// - Returns: The basic identifier variable.
     func base(_ name: TokenSyntax) -> BasicPropertyVariable {
-        return BasicPropertyVariable(
+        BasicPropertyVariable(
             name: name, type: self.identifierType, value: nil,
             decodePrefix: "", encodePrefix: "",
             decode: true, encode: true
@@ -197,7 +199,7 @@ where Variable: PropertyVariable {
         for decl: EnumCaseVariableDeclSyntax,
         in context: some MacroExpansionContext
     ) -> PropertyVariableTreeNode {
-        return .init()
+        .init()
     }
 
     /// Creates value expressions for provided enum-case variable.
@@ -266,7 +268,7 @@ where Variable: PropertyVariable {
     func codingKeys(
         in context: some MacroExpansionContext
     ) -> MemberBlockItemListSyntax {
-        return []
+        []
     }
 }
 
@@ -327,7 +329,7 @@ extension InternallyTaggedEnumSwitcher {
             in context: some MacroExpansionContext,
             to location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
-            return switch location {
+            switch location {
             case .coder(let encoder, _):
                 fatalError("Error encoding \(Self.self) to \(encoder)")
             case .container(let container, _, _):

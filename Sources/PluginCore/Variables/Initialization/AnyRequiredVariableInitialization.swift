@@ -30,6 +30,6 @@ struct AnyRequiredVariableInitialization: RequiredVariableInitialization {
     /// - Parameter generator: The init-generator to add in.
     /// - Returns: The modified generator containing this initialization.
     func add(to generator: MemberwiseInitGenerator) -> MemberwiseInitGenerator {
-        return base.add(to: generator)
+        base.add(to: generator)
     }
 }

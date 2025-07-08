@@ -48,7 +48,7 @@ package struct CodingKeys: PeerAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantDuplicate()
             `if`(
                 isStruct || isClass || isEnum,

@@ -41,7 +41,7 @@ extension DynamicCodableIdentifier<String>: CodingKey {
     /// the identifier value itself is used in case of single
     /// identifier.
     public var stringValue: String {
-        return switch self {
+        switch self {
         case .one(let key):
             key
         case .many(let keys):
@@ -74,7 +74,7 @@ extension DynamicCodableIdentifier<String>: CodingKey {
     ///
     /// - Returns: Whether `stringValue` is equivalent.
     public static func ~= <Key: CodingKey>(left: Self, right: Key) -> Bool {
-        return switch left {
+        switch left {
         case .one(let value):
             value == right.stringValue
         case .many(let values):

@@ -135,7 +135,7 @@ extension PropertyVariableTreeNode {
         in context: some MacroExpansionContext,
         from location: CodingLocation
     ) -> Generated {
-        return self.decoding(with: nil, in: context, from: location)
+        self.decoding(with: nil, in: context, from: location)
     }
 }
 
@@ -227,6 +227,6 @@ extension PropertyVariableTreeNode {
         in context: some MacroExpansionContext,
         to location: CodingLocation
     ) -> Generated {
-        return self.encoding(with: nil, in: context, to: location)
+        self.encoding(with: nil, in: context, to: location)
     }
 }

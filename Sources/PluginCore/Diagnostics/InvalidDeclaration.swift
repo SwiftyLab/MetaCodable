@@ -76,7 +76,7 @@ struct InvalidDeclaration<Attr>: DiagnosticProducer where Attr: Attribute {
     /// - Returns: The name of syntax type.
     func name(for syntax: SyntaxProtocol.Type) -> String {
         func kebabCased(_ str: String) -> String {
-            return CodingKeyTransformer(strategy: .kebab－case)
+            CodingKeyTransformer(strategy: .kebab－case)
                 .transform(key: str)
         }
         let name = "\(syntax)"
@@ -98,7 +98,7 @@ extension Attribute {
     func expect(
         syntaxes types: SyntaxProtocol.Type...
     ) -> InvalidDeclaration<Self> {
-        return .init(self, expect: types)
+        .init(self, expect: types)
     }
     /// Indicates attribute expects the attached syntax of
     /// provided types.
@@ -111,6 +111,6 @@ extension Attribute {
     func expect(
         syntaxes types: [SyntaxProtocol.Type]
     ) -> InvalidDeclaration<Self> {
-        return .init(self, expect: types)
+        .init(self, expect: types)
     }
 }

@@ -1,7 +1,7 @@
-import MetaCodable
-import Testing
 import Foundation
 import HelperCoders
+import MetaCodable
+import Testing
 
 @testable import PluginCore
 
@@ -21,14 +21,14 @@ struct DecodedAtEncodedAtIntegrationTests {
     func differentPathsForDecodingAndEncoding() throws {
         // Sample JSON with nested structure for decoding
         let jsonData = """
-        {
-            "id": "12345",
-            "personal_info": {
-                "name": "John Doe",
-                "years": 30
+            {
+                "id": "12345",
+                "personal_info": {
+                    "name": "John Doe",
+                    "years": 30
+                }
             }
-        }
-        """.data(using: .utf8)!
+            """.data(using: .utf8)!
 
         // Decode the JSON
         let person = try JSONDecoder().decode(Person.self, from: jsonData)
@@ -40,13 +40,15 @@ struct DecodedAtEncodedAtIntegrationTests {
 
         // Encode back to JSON
         let encodedData = try JSONEncoder().encode(person)
-        let encodedJson = try JSONSerialization.jsonObject(with: encodedData) as! [String: Any]
+        let encodedJson =
+            try JSONSerialization.jsonObject(with: encodedData)
+            as! [String: Any]
 
         // Verify the encoded structure is different from the decoded one
         #expect(encodedJson["id"] as? String == "12345")
-        #expect(encodedJson["full_name"] as? String == "John Doe") // Uses EncodedAt path
-        #expect(encodedJson["age"] as? Int == 30) // Uses EncodedAt path
-        #expect(encodedJson["personal_info"] == nil) // No nested structure in encoded JSON
+        #expect(encodedJson["full_name"] as? String == "John Doe")  // Uses EncodedAt path
+        #expect(encodedJson["age"] as? Int == 30)  // Uses EncodedAt path
+        #expect(encodedJson["personal_info"] == nil)  // No nested structure in encoded JSON
     }
 
     @Codable
@@ -68,18 +70,18 @@ struct DecodedAtEncodedAtIntegrationTests {
     func complexNestedStructure() throws {
         // Complex nested JSON for decoding
         let jsonData = """
-        {
-            "data": {
-                "attributes": {
-                    "name": "Test Object",
-                    "value": 42
+            {
+                "data": {
+                    "attributes": {
+                        "name": "Test Object",
+                        "value": 42
+                    }
+                },
+                "meta": {
+                    "created_at": "2025-07-05T12:00:00Z"
                 }
-            },
-            "meta": {
-                "created_at": "2025-07-05T12:00:00Z"
             }
-        }
-        """.data(using: .utf8)!
+            """.data(using: .utf8)!
 
         // Decode the JSON
         let object = try JSONDecoder().decode(NestedObject.self, from: jsonData)
@@ -91,14 +93,18 @@ struct DecodedAtEncodedAtIntegrationTests {
 
         // Encode back to JSON
         let encodedData = try JSONEncoder().encode(object)
-        let encodedJson = try JSONSerialization.jsonObject(with: encodedData) as! [String: Any]
+        let encodedJson =
+            try JSONSerialization.jsonObject(with: encodedData)
+            as! [String: Any]
 
         // Verify the encoded structure
-        #expect(encodedJson["name"] as? String == "Test Object") // Top level
-        #expect((encodedJson["attributes"] as? [String: Any])?["value"] as? Int == 42) // Nested under attributes
-        #expect(encodedJson["createdAt"] as? String == "2025-07-05T12:00:00Z") // Top level
-        #expect(encodedJson["data"] == nil) // Original nested structure is gone
-        #expect(encodedJson["meta"] == nil) // Original nested structure is gone
+        #expect(encodedJson["name"] as? String == "Test Object")  // Top level
+        #expect(
+            (encodedJson["attributes"] as? [String: Any])?["value"] as? Int
+                == 42)  // Nested under attributes
+        #expect(encodedJson["createdAt"] as? String == "2025-07-05T12:00:00Z")  // Top level
+        #expect(encodedJson["data"] == nil)  // Original nested structure is gone
+        #expect(encodedJson["meta"] == nil)  // Original nested structure is gone
     }
 
     @Codable
@@ -116,36 +122,40 @@ struct DecodedAtEncodedAtIntegrationTests {
     func optionalValues() throws {
         // JSON with all values present
         let fullJsonData = """
-        {
-            "info": {
-                "name": "Optional Test",
-                "value": 100
+            {
+                "info": {
+                    "name": "Optional Test",
+                    "value": 100
+                }
             }
-        }
-        """.data(using: .utf8)!
+            """.data(using: .utf8)!
 
         // JSON with missing values
         let partialJsonData = """
-        {
-            "info": {
-                "name": "Optional Test"
+            {
+                "info": {
+                    "name": "Optional Test"
+                }
             }
-        }
-        """.data(using: .utf8)!
+            """.data(using: .utf8)!
 
         // Decode the full JSON
-        let fullObject = try JSONDecoder().decode(OptionalValues.self, from: fullJsonData)
+        let fullObject = try JSONDecoder().decode(
+            OptionalValues.self, from: fullJsonData)
         #expect(fullObject.name == "Optional Test")
         #expect(fullObject.value == 100)
 
         // Decode the partial JSON
-        let partialObject = try JSONDecoder().decode(OptionalValues.self, from: partialJsonData)
+        let partialObject = try JSONDecoder().decode(
+            OptionalValues.self, from: partialJsonData)
         #expect(partialObject.name == "Optional Test")
         #expect(partialObject.value == nil)
 
         // Encode full object back to JSON
         let fullEncodedData = try JSONEncoder().encode(fullObject)
-        let fullEncodedJson = try JSONSerialization.jsonObject(with: fullEncodedData) as! [String: Any]
+        let fullEncodedJson =
+            try JSONSerialization.jsonObject(with: fullEncodedData)
+            as! [String: Any]
 
         // Verify the encoded structure
         #expect(fullEncodedJson["name"] as? String == "Optional Test")
@@ -154,7 +164,9 @@ struct DecodedAtEncodedAtIntegrationTests {
 
         // Encode partial object back to JSON
         let partialEncodedData = try JSONEncoder().encode(partialObject)
-        let partialEncodedJson = try JSONSerialization.jsonObject(with: partialEncodedData) as! [String: Any]
+        let partialEncodedJson =
+            try JSONSerialization.jsonObject(with: partialEncodedData)
+            as! [String: Any]
 
         // Verify the encoded structure
         #expect(partialEncodedJson["name"] as? String == "Optional Test")
@@ -203,7 +215,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                         fixIts: [
                             .init(message: "Remove @EncodedAt attribute")
                         ]
-                    )
+                    ),
                 ]
             )
         }

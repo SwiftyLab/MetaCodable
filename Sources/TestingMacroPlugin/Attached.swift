@@ -16,7 +16,7 @@ struct Test: PeerMacro {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
-        return []
+        []
     }
 }
 
@@ -35,7 +35,7 @@ struct Tag: AccessorMacro {
         providingAccessorsOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [AccessorDeclSyntax] {
-        return [
+        [
             AccessorDeclSyntax(accessorSpecifier: .keyword(.get)) {
                 "fatalError(\"Unreachable\")"
             }

@@ -23,8 +23,8 @@ package struct IgnoreEncoding: PropertyAttribute {
         }
 
         return args.first { expr in
-            expr.label?.tokenKind == .identifier("if") ||
-            expr.label?.tokenKind == .identifier("basedOn")
+            expr.label?.tokenKind == .identifier("if")
+                || expr.label?.tokenKind == .identifier("basedOn")
         }
     }
 
@@ -56,7 +56,7 @@ package struct IgnoreEncoding: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantDuplicate()
             shouldNotBeCombined(with: IgnoreCoding.self)
             `if`(

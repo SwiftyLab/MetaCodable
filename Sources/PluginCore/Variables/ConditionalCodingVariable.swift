@@ -96,7 +96,8 @@ where Var: ConditionalVariable, Var.Generated: ConditionalVariableSyntax {
                 TupleTypeElementSyntax(type: "_" as TypeSyntax)
             }
         }
-        let expr: ExprSyntax = "!{ () -> (\(returnList)) -> Bool in \(conditionExpr) }()(\(args))"
+        let expr: ExprSyntax =
+            "!{ () -> (\(returnList)) -> Bool in \(conditionExpr) }()(\(args))"
         return syntax.adding(condition: [.init(expression: expr)])
     }
 }
@@ -123,7 +124,7 @@ where Var: PropertyVariable {
     /// `Decodable` conformance, if provided decode
     /// option is set as `true` otherwise `false`.
     var requireDecodable: Bool? {
-        return (options.decode ?? true) ? base.requireDecodable : false
+        (options.decode ?? true) ? base.requireDecodable : false
     }
     /// Whether the variable type requires `Encodable` conformance.
     ///
@@ -131,7 +132,7 @@ where Var: PropertyVariable {
     /// `Encodable` conformance, if provided encode
     /// option is set as `true` otherwise `false`.
     var requireEncodable: Bool? {
-        return (options.encode ?? true) ? base.requireEncodable : false
+        (options.encode ?? true) ? base.requireEncodable : false
     }
 }
 

@@ -14,7 +14,7 @@ package struct CodedAs: PropertyAttribute {
 
     /// The alternate value expression provided.
     var exprs: [ExprSyntax] {
-        return node.arguments?
+        node.arguments?
             .as(LabeledExprListSyntax.self)?.map(\.expression) ?? []
     }
 
@@ -23,7 +23,7 @@ package struct CodedAs: PropertyAttribute {
     /// Used for enums with internal/adjacent tagging to decode
     /// the identifier to this type.
     var type: TypeSyntax? {
-        return node.attributeName.as(IdentifierTypeSyntax.self)?
+        node.attributeName.as(IdentifierTypeSyntax.self)?
             .genericArgumentClause?.arguments
             .first?.argument.as(TypeSyntax.self)
     }
@@ -63,7 +63,7 @@ package struct CodedAs: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantDuplicate()
             `if`(
                 has(arguments: 0),

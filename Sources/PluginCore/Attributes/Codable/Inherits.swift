@@ -18,7 +18,7 @@ package struct Inherits: PeerAttribute {
     ///
     /// In case of no super class, this should be `false`.
     var decodable: Bool {
-        return node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
+        node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
             expr.label?.tokenKind == .identifier("decodable")
         }?.expression.as(BooleanLiteralExprSyntax.self)?.literal
             .tokenKind == .keyword(.true)
@@ -28,7 +28,7 @@ package struct Inherits: PeerAttribute {
     ///
     /// In case of no super class, this should be `false`.
     var encodable: Bool {
-        return node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
+        node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
             expr.label?.tokenKind == .identifier("encodable")
         }?.expression.as(BooleanLiteralExprSyntax.self)?.literal
             .tokenKind == .keyword(.true)
@@ -58,7 +58,7 @@ package struct Inherits: PeerAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             shouldNotDuplicate()
             mustBeCombined(with: Codable.self)
             expect(syntaxes: ClassDeclSyntax.self)

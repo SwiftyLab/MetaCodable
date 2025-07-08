@@ -34,7 +34,7 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
         for decl: EnumCaseVariableDeclSyntax,
         in context: some MacroExpansionContext
     ) -> PropertyVariableTreeNode {
-        return .init()
+        .init()
     }
 
     /// Creates value expressions for provided enum-case variable.
@@ -163,9 +163,9 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
                 over: location.selfValue, at: location, from: contentEncoder,
                 in: context, withDefaultCase: location.hasDefaultCase
             ) { name in
-                return """
-                    let \(contentEncoder) = \(container).superEncoder(forKey: \(name))
-                    """
+                """
+                let \(contentEncoder) = \(container).superEncoder(forKey: \(name))
+                """
             }
         }
     }

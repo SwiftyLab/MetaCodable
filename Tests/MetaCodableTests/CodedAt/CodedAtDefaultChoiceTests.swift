@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct CodedAtDefaultChoiceTests {
-
     struct WithNoPath {
         @Codable
         @MemberInit

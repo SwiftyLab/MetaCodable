@@ -36,8 +36,10 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         context: some MacroExpansionContext
     ) {
         var base = base
-        let decodingKeys = codingKeys.add(keys: keyPath.decoding, context: context)
-        let encodingKeys = codingKeys.add(keys: keyPath.encoding, context: context)
+        let decodingKeys = codingKeys.add(
+            keys: keyPath.decoding, context: context)
+        let encodingKeys = codingKeys.add(
+            keys: keyPath.encoding, context: context)
         self.variable = .init(decoder: contentDecoder, encoder: contentEncoder)
         base.registering(variable: variable, decodingKeyPath: decodingKeys)
         base.registering(variable: variable, encodingKeyPath: encodingKeys)
@@ -57,7 +59,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         for decl: EnumCaseVariableDeclSyntax,
         in context: some MacroExpansionContext
     ) -> PropertyVariableTreeNode {
-        return base.node(for: decl, in: context)
+        base.node(for: decl, in: context)
     }
 
     /// Creates value expressions for provided enum-case variable.
@@ -75,7 +77,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         for variable: Var, values: [ExprSyntax],
         codingKeys: CodingKeysMap, context: some MacroExpansionContext
     ) -> EnumVariable.CaseValue {
-        return base.keyExpression(
+        base.keyExpression(
             for: variable, values: values,
             codingKeys: codingKeys, context: context
         )
@@ -90,7 +92,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     func transform(
         variable: BasicAssociatedVariable
     ) -> BasicAssociatedVariable {
-        return base.transform(variable: variable)
+        base.transform(variable: variable)
     }
 
     /// Provides the syntax for decoding at the provided location.
@@ -108,7 +110,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         in context: some MacroExpansionContext,
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
-        return base.decoding(
+        base.decoding(
             in: context, from: location, contentAt: variable.decoder
         )
     }
@@ -128,7 +130,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         in context: some MacroExpansionContext,
         to location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
-        return base.encoding(
+        base.encoding(
             in: context, to: location, contentAt: variable.encoder
         )
     }
@@ -143,7 +145,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     func codingKeys(
         in context: some MacroExpansionContext
     ) -> MemberBlockItemListSyntax {
-        return base.codingKeys(in: context)
+        base.codingKeys(in: context)
     }
 }
 
@@ -212,7 +214,7 @@ extension AdjacentlyTaggedEnumSwitcher {
             in context: some MacroExpansionContext,
             from location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
-            return switch location {
+            switch location {
             case .coder(let decoder, _):
                 "let \(self.decoder) = \(decoder)"
             case .container(let container, let key, _):
@@ -235,7 +237,7 @@ extension AdjacentlyTaggedEnumSwitcher {
             in context: some MacroExpansionContext,
             to location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
-            return switch location {
+            switch location {
             case .coder(let encoder, _):
                 "let \(self.encoder) = \(encoder)"
             case .container(let container, let key, _):

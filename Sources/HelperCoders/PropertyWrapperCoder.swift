@@ -20,7 +20,7 @@ public struct PropertyWrapperCoder<Wrapper: PropertyWrappable>: HelperCoder {
     /// - Throws: If the property wrapper throws error.
     @inlinable
     public func decode(from decoder: Decoder) throws -> Wrapper.Wrapped {
-        return try Wrapper(from: decoder).wrappedValue
+        try Wrapper(from: decoder).wrappedValue
     }
 
     /// Encodes given value using `Wrapper` type to the provided `encoder`.

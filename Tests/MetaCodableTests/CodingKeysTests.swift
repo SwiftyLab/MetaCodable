@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct CodingKeysTests {
-
     @Test
     func misuseInAbsenceOfCodable() throws {
         assertMacroExpansion(

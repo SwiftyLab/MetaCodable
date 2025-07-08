@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct GenericsTests {
-
     struct SingleGenericTypeExpansion {
         @Codable
         struct GenericCodable<T> {
@@ -658,7 +657,7 @@ struct GenericsTests {
     }
 }
 
-fileprivate struct TestCoder<Coded>: HelperCoder {
+private struct TestCoder<Coded>: HelperCoder {
     func decode(from decoder: any Decoder) throws -> Coded {
         throw CancellationError()
     }

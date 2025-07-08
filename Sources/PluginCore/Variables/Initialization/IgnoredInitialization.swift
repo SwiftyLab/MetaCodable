@@ -12,6 +12,6 @@ struct IgnoredInitialization: VariableInitialization {
     /// - Parameter generator: The init-generator to add in.
     /// - Returns: The provided memberwise initialization generator.
     func add(to generator: MemberwiseInitGenerator) -> MemberwiseInitGenerator {
-        return generator
+        generator
     }
 }

@@ -27,7 +27,7 @@ extension MemberGroupSyntax where ChildSyntaxInput == Void {
     ///
     /// - Returns: All the individual members syntax of current syntax.
     func codableMembers() -> [MemberSyntax] {
-        return self.codableMembers(input: ())
+        self.codableMembers(input: ())
     }
 }
 
@@ -44,7 +44,7 @@ where
     /// - Parameter input: The input to child syntax.
     /// - Returns: All the member properties.
     func codableMembers(input: Void) -> [PropertyDeclSyntax] {
-        return self.memberBlock.members.flatMap { member in
+        self.memberBlock.members.flatMap { member in
             guard
                 // is a variable declaration
                 let decl = member.decl.as(VariableDeclSyntax.self),
@@ -54,7 +54,7 @@ where
                 )
             else { return [] as [PropertyDeclSyntax] }
 
-            var variablesData = [(PatternBindingSyntax, TypeSyntax?)]()
+            var variablesData: [(PatternBindingSyntax, TypeSyntax?)] = []
             for binding in decl.bindings
             where binding.pattern.is(IdentifierPatternSyntax.self) {
                 let data = (binding, binding.typeAnnotation?.type.trimmed)
@@ -116,13 +116,13 @@ extension EnumDeclSyntax: MemberGroupSyntax, VariableSyntax {
     /// - Parameter input: The input to child syntax.
     /// - Returns: All the individual members syntax of current syntax.
     func codableMembers(input: CodingKeysMap) -> [EnumCaseVariableDeclSyntax] {
-        return self.memberBlock.members.flatMap { member in
+        self.memberBlock.members.flatMap { member in
             guard
                 // is a case declaration
                 let decl = member.decl.as(EnumCaseDeclSyntax.self)
             else { return [] as [EnumCaseVariableDeclSyntax] }
             return decl.elements.map { element in
-                return .init(
+                .init(
                     element: element, decl: decl,
                     parent: self, codingKeys: input
                 )

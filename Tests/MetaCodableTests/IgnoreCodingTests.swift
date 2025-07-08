@@ -5,7 +5,6 @@ import Testing
 @testable import PluginCore
 
 struct IgnoreCodingTests {
-
     @Test
     func misuseOnUninitializedVariable() throws {
         assertMacroExpansion(
@@ -1148,7 +1147,8 @@ struct IgnoreCodingTests {
 
         @Test
         func ignore() throws {
-            let obj = SomeCodable(one: "", two: "ignored", shouldIgnoreTwo: true)
+            let obj = SomeCodable(
+                one: "", two: "ignored", shouldIgnoreTwo: true)
             let data = try JSONEncoder().encode(obj)
             let value = try JSONSerialization.jsonObject(with: data)
             let dict = try #require(value as? [String: Any])
@@ -1159,7 +1159,8 @@ struct IgnoreCodingTests {
 
         @Test
         func encode() throws {
-            let obj = SomeCodable(one: "some", two: "some", shouldIgnoreTwo: false)
+            let obj = SomeCodable(
+                one: "some", two: "some", shouldIgnoreTwo: false)
             let data = try JSONEncoder().encode(obj)
             let value = try JSONSerialization.jsonObject(with: data)
             let dict = try #require(value as? [String: Any])
@@ -1170,7 +1171,9 @@ struct IgnoreCodingTests {
 
         @Test
         func decode() throws {
-            let json = "{\"one\": \"\", \"two\": \"value\", \"shouldIgnoreTwo\": true}".data(using: .utf8)!
+            let json =
+                "{\"one\": \"\", \"two\": \"value\", \"shouldIgnoreTwo\": true}"
+                .data(using: .utf8)!
             let obj = try JSONDecoder().decode(SomeCodable.self, from: json)
             #expect(obj.one == "")
             #expect(obj.two == "value")
@@ -1306,24 +1309,30 @@ struct IgnoreCodingTests {
     }
 }
 
-fileprivate func ignoreEncodingVariable(_ var1: Bool) -> Bool {
-    return var1
+private func ignoreEncodingVariable(_ var1: Bool) -> Bool {
+    var1
 }
 
-fileprivate func ignoreEncodingVariables(
+private func ignoreEncodingVariables(
     _ var1: Bool, var2: Int, _ var3: String
 ) -> Bool {
-    return var1
+    var1
 }
 
-fileprivate func shouldIgnoreBasedOnValue(_ container: IgnoreCodingTests.EnumEncodingIgnoreWithBasedOnCondition.SomeEnum) -> Bool {
+private func shouldIgnoreBasedOnValue(
+    _ container: IgnoreCodingTests.EnumEncodingIgnoreWithBasedOnCondition
+        .SomeEnum
+) -> Bool {
     if case .bool(let value) = container {
         return value
     }
     return false
 }
 
-fileprivate func shouldIgnoreBasedOnMultipleValues(_ container: IgnoreCodingTests.EnumEncodingIgnoreWithBasedOnCondition.SomeEnum) -> Bool {
+private func shouldIgnoreBasedOnMultipleValues(
+    _ container: IgnoreCodingTests.EnumEncodingIgnoreWithBasedOnCondition
+        .SomeEnum
+) -> Bool {
     if case .multi(let variable, let val, _) = container {
         return variable && val > 10
     }

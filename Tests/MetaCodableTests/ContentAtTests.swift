@@ -5,7 +5,6 @@ import Testing
 @testable import PluginCore
 
 struct ContentAtTests {
-
     @Test
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(

@@ -29,7 +29,7 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         for decl: EnumCaseVariableDeclSyntax,
         in context: some MacroExpansionContext
     ) -> PropertyVariableTreeNode {
-        return node
+        node
     }
 
     /// Creates value expressions for provided enum-case variable.
@@ -191,7 +191,7 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
     func codingKeys(
         in context: some MacroExpansionContext
     ) -> MemberBlockItemListSyntax {
-        return []
+        []
     }
 }
 
@@ -264,7 +264,7 @@ fileprivate extension UnTaggedEnumSwitcher {
         override func visit(
             _ node: CodeBlockItemListSyntax
         ) -> SyntaxVisitorContinueKind {
-            return self.visit(node: node)
+            self.visit(node: node)
         }
 
         /// Decides whether to visit or skip children of provided node.
@@ -277,7 +277,7 @@ fileprivate extension UnTaggedEnumSwitcher {
         override func visit(
             _ node: CodeBlockItemSyntax
         ) -> SyntaxVisitorContinueKind {
-            return self.visit(node: node)
+            self.visit(node: node)
         }
     }
 
@@ -342,7 +342,7 @@ fileprivate extension UnTaggedEnumSwitcher {
         override func visit(
             _ node: CodeBlockSyntax
         ) -> SyntaxVisitorContinueKind {
-            return self.visit(node: node)
+            self.visit(node: node)
         }
 
         /// Decides whether to visit or skip children of provided node.
@@ -355,7 +355,7 @@ fileprivate extension UnTaggedEnumSwitcher {
         override func visit(
             _ node: CodeBlockItemListSyntax
         ) -> SyntaxVisitorContinueKind {
-            return self.visit(node: node)
+            self.visit(node: node)
         }
 
         /// Decides whether to visit or skip children of provided node.
@@ -368,7 +368,7 @@ fileprivate extension UnTaggedEnumSwitcher {
         override func visit(
             _ node: CodeBlockItemSyntax
         ) -> SyntaxVisitorContinueKind {
-            return self.visit(node: node)
+            self.visit(node: node)
         }
     }
 }

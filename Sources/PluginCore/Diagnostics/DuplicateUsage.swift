@@ -79,7 +79,7 @@ extension Attribute {
     ///
     /// - Returns: Duplication validation diagnostic producer.
     func cantDuplicate() -> DuplicateUsage<Self> {
-        return .init(self)
+        .init(self)
     }
 
     /// Indicates this attribute shouldn't be duplicated.
@@ -89,6 +89,6 @@ extension Attribute {
     ///
     /// - Returns: Duplication validation diagnostic producer.
     func shouldNotDuplicate() -> DuplicateUsage<Self> {
-        return .init(self, severity: .warning)
+        .init(self, severity: .warning)
     }
 }

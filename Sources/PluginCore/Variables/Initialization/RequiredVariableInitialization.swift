@@ -26,6 +26,6 @@ extension RequiredVariableInitialization {
     ///
     /// Wraps current instance in `OptionalInitialization`.
     var optionalize: OptionalInitialization<Self> {
-        return .init(base: self)
+        .init(base: self)
     }
 }

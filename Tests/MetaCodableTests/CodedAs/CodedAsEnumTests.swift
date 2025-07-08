@@ -6,7 +6,6 @@ import Testing
 @testable import PluginCore
 
 struct CodedAsEnumTests {
-
     @Test
     func misuseOnNonCaseDeclaration() throws {
         assertMacroExpansion(

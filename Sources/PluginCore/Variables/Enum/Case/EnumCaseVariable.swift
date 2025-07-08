@@ -19,7 +19,7 @@ extension EnumCaseVariable {
     ///
     /// All associated variables are passed as argument.
     var conditionArguments: LabeledExprListSyntax {
-        return LabeledExprListSyntax {
+        LabeledExprListSyntax {
             for variable in self.variables {
                 variable.conditionArguments
             }

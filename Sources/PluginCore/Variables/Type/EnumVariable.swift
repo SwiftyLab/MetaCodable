@@ -136,20 +136,20 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
             encodeSwitchExpr: encodeSwitchExpr, forceDefault: forceDefault,
             switcher: switcher, codingKeys: codingKeys
         ) { input in
-            return input.checkForInternalTagging(
+            input.checkForInternalTagging(
                 encodeContainer: "typeContainer", identifier: "type",
                 fallbackType: "String", codingKeys: codingKeys, context: context
             ) { registration in
-                return registration.useHelperCoderIfExists()
+                registration.useHelperCoderIfExists()
             } switcherBuilder: { registration in
-                return registration.checkForAdjacentTagging(
+                registration.checkForAdjacentTagging(
                     contentDecoder: Self.contentDecoder,
                     contentEncoder: Self.contentEncoder,
                     codingKeys: codingKeys, context: context
                 )
             }.checkIfUnTagged(in: context)
         } caseBuilder: { input in
-            return input.checkForAlternateValue().checkCodingIgnored()
+            input.checkForAlternateValue().checkCodingIgnored()
         } propertyBuilder: { input in
             let parent = input.decl.parent
             return input.transformKeysAccordingToStrategy(attachedTo: parent)
@@ -445,7 +445,7 @@ package extension EnumVariable {
     static func decodingArgs(
         representing variables: [any AssociatedVariable]
     ) -> LabeledExprListSyntax {
-        return LabeledExprListSyntax {
+        LabeledExprListSyntax {
             for variable in variables {
                 let decode = (variable.decode ?? true)
                 let name = variable.name
@@ -468,7 +468,7 @@ package extension EnumVariable {
     static func encodingArgs(
         representing variables: [any AssociatedVariable]
     ) -> LabeledExprListSyntax {
-        return LabeledExprListSyntax {
+        LabeledExprListSyntax {
             for variable in variables {
                 let encode = (variable.encode ?? true)
                 let label = variable.label?.text
@@ -501,7 +501,7 @@ package extension EnumVariable {
     static func externallyTaggedSwitcher(
         decodingKeys: CodingKeysMap
     ) -> ExternallyTaggedEnumSwitcher {
-        return .init(
+        .init(
             decodingKeys: decodingKeys,
             contentDecoder: contentDecoder, contentEncoder: contentEncoder
         )

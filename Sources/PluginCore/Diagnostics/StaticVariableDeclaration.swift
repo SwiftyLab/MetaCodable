@@ -67,6 +67,6 @@ extension PropertyAttribute {
     ///
     /// - Returns: Static variable declaration validation diagnostic producer.
     func attachedToNonStaticVariable() -> StaticVariableDeclaration<Self> {
-        return .init(self)
+        .init(self)
     }
 }

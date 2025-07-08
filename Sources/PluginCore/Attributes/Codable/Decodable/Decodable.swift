@@ -42,7 +42,7 @@ package struct ConformDecodable: PeerAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(
                 syntaxes: StructDeclSyntax.self, ClassDeclSyntax.self,
                 EnumDeclSyntax.self, ActorDeclSyntax.self,

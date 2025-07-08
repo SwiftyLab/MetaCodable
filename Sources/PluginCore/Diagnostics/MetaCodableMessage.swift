@@ -97,7 +97,7 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
         macro: AttributeSyntax,
         message: String, id: MessageID
     ) -> MetaCodableMessage {
-        return .init(
+        .init(
             macro: macro, message: message, messageID: id, severity: .warning
         )
     }

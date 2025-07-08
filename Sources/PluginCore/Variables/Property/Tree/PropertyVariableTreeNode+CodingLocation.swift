@@ -55,7 +55,7 @@ extension PropertyVariableTreeNode {
         static func withCoder(
             _ coder: TokenSyntax, keyType: ExprSyntax
         ) -> Self {
-            return .init(
+            .init(
                 context: .coder(coder, keyType: keyType), progress: .init()
             )
         }
@@ -70,7 +70,7 @@ extension PropertyVariableTreeNode {
         func withContainer(
             _ container: Context.Container, key: CodingKeysMap.Key
         ) -> Self {
-            return .init(
+            .init(
                 context: .container(container, key: key), progress: progress
             )
         }
@@ -145,7 +145,7 @@ extension PropertyVariableTreeNode {
         func encoding(
             in context: some MacroExpansionContext, to location: () = ()
         ) -> CodeBlockItemListSyntax {
-            return ""
+            ""
         }
 
         /// The decoding/encoding progress.

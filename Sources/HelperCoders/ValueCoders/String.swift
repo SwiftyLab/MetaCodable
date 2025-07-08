@@ -21,7 +21,7 @@ extension String: ValueCodingStrategy {
             ]
             guard
                 let value = fallbackTypes.lazy.compactMap({
-                    return (try? $0.init(from: decoder))?.description
+                    (try? $0.init(from: decoder))?.description
                 }).first
             else { throw error }
             return value

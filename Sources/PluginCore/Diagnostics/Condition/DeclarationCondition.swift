@@ -12,7 +12,7 @@ struct DeclarationCondition<S: SyntaxProtocol>: DiagnosticCondition {
     /// - Parameter syntax: The syntax to validate.
     /// - Returns: Whether syntax passes validation.
     func satisfied(by syntax: some SyntaxProtocol) -> Bool {
-        return syntax.is(S.self)
+        syntax.is(S.self)
     }
 }
 

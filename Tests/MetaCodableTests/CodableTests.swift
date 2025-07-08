@@ -142,7 +142,7 @@ struct CodableTests {
         struct SomeCodable {
             let value1: String?
             let value2: String!
-            let value3: Optional<String>
+            let value3: String?
         }
 
         @Test
@@ -567,7 +567,7 @@ func assertMacroExpansion(
         originalSource, expandedSource: expandedSource,
         diagnostics: diagnostics,
         macroSpecs: allMacros.mapValues { value in
-            return MacroSpec(type: value, conformances: conformances)
+            MacroSpec(type: value, conformances: conformances)
         },
         testModuleName: testModuleName, testFileName: testFileName,
         indentationWidth: indentationWidth
@@ -610,7 +610,7 @@ extension String {
 
 extension Attribute {
     static var misuseID: MessageID {
-        return Self.init(
+        Self.init(
             from: .init(
                 attributeName: IdentifierTypeSyntax(
                     name: .identifier(Self.name)
@@ -622,7 +622,7 @@ extension Attribute {
 
 extension DiagnosticSpec {
     static func multiBinding(line: Int, column: Int) -> Self {
-        return .init(
+        .init(
             id: MessageID(
                 domain: "SwiftSyntaxMacroExpansion",
                 id: "peerMacroOnVariableWithMultipleBindings"
@@ -634,13 +634,20 @@ extension DiagnosticSpec {
 }
 
 extension Tag {
-    @Tag static var `struct`: Self
-    @Tag static var `class`: Self
-    @Tag static var `enum`: Self
-    @Tag static var actor: Self
-    @Tag static var external: Self
-    @Tag static var `internal`: Self
-    @Tag static var adjacent: Self
+    @Tag
+    static var `struct`: Self
+    @Tag
+    static var `class`: Self
+    @Tag
+    static var `enum`: Self
+    @Tag
+    static var actor: Self
+    @Tag
+    static var external: Self
+    @Tag
+    static var `internal`: Self
+    @Tag
+    static var adjacent: Self
 }
 
 #if swift(<6)

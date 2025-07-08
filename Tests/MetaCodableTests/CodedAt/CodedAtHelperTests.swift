@@ -5,7 +5,6 @@ import Testing
 @testable import PluginCore
 
 struct CodedAtHelperTests {
-
     struct WithNoPath {
         @Codable
         @MemberInit

@@ -12,7 +12,7 @@ package struct CodedBy: PropertyAttribute {
 
     /// The helper coding arguments provided.
     var args: LabeledExprListSyntax {
-        return node.arguments!.as(LabeledExprListSyntax.self)!
+        node.arguments!.as(LabeledExprListSyntax.self)!
     }
 
     /// Creates a new instance with the provided node.
@@ -48,7 +48,7 @@ package struct CodedBy: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantDuplicate()
             `if`(
                 isEnum || isProtocol,
@@ -99,6 +99,6 @@ fileprivate extension DefaultPropertyVariable {
     /// - Parameter args: The helper coding arguments provided.
     /// - Returns: Created variable data with helper expression.
     func with(helper args: LabeledExprListSyntax) -> HelperCodedVariable<Self> {
-        return .init(base: self, options: .init(parsing: args))
+        .init(base: self, options: .init(parsing: args))
     }
 }

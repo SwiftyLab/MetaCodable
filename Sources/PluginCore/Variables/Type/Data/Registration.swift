@@ -62,7 +62,7 @@ struct Registration<Decl, Key, Var: Variable> {
     /// - Returns: Newly created registration with updated
     ///   `CodingKey` path.
     func updating(with key: Key) -> Self {
-        return .init(decl: decl, key: key, variable: variable)
+        .init(decl: decl, key: key, variable: variable)
     }
 
     /// Update the variable data in this registration with provided data.
@@ -73,7 +73,7 @@ struct Registration<Decl, Key, Var: Variable> {
     /// - Parameter variable: The new variable data.
     /// - Returns: Newly created registration with updated variable data.
     func updating<V: Variable>(with variable: V) -> Registration<Decl, Key, V> {
-        return .init(decl: decl, key: key, variable: variable)
+        .init(decl: decl, key: key, variable: variable)
     }
 }
 

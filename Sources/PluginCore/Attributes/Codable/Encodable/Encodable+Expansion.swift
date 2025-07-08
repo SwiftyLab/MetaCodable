@@ -28,7 +28,7 @@ extension ConformEncodable: MemberMacro, ExtensionMacro {
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         let defaultProtocols: [TypeSyntax] = [
-            .init(stringLiteral: TypeCodingLocation.Method.encode.protocol),
+            .init(stringLiteral: TypeCodingLocation.Method.encode.protocol)
         ]
         return try Self.expansion(
             of: node, providingMembersOf: declaration,

@@ -27,7 +27,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
         for decl: EnumCaseVariableDeclSyntax,
         in context: some MacroExpansionContext
     ) -> PropertyVariableTreeNode {
-        return base.node(for: decl, in: context)
+        base.node(for: decl, in: context)
     }
 
     /// Creates value expressions for provided enum-case variable.
@@ -45,7 +45,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
         for variable: Var, values: [ExprSyntax],
         codingKeys: CodingKeysMap, context: some MacroExpansionContext
     ) -> EnumVariable.CaseValue {
-        return base.keyExpression(
+        base.keyExpression(
             for: variable, values: values,
             codingKeys: codingKeys, context: context
         )
@@ -60,7 +60,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     func transform(
         variable: BasicAssociatedVariable
     ) -> BasicAssociatedVariable {
-        return base.transform(variable: variable)
+        base.transform(variable: variable)
     }
 
     /// Provides the syntax for decoding this variable at the provided location.
@@ -76,7 +76,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
         in context: some MacroExpansionContext,
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
-        return base.decoding(in: context, from: location)
+        base.decoding(in: context, from: location)
     }
 
     /// Provides the syntax for encoding this variable at the provided location.
@@ -92,7 +92,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
         in context: some MacroExpansionContext,
         to location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
-        return base.encoding(in: context, to: location)
+        base.encoding(in: context, to: location)
     }
 
     /// Creates additional enum declarations for enum variable.
@@ -105,7 +105,7 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     func codingKeys(
         in context: some MacroExpansionContext
     ) -> MemberBlockItemListSyntax {
-        return base.codingKeys(in: context)
+        base.codingKeys(in: context)
     }
 }
 
@@ -115,6 +115,6 @@ extension EnumSwitcherVariable {
     /// Wraps this variable in an `AnyEnumSwitcher` instance.
     /// The implementation stays unchanged while type is erased.
     var any: AnyEnumSwitcher {
-        return .init(base: self)
+        .init(base: self)
     }
 }

@@ -33,7 +33,7 @@ where L: DiagnosticCondition, R: DiagnosticCondition {
     /// - Parameter syntax: The syntax to validate.
     /// - Returns: Whether syntax passes validation.
     func satisfied(by syntax: some SyntaxProtocol) -> Bool {
-        return lhs.satisfied(by: syntax) || rhs.satisfied(by: syntax)
+        lhs.satisfied(by: syntax) || rhs.satisfied(by: syntax)
     }
 }
 
@@ -46,5 +46,5 @@ where L: DiagnosticCondition, R: DiagnosticCondition {
 /// - Returns: The resulting condition.
 func || <L, R>(lhs: L, rhs: R) -> OrDiagnosticCondition<L, R>
 where L: DiagnosticCondition, R: DiagnosticCondition {
-    return .init(lhs: lhs, rhs: rhs)
+    .init(lhs: lhs, rhs: rhs)
 }

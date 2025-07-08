@@ -632,7 +632,7 @@ extension CGFloat: ValueCodingStrategy {
     }
 }
 
-fileprivate struct CustomIntCoder: HelperCoder {
+private struct CustomIntCoder: HelperCoder {
     func decode(from decoder: Decoder) throws -> Int {
         let container = try decoder.singleValueContainer()
         let stringValue = try container.decode(String.self)

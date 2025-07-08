@@ -73,7 +73,7 @@ where Initialization: VariableInitialization {
     func initializing(
         in context: some MacroExpansionContext
     ) -> Initialization {
-        return base.initializing(in: context)
+        base.initializing(in: context)
     }
 
     /// Provides the code syntax for decoding this variable
@@ -91,7 +91,7 @@ where Initialization: VariableInitialization {
         in context: some MacroExpansionContext,
         from location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
-        return base.decoding(in: context, from: location)
+        base.decoding(in: context, from: location)
     }
 
     /// Provides the code syntax for encoding this variable
@@ -109,7 +109,7 @@ where Initialization: VariableInitialization {
         in context: some MacroExpansionContext,
         to location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
-        return base.encoding(in: context, to: location)
+        base.encoding(in: context, to: location)
     }
 
     /// The number of variables this variable depends on.
@@ -125,7 +125,7 @@ where Initialization: VariableInitialization {
     /// - Parameter variable: The variable to check for.
     /// - Returns: Whether this variable is dependent on the provided variable.
     func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
-        return base.depends(on: variable)
+        base.depends(on: variable)
     }
 }
 

@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct DecodedAtTests {
-
     @Test
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(

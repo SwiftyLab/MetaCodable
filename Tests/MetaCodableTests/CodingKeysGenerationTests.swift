@@ -4,7 +4,6 @@ import Testing
 @testable import PluginCore
 
 struct CodingKeysGenerationTests {
-
     struct BacktickExpression {
         @Codable
         struct SomeCodable {
