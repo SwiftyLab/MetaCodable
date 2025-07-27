@@ -11,6 +11,18 @@ struct CommonStrategiesValueCoderTests {
         let int: Int
         let double: Double
         let string: String
+        let optBool: Bool?
+        let optInt: Int?
+        let optDouble: Double?
+        let optString: String?
+        let impBool: Bool!
+        let impInt: Int!
+        let impDouble: Double!
+        let impString: String!
+        let optGenBool: Optional<Bool>
+        let optGenInt: Optional<Int>
+        let optGenDouble: Optional<Double>
+        let optGenString: Optional<String>
     }
 
     @Test
@@ -54,6 +66,18 @@ struct CommonStrategiesValueCoderTests {
                 let int: Int
                 let double: Double
                 let string: String
+                let optBool: Bool?
+                let optInt: Int?
+                let optDouble: Double?
+                let optString: String?
+                let impBool: Bool!
+                let impInt: Int!
+                let impDouble: Double!
+                let impString: String!
+                let optGenBool: Optional<Bool>
+                let optGenInt: Optional<Int>
+                let optGenDouble: Optional<Double>
+                let optGenString: Optional<String>
             }
             """,
             expandedSource:
@@ -63,6 +87,18 @@ struct CommonStrategiesValueCoderTests {
                     let int: Int
                     let double: Double
                     let string: String
+                    let optBool: Bool?
+                    let optInt: Int?
+                    let optDouble: Double?
+                    let optString: String?
+                    let impBool: Bool!
+                    let impInt: Int!
+                    let impDouble: Double!
+                    let impString: String!
+                    let optGenBool: Optional<Bool>
+                    let optGenInt: Optional<Int>
+                    let optGenDouble: Optional<Double>
+                    let optGenString: Optional<String>
                 }
 
                 extension Model: Decodable {
@@ -72,6 +108,18 @@ struct CommonStrategiesValueCoderTests {
                         self.int = try ValueCoder<Int>().decode(from: container, forKey: CodingKeys.int)
                         self.double = try ValueCoder<Double>().decode(from: container, forKey: CodingKeys.double)
                         self.string = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.string)
+                        self.optBool = try ValueCoder<Bool>().decodeIfPresent(from: container, forKey: CodingKeys.optBool)
+                        self.optInt = try ValueCoder<Int>().decodeIfPresent(from: container, forKey: CodingKeys.optInt)
+                        self.optDouble = try ValueCoder<Double>().decodeIfPresent(from: container, forKey: CodingKeys.optDouble)
+                        self.optString = try ValueCoder<String>().decodeIfPresent(from: container, forKey: CodingKeys.optString)
+                        self.impBool = try ValueCoder<Bool>().decodeIfPresent(from: container, forKey: CodingKeys.impBool)
+                        self.impInt = try ValueCoder<Int>().decodeIfPresent(from: container, forKey: CodingKeys.impInt)
+                        self.impDouble = try ValueCoder<Double>().decodeIfPresent(from: container, forKey: CodingKeys.impDouble)
+                        self.impString = try ValueCoder<String>().decodeIfPresent(from: container, forKey: CodingKeys.impString)
+                        self.optGenBool = try ValueCoder<Bool>().decodeIfPresent(from: container, forKey: CodingKeys.optGenBool)
+                        self.optGenInt = try ValueCoder<Int>().decodeIfPresent(from: container, forKey: CodingKeys.optGenInt)
+                        self.optGenDouble = try ValueCoder<Double>().decodeIfPresent(from: container, forKey: CodingKeys.optGenDouble)
+                        self.optGenString = try ValueCoder<String>().decodeIfPresent(from: container, forKey: CodingKeys.optGenString)
                     }
                 }
 
@@ -82,6 +130,18 @@ struct CommonStrategiesValueCoderTests {
                         try ValueCoder<Int>().encode(self.int, to: &container, atKey: CodingKeys.int)
                         try ValueCoder<Double>().encode(self.double, to: &container, atKey: CodingKeys.double)
                         try ValueCoder<String>().encode(self.string, to: &container, atKey: CodingKeys.string)
+                        try ValueCoder<Bool>().encodeIfPresent(self.optBool, to: &container, atKey: CodingKeys.optBool)
+                        try ValueCoder<Int>().encodeIfPresent(self.optInt, to: &container, atKey: CodingKeys.optInt)
+                        try ValueCoder<Double>().encodeIfPresent(self.optDouble, to: &container, atKey: CodingKeys.optDouble)
+                        try ValueCoder<String>().encodeIfPresent(self.optString, to: &container, atKey: CodingKeys.optString)
+                        try ValueCoder<Bool>().encodeIfPresent(self.impBool, to: &container, atKey: CodingKeys.impBool)
+                        try ValueCoder<Int>().encodeIfPresent(self.impInt, to: &container, atKey: CodingKeys.impInt)
+                        try ValueCoder<Double>().encodeIfPresent(self.impDouble, to: &container, atKey: CodingKeys.impDouble)
+                        try ValueCoder<String>().encodeIfPresent(self.impString, to: &container, atKey: CodingKeys.impString)
+                        try ValueCoder<Bool>().encodeIfPresent(self.optGenBool, to: &container, atKey: CodingKeys.optGenBool)
+                        try ValueCoder<Int>().encodeIfPresent(self.optGenInt, to: &container, atKey: CodingKeys.optGenInt)
+                        try ValueCoder<Double>().encodeIfPresent(self.optGenDouble, to: &container, atKey: CodingKeys.optGenDouble)
+                        try ValueCoder<String>().encodeIfPresent(self.optGenString, to: &container, atKey: CodingKeys.optGenString)
                     }
                 }
 
@@ -91,6 +151,18 @@ struct CommonStrategiesValueCoderTests {
                         case int = "int"
                         case double = "double"
                         case string = "string"
+                        case optBool = "optBool"
+                        case optInt = "optInt"
+                        case optDouble = "optDouble"
+                        case optString = "optString"
+                        case impBool = "impBool"
+                        case impInt = "impInt"
+                        case impDouble = "impDouble"
+                        case impString = "impString"
+                        case optGenBool = "optGenBool"
+                        case optGenInt = "optGenInt"
+                        case optGenDouble = "optGenDouble"
+                        case optGenString = "optGenString"
                     }
                 }
                 """

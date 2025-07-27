@@ -80,18 +80,19 @@ extension Registration where Var: DefaultPropertyVariable {
         from decl: some AttributableDeclSyntax
     ) -> Registration<Decl, Key, StrategyVariable<Var.Initialization>> {
         let finder = StrategyFinder(decl: decl)
-        let inStrategy =
-            finder.valueCodingStrategies.first { strategy in
-                strategy.trimmedDescription
-                    == self.variable.type.trimmedDescription
-            } != nil
+        let type = finder.valueCodingStrategies.first { strategy in
+            return strategy.trimmedDescription
+                == self.variable.type.trimmedDescription
+                || strategy.trimmedDescription
+                    == self.variable.type.wrappedType.trimmedDescription
+        }
 
         let newVariable: AnyPropertyVariable<Var.Initialization>
-        if inStrategy {
+        if let type = type {
             newVariable =
                 HelperCodedVariable(
                     base: self.variable,
-                    options: .helper("ValueCoder<\(variable.type)>()")
+                    options: .helper("ValueCoder<\(type)>()")
                 ).any
         } else {
             newVariable = self.variable.any

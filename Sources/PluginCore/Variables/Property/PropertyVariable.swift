@@ -195,6 +195,31 @@ extension CodeBlockItemListSyntax: ConditionalVariableSyntax {
 }
 
 extension TypeSyntax {
+    /// Extract actual type of an optional type.
+    ///
+    /// Extracts type based on whether the type syntax uses
+    /// `?` optional type syntax (i.e. `Type?`) or
+    /// `!` implicitly unwrapped optional type syntax (i.e. `Type!`) or
+    /// generic optional syntax (i.e. `Optional<Type>`).
+    /// Otherwise, returns the type syntax as is.
+    var wrappedType: TypeSyntax {
+        if let type = self.as(OptionalTypeSyntax.self) {
+            return type.wrappedType
+        } else if let type = self.as(ImplicitlyUnwrappedOptionalTypeSyntax.self)
+        {
+            return type.wrappedType
+        } else if let type = self.as(IdentifierTypeSyntax.self),
+            type.name.text == "Optional",
+            let gArgs = type.genericArgumentClause?.arguments,
+            gArgs.count == 1,
+            let wrappedType = gArgs.first?.argument.as(TypeSyntax.self)
+        {
+            return wrappedType
+        } else {
+            return self
+        }
+    }
+
     /// Check whether current type syntax represents an optional type.
     ///
     /// Checks whether the type syntax uses
@@ -202,27 +227,7 @@ extension TypeSyntax {
     /// `!` implicitly unwrapped optional type syntax (i.e. `Type!`) or
     /// generic optional syntax (i.e. `Optional<Type>`).
     var isOptionalTypeSyntax: Bool {
-        if self.is(OptionalTypeSyntax.self) {
-            return true
-        } else if self.is(ImplicitlyUnwrappedOptionalTypeSyntax.self) {
-            return true
-        } else if let type = self.as(IdentifierTypeSyntax.self),
-            type.name.trimmed.text == "Optional",
-            let gArgs = type.genericArgumentClause?.arguments,
-            gArgs.count == 1
-        {
-            return true
-        } else if let type = self.as(MemberTypeSyntax.self),
-            let baseType = type.baseType.as(IdentifierTypeSyntax.self),
-            baseType.trimmed.name.text == "Swift",
-            type.trimmed.name.text == "Optional",
-            let gArgs = type.genericArgumentClause?.arguments,
-            gArgs.count == 1
-        {
-            return true
-        } else {
-            return false
-        }
+        wrappedType != self
     }
 }
 
