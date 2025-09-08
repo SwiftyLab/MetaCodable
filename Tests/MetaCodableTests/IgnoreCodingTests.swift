@@ -182,6 +182,32 @@ struct IgnoreCodingTests {
             )
         }
 
+        @Test
+        func ignoreCodingBehavior() throws {
+            let original = SomeCodable()
+            #expect(original.one == "some")  // Default value
+
+            // Test encoding - when all properties are ignored, encoding may fail
+            // This is expected behavior as there's nothing to encode
+            #expect(throws: EncodingError.self) {
+                let _ = try JSONEncoder().encode(original)
+            }
+        }
+
+        @Test
+        func ignoreCodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "one": "ignored_value",
+                    "other": "also_ignored"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.one == "some")  // Should keep default value, ignore JSON
+        }
+
         struct Optional {
             @Codable
             struct SomeCodable {

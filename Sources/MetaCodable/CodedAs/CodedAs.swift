@@ -106,11 +106,11 @@ public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
 ///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
-/// - Important: For each case ``CodedAs(_:_:)`` macro with values
+/// - Important: For each case ``CodedAs(_:_:)-8wdaz`` macro with values
 ///   of the type here should be provided, otherwise case name as `String`
 ///   will be used for comparison. If the type here conforms to
 ///   `ExpressibleByStringLiteral` and can be represented by case name
-///   as `String` literal then no need to provide values with ``CodedAs(_:_:)``.
+///   as `String` literal then no need to provide values with ``CodedAs(_:_:)-8wdaz``.
 ///
 /// - Important: When using with protocols ``DynamicCodable/IdentifierValue``
 ///   type must be same as the type defined with this macro, in absence of this macro

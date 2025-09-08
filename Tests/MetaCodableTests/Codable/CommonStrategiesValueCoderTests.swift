@@ -19,10 +19,10 @@ struct CommonStrategiesValueCoderTests {
         let impInt: Int!
         let impDouble: Double!
         let impString: String!
-        let optGenBool: Optional<Bool>
-        let optGenInt: Optional<Int>
-        let optGenDouble: Optional<Double>
-        let optGenString: Optional<String>
+        let optGenBool: Bool?
+        let optGenInt: Int?
+        let optGenDouble: Double?
+        let optGenString: String?
     }
 
     @Test
@@ -548,32 +548,47 @@ struct CommonStrategiesValueCoderTests {
 
                     extension Status: Decodable {
                         init(from decoder: any Decoder) throws {
-                            let type: String
-                            let container = try decoder.container(keyedBy: CodingKeys.self)
-                            type = try container.decode(String.self, forKey: CodingKeys.type)
-                            switch type {
-                            case "active":
-                                let since: String
-                                let container = try decoder.container(keyedBy: CodingKeys.self)
-                                since = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.since)
-                                self = .active(since: since)
-                            case "inactive":
-                                let reason: String
-                                let container = try decoder.container(keyedBy: CodingKeys.self)
-                                reason = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.reason)
-                                self = .inactive(reason: reason)
-                            case "pending":
-                                let until: String
-                                let container = try decoder.container(keyedBy: CodingKeys.self)
-                                until = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.until)
-                                self = .pending(until: until)
-                            default:
-                                let context = DecodingError.Context(
-                                    codingPath: decoder.codingPath,
-                                    debugDescription: "Couldn't match any cases."
-                                )
-                                throw DecodingError.typeMismatch(Self.self, context)
+                            var typeContainer: KeyedDecodingContainer<CodingKeys>?
+                            let container = try? decoder.container(keyedBy: CodingKeys.self)
+                            if let container = container {
+                                typeContainer = container
+                            } else {
+                                typeContainer = nil
                             }
+                            if let typeContainer = typeContainer, let container = container {
+                                let typeString: String?
+                                do {
+                                    typeString = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeString = nil
+                                }
+                                if let typeString = typeString {
+                                    switch typeString {
+                                    case "active":
+                                        let since: String
+                                        since = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.since)
+                                        self = .active(since: since)
+                                        return
+                                    case "inactive":
+                                        let reason: String
+                                        reason = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.reason)
+                                        self = .inactive(reason: reason)
+                                        return
+                                    case "pending":
+                                        let until: String
+                                        until = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.until)
+                                        self = .pending(until: until)
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                            }
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
                         }
                     }
 

@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import Testing
 
@@ -60,6 +61,47 @@ struct GroupedVariableTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable(
+                one: "first", two: "second", three: "third")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.one == "first")
+            #expect(decoded.two == "second")
+            #expect(decoded.three == "third")
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "one": "value1",
+                    "two": "value2",
+                    "three": "value3"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.one == "value1")
+            #expect(decoded.two == "value2")
+            #expect(decoded.three == "value3")
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = SomeCodable(one: "a", two: "b", three: "c")
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["one"] as? String == "a")
+            #expect(json["two"] as? String == "b")
+            #expect(json["three"] as? String == "c")
         }
     }
 

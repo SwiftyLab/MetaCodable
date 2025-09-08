@@ -16,8 +16,11 @@
 ///     of multiple `Decodable` types.
 ///   * Use ``CodedBy(_:)`` to provide custom decoding behavior for
 ///     `Decodable` types or implement decoding for non-`Decodable` types.
+///   * Use ``CodedAs(_:_:)-8wdaz`` to provide additional coding key values
+///     where field value can appear.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
-///   * Use ``CodedAs(_:_:)`` to provide custom values for enum cases.
+///   * Use ``CodedAs(_:_:)-8wdaz`` and ``CodedAs(_:_:)-4n3ze``
+///     to provide custom values for enum cases.
 ///   * Use ``CodedAt(_:)`` to provide enum-case/protocol identifier tag path.
 ///   * Use ``CodedAs()`` to provide enum-case/protocol identifier tag type.
 ///   * Use ``ContentAt(_:_:)`` to provided enum-case/protocol content path.

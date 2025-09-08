@@ -103,6 +103,39 @@ struct MetaCodableMessage: Error, DiagnosticMessage, FixItMessage {
     }
 }
 
+/// A diagnostic message for macro expansion errors in MetaCodable.
+///
+/// This struct represents an error or warning that occurs during macro expansion,
+/// providing contextual information about what went wrong and where it occurred.
+/// It conforms to both `Error` and `DiagnosticMessage` to integrate with Swift's
+/// macro diagnostic system.
+///
+/// - Parameters:
+///   - Attr: The attribute type that caused the error, which must conform to `Attribute`
+struct MetaCodableMacroExpansionErrorMessage<Attr>: Error, DiagnosticMessage
+where Attr: Attribute {
+    /// The human-readable error message describing what went wrong
+    let message: String
+    /// The severity level of the diagnostic (error, warning, note, etc.)
+    let severity: DiagnosticSeverity
+
+    /// The unique diagnostic identifier based on the attribute type
+    var diagnosticID: MessageID {
+        Attr.messageID(Attr.misuseId)
+    }
+
+    /// Creates a new macro expansion error message.
+    ///
+    /// - Parameters:
+    ///   - message: A descriptive error message explaining the issue
+    ///   - severity: The diagnostic severity level (defaults to `.error`)
+    init(_ message: String, severity: DiagnosticSeverity = .error) {
+        self.severity = severity
+        self.message = message
+    }
+}
+
 #if !canImport(SwiftSyntax600)
 extension MetaCodableMessage: @unchecked Sendable {}
+extension MetaCodableMacroExpansionErrorMessage: @unchecked Sendable {}
 #endif

@@ -395,29 +395,44 @@ struct DecodedAtEncodedAtIntegrationTests {
 
                         extension Command: Decodable {
                             init(from decoder: any Decoder) throws {
-                                let type: String
-                                let container = try decoder.container(keyedBy: CodingKeys.self)
-                                type = try container.decode(String.self, forKey: CodingKeys.type)
-                                switch type {
-                                case "load":
-                                    let key: String
-                                    let container = try decoder.container(keyedBy: CodingKeys.self)
-                                    key = try container.decode(String.self, forKey: CodingKeys.key)
-                                    self = .load(key: key)
-                                case "store":
-                                    let key: String
-                                    let value: Int
-                                    let container = try decoder.container(keyedBy: CodingKeys.self)
-                                    key = try container.decode(String.self, forKey: CodingKeys.key)
-                                    value = try container.decode(Int.self, forKey: CodingKeys.value)
-                                    self = .store(key: key, value: value)
-                                default:
-                                    let context = DecodingError.Context(
-                                        codingPath: decoder.codingPath,
-                                        debugDescription: "Couldn't match any cases."
-                                    )
-                                    throw DecodingError.typeMismatch(Self.self, context)
+                                var typeContainer: KeyedDecodingContainer<CodingKeys>?
+                                let container = try? decoder.container(keyedBy: CodingKeys.self)
+                                if let container = container {
+                                    typeContainer = container
+                                } else {
+                                    typeContainer = nil
                                 }
+                                if let typeContainer = typeContainer, let container = container {
+                                    let typeString: String?
+                                    do {
+                                        typeString = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type) ?? nil
+                                    } catch {
+                                        typeString = nil
+                                    }
+                                    if let typeString = typeString {
+                                        switch typeString {
+                                        case "load":
+                                            let key: String
+                                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                                            self = .load(key: key)
+                                            return
+                                        case "store":
+                                            let key: String
+                                            let value: Int
+                                            key = try container.decode(String.self, forKey: CodingKeys.key)
+                                            value = try container.decode(Int.self, forKey: CodingKeys.value)
+                                            self = .store(key: key, value: value)
+                                            return
+                                        default:
+                                            break
+                                        }
+                                    }
+                                }
+                                let context = DecodingError.Context(
+                                    codingPath: decoder.codingPath,
+                                    debugDescription: "Couldn't match any cases."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
                             }
                         }
 
@@ -488,15 +503,18 @@ struct DecodedAtEncodedAtIntegrationTests {
 
                         extension Command: Decodable {
                             init(from decoder: any Decoder) throws {
-                                let type: Int
+                                var typeContainer: KeyedDecodingContainer<CodingKeys>
                                 let container = try decoder.container(keyedBy: CodingKeys.self)
-                                type = try container.decode(Int.self, forKey: CodingKeys.type)
+                                typeContainer = container
+                                let type: Int
+                                type = try typeContainer.decode(Int.self, forKey: CodingKeys.type)
                                 switch type {
                                 case 1:
                                     let key: String
                                     let container = try decoder.container(keyedBy: CodingKeys.self)
                                     key = try container.decode(String.self, forKey: CodingKeys.key)
                                     self = .load(key: key)
+                                    return
                                 case 2:
                                     let key: String
                                     let value: Int
@@ -504,13 +522,15 @@ struct DecodedAtEncodedAtIntegrationTests {
                                     key = try container.decode(String.self, forKey: CodingKeys.key)
                                     value = try container.decode(Int.self, forKey: CodingKeys.value)
                                     self = .store(key: key, value: value)
+                                    return
                                 default:
-                                    let context = DecodingError.Context(
-                                        codingPath: decoder.codingPath,
-                                        debugDescription: "Couldn't match any cases."
-                                    )
-                                    throw DecodingError.typeMismatch(Self.self, context)
+                                    break
                                 }
+                                let context = DecodingError.Context(
+                                    codingPath: decoder.codingPath,
+                                    debugDescription: "Couldn't match any cases."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
                             }
                         }
 
@@ -583,15 +603,18 @@ struct DecodedAtEncodedAtIntegrationTests {
 
                         extension Command: Decodable {
                             init(from decoder: any Decoder) throws {
-                                let type: [Int]
+                                var typeContainer: KeyedDecodingContainer<CodingKeys>
                                 let container = try decoder.container(keyedBy: CodingKeys.self)
-                                type = try SequenceCoder(output: [Int].self, configuration: .lossy).decode(from: container, forKey: CodingKeys.type)
+                                typeContainer = container
+                                let type: [Int]
+                                type = try SequenceCoder(output: [Int].self, configuration: .lossy).decode(from: typeContainer, forKey: CodingKeys.type)
                                 switch type {
                                 case [1, 2, 3]:
                                     let key: String
                                     let container = try decoder.container(keyedBy: CodingKeys.self)
                                     key = try container.decode(String.self, forKey: CodingKeys.key)
                                     self = .load(key: key)
+                                    return
                                 case [4, 5, 6]:
                                     let key: String
                                     let value: Int
@@ -599,13 +622,15 @@ struct DecodedAtEncodedAtIntegrationTests {
                                     key = try container.decode(String.self, forKey: CodingKeys.key)
                                     value = try container.decode(Int.self, forKey: CodingKeys.value)
                                     self = .store(key: key, value: value)
+                                    return
                                 default:
-                                    let context = DecodingError.Context(
-                                        codingPath: decoder.codingPath,
-                                        debugDescription: "Couldn't match any cases."
-                                    )
-                                    throw DecodingError.typeMismatch(Self.self, context)
+                                    break
                                 }
+                                let context = DecodingError.Context(
+                                    codingPath: decoder.codingPath,
+                                    debugDescription: "Couldn't match any cases."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
                             }
                         }
 
@@ -782,35 +807,42 @@ struct DecodedAtEncodedAtIntegrationTests {
 
                         extension Operation: Decodable {
                             init(from decoder: any Decoder) throws {
-                                let type: String?
+                                var typeContainer: KeyedDecodingContainer<CodingKeys>?
                                 let container = try decoder.container(keyedBy: CodingKeys.self)
                                 let data_container = ((try? container.decodeNil(forKey: CodingKeys.data)) == false) ? try container.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.data) : nil
                                 let attributes_data_container = ((try? data_container?.decodeNil(forKey: CodingKeys.attributes)) == false) ? try data_container?.nestedContainer(keyedBy: CodingKeys.self, forKey: CodingKeys.attributes) : nil
                                 if let _ = data_container {
                                     if let attributes_data_container = attributes_data_container {
-                                        type = try attributes_data_container.decodeIfPresent(String.self, forKey: CodingKeys.type)
+                                        typeContainer = attributes_data_container
                                     } else {
-                                        type = nil
+                                        typeContainer = nil
                                     }
                                 } else {
-                                    type = nil
+                                    typeContainer = nil
                                 }
-                                switch type {
-                                case "REGISTRATION":
-                                    let _0: Registration
-                                    _0 = try Registration(from: decoder)
-                                    self = .registration(_0)
-                                case nil:
-                                    let _0: Expiry
-                                    _0 = try Expiry(from: decoder)
-                                    self = .expiry(_0)
-                                default:
-                                    let context = DecodingError.Context(
-                                        codingPath: decoder.codingPath,
-                                        debugDescription: "Couldn't match any cases."
-                                    )
-                                    throw DecodingError.typeMismatch(Self.self, context)
+                                if let typeContainer = typeContainer {
+                                    let type: String?
+                                    type = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type)
+                                    switch type {
+                                    case "REGISTRATION":
+                                        let _0: Registration
+                                        _0 = try Registration(from: decoder)
+                                        self = .registration(_0)
+                                        return
+                                    case nil:
+                                        let _0: Expiry
+                                        _0 = try Expiry(from: decoder)
+                                        self = .expiry(_0)
+                                        return
+                                    default:
+                                        break
+                                    }
                                 }
+                                let context = DecodingError.Context(
+                                    codingPath: decoder.codingPath,
+                                    debugDescription: "Couldn't match any cases."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
                             }
                         }
 
@@ -821,10 +853,10 @@ struct DecodedAtEncodedAtIntegrationTests {
                                 var typeContainer = attributes_container
                                 switch self {
                                 case .registration(let _0):
-                                    try typeContainer.encodeIfPresent("REGISTRATION", forKey: CodingKeys.type)
+                                    try typeContainer.encode("REGISTRATION", forKey: CodingKeys.type)
                                     try _0.encode(to: encoder)
                                 case .expiry(let _0):
-                                    try typeContainer.encodeIfPresent(nil as String?, forKey: CodingKeys.type)
+                                    try typeContainer.encode(nil as String?, forKey: CodingKeys.type)
                                     try _0.encode(to: encoder)
                                 }
                             }

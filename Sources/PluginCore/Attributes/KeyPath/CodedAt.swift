@@ -74,27 +74,38 @@ package struct CodedAt: PropertyAttribute {
 
 extension Registration
 where Var == ExternallyTaggedEnumSwitcher, Decl == EnumDeclSyntax {
-    /// Checks if enum declares internal tagging.
+    /// Checks if enum declares internal tagging and creates appropriate switcher.
     ///
-    /// Checks if identifier path provided with `CodedAt` macro,
-    /// identifier type is used if `CodedAs` macro provided falling back to
-    /// the `fallbackType` passed.
+    /// Examines the enum declaration for `CodedAt`, `DecodedAt`, and `EncodedAt`
+    /// attributes to determine if internal tagging should be used. Internal tagging
+    /// occurs when these attributes specify non-empty key paths that indicate where
+    /// the type identifier should be located within the encoded structure.
+    ///
+    /// If valid key paths are found, creates an `InternallyTaggedEnumSwitcher` with
+    /// the specified configuration. The identifier type is determined from the `CodedAs`
+    /// attribute if present, otherwise defaults to `String`.
     ///
     /// - Parameters:
-    ///   - encodeContainer: The container for case variation encoding.
-    ///   - identifier: The identifier name to use.
-    ///   - fallbackType: The fallback identifier type to use if not provided.
-    ///   - codingKeys: The map where `CodingKeys` maintained.
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - variableBuilder: The builder action for building identifier.
-    ///   - switcherBuilder: The further builder action if check succeeds.
+    ///   - container: The container token for case variation encoding/decoding.
+    ///   - identifier: The identifier token name to use for tagging.
+    ///   - codingKeys: The coding keys map for key path resolution.
+    ///   - forceDecodingReturn: Whether to force explicit `return` statements in
+    ///     generated decoding switch cases. When `true`, each case will include a
+    ///     `return` statement after assignment for early exit.
+    ///   - context: The macro expansion context for diagnostics and code generation.
+    ///   - variableBuilder: Builder function for creating the identifier variable
+    ///     from the basic property variable registration.
+    ///   - switcherBuilder: Builder function for creating the final switcher from
+    ///     the internally tagged enum switcher registration.
     ///
-    /// - Returns: Type-erased variable registration applying builders
-    ///   if succeeds, otherwise current variable type-erased registration.
+    /// - Returns: A type-erased enum switcher registration. If internal tagging
+    ///   is detected (non-empty decode and encode paths), returns the result of
+    ///   applying both builder functions. Otherwise, returns the current registration
+    ///   with a type-erased variable, indicating external tagging should be used.
     func checkForInternalTagging<Variable, Switcher>(
-        encodeContainer: TokenSyntax,
-        identifier: TokenSyntax, fallbackType: TypeSyntax,
-        codingKeys: CodingKeysMap, context: some MacroExpansionContext,
+        container: TokenSyntax, identifier: TokenSyntax,
+        codingKeys: CodingKeysMap, forceDecodingReturn: Bool,
+        context: some MacroExpansionContext,
         variableBuilder: @escaping (
             PathRegistration<EnumDeclSyntax, BasicPropertyVariable>
         ) -> PathRegistration<EnumDeclSyntax, Variable>,
@@ -116,10 +127,13 @@ where Var == ExternallyTaggedEnumSwitcher, Decl == EnumDeclSyntax {
         let typeAttr = CodedAs(from: decl)
         let keyPath = PathKey(decoding: decodedPath, encoding: encodedPath)
         let variable = InternallyTaggedEnumSwitcher(
-            encodeContainer: encodeContainer, identifier: identifier,
-            identifierType: typeAttr?.type ?? fallbackType,
+            identifierDecodeContainer: container,
+            identifierEncodeContainer: container,
+            identifier: identifier, identifierType: typeAttr?.type,
             keyPath: keyPath, codingKeys: codingKeys,
-            decl: decl, context: context, variableBuilder: variableBuilder
+            decl: decl, context: context,
+            forceDecodingReturn: forceDecodingReturn,
+            variableBuilder: variableBuilder
         )
 
         let newRegistration = switcherBuilder(self.updating(with: variable))

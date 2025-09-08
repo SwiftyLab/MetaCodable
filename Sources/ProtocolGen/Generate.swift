@@ -243,7 +243,8 @@ extension ProtocolGen {
                 codingKeys: CodingKeysMap(
                     typeName: "CodingKeys",
                     fallbackTypeName: "DynamicCodableIdentifier<String>"
-                )
+                ),
+                forceInternalTaggingDecodingReturn: false
             )
         }
 

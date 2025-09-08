@@ -49,7 +49,16 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         codingKeys: CodingKeysMap, context: some MacroExpansionContext
     ) -> EnumVariable.CaseValue {
         let name = CodingKeysMap.Key.name(for: variable.name).text
-        return .raw(!values.isEmpty ? values : ["\(literal: name)"])
+        return !values.isEmpty
+            ? .raw(
+                values.map { expr in
+                    .from(
+                        expression: expr, inheritedType: nil,
+                        context: context
+                    )
+                }
+            )
+            : .raw([.init(syntax: "\(literal: name)", type: .string)])
     }
 
     /// Update provided variable data.
@@ -175,10 +184,13 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
     ) -> CodeBlockItemListSyntax {
         let coder = location.coder
         return CodeBlockItemListSyntax {
-            self.encodeSwitchExpression(
+            let switchExpr = self.encodeSwitchExpression(
                 over: location.selfValue, at: location, from: coder,
                 in: context, withDefaultCase: location.hasDefaultCase
             ) { _ in "" }
+            if let switchExpr = switchExpr {
+                switchExpr
+            }
         }
     }
 

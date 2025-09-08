@@ -97,7 +97,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
             caseDecodeExpr: caseDecodeExpr, caseEncodeExpr: caseEncodeExpr,
             encodeSwitchExpr: "self", forceDefault: false,
             switcher: Self.externallyTaggedSwitcher(decodingKeys: decodingKeys),
-            codingKeys: codingKeys
+            codingKeys: codingKeys,
+            forceInternalTaggingDecodingReturn: true
         )
     }
 
@@ -114,21 +115,23 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
     /// - Parameters:
     ///   - decl: The declaration to read data from.
     ///   - context: The context in which to perform the macro expansion.
-    ///   - caseDecodeExpr: The enum-case decoding expression generation
-    ///     callback.
-    ///   - caseEncodeExpr: The enum-case encoding expression generation
-    ///     callback.
-    ///   - encodeSwitchExpr: The context in which to perform the macro expansion.
-    ///   - forceDefault: The context in which to perform the macro expansion.
-    ///   - switcher: The switch expression generator.
-    ///   - codingKeys: The map where `CodingKeys` maintained.
+    ///   - caseDecodeExpr: The enum-case decoding expression generation callback.
+    ///   - caseEncodeExpr: The enum-case encoding expression generation callback.
+    ///   - encodeSwitchExpr: The expression used in switch header for encoding implementation.
+    ///   - forceDefault: Whether to always add default case to decoding/encoding switch.
+    ///   - switcher: The switch expression generator for externally tagged enums.
+    ///   - codingKeys: The map where `CodingKeys` are maintained.
+    ///   - forceInternalTaggingDecodingReturn: Whether to force explicit `return` statements
+    ///     in generated decoding switch cases when internal tagging is detected. When `true`,
+    ///     each internally tagged enum case includes a `return` after assignment for early exit.
     ///
     /// - Returns: Created enum variable.
     package init(
         from decl: EnumDeclSyntax, in context: some MacroExpansionContext,
         caseDecodeExpr: @escaping CaseCode, caseEncodeExpr: @escaping CaseCode,
         encodeSwitchExpr: ExprSyntax, forceDefault: Bool,
-        switcher: ExternallyTaggedEnumSwitcher, codingKeys: CodingKeysMap
+        switcher: ExternallyTaggedEnumSwitcher, codingKeys: CodingKeysMap,
+        forceInternalTaggingDecodingReturn: Bool
     ) {
         self.init(
             from: decl, in: context,
@@ -137,8 +140,10 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
             switcher: switcher, codingKeys: codingKeys
         ) { input in
             input.checkForInternalTagging(
-                encodeContainer: "typeContainer", identifier: "type",
-                fallbackType: "String", codingKeys: codingKeys, context: context
+                container: Self.typeContainer, identifier: Self.type,
+                codingKeys: codingKeys,
+                forceDecodingReturn: forceInternalTaggingDecodingReturn,
+                context: context
             ) { registration in
                 registration.useHelperCoderIfExists()
             } switcherBuilder: { registration in
@@ -259,15 +264,12 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         in context: some MacroExpansionContext,
         from location: TypeCodingLocation
     ) -> TypeGenerated? {
-        guard
-            let conformance = location.conformance
-        else { return nil }
-
+        guard let conformance = location.conformance else { return nil }
         let selfType: ExprSyntax = "\(name).self"
         let code: CodeBlockItemListSyntax
         if cases.contains(where: { $0.variable.decode ?? true }) {
             let switcherLoc = EnumSwitcherLocation(
-                coder: location.method.arg, container: "container",
+                coder: location.method.arg, container: Self.container,
                 keyType: codingKeys.type, selfType: selfType, selfValue: "_",
                 cases: cases, codeExpr: caseDecodeExpr,
                 hasDefaultCase: forceDefault
@@ -286,6 +288,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 "throw DecodingError.typeMismatch(Self.self, context)"
             }
         }
+
         return .init(
             code: code, modifiers: [],
             whereClause: constraintGenerator.decodingClause(
@@ -314,16 +317,13 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         in context: some MacroExpansionContext,
         to location: TypeCodingLocation
     ) -> TypeGenerated? {
-        guard
-            let conformance = location.conformance
-        else { return nil }
-
+        guard let conformance = location.conformance else { return nil }
         let selfType: ExprSyntax = "\(name).self"
         let expr = encodeSwitchExpr
         let code: CodeBlockItemListSyntax
         if cases.contains(where: { $0.variable.encode ?? true }) {
             let switcherLocation = EnumSwitcherLocation(
-                coder: location.method.arg, container: "container",
+                coder: location.method.arg, container: Self.container,
                 keyType: codingKeys.type, selfType: selfType, selfValue: expr,
                 cases: cases, codeExpr: caseEncodeExpr,
                 hasDefaultCase: forceDefault
@@ -334,6 +334,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         } else {
             code = ""
         }
+
         return .init(
             code: code, modifiers: [],
             whereClause: constraintGenerator.encodingClause(
@@ -386,7 +387,7 @@ extension EnumVariable {
         /// The expression represents a set of raw value expressions.
         ///
         /// - Parameter exprs: The raw expressions.
-        case raw(_ exprs: [ExprSyntax])
+        case raw([Expr])
         /// Represents value is a set of `CodingKey`s.
         ///
         /// The expressions for the keys are used as value expressions.
@@ -406,28 +407,372 @@ extension EnumVariable {
         /// The expressions for decoding.
         ///
         /// Represents value expressions for case when decoding.
-        var decodeExprs: [ExprSyntax] {
+        var decodeExprs: [Expr] {
             switch self {
             case .raw(let exprs):
                 return exprs
             case .key(let keys):
-                return keys.map(\.expr)
+                return keys.map { Expr(syntax: $0.expr, type: .string) }
             case .keys(let decodeKeys, _):
-                return decodeKeys.map(\.expr)
+                return decodeKeys.map { Expr(syntax: $0.expr, type: .string) }
             }
         }
 
         /// The expressions for encoding.
         ///
         /// Represents value expressions for case when encoding.
-        var encodeExprs: [ExprSyntax] {
+        var encodeExprs: [Expr] {
             switch self {
             case .raw(let exprs):
                 return exprs
             case .key(let keys):
-                return keys.map(\.expr)
+                return keys.map { Expr(syntax: $0.expr, type: .string) }
             case .keys(_, let encodeKeys):
-                return encodeKeys.map(\.expr)
+                return encodeKeys.map { Expr(syntax: $0.expr, type: .string) }
+            }
+        }
+
+        /// Represents the type of an enum case value expression.
+        ///
+        /// Used to categorize and handle different types of literal values that can be
+        /// used as enum case identifiers. Supports built-in Swift types and custom types.
+        enum TypeOf: Hashable {
+            /// Boolean literal type.
+            case bool
+            /// Integer literal type.
+            case int
+            /// Double/floating-point literal type.
+            case double
+            /// String literal type.
+            case string
+            /// Custom or unrecognized type with explicit type syntax.
+            case unknown(TypeSyntax)
+
+            /// Returns all possible types for enum case values.
+            ///
+            /// If an inherited type is provided, returns only that type wrapped as `.unknown`.
+            /// Otherwise, returns all built-in supported types for automatic type inference.
+            ///
+            /// - Parameter inheritedType: Optional explicit type to use instead of inference.
+            /// - Returns: Array of type cases to consider for enum case values.
+            static func all(inheritedType: TypeSyntax?) -> [Self] {
+                if let inheritedType = inheritedType {
+                    return [.unknown(inheritedType)]
+                }
+                return [.bool, .int, .double, .string]
+            }
+
+            /// Generates a name suffix for variable naming based on the type.
+            ///
+            /// Used to create unique variable names when multiple types are being processed.
+            /// Returns the capitalized type name for built-in types, or empty string for
+            /// custom types to avoid naming conflicts.
+            ///
+            /// - Returns: Token syntax for the type-based name suffix.
+            func nameSuffix() -> TokenSyntax {
+                switch self {
+                case .bool:
+                    "Bool"
+                case .int:
+                    "Int"
+                case .double:
+                    "Double"
+                case .string:
+                    "String"
+                case .unknown:
+                    ""
+                }
+            }
+
+            /// Generates the type syntax for this type case.
+            ///
+            /// Creates the appropriate Swift type syntax for use in generated code.
+            /// Can optionally wrap the type in an optional type syntax.
+            ///
+            /// - Parameter optional: Whether to wrap the type in optional syntax.
+            /// - Returns: The generated type syntax, optionally wrapped.
+            func syntax(optional: Bool) -> TypeSyntax {
+                let type: TypeSyntax =
+                    switch self {
+                    case .bool:
+                        "Bool"
+                    case .int:
+                        "Int"
+                    case .double:
+                        "Double"
+                    case .string:
+                        "String"
+                    case .unknown(let type):
+                        type
+                    }
+                return optional
+                    ? TypeSyntax(OptionalTypeSyntax(wrappedType: type)) : type
+            }
+
+            /// Compares two TypeOf instances for equality.
+            ///
+            /// Built-in types are compared by case, while unknown types are compared
+            /// by their trimmed type syntax description to handle formatting differences.
+            ///
+            /// - Parameters:
+            ///   - lhs: The left-hand side TypeOf instance.
+            ///   - rhs: The right-hand side TypeOf instance.
+            /// - Returns: True if the types are equivalent, false otherwise.
+            static func == (lhs: TypeOf, rhs: TypeOf) -> Bool {
+                switch (lhs, rhs) {
+                case (.bool, .bool), (.int, .int), (.double, .double),
+                    (.string, .string):
+                    return true
+                case let (.unknown(lhsType), .unknown(rhsType)):
+                    return lhsType.trimmedDescription
+                        == rhsType.trimmedDescription
+                default:
+                    return false
+                }
+            }
+        }
+
+        /// Represents an expression with its associated type information.
+        ///
+        /// Combines a Swift expression syntax with type metadata to enable proper
+        /// type handling and code generation for enum case values.
+        struct Expr {
+            /// The Swift expression syntax for the enum case value.
+            let syntax: ExprSyntax
+            /// The inferred or specified type of the expression.
+            let type: TypeOf
+
+            /// Creates an Expr instance by analyzing the provided expression syntax.
+            ///
+            /// Performs comprehensive type inference on the expression to determine its type category.
+            /// The method follows a hierarchical approach to type determination:
+            /// 1. If an inherited type is provided, uses that explicitly
+            /// 2. Attempts to infer type from raw literal expressions (bool, int, double, string)
+            /// 3. Attempts to infer type from operator expressions (ranges, prefix/postfix operators)
+            /// 4. Falls back to string type if no other type can be determined
+            ///
+            /// Supports various expression types including:
+            /// - Literal expressions (boolean, integer, float, string)
+            /// - Range operators (`...`, `..<`)
+            /// - Prefix operators (e.g., `-` for negative numbers)
+            /// - Postfix operators (e.g., `...` for partial ranges)
+            /// - Parenthesized expressions
+            ///
+            /// - Parameters:
+            ///   - expression: The Swift expression syntax to analyze for type inference
+            ///   - inheritedType: Optional explicit type to use instead of automatic inference
+            ///   - context: The macro expansion context for diagnostics and error reporting
+            /// - Returns: A new Expr instance with the expression and inferred/specified type
+            static func from(
+                expression: ExprSyntax, inheritedType: TypeSyntax?,
+                context: some MacroExpansionContext
+            ) -> Self {
+                let type: TypeOf =
+                    if let inheritedType = inheritedType {
+                        .unknown(inheritedType)
+                    } else if let type = typeOf(raw: expression) {
+                        type
+                    } else if let type = typeOf(
+                        operator: expression, context: context)
+                    {
+                        type
+                    } else {
+                        .string
+                    }
+                return Expr(syntax: expression, type: type)
+            }
+
+            /// Infers the type of an expression containing operators.
+            ///
+            /// Analyzes expressions that contain range operators (`...`, `..<`) or other operators
+            /// to determine the underlying type. This method handles various operator expression
+            /// formats including:
+            /// - Infix operators: `1...5`, `0..<10`
+            /// - Prefix operators: `...5`, `..<10`
+            /// - Postfix operators: `1...`, `5...`
+            /// - Sequence expressions with multiple elements
+            ///
+            /// The method converts different operator expression types into a normalized
+            /// `SequenceExprSyntax` format for consistent processing, then analyzes the
+            /// operands to determine the overall expression type.
+            ///
+            /// - Parameters:
+            ///   - expression: The operator expression to analyze
+            ///   - context: The macro expansion context for diagnostics
+            /// - Returns: The inferred type if successful, nil if type cannot be determined
+            private static func typeOf(
+                operator expression: ExprSyntax,
+                context: some MacroExpansionContext
+            ) -> TypeOf? {
+                let operatorTexts = ["...", "..<"]
+                let expr: SequenceExprSyntax
+                if let expression = expression.as(SequenceExprSyntax.self) {
+                    expr = expression
+                } else if let expression = expression.as(
+                    InfixOperatorExprSyntax.self
+                ) {
+                    expr = SequenceExprSyntax(
+                        elements: [
+                            expression.leftOperand,
+                            expression.operator,
+                            expression.rightOperand,
+                        ]
+                    )
+                } else if let expression = expression.as(
+                    PrefixOperatorExprSyntax.self
+                ) {
+                    expr = SequenceExprSyntax(
+                        elements: [
+                            ExprSyntax(
+                                BinaryOperatorExprSyntax(
+                                    operator: expression.operator
+                                )
+                            ),
+                            expression.expression,
+                        ]
+                    )
+                } else if let expression = expression.as(
+                    PostfixOperatorExprSyntax.self
+                ) {
+                    expr = SequenceExprSyntax(
+                        elements: [
+                            expression.expression,
+                            ExprSyntax(
+                                BinaryOperatorExprSyntax(
+                                    operator: expression.operator
+                                )
+                            ),
+                        ]
+                    )
+                } else {
+                    return nil
+                }
+
+                switch expr.elements.count {
+                case 2:
+                    if let opExpr = expr.elements.first!.as(
+                        BinaryOperatorExprSyntax.self
+                    ),
+                        operatorTexts.contains(String(opExpr.operator.text)),
+                        let type = typeOf(raw: expr.elements.last!)
+                    {
+                        return type
+                    } else if let opExpr = expr.elements.last!.as(
+                        BinaryOperatorExprSyntax.self),
+                        operatorTexts.contains(String(opExpr.operator.text)),
+                        let type = typeOf(raw: expr.elements.first!)
+                    {
+                        return type
+                    }
+                case 3:
+                    let middleIndex = expr.elements.index(
+                        expr.elements.startIndex, offsetBy: 1
+                    )
+                    guard
+                        let opExpr = expr.elements[middleIndex].as(
+                            BinaryOperatorExprSyntax.self
+                        ),
+                        operatorTexts.contains(String(opExpr.operator.text)),
+                        let firstType = typeOf(raw: expr.elements.first!),
+                        let lastType = typeOf(raw: expr.elements.last!)
+                    else { break }
+                    return maxOf(
+                        leftType: firstType, rightType: lastType,
+                        originExpression: expression, context: context
+                    )
+                default:
+                    break
+                }
+
+                return nil
+            }
+
+            /// Infers the type of a raw literal expression.
+            ///
+            /// Analyzes literal expressions to determine their Swift type category.
+            /// This method handles various literal expression formats and performs
+            /// preprocessing to normalize the expression before type analysis:
+            ///
+            /// 1. Unwraps single-element tuple expressions: `(42)` → `42`
+            /// 2. Handles negative number prefix operators: `-42` → `42` (int type)
+            /// 3. Identifies literal types: boolean, integer, float, string
+            ///
+            /// Supported literal types:
+            /// - `BooleanLiteralExprSyntax`: `true`, `false` → `.bool`
+            /// - `IntegerLiteralExprSyntax`: `42`, `0`, `-5` → `.int`
+            /// - `FloatLiteralExprSyntax`: `3.14`, `0.5` → `.double`
+            /// - `StringLiteralExprSyntax`: `"hello"`, `"world"` → `.string`
+            ///
+            /// - Parameter expression: The raw expression to analyze for literal type
+            /// - Returns: The inferred literal type if recognized, nil otherwise
+            private static func typeOf(raw expression: ExprSyntax) -> TypeOf? {
+                var expr: ExprSyntax
+                if let tuple = expression.as(TupleExprSyntax.self),
+                    tuple.elements.count == 1
+                {
+                    expr = tuple.elements.first!.expression
+                } else {
+                    expr = expression
+                }
+
+                if let prefixExpr = expr.as(PrefixOperatorExprSyntax.self),
+                    prefixExpr.operator.text == "-"
+                {
+                    expr = prefixExpr.expression
+                }
+
+                if expr.is(BooleanLiteralExprSyntax.self) {
+                    return .bool
+                } else if expr.is(FloatLiteralExprSyntax.self) {
+                    return .double
+                } else if expr.is(IntegerLiteralExprSyntax.self) {
+                    return .int
+                } else if expr.is(StringLiteralExprSyntax.self) {
+                    return .string
+                } else {
+                    return nil
+                }
+            }
+        }
+
+        /// Determines the maximum (most specific) type from two types in a range expression.
+        ///
+        /// When analyzing range expressions like `1...5.0`, this method determines the most
+        /// appropriate type that can represent both operands. The type promotion follows
+        /// Swift's type system rules:
+        ///
+        /// - Same types return the same type: `.int` + `.int` → `.int`
+        /// - Integer and double promote to double: `.int` + `.double` → `.double`
+        /// - Incompatible types generate a diagnostic error and fallback to `.string`
+        ///
+        /// This ensures that range expressions maintain type safety while allowing
+        /// reasonable type promotions for numeric ranges.
+        ///
+        /// - Parameters:
+        ///   - leftType: The type of the left operand in the range
+        ///   - rightType: The type of the right operand in the range
+        ///   - originExpression: The original expression for error reporting
+        ///   - context: The macro expansion context for diagnostics
+        /// - Returns: The promoted type that can represent both operands
+        private static func maxOf(
+            leftType: TypeOf, rightType: TypeOf, originExpression: ExprSyntax,
+            context: some MacroExpansionContext
+        ) -> TypeOf {
+            switch (leftType, rightType) {
+            case (.int, .int), (.double, .double), (.string, .string):
+                return leftType
+            case (.int, .double), (.double, .int):
+                return .double
+            default:
+                context.diagnose(
+                    .init(
+                        node: originExpression,
+                        message: MetaCodableMacroExpansionErrorMessage<CodedAs>(
+                            "Invalid expression type for enum case value"
+                        )
+                    )
+                )
+                return .string
             }
         }
     }
@@ -509,6 +854,21 @@ package extension EnumVariable {
 }
 
 fileprivate extension EnumVariable {
+    /// The default name for identifier type root container.
+    ///
+    /// This container is passed to each case for decoding.
+    static var typeContainer: TokenSyntax { "typeContainer" }
+    /// The default name for top-level root container.
+    ///
+    /// This container is passed to each case for decoding.
+    static var container: TokenSyntax { "container" }
+
+    /// The identifier type variable name.
+    ///
+    /// This name is passed for identifier variable declaration
+    /// during decoding.
+    static var type: TokenSyntax { "type" }
+
     /// The default name for content root decoder.
     ///
     /// This decoder is passed to each case for decoding.

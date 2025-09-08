@@ -75,7 +75,7 @@
             }
 
             @Step {
-                Use ``CodedAs(_:_:)`` macro to specify multiple possible `CodingKey`s for a single field.
+                Use ``CodedAs(_:_:)-8wdaz`` macro to specify multiple possible `CodingKey`s for a single field.
 
                 @Code(name: Post.swift, file: Post-06.swift) {
                     @Image(source: Post-06.png, alt: "Basic post JSON representation with author and creation time")

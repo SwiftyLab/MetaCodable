@@ -38,7 +38,7 @@ jobs:
             {
               "os": "macos-15",
               "language": "swift",
-              "swift": "latest"
+              "swift": "6.1.2"
             }
           ]
         }
@@ -180,7 +180,7 @@ jobs:
             },
             {
               "os": "macos-15",
-              "swift": "latest"
+              "swift": "6.1.2"
             }
           ]
         }

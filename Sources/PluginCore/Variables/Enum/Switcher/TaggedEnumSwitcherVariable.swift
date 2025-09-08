@@ -22,40 +22,76 @@ extension TaggedEnumSwitcherVariable {
     ///   - coder: The decoder for cases.
     ///   - context: The context in which to perform the macro expansion.
     ///   - default: Whether default case is needed.
+    ///   - forceDecodingReturn: Whether to force explicit `return` statements in each
+    ///     switch case. When `true`, adds a `return` statement after the case assignment
+    ///     for early exit. Defaults to `false` for backward compatibility.
     ///   - preSyntax: The callback to generate case variation data.
     ///
     /// - Returns: The generated switch expression.
     func decodeSwitchExpression(
-        over header: ExprSyntax,
+        over header: EnumVariable.CaseValue.Expr,
         at location: EnumSwitcherLocation,
         from coder: TokenSyntax,
         in context: some MacroExpansionContext,
         withDefaultCase default: Bool,
+        forceDecodingReturn: Bool = false,
         preSyntax: (TokenSyntax) -> CodeBlockItemListSyntax
-    ) -> SwitchExprSyntax {
-        SwitchExprSyntax(subject: header) {
+    ) -> SwitchExprSyntax? {
+        var switchable = false
+        let switchExpr = SwitchExprSyntax(subject: header.syntax) {
             for (`case`, value) in location.cases where `case`.decode ?? true {
+                let values = value.decodeExprs
+                    .filter { $0.type == header.type }
+                    .map(\.syntax)
                 let cLocation = EnumCaseCodingLocation(
-                    coder: coder, values: value.decodeExprs
+                    coder: coder, values: values
                 )
                 let generated = `case`.decoding(in: context, from: cLocation)
-                SwitchCaseSyntax(label: .case(generated.label)) {
-                    preSyntax("\(value.decodeExprs.first!)")
-                    generated.code.combined()
-                    "\(location.codeExpr(`case`.name, `case`.variables))"
+                if !values.isEmpty {
+                    let _ = { switchable = true }()
+                    SwitchCaseSyntax(label: .case(generated.label)) {
+                        preSyntax("\(values.first!)")
+                        generated.code.combined()
+                        "\(location.codeExpr(`case`.name, `case`.variables))"
+                        if forceDecodingReturn {
+                            "return"
+                        }
+                    }
                 }
             }
+
             if `default` {
                 SwitchCaseSyntax(label: .default(.init())) {
-                    """
-                    let context = DecodingError.Context(
-                        codingPath: \(coder).codingPath,
-                        debugDescription: "Couldn't match any cases."
-                    )
-                    """
-                    "throw DecodingError.typeMismatch(Self.self, context)"
+                    "break"
                 }
             }
+        }
+        return switchable ? switchExpr : nil
+    }
+
+    /// Generates error handling syntax for unmatched enum cases during decoding.
+    ///
+    /// Creates a `DecodingError.typeMismatch` with appropriate context information
+    /// when no enum cases match the decoded value. This provides meaningful error
+    /// messages that include the coding path and a descriptive message indicating
+    /// that no cases could be matched.
+    ///
+    /// - Parameter coder: The decoder token used to access the coding path for
+    ///   error context.
+    ///
+    /// - Returns: Code block syntax that throws a type mismatch decoding error
+    ///   with contextual information.
+    func unmatchedErrorSyntax(
+        from coder: TokenSyntax
+    ) -> CodeBlockItemListSyntax {
+        CodeBlockItemListSyntax {
+            """
+            let context = DecodingError.Context(
+                codingPath: \(coder).codingPath,
+                debugDescription: "Couldn't match any cases."
+            )
+            """
+            "throw DecodingError.typeMismatch(Self.self, context)"
         }
     }
 }
@@ -82,15 +118,19 @@ extension EnumSwitcherVariable {
         in context: some MacroExpansionContext,
         withDefaultCase default: Bool,
         preSyntax: (TokenSyntax) -> CodeBlockItemListSyntax
-    ) -> SwitchExprSyntax {
+    ) -> SwitchExprSyntax? {
         let cases = location.cases
         let allEncodable = cases.allSatisfy { $0.variable.encode ?? true }
         var anyEncodeCondition = false
-        return SwitchExprSyntax(subject: header) {
+        var switchable = false
+        let switchExpr = SwitchExprSyntax(subject: header) {
             for (`case`, value) in cases where `case`.encode ?? true {
+                let _ = { switchable = true }()
+                let values = value.encodeExprs.map(\.syntax)
                 let cLocation = EnumCaseCodingLocation(
-                    coder: coder, values: value.encodeExprs
+                    coder: coder, values: values
                 )
+
                 let generated = `case`.encoding(in: context, to: cLocation)
                 let expr = location.codeExpr(`case`.name, `case`.variables)
                 let pattern = ExpressionPatternSyntax(expression: expr)
@@ -106,7 +146,7 @@ extension EnumSwitcherVariable {
                 SwitchCaseSyntax(label: .case(label)) {
                     if !generatedCode.isEmpty {
                         CodeBlockItemListSyntax {
-                            preSyntax("\(value.encodeExprs.first!)")
+                            preSyntax("\(values.first!)")
                             generatedCode
                         }
                     } else {
@@ -114,9 +154,11 @@ extension EnumSwitcherVariable {
                     }
                 }
             }
+
             if `default` || !allEncodable || anyEncodeCondition {
                 SwitchCaseSyntax(label: .default(.init())) { "break" }
             }
         }
+        return switchable ? switchExpr : nil
     }
 }

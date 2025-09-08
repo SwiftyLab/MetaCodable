@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import Testing
 
@@ -46,6 +47,37 @@ struct GenericsTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = GenericCodable(value: "test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<String>.self, from: encoded)
+            #expect(decoded.value == "test")
+        }
+
+        @Test
+        func decodingAndEncodingWithInt() throws {
+            let original = GenericCodable(value: 42)
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<Int>.self, from: encoded)
+            #expect(decoded.value == 42)
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "hello"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<String>.self, from: jsonData)
+            #expect(decoded.value == "hello")
         }
     }
 
@@ -103,6 +135,35 @@ struct GenericsTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = GenericCodable(
+                value1: "test", value2: 42, value3: true)
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<String, Int, Bool>.self, from: encoded)
+            #expect(decoded.value1 == "test")
+            #expect(decoded.value2 == 42)
+            #expect(decoded.value3 == true)
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value1": "hello",
+                    "value2": 100,
+                    "value3": false
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<String, Int, Bool>.self, from: jsonData)
+            #expect(decoded.value1 == "hello")
+            #expect(decoded.value2 == 100)
+            #expect(decoded.value3 == false)
         }
     }
 
@@ -192,6 +253,49 @@ struct GenericsTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncodingCaseOne() throws {
+            let original: GenericCodable<String, Int, Bool> = .one("test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<String, Int, Bool>.self, from: encoded)
+            if case .one(let value) = decoded {
+                #expect(value == "test")
+            } else {
+                Issue.record("Expected .one case")
+            }
+        }
+
+        @Test
+        func decodingAndEncodingCaseTwo() throws {
+            let original: GenericCodable<String, Int, Bool> = .two(42)
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<String, Int, Bool>.self, from: encoded)
+            if case .two(let value) = decoded {
+                #expect(value == 42)
+            } else {
+                Issue.record("Expected .two case")
+            }
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "three": true
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                GenericCodable<String, Int, Bool>.self, from: jsonData)
+            if case .three(let value) = decoded {
+                #expect(value == true)
+            } else {
+                Issue.record("Expected .three case")
+            }
         }
     }
 

@@ -45,19 +45,23 @@ extension Attribute {
     /// The lowercased-name of this attribute.
     ///
     /// This is used for attribute related diagnostics.
-    var id: String { name.lowercased() }
+    static var id: String { Self.name.lowercased() }
+    /// The misuse id of this attribute.
+    ///
+    /// This is used for attribute related diagnostics.
+    static var misuseId: String { "\(Self.id)-misuse" }
 
     /// Message id for misuse of this attribute.
     ///
     /// This attribute can must be removed or its usage condition
     /// must be satisfied.
-    var misuseMessageID: MessageID { messageID("\(id)-misuse") }
+    var misuseMessageID: MessageID { Self.messageID(Self.misuseId) }
 
     /// Creates a new message id in current package domain.
     ///
     /// - Parameters id: The message id.
     /// - Returns: Created message id.
-    func messageID(_ id: String) -> MessageID {
+    static func messageID(_ id: String) -> MessageID {
         .init(
             domain: "com.SwiftyLab.MetaCodable",
             id: id

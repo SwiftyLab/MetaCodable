@@ -47,6 +47,124 @@ struct CodedAsEnumTests {
     }
 
     @Test
+    func invalidRangeExpressionTypeDiagnostic() throws {
+        assertMacroExpansion(
+            """
+            @Codable
+            @CodedAt("type")
+            enum SomeEnum {
+                @CodedAs("load", true...false)
+                case load(key: String)
+                @CodedAs("store", 1..."end")
+                case store(key: String, value: Int)
+            }
+            """,
+            expandedSource:
+                """
+                enum SomeEnum {
+                    case load(key: String)
+                    case store(key: String, value: Int)
+                }
+
+                extension SomeEnum: Decodable {
+                    init(from decoder: any Decoder) throws {
+                        var typeContainer: KeyedDecodingContainer<CodingKeys>?
+                        let container = try? decoder.container(keyedBy: CodingKeys.self)
+                        if let container = container {
+                            typeContainer = container
+                        } else {
+                            typeContainer = nil
+                        }
+                        if let typeContainer = typeContainer, let container = container {
+                            let typeString: String?
+                            do {
+                                typeString = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type) ?? nil
+                            } catch {
+                                typeString = nil
+                            }
+                            if let typeString = typeString {
+                                switch typeString {
+                                case "load", true ... false:
+                                    let key: String
+                                    key = try container.decode(String.self, forKey: CodingKeys.key)
+                                    self = .load(key: key)
+                                    return
+                                case "store", 1 ... "end":
+                                    let key: String
+                                    let value: Int
+                                    key = try container.decode(String.self, forKey: CodingKeys.key)
+                                    value = try container.decode(Int.self, forKey: CodingKeys.value)
+                                    self = .store(key: key, value: value)
+                                    return
+                                default:
+                                    break
+                                }
+                            }
+                        }
+                        let context = DecodingError.Context(
+                            codingPath: decoder.codingPath,
+                            debugDescription: "Couldn't match any cases."
+                        )
+                        throw DecodingError.typeMismatch(Self.self, context)
+                    }
+                }
+
+                extension SomeEnum: Encodable {
+                    func encode(to encoder: any Encoder) throws {
+                        let container = encoder.container(keyedBy: CodingKeys.self)
+                        var typeContainer = container
+                        switch self {
+                        case .load(key: let key):
+                            try typeContainer.encode("load", forKey: CodingKeys.type)
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(key, forKey: CodingKeys.key)
+                        case .store(key: let key, value: let value):
+                            try typeContainer.encode("store", forKey: CodingKeys.type)
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            try container.encode(key, forKey: CodingKeys.key)
+                            try container.encode(value, forKey: CodingKeys.value)
+                        }
+                    }
+                }
+
+                extension SomeEnum {
+                    enum CodingKeys: String, CodingKey {
+                        case type = "type"
+                        case key = "key"
+                        case value = "value"
+                    }
+                }
+                """,
+            diagnostics: [
+                .init(
+                    id: CodedAs.misuseID,
+                    message: "Invalid expression type for enum case value",
+                    line: 4, column: 22,
+                    fixIts: []
+                ),
+                .init(
+                    id: CodedAs.misuseID,
+                    message: "Invalid expression type for enum case value",
+                    line: 6, column: 23,
+                    fixIts: []
+                ),
+                .init(
+                    id: CodedAs.misuseID,
+                    message: "Invalid expression type for enum case value",
+                    line: 4, column: 22,
+                    fixIts: []
+                ),
+                .init(
+                    id: CodedAs.misuseID,
+                    message: "Invalid expression type for enum case value",
+                    line: 6, column: 23,
+                    fixIts: []
+                ),
+            ]
+        )
+    }
+
+    @Test
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -219,15 +337,18 @@ struct CodedAsEnumTests {
 
                     extension Command: Decodable {
                         init(from decoder: any Decoder) throws {
-                            let type: [Int]
+                            var typeContainer: KeyedDecodingContainer<CodingKeys>
                             let container = try decoder.container(keyedBy: CodingKeys.self)
-                            type = try SequenceCoder(output: [Int].self, configuration: .lossy).decode(from: container, forKey: CodingKeys.type)
+                            typeContainer = container
+                            let type: [Int]
+                            type = try SequenceCoder(output: [Int].self, configuration: .lossy).decode(from: typeContainer, forKey: CodingKeys.type)
                             switch type {
                             case [1, 2, 3]:
                                 let key: String
                                 let container = try decoder.container(keyedBy: CodingKeys.self)
                                 key = try container.decode(String.self, forKey: CodingKeys.key)
                                 self = .load(key: key)
+                                return
                             case [4, 5, 6]:
                                 let key: String
                                 let value: Int
@@ -235,13 +356,15 @@ struct CodedAsEnumTests {
                                 key = try container.decode(String.self, forKey: CodingKeys.key)
                                 value = try container.decode(Int.self, forKey: CodingKeys.value)
                                 self = .store(key: key, value: value)
+                                return
                             default:
-                                let context = DecodingError.Context(
-                                    codingPath: decoder.codingPath,
-                                    debugDescription: "Couldn't match any cases."
-                                )
-                                throw DecodingError.typeMismatch(Self.self, context)
+                                break
                             }
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
                         }
                     }
 
@@ -449,44 +572,61 @@ struct CodedAsEnumTests {
 
                     extension SomeEnum: Decodable {
                         init(from decoder: any Decoder) throws {
-                            let type: String
-                            let container = try decoder.container(keyedBy: CodingKeys.self)
-                            type = try container.decode(String.self, forKey: CodingKeys.type)
-                            switch type {
-                            case "bool":
-                                let variable: Bool
-                                let container = try decoder.container(keyedBy: CodingKeys.self)
-                                variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                                self = .bool(_: variable)
-                            case "altInt":
-                                let val: Int
-                                let container = try decoder.container(keyedBy: CodingKeys.self)
-                                val = try container.decode(Int.self, forKey: CodingKeys.val)
-                                self = .int(val: val)
-                            case "altDouble1", "altDouble2":
-                                let _0: Double
-                                _0 = try Double(from: decoder)
-                                self = .double(_: _0)
-                            case "string":
-                                let _0: String
-                                _0 = try String(from: decoder)
-                                self = .string(_0)
-                            case "multi":
-                                let variable: Bool
-                                let val: Int
-                                let _2: String
-                                let container = try decoder.container(keyedBy: CodingKeys.self)
-                                _2 = try String(from: decoder)
-                                variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
-                                val = try container.decode(Int.self, forKey: CodingKeys.val)
-                                self = .multi(_: variable, val: val, _2)
-                            default:
-                                let context = DecodingError.Context(
-                                    codingPath: decoder.codingPath,
-                                    debugDescription: "Couldn't match any cases."
-                                )
-                                throw DecodingError.typeMismatch(Self.self, context)
+                            var typeContainer: KeyedDecodingContainer<CodingKeys>?
+                            let container = try? decoder.container(keyedBy: CodingKeys.self)
+                            if let container = container {
+                                typeContainer = container
+                            } else {
+                                typeContainer = nil
                             }
+                            if let typeContainer = typeContainer, let container = container {
+                                let typeString: String?
+                                do {
+                                    typeString = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeString = nil
+                                }
+                                if let typeString = typeString {
+                                    switch typeString {
+                                    case "bool":
+                                        let variable: Bool
+                                        variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                                        self = .bool(_: variable)
+                                        return
+                                    case "altInt":
+                                        let val: Int
+                                        val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                        self = .int(val: val)
+                                        return
+                                    case "altDouble1", "altDouble2":
+                                        let _0: Double
+                                        _0 = try Double(from: decoder)
+                                        self = .double(_: _0)
+                                        return
+                                    case "string":
+                                        let _0: String
+                                        _0 = try String(from: decoder)
+                                        self = .string(_0)
+                                        return
+                                    case "multi":
+                                        let variable: Bool
+                                        let val: Int
+                                        let _2: String
+                                        _2 = try String(from: decoder)
+                                        variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
+                                        val = try container.decode(Int.self, forKey: CodingKeys.val)
+                                        self = .multi(_: variable, val: val, _2)
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                            }
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
                         }
                     }
 
