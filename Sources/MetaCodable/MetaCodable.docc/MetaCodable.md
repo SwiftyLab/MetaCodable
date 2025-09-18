@@ -16,11 +16,11 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows custom `CodingKey` value declaration per variable with ``CodedAt(_:)`` passing single argument, instead of requiring you to write all the `CodingKey` values.
 - Allows to create flattened model for nested `CodingKey` values with ``CodedAt(_:)`` and ``CodedIn(_:)``.
 - Allows to create composition of multiple `Codable` types with ``CodedAt(_:)`` passing no arguments.
-- Allows to read data from additional fallback `CodingKey`s provided with ``CodedAs(_:_:)``.
+- Allows to read data from additional fallback `CodingKey`s provided with ``CodedAs(_:_:)-8wdaz``.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``, or only in case of failures when missing value with ``Default(ifMissing:)``. Different default values can also be used for value missing and other errors respectively with ``Default(ifMissing:forErrors:)``.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``, ``CodedBy(_:properties:)`` or others. i.e. ``LossySequenceCoder`` etc.
 - Allows applying common strategies like `ValueCoder` to all properties of a type through the ``Codable(commonStrategies:)`` parameter, reducing the need for repetitive property annotations.
-- Allows specifying different case values with ``CodedAs(_:_:)`` and case value/protocol type identifier type different from `String` with ``CodedAs()``.
+- Allows specifying different case values with ``CodedAs(_:_:)-8wdaz`` and case value/protocol type identifier type different from `String` with ``CodedAs()`` or arbitrary primitive values with ``CodedAs(_:_:)-4n3ze``.
 - Allows specifying enum-case/protocol type identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
 - Allows decoding/encoding enums that lack distinct identifiers for each case data with ``UnTagged()``.
 - Allows to ignore specific properties/cases from decoding/encoding with ``IgnoreCoding()``, ``IgnoreDecoding()`` and ``IgnoreEncoding()``. Allows to ignore encoding based on custom conditions with ``IgnoreEncoding(if:)-1iuvv`` and ``IgnoreEncoding(if:)-7toka``.
@@ -81,7 +81,8 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - ``EncodedAt(_:)``
 - ``CodedIn(_:)``
 - ``CodedAs()``
-- ``CodedAs(_:_:)``
+- ``CodedAs(_:_:)-8wdaz``
+- ``CodedAs(_:_:)-4n3ze``
 - ``ContentAt(_:_:)``
 - ``UnTagged()``
 - ``CodingKeys(_:)``

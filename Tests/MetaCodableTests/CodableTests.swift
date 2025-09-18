@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import SwiftDiagnostics
 import SwiftSyntax
@@ -75,6 +76,28 @@ struct CodableTests {
                     """
             )
         }
+
+        @Test
+        func availableAttributeEncoding() throws {
+            let original = SomeCodable(value: "deprecated_test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "deprecated_test")
+        }
+
+        @Test
+        func availableAttributeFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "available_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "available_value")
+        }
     }
 
     struct WithoutAnyCustomization {
@@ -134,6 +157,41 @@ struct CodableTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func basicCodableEncoding() throws {
+            let original = SomeCodable(value: "basic_test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "basic_test")
+        }
+
+        @Test
+        func basicCodableFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "basic_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "basic_value")
+        }
+
+        @Test
+        func staticPropertiesIgnored() throws {
+            let original = SomeCodable(value: "test")
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            // Static properties should not be encoded
+            #expect(json["other"] == nil)
+            #expect(json["otherM"] == nil)
+            #expect(json["value"] as? String == "test")
         }
     }
 

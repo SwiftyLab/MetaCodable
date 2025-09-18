@@ -167,6 +167,43 @@ struct CodedByActionTests {
                     """
             )
         }
+
+        @Test
+        func customCoderVersionBehavior() throws {
+            // Test version 1 behavior
+            let dog1 = Dog(name: "Buddy", version: 1, info: Dog.Info(tag: 5))
+            let encoded1 = try JSONEncoder().encode(dog1)
+            let decoded1 = try JSONDecoder().decode(Dog.self, from: encoded1)
+            #expect(decoded1.name == "Buddy")
+            #expect(decoded1.version == 1)
+            #expect(decoded1.info.tag == 5)  // No modification for version < 2
+
+            // Test version 2 behavior
+            let dog2 = Dog(name: "Max", version: 2, info: Dog.Info(tag: 5))
+            let encoded2 = try JSONEncoder().encode(dog2)
+            let decoded2 = try JSONDecoder().decode(Dog.self, from: encoded2)
+            #expect(decoded2.name == "Max")
+            #expect(decoded2.version == 2)
+            #expect(decoded2.info.tag == 5)  // Should be 5 after encode(-1) then decode(+1)
+        }
+
+        @Test
+        func customCoderFromJSON() throws {
+            let jsonStr = """
+                {
+                    "name": "Rex",
+                    "version": 3,
+                    "info": {
+                        "tag": 10
+                    }
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Dog.self, from: jsonData)
+            #expect(decoded.name == "Rex")
+            #expect(decoded.version == 3)
+            #expect(decoded.info.tag == 11)  // 10 + 1 for version >= 2
+        }
     }
 
     // https://forums.swift.org/t/codable-passing-data-to-child-decoder/12757

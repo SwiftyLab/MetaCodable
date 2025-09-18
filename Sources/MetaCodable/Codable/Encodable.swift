@@ -14,11 +14,12 @@
 ///     coding key path, with variable name as coding key.
 ///   * Use ``CodedAt(_:)`` with no path arguments, when type is composition
 ///     of multiple `Encodable` types.
-///   * Use ``CodedAs(_:_:)`` to provide additional coding key values where
-///     field value can appear.
+///   * Use ``CodedAs(_:_:)-8wdaz`` to provide additional coding key values
+///     where field value can appear.
 ///   * Use ``CodedBy(_:)`` to provide custom encoding behavior for
 ///     `Encodable` types or implement encoding for non-`Encodable` types.
-///   * Use ``CodedAs(_:_:)`` to provide custom values for enum cases.
+///   * Use ``CodedAs(_:_:)-8wdaz`` and ``CodedAs(_:_:)-4n3ze``
+///     to provide custom values for enum cases.
 ///   * Use ``CodedAt(_:)`` to provide enum-case/protocol identifier tag path.
 ///   * Use ``CodedAs()`` to provide enum-case/protocol identifier tag type.
 ///   * Use ``ContentAt(_:_:)`` to provided enum-case/protocol content path.

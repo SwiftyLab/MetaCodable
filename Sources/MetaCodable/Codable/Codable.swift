@@ -13,12 +13,13 @@
 ///     coding key path, with variable name as coding key.
 ///   * Use ``CodedAt(_:)`` with no path arguments, when type is composition
 ///     of multiple `Codable` types.
-///   * Use ``CodedAs(_:_:)`` to provide additional coding key values where
-///     field value can appear.
+///   * Use ``CodedAs(_:_:)-8wdaz`` to provide additional coding key values
+///     where field value can appear.
 ///   * Use ``CodedBy(_:)`` to provide custom decoding/encoding behavior for
 ///     `Codable` types or implement decoding/encoding for non-`Codable` types.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
-///   * Use ``CodedAs(_:_:)`` to provide custom values for enum cases.
+///   * Use ``CodedAs(_:_:)-8wdaz`` and ``CodedAs(_:_:)-4n3ze``
+///     to provide custom values for enum cases.
 ///   * Use ``CodedAt(_:)`` to provide enum-case/protocol identifier tag path.
 ///   * Use ``CodedAs()`` to provide enum-case/protocol identifier tag type.
 ///   * Use ``ContentAt(_:_:)`` to provided enum-case/protocol content path.

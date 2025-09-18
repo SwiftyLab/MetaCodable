@@ -332,6 +332,37 @@ struct ConformDecodableTests {
                     """
             )
         }
+
+        @Test
+        func decodingOnly() throws {
+            // Since SomeDecodable only conforms to Decodable, we can only test decoding
+            let jsonStr = """
+                {
+                    "value": "test_value",
+                    "count": 42
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeDecodable.self, from: jsonData)
+            #expect(decoded.value == "test_value")
+            #expect(decoded.count == 42)
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "decoded_value",
+                    "count": 100
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeDecodable.self, from: jsonData)
+            #expect(decoded.value == "decoded_value")
+            #expect(decoded.count == 100)
+        }
     }
 
     struct WithCommonStrategies {

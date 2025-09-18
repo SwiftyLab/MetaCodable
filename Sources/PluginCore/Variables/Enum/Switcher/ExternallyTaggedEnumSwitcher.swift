@@ -92,7 +92,7 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
         } else if !eKeys.isEmpty {
             return .key(eKeys)
         } else {
-            return .raw(values)
+            return .raw(values.map { .init(syntax: $0, type: .string) })
         }
     }
 
@@ -131,10 +131,18 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
             """
             let \(contentDecoder) = try \(container).superDecoder(forKey: \(expr))
             """
-            self.decodeSwitchExpression(
-                over: expr, at: location, from: contentDecoder,
+
+            let switchExpr = self.decodeSwitchExpression(
+                over: .init(syntax: expr, type: .string), at: location,
+                from: contentDecoder,
                 in: context, withDefaultCase: location.hasDefaultCase
             ) { _ in "" }
+            if let switchExpr = switchExpr {
+                switchExpr
+            }
+            if location.hasDefaultCase {
+                self.unmatchedErrorSyntax(from: contentDecoder)
+            }
         }
     }
 
@@ -159,13 +167,16 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
             """
             var \(container) = \(coder).container(keyedBy: \(keyType))
             """
-            self.encodeSwitchExpression(
+            let switchExpr = self.encodeSwitchExpression(
                 over: location.selfValue, at: location, from: contentEncoder,
                 in: context, withDefaultCase: location.hasDefaultCase
             ) { name in
                 """
                 let \(contentEncoder) = \(container).superEncoder(forKey: \(name))
                 """
+            }
+            if let switchExpr = switchExpr {
+                switchExpr
             }
         }
     }

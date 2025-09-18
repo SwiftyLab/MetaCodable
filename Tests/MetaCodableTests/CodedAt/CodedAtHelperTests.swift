@@ -1,3 +1,4 @@
+import Foundation
 import HelperCoders
 import MetaCodable
 import Testing
@@ -51,6 +52,38 @@ struct CodedAtHelperTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable(value: ["test1", "test2"])
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == ["test1", "test2"])
+        }
+
+        @Test
+        func decodingFromJSONArray() throws {
+            let jsonStr = """
+                ["value1", "value2", "value3"]
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == ["value1", "value2", "value3"])
+        }
+
+        @Test
+        func lossyDecodingWithInvalidValues() throws {
+            let jsonStr = """
+                ["valid", 123, "another_valid", null, true]
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            // SequenceCoder with .lossy should filter out invalid values
+            #expect(decoded.value == ["valid", "another_valid"])
         }
     }
 

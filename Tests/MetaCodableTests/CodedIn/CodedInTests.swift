@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import Testing
 
@@ -470,6 +471,44 @@ struct CodedInTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable(value: "nested_test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "nested_test")
+        }
+
+        @Test
+        func decodingFromNestedJSON() throws {
+            let jsonStr = """
+                {
+                    "deeply": {
+                        "nested": {
+                            "value": "deep_value"
+                        }
+                    }
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "deep_value")
+        }
+
+        @Test
+        func encodingToNestedJSON() throws {
+            let original = SomeCodable(value: "encoded_nested")
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            let deeply = json["deeply"] as! [String: Any]
+            let nested = deeply["nested"] as! [String: Any]
+            #expect(nested["value"] as? String == "encoded_nested")
         }
     }
 
