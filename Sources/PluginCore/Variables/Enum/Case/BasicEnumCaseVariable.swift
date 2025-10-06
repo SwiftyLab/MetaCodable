@@ -71,7 +71,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     /// - Parameters:
     ///   - decl: The declaration to read data from.
     ///   - context: The context in which to perform the macro expansion.
-    ///   - node: The node at which variables are registered.
+    ///   - switcher: The switcher variable for handling enum case variations.
     ///   - builder: The builder action to use to update associated variables
     ///     registration data.
     ///

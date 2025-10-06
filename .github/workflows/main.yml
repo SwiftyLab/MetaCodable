@@ -175,15 +175,16 @@ jobs:
               }
             },
             {
-              "os": "ubuntu-latest",
-              "swift": "latest"
-            },
-            {
               "os": "macos-15",
               "swift": "6.1.2"
             }
           ]
         }
+      # disable until prebuilt macro issues are fixed
+      # {
+      #   "os": "ubuntu-latest",
+      #   "swift": "latest"
+      # },
 
   cocoapods-test:
     name: CocoaPods
