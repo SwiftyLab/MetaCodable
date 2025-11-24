@@ -1,7 +1,9 @@
 {
   "recommendations": [
-    "sswg.swift-lang",
+    "swiftlang.swift-vscode",
     "vadimcn.vscode-lldb",
+    "eamodio.gitlens",
+    "github.vscode-github-actions",
     "ms-vscode-remote.vscode-remote-extensionpack"
   ]
 }

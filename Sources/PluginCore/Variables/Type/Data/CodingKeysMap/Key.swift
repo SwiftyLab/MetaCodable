@@ -64,7 +64,7 @@ extension CodingKeysMap {
         /// - Returns: True if both key instances have the same
         ///            key value, otherwise false.
         static func == (lhs: Self, rhs: Self) -> Bool {
-            return lhs.value == rhs.value
+            lhs.value == rhs.value
         }
 
         /// Convert field token syntax to equivalent key token string.

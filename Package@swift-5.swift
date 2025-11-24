@@ -1,8 +1,9 @@
 // swift-tools-version: 5.9
+// swift-format-ignore-file
 
+import CompilerPluginSupport
 import Foundation
 import PackageDescription
-import CompilerPluginSupport
 
 let package = Package(
     name: "MetaCodable",
@@ -19,10 +20,9 @@ let package = Package(
         .plugin(name: "MetaProtocolCodable", targets: ["MetaProtocolCodable"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", "509.1.0"..<"601.0.0"),
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", "509.1.0"..<"602.0.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2"),
-        .package(url: "https://github.com/swiftlang/swift-format", from: "600.0.0"),
     ],
     targets: [
         // MARK: Core
@@ -85,7 +85,6 @@ let package = Package(
             dependencies: [
                 "PluginCore", "MacroPlugin", "MetaCodable", "HelperCoders", "Testing",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
-                .product(name: "SwiftSyntaxMacrosGenericTestSupport", package: "swift-syntax"),
             ],
             plugins: ["MetaProtocolCodable"]
         ),

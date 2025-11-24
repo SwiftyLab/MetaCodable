@@ -21,7 +21,7 @@ struct Response {
 @Codable
 struct RegistrationAttributes: ResponseAttributes, DynamicCodable {
     static var identifier: DynamicCodableIdentifier<String?> {
-        return .one("REGISTRATION")
+        .one("REGISTRATION")
     }
 
     let id: String

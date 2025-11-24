@@ -1,10 +1,9 @@
-import HelperCoders
 import MetaCodable
 
-@Codable
+@Codable(commonStrategies: [.codedBy(.valueCoder())])
 struct Product {
-    @CodedBy(ValueCoder<Int>())
     let sku: Int
-    @CodedBy(ValueCoder<Bool>())
     let inStock: Bool
+    let name: String
+    let price: Double
 }

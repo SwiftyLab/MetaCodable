@@ -51,7 +51,7 @@ package enum DecodingFallback {
         nestedContainerHasVariables: Bool,
         nestedDecoding decoding: (Container) -> Generated
     ) -> Generated {
-        return switch context {
+        switch context {
         case .coder(let coder, let kType):
             represented(
                 decoder: coder, keyType: kType,
@@ -275,7 +275,7 @@ extension DecodingFallback {
     private static func hasEarlyExit(
         in syntaxes: CodeBlockItemListSyntax
     ) -> Bool {
-        return switch syntaxes.last?.item {
+        switch syntaxes.last?.item {
         case .stmt(let stmt) where stmt.is(ThrowStmtSyntax.self):
             true
         default:

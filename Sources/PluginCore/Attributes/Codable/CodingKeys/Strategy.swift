@@ -218,8 +218,8 @@ extension CodingKeys {
         /// - Returns: Parsed case strategy.
         init(with expr: ExprSyntax) {
             let description = expr.trimmed.description
-            for `case` in Self.allCases {
-                guard description.hasSuffix(`case`.rawValue) else { continue }
+            for `case` in Self.allCases
+            where description.hasSuffix(`case`.rawValue) {
                 self = `case`
                 return
             }

@@ -1,10 +1,10 @@
+import Foundation
 import MetaCodable
 import Testing
 
 @testable import PluginCore
 
 struct VariableDeclarationTests {
-
     struct InitializedImmutableVariable {
         @Codable
         @MemberInit
@@ -50,6 +50,34 @@ struct VariableDeclarationTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable()
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "some")
+        }
+
+        @Test
+        func decodingFromEmptyJSON() throws {
+            let jsonStr = "{}"
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "some")
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = SomeCodable()
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["value"] as? String == "some")
         }
     }
 
@@ -152,9 +180,7 @@ struct VariableDeclarationTests {
         @MemberInit
         struct SomeCodable {
             var value: String {
-                get {
-                    "some"
-                }
+                "some"
             }
         }
 
@@ -570,7 +596,7 @@ struct VariableDeclarationTests {
         @Codable
         @MemberInit
         struct SomeCodable {
-            let value: Optional<String>
+            let value: String?
         }
 
         @Test

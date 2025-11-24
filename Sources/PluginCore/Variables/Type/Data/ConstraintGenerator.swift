@@ -82,7 +82,7 @@ struct ConstraintGenerator {
         withVariables variables: [any PropertyVariable],
         conformingTo protocol: TypeSyntax
     ) -> GenericWhereClauseSyntax? {
-        return codingClause(
+        codingClause(
             forRequirementPath: \.requireDecodable,
             withVariables: variables, conformingTo: `protocol`
         )
@@ -102,7 +102,7 @@ struct ConstraintGenerator {
         withVariables variables: [any PropertyVariable],
         conformingTo protocol: TypeSyntax
     ) -> GenericWhereClauseSyntax? {
-        return codingClause(
+        codingClause(
             forRequirementPath: \.requireEncodable,
             withVariables: variables, conformingTo: `protocol`
         )

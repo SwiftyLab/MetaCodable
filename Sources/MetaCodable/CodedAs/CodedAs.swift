@@ -40,7 +40,7 @@
 /// - Parameter values: The values to use.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The value type must be `String` when used in
@@ -103,20 +103,20 @@ public macro CodedAs<T: Codable & Equatable>(_ values: T, _: T...) =
 /// ```
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
-/// - Important: For each case ``CodedAs(_:_:)`` macro with values
+/// - Important: For each case ``CodedAs(_:_:)-8wdaz`` macro with values
 ///   of the type here should be provided, otherwise case name as `String`
 ///   will be used for comparison. If the type here conforms to
 ///   `ExpressibleByStringLiteral` and can be represented by case name
-///   as `String` literal then no need to provide values with ``CodedAs(_:_:)``.
+///   as `String` literal then no need to provide values with ``CodedAs(_:_:)-8wdaz``.
 ///
 /// - Important: When using with protocols ``DynamicCodable/IdentifierValue``
 ///   type must be same as the type defined with this macro, in absence of this macro
 ///   ``DynamicCodable/IdentifierValue`` type must be `String`.
 ///
-/// - Important: This attribute must be used combined with ``Codable()``
+/// - Important: This attribute must be used combined with ``Codable(commonStrategies:)``
 ///   and ``CodedAt(_:)``.
 @attached(peer)
 @available(swift 5.9)

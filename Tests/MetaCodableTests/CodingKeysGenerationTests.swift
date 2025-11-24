@@ -1,10 +1,10 @@
+import Foundation
 import MetaCodable
 import Testing
 
 @testable import PluginCore
 
 struct CodingKeysGenerationTests {
-
     struct BacktickExpression {
         @Codable
         struct SomeCodable {
@@ -47,6 +47,28 @@ struct CodingKeysGenerationTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable(internal: "reserved")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.internal == "reserved")
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "internal": "keyword"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.internal == "keyword")
         }
     }
 
@@ -108,6 +130,35 @@ struct CodingKeysGenerationTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable(val1: "first", val2: "second")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.val1 == "first")
+            #expect(decoded.val2 == "second")
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "associatedtype": {
+                        "val1": "value1"
+                    },
+                    "continue": {
+                        "val2": "value2"
+                    }
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.val1 == "value1")
+            #expect(decoded.val2 == "value2")
         }
     }
 

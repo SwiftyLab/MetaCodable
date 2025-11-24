@@ -56,7 +56,7 @@ package struct IgnoreCoding: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             cantBeCombined(with: CodedIn.self)
             cantBeCombined(with: CodedAt.self)
             cantBeCombined(with: CodedAs.self)
@@ -106,8 +106,23 @@ where
         let ignoreEncoding = ignoreEncodingAttr != nil && conditionExpr == nil
         let decode = !ignoreCoding && !ignoreDecoding
         let encode = !ignoreCoding && !ignoreEncoding
+
+        let encodingCondition: Output.Options.Condition?
+        if let conditionExpr = conditionExpr {
+            switch conditionExpr.label?.tokenKind {
+            case .identifier("if"):
+                encodingCondition = .if(conditionExpr.expression)
+            case .identifier("basedOn"):
+                encodingCondition = .basedOn(conditionExpr.expression)
+            default:
+                encodingCondition = nil
+            }
+        } else {
+            encodingCondition = nil
+        }
+
         let options = Output.Options(
-            decode: decode, encode: encode, encodingConditionExpr: conditionExpr
+            decode: decode, encode: encode, encodingCondition: encodingCondition
         )
         let newVariable = Output(base: self.variable, options: options)
         return self.updating(with: newVariable)
@@ -119,7 +134,7 @@ where
 ///
 /// Attaching attributes of this type to computed properties indicates
 /// this variable should be encoded for the type.
-fileprivate protocol CodingAttribute: PropertyAttribute {}
+private protocol CodingAttribute: PropertyAttribute {}
 extension CodedIn: CodingAttribute {}
 extension CodedAt: CodingAttribute {}
 extension CodedBy: CodingAttribute {}

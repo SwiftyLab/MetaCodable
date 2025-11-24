@@ -30,7 +30,7 @@
 /// the data for `field` case or `Load` type respectively.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
@@ -71,7 +71,7 @@ public macro IgnoreCoding() =
 /// type will be encoded.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
@@ -108,7 +108,7 @@ public macro IgnoreDecoding() =
 /// type will be decoded if case related data is present.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)
@@ -145,7 +145,7 @@ public macro IgnoreEncoding() =
 /// - Parameter condition: The condition to be checked.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The condition argument types must confirm to `Codable`
@@ -167,7 +167,7 @@ public macro IgnoreEncoding<each T>(if condition: (repeat each T) -> Bool) =
 /// - Parameter condition: The condition to be checked.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The field type must confirm to `Codable` and
@@ -175,4 +175,33 @@ public macro IgnoreEncoding<each T>(if condition: (repeat each T) -> Bool) =
 @attached(peer)
 @available(swift 5.9)
 public macro IgnoreEncoding<T>(if condition: (T) -> Bool) =
+    #externalMacro(module: "MacroPlugin", type: "IgnoreEncoding")
+
+/// Indicates the field needs to be encoded only if provided condition
+/// is not satisfied, based on the containing object.
+///
+/// This macro evaluates the condition using the containing object itself,
+/// rather than just the property value. This is useful when the encoding
+/// decision depends on other properties or the overall state of the object.
+/// ```swift
+/// let shouldNotEncodeField: Bool
+/// @IgnoreEncoding(basedOn: \Self.shouldNotEncodeField)
+/// let field: String
+/// ```
+///
+/// The decoding data needs to have applicable data in `field` key.
+/// But the encoded data might not have any `field` key depending on
+/// the value of `shouldNotEncodeField` property of the containing object.
+///
+/// - Parameter condition: The condition to be checked using the containing object.
+///
+/// - Note: This macro on its own only validates if attached declaration
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
+///   when generating final implementations.
+///
+/// - Important: The condition takes the containing object as its parameter
+///   which must conform to `Encodable`.
+@attached(peer)
+@available(swift 5.9)
+public macro IgnoreEncoding<T>(basedOn condition: (T) -> Bool) =
     #externalMacro(module: "MacroPlugin", type: "IgnoreEncoding")

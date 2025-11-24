@@ -55,11 +55,13 @@ package struct CodedIn: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(syntaxes: VariableDeclSyntax.self)
             cantDuplicate()
             attachedToNonStaticVariable()
             cantBeCombined(with: CodedAt.self)
+            cantBeCombined(with: DecodedAt.self)
+            cantBeCombined(with: EncodedAt.self)
             cantBeCombined(with: IgnoreCoding.self)
         }
     }

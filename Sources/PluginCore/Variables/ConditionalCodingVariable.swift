@@ -24,11 +24,28 @@ where Var: ConditionalVariable, Var.Generated: ConditionalVariableSyntax {
         /// False for variables with `@IgnoreCoding`
         /// and `@IgnoreEncoding` attributes.
         let encode: Bool?
-        /// The condition expression based on which encoding is decided.
+
+        /// The condition based on which encoding is decided.
         ///
-        /// This expression accepts arguments from this variable and resolves
+        /// This condition accepts arguments from this variable and resolves
         /// to either `true` or `false` based on which encoding is ignored.
-        let encodingConditionExpr: ExprSyntax?
+        let encodingCondition: Condition?
+
+        /// Condition for determining when encoding should not be performed.
+        enum Condition {
+            /// Encoding is performed only if the provided expression evaluates
+            /// to false.
+            ///
+            /// The expression accepts arguments from this variable and resolves
+            /// to either `true` or `false` based on which encoding is decided.
+            case `if`(ExprSyntax)
+            /// Encoding is performed only if the provided expression evaluates
+            /// to false.
+            ///
+            /// The expression accepts argument as the value that contains
+            /// this property.
+            case basedOn(ExprSyntax)
+        }
     }
 
     /// The value wrapped by this instance.
@@ -59,10 +76,21 @@ where Var: ConditionalVariable, Var.Generated: ConditionalVariableSyntax {
         to location: Var.CodingLocation
     ) -> Var.Generated {
         let syntax = base.encoding(in: context, to: location)
-        guard
-            let conditionExpr = options.encodingConditionExpr
-        else { return syntax }
-        let args = self.conditionArguments
+        guard let condition = options.encodingCondition else { return syntax }
+
+        let conditionExpr: ExprSyntax
+        let args: LabeledExprListSyntax
+        switch condition {
+        case .if(let expr):
+            conditionExpr = expr
+            args = self.conditionArguments
+        case .basedOn(let expr):
+            conditionExpr = expr
+            args = LabeledExprListSyntax {
+                LabeledExprSyntax(expression: "self" as ExprSyntax)
+            }
+        }
+
         let returnList = TupleTypeElementListSyntax {
             for _ in args {
                 TupleTypeElementSyntax(type: "_" as TypeSyntax)
@@ -96,7 +124,7 @@ where Var: PropertyVariable {
     /// `Decodable` conformance, if provided decode
     /// option is set as `true` otherwise `false`.
     var requireDecodable: Bool? {
-        return (options.decode ?? true) ? base.requireDecodable : false
+        (options.decode ?? true) ? base.requireDecodable : false
     }
     /// Whether the variable type requires `Encodable` conformance.
     ///
@@ -104,7 +132,7 @@ where Var: PropertyVariable {
     /// `Encodable` conformance, if provided encode
     /// option is set as `true` otherwise `false`.
     var requireEncodable: Bool? {
-        return (options.encode ?? true) ? base.requireEncodable : false
+        (options.encode ?? true) ? base.requireEncodable : false
     }
 }
 

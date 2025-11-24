@@ -26,7 +26,7 @@ extension PropertyVariableTreeNode {
         ///
         /// - Returns: The combined code syntax.
         func combined() -> CodeBlockItemListSyntax {
-            return CodeBlockItemListSyntax {
+            CodeBlockItemListSyntax {
                 containerSyntax
                 codingSyntax
                 conditionalSyntax
@@ -47,7 +47,7 @@ extension PropertyVariableTreeNode.Generated {
     ///
     /// - Returns: The final generated syntax.
     static func + (lhs: Self, rhs: Self) -> Self {
-        return .init(
+        .init(
             containerSyntax: CodeBlockItemListSyntax {
                 lhs.containerSyntax
                 rhs.containerSyntax

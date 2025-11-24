@@ -41,7 +41,7 @@ where S: Codable, S.Element: Codable {
     ///   stored value is not an unkeyed container.
     public func decode(from decoder: Decoder) throws -> S {
         var container = try decoder.unkeyedContainer()
-        var result = Array<S.Element>()
+        var result: [S.Element] = []
         while !container.isAtEnd {
             let value: S.Element
             do { value = try container.decode(S.Element.self) } catch {

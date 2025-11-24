@@ -124,7 +124,7 @@
 /// - Parameter path: The `CodingKey` path value located at.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: When applied to fields, the field type must confirm to

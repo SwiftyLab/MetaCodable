@@ -16,7 +16,7 @@ import SwiftSyntax
 ///     methods.
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
-package struct Codable: Attribute {
+package struct Codable: PeerAttribute {
     /// The node syntax provided
     /// during initialization.
     let node: AttributeSyntax
@@ -45,12 +45,14 @@ package struct Codable: Attribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(
                 syntaxes: StructDeclSyntax.self, ClassDeclSyntax.self,
                 EnumDeclSyntax.self, ActorDeclSyntax.self,
                 ProtocolDeclSyntax.self
             )
+            cantBeCombined(with: ConformDecodable.self)
+            cantBeCombined(with: ConformEncodable.self)
             cantDuplicate()
         }
     }

@@ -1,4 +1,5 @@
 import SwiftSyntax
+import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
 /// A type of `EnumSwitcherVariable` that can have adjacent tagging.
@@ -22,6 +23,7 @@ protocol AdjacentlyTaggableSwitcher: EnumSwitcherVariable {
         from location: EnumSwitcherLocation,
         contentAt decoder: TokenSyntax
     ) -> CodeBlockItemListSyntax
+
     /// Provides the syntax for encoding at the provided location and encoder.
     ///
     /// The generated implementation encodes the identifier variable to provided
@@ -39,44 +41,93 @@ protocol AdjacentlyTaggableSwitcher: EnumSwitcherVariable {
         contentAt encoder: TokenSyntax
     ) -> CodeBlockItemListSyntax
 
-    /// Register variable for the provided `CodingKey` path.
+    /// Register variable for decoding at the provided `CodingKey` path.
     ///
-    /// Creates new switcher variable of this type updating with provided
-    /// variable registration.
+    /// Creates a new switcher variable of this type that incorporates the provided
+    /// variable registration for the decoding process.
     ///
     /// - Parameters:
-    ///   - variable: The variable data, i.e. name, type and
-    ///     additional macro metadata.
-    ///   - keyPath: The `CodingKey` path where the value
-    ///     will be decode/encoded.
+    ///   - variable: The variable data to register, containing metadata such as name,
+    ///     type, and coding attributes. This is typically a `CoderVariable` that handles
+    ///     the decoding process.
+    ///   - decodingKeyPath: The `CodingKey` path where the value will be decoded from.
+    ///     This path determines the location in the encoded input from which the variable's
+    ///     value will be extracted.
     ///
-    /// - Returns: Newly created variable updating registration.
+    /// - Returns: The updated instance of `Self` with the variable registered.
+    @discardableResult
     mutating func registering(
         variable: AdjacentlyTaggedEnumSwitcher<Self>.CoderVariable,
-        keyPath: [CodingKeysMap.Key]
+        decodingKeyPath: [CodingKeysMap.Key]
+    ) -> Self
+
+    /// Register variable for encoding at the provided `CodingKey` path.
+    ///
+    /// Creates a new switcher variable of this type that incorporates the provided
+    /// variable registration for the encoding process.
+    ///
+    /// - Parameters:
+    ///   - variable: The variable data to register, containing metadata such as name,
+    ///     type, and coding attributes. This is typically a `CoderVariable` that handles
+    ///     the encoding process.
+    ///   - encodingKeyPath: The `CodingKey` path where the value will be encoded to.
+    ///     This path determines the location in the encoded output where the variable's
+    ///     value will be stored.
+    ///
+    /// - Returns: The updated instance of `Self` with the variable registered.
+    @discardableResult
+    mutating func registering(
+        variable: AdjacentlyTaggedEnumSwitcher<Self>.CoderVariable,
+        encodingKeyPath: [CodingKeysMap.Key]
     ) -> Self
 }
 
 extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
-    /// Register variable for the provided `CodingKey` path.
+    /// Register variable for decoding at the provided `CodingKey` path.
     ///
-    /// Creates new switcher variable of this type updating with provided
-    /// variable registration.
-    ///
-    /// Registers variable at the provided `CodingKey` path on the current node.
+    /// Creates a new switcher variable of this type that incorporates the provided
+    /// variable registration. This method registers the variable at the specified
+    /// `CodingKey` path on the current decoding node.
     ///
     /// - Parameters:
-    ///   - variable: The variable data, i.e. name, type and
-    ///     additional macro metadata.
-    ///   - keyPath: The `CodingKey` path where the value
-    ///     will be decode/encoded.
+    ///   - variable: The variable data to register, containing metadata such as name,
+    ///     type, and coding attributes. This is typically a `CoderVariable` that handles
+    ///     the decoding process.
+    ///   - decodingKeyPath: The `CodingKey` path where the value will be decoded from.
+    ///     This path determines the location in the encoded input from which the variable's
+    ///     value will be extracted.
     ///
-    /// - Returns: Newly created variable updating registration.
+    /// - Returns: The updated instance of `Self` with the variable registered.
+    @discardableResult
     mutating func registering(
         variable: AdjacentlyTaggedEnumSwitcher<Self>.CoderVariable,
-        keyPath: [CodingKeysMap.Key]
+        decodingKeyPath: [CodingKeysMap.Key]
     ) -> Self {
-        node.register(variable: variable, keyPath: keyPath)
+        decodingNode.register(variable: variable, keyPath: decodingKeyPath)
+        return self
+    }
+
+    /// Register variable for encoding at the provided `CodingKey` path.
+    ///
+    /// Creates a new switcher variable of this type that incorporates the provided
+    /// variable registration. This method registers the variable at the specified
+    /// `CodingKey` path on the current encoding node.
+    ///
+    /// - Parameters:
+    ///   - variable: The variable data to register, containing metadata such as name,
+    ///     type, and coding attributes. This is typically a `CoderVariable` that handles
+    ///     the encoding process.
+    ///   - encodingKeyPath: The `CodingKey` path where the value will be encoded to.
+    ///     This path determines the location in the encoded output where the variable's
+    ///     value will be stored.
+    ///
+    /// - Returns: The updated instance of `Self` with the variable registered.
+    @discardableResult
+    mutating func registering(
+        variable: AdjacentlyTaggedEnumSwitcher<Self>.CoderVariable,
+        encodingKeyPath: [CodingKeysMap.Key]
+    ) -> Self {
+        encodingNode.register(variable: variable, keyPath: encodingKeyPath)
         return self
     }
 
@@ -97,16 +148,143 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
         contentAt decoder: TokenSyntax
     ) -> CodeBlockItemListSyntax {
         let coder = location.coder
+        let container = self.variable.decodeContainer
+        let containerType = self.identifierContainerType()
+        let idetifierDecodingSyntax =
+            EnumVariable.CaseValue.TypeOf.all(
+                inheritedType: identifierType
+            ).compactMap { type in
+                let identifier: TokenSyntax =
+                    "\(self.identifier)\(type.nameSuffix())"
+                let switchExpr = self.decodeSwitchExpression(
+                    over: .init(syntax: "\(identifier)", type: type),
+                    at: location, from: decoder,
+                    in: context, withDefaultCase: true,
+                    forceDecodingReturn: forceDecodingReturn
+                ) { _ in "" }
+
+                guard let switchExpr = switchExpr, switchExpr.cases.count > 1
+                else { return nil }
+                return CodeBlockItemListSyntax {
+                    let typesyntax = type.syntax(
+                        optional: identifierType == nil)
+                    let (variable, key) = identifierVariableAndKey(
+                        identifier, withType: typesyntax, context: context
+                    )
+                    let decodingKey = codingKeys.add(
+                        keys: key.decoding, field: identifier, context: context
+                    ).last!.expr
+
+                    "let \(identifier): \(type.syntax(optional: identifierType == nil))"
+                    variable.decoding(
+                        in: context,
+                        from: .container(
+                            container, key: decodingKey, method: nil)
+                    )
+
+                    switch variable.decodingFallback {
+                    case .ifMissing where identifierType == nil,
+                        .onlyIfMissing where identifierType == nil:
+                        try! IfExprSyntax(
+                            """
+                            if let \(identifier) = \(identifier))
+                            """
+                        ) {
+                            switchExpr
+                        }
+                    default:
+                        switchExpr
+                    }
+                }
+            } as [CodeBlockItemListSyntax]
+
         return CodeBlockItemListSyntax {
-            "let \(identifier): \(identifierType)"
-            node.decoding(
-                in: context, from: .withCoder(coder, keyType: location.keyType)
-            ).combined()
-            self.decodeSwitchExpression(
-                over: "\(identifier)", at: location, from: decoder,
-                in: context, withDefaultCase: true
-            ) { _ in "" }
+            if !idetifierDecodingSyntax.isEmpty {
+                "var \(container): \(containerType)"
+                decodingNode.decoding(
+                    in: context,
+                    from: .withCoder(coder, keyType: location.keyType)
+                ).combined()
+
+                if containerType.isOptionalTypeSyntax {
+                    let topContainerOptional = decodingNode.children
+                        .flatMap(\.value.linkedVariables)
+                        .allSatisfy { variable in
+                            switch variable.decodingFallback {
+                            case .ifMissing:
+                                return true
+                            default:
+                                return false
+                            }
+                        }
+
+                    let header: SyntaxNodeString =
+                        topContainerOptional
+                        ? "if let \(container) = \(container), let \(location.container) = \(location.container)"
+                        : "if let \(container) = \(container)"
+                    try! IfExprSyntax(header) {
+                        for syntax in idetifierDecodingSyntax {
+                            syntax
+                        }
+                    }
+                } else {
+                    for syntax in idetifierDecodingSyntax {
+                        syntax
+                    }
+                }
+            }
+            self.unmatchedErrorSyntax(from: decoder)
         }
+    }
+
+    /// Determines the container type for identifier decoding.
+    ///
+    /// Creates a `KeyedDecodingContainer` type with the appropriate coding keys.
+    /// If the identifier type is optional or not specified, wraps the container
+    /// type in an optional to handle cases where the identifier might be missing.
+    ///
+    /// - Returns: The container type syntax, optionally wrapped if identifier
+    ///   type allows for missing values.
+    private func identifierContainerType() -> TypeSyntax {
+        let type: TypeSyntax = "KeyedDecodingContainer<\(codingKeys.typeName)>"
+        guard identifierType?.isOptionalTypeSyntax ?? true else { return type }
+        return TypeSyntax(OptionalTypeSyntax(wrappedType: type))
+    }
+
+    /// Creates an identifier variable and its associated key path.
+    ///
+    /// Constructs a property variable for the enum identifier with the specified
+    /// type and applies the variable builder transformation. If no explicit
+    /// identifier type is set, wraps the variable with default value handling
+    /// to gracefully handle missing or invalid identifiers by defaulting to `nil`.
+    ///
+    /// - Parameters:
+    ///   - identifier: The identifier token name for the variable.
+    ///   - type: The type syntax for the identifier variable.
+    ///   - context: The macro expansion context.
+    ///
+    /// - Returns: A tuple containing the configured property variable and its
+    ///   associated key path for coding operations.
+    private func identifierVariableAndKey(
+        _ identifier: TokenSyntax, withType type: TypeSyntax,
+        context: some MacroExpansionContext
+    ) -> (AnyPropertyVariable<AnyRequiredVariableInitialization>, PathKey) {
+        let variable = BasicPropertyVariable(
+            name: identifier, type: type, value: nil,
+            decodePrefix: "", encodePrefix: "",
+            decode: true, encode: true
+        )
+        let input = Registration(decl: decl, key: keyPath, variable: variable)
+        let output = variableBuilder(input)
+
+        guard self.identifierType == nil
+        else { return (output.variable.any, output.key) }
+
+        let outVariable = DefaultValueVariable(
+            base: output.variable,
+            options: .init(onMissingExpr: "nil", onErrorExpr: "nil")
+        ).any
+        return (outVariable, output.key)
     }
 
     /// Provides the syntax for encoding at the provided location and encoder.
@@ -127,22 +305,27 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
     ) -> CodeBlockItemListSyntax {
         let coder = location.coder
         return CodeBlockItemListSyntax {
-            node.encoding(
+            encodingNode.encoding(
                 in: context, to: .withCoder(coder, keyType: location.keyType)
             ).combined()
-            self.encodeSwitchExpression(
+            let switchExpr = self.encodeSwitchExpression(
                 over: location.selfValue, at: location, from: encoder,
                 in: context, withDefaultCase: location.hasDefaultCase
             ) { name in
-                let base = self.base(name)
-                let key: [String] = []
-                let input = Registration(decl: decl, key: key, variable: base)
-                let output = variableBuilder(input)
-                let keyExpr = keys.last!.expr
-                return output.variable.encoding(
-                    in: context,
-                    to: .container(encodeContainer, key: keyExpr, method: nil)
+                let container = variable.encodeContainer
+                let (variable, key) = identifierVariableAndKey(
+                    name, withType: "_", context: context
                 )
+                let encodingKey = codingKeys.add(
+                    keys: key.encoding, field: identifier, context: context
+                ).last!.expr
+                return variable.encoding(
+                    in: context,
+                    to: .container(container, key: encodingKey, method: nil)
+                )
+            }
+            if let switchExpr = switchExpr {
+                switchExpr
             }
         }
     }
@@ -167,8 +350,9 @@ where Var: AdjacentlyTaggableSwitcher, Decl: AttributableDeclSyntax {
     ) -> Registration<Decl, Key, AnyEnumSwitcher> {
         guard
             let attr = ContentAt(from: decl),
-            case let keyPath = attr.keyPath(withExisting: []),
-            !keyPath.isEmpty
+            case let keys = attr.keyPath(withExisting: []),
+            !keys.isEmpty,
+            case let keyPath = PathKey(decoding: keys, encoding: keys)
         else { return self.updating(with: variable.any) }
         let variable = AdjacentlyTaggedEnumSwitcher(
             base: variable,

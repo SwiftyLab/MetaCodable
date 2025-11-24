@@ -372,6 +372,82 @@ struct UntaggedEnumTests {
                     """
             )
         }
+
+        @Test
+        func decodingAndEncodingBool() throws {
+            let original: CodableValue = .bool(true)
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                CodableValue.self, from: encoded)
+            if case .bool(let value) = decoded {
+                #expect(value == true)
+            } else {
+                Issue.record("Expected .bool case")
+            }
+        }
+
+        @Test
+        func decodingAndEncodingString() throws {
+            let original: CodableValue = .string("test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                CodableValue.self, from: encoded)
+            if case .string(let value) = decoded {
+                #expect(value == "test")
+            } else {
+                Issue.record("Expected .string case")
+            }
+        }
+
+        @Test
+        func decodingFromJSONPrimitives() throws {
+            // Test bool
+            let boolJson = "true".data(using: .utf8)!
+            let boolDecoded = try JSONDecoder().decode(
+                CodableValue.self, from: boolJson)
+            if case .bool(let value) = boolDecoded {
+                #expect(value == true)
+            } else {
+                Issue.record("Expected .bool case for true")
+            }
+
+            // Test string
+            let stringJson = "\"hello\"".data(using: .utf8)!
+            let stringDecoded = try JSONDecoder().decode(
+                CodableValue.self, from: stringJson)
+            if case .string(let value) = stringDecoded {
+                #expect(value == "hello")
+            } else {
+                Issue.record("Expected .string case for hello")
+            }
+
+            // Test uint (42 will be decoded as uint since it comes before int in case order)
+            let uintJson = "42".data(using: .utf8)!
+            let uintDecoded = try JSONDecoder().decode(
+                CodableValue.self, from: uintJson)
+            if case .uint(let value) = uintDecoded {
+                #expect(value == 42)
+            } else {
+                Issue.record("Expected .uint case for 42")
+            }
+        }
+
+        @Test
+        func decodingFromJSONArray() throws {
+            let arrayJson = "[true, \"test\", 123]".data(using: .utf8)!
+            let arrayDecoded = try JSONDecoder().decode(
+                CodableValue.self, from: arrayJson)
+            if case .array(let values) = arrayDecoded {
+                #expect(values.count == 3)
+                if case .bool(let boolVal) = values[0] {
+                    #expect(boolVal == true)
+                } else {
+                    Issue.record("Expected first element to be bool")
+                }
+            } else {
+                Issue.record("Expected .array case")
+            }
+        }
     }
 
     struct WithFallbackCase {

@@ -37,7 +37,7 @@
 /// variables are successfully decoded, is chosen as the variation case value.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: This macro can only be applied to enums.

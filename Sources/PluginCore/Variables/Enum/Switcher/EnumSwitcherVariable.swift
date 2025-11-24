@@ -73,7 +73,7 @@ extension EnumSwitcherVariable {
     func transform(
         variable: BasicAssociatedVariable
     ) -> BasicAssociatedVariable {
-        return variable
+        variable
     }
 }
 

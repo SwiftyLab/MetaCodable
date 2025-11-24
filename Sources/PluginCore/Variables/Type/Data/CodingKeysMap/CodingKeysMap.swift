@@ -192,7 +192,7 @@ fileprivate extension CodingKeysMap {
     /// - Parameter str: The input `String`.
     /// - Returns: The created `String`.
     func camelCased(str: String) -> String {
-        return CodingKeyTransformer(strategy: .camelCase).transform(key: str)
+        CodingKeyTransformer(strategy: .camelCase).transform(key: str)
     }
 
     /// Check if `String` begins with number.
@@ -202,14 +202,15 @@ fileprivate extension CodingKeysMap {
     /// - Parameter str: The input `String`.
     /// - Returns: Whether `String` begins with number.
     func doesBeginWithNumber(str: String) -> Bool {
-        if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
-            return try! #/^[0-9]+[a-zA-Z0-9]*/#.wholeMatch(in: str) != nil
-        } else {
+        guard
+            #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *)
+        else {
             return str.range(
                 of: "^[0-9]+[a-zA-Z0-9]*",
                 options: .regularExpression
             ) != nil
         }
+        return try! #/^[0-9]+[a-zA-Z0-9]*/#.wholeMatch(in: str) != nil
     }
 }
 

@@ -109,7 +109,7 @@ where Initialization: VariableInitialization {
     func initializing(
         in context: some MacroExpansionContext
     ) -> Initialization {
-        return initialization(context)
+        initialization(context)
     }
 
     /// Provides the code syntax for decoding this variable
@@ -127,7 +127,7 @@ where Initialization: VariableInitialization {
         in context: some MacroExpansionContext,
         from location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
-        return base.decoding(in: context, from: location)
+        base.decoding(in: context, from: location)
     }
 
     /// Provides the code syntax for encoding this variable
@@ -145,7 +145,7 @@ where Initialization: VariableInitialization {
         in context: some MacroExpansionContext,
         to location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
-        return base.encoding(in: context, to: location)
+        base.encoding(in: context, to: location)
     }
 
     /// The number of variables this variable depends on.
@@ -161,7 +161,7 @@ where Initialization: VariableInitialization {
     /// - Parameter variable: The variable to check for.
     /// - Returns: Whether this variable is dependent on the provided variable.
     func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
-        return base.depends(on: variable)
+        base.depends(on: variable)
     }
 }
 
@@ -183,7 +183,7 @@ extension PropertyVariable where Initialization: VariableInitialization {
     /// Wraps this variable in an `AnyPropertyVariable` instance.
     /// The implementation stays unchanged while type is erased.
     var any: AnyPropertyVariable<Self.Initialization> {
-        return .init(base: self)
+        .init(base: self)
     }
 }
 
@@ -195,6 +195,6 @@ where Initialization: RequiredVariableInitialization {
     /// type in `AnyRequiredVariableInitialization`. The implementation
     /// stays unchanged while type is erased.
     var any: AnyPropertyVariable<AnyRequiredVariableInitialization> {
-        return .init(base: self)
+        .init(base: self)
     }
 }

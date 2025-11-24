@@ -72,6 +72,14 @@ struct Expect: ExpressionMacro {
             )
         }
 
+        if compExpr.rightOperand.is(NilLiteralExprSyntax.self) {
+            return ExprSyntax(
+                FunctionCallExprSyntax(callee: "XCTAssertNil" as ExprSyntax) {
+                    LabeledExprSyntax(expression: compExpr.leftOperand)
+                }
+            )
+        }
+
         return ExprSyntax(
             FunctionCallExprSyntax(callee: "XCTAssertEqual" as ExprSyntax) {
                 LabeledExprSyntax(expression: compExpr.leftOperand)
@@ -135,3 +143,11 @@ struct ExpectThrows: ExpressionMacro {
         )
     }
 }
+
+#if !canImport(SwiftSyntax510)
+extension FreestandingMacroExpansionSyntax {
+    var arguments: LabeledExprListSyntax {
+        self.argumentList
+    }
+}
+#endif

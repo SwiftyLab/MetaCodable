@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import Testing
 
@@ -106,6 +107,40 @@ struct CodableInheritanceTests {
                 conformsTo: []
             )
         }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable()
+            original.value = "inheritance_test"
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "inheritance_test")
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "class_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "class_value")
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = SomeCodable()
+            original.value = "encoded_class"
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["value"] as? String == "encoded_class")
+        }
     }
 
     struct WithExplicitInheritance {
@@ -157,6 +192,29 @@ struct CodableInheritanceTests {
                     """,
                 conformsTo: []
             )
+        }
+
+        @Test
+        func inheritanceDecodingAndEncoding() throws {
+            let original = SomeCodable()
+            original.value = "inherited_test"
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "inherited_test")
+        }
+
+        @Test
+        func inheritanceFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "inherited_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "inherited_value")
         }
     }
 

@@ -35,7 +35,7 @@ struct TestingMacroMessage: DiagnosticMessage {
     /// the exact same wording. Eg. it’s possible that
     /// the message contains more context when available.
     var diagnosticID: MessageID {
-        return .init(domain: "com.SwiftyLab.Testing", id: "noimpl")
+        .init(domain: "com.SwiftyLab.Testing", id: "noimpl")
     }
 
     /// The severity (warning/error etc.) of

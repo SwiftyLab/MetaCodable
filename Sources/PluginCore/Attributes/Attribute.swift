@@ -45,20 +45,24 @@ extension Attribute {
     /// The lowercased-name of this attribute.
     ///
     /// This is used for attribute related diagnostics.
-    var id: String { name.lowercased() }
+    static var id: String { Self.name.lowercased() }
+    /// The misuse id of this attribute.
+    ///
+    /// This is used for attribute related diagnostics.
+    static var misuseId: String { "\(Self.id)-misuse" }
 
     /// Message id for misuse of this attribute.
     ///
     /// This attribute can must be removed or its usage condition
     /// must be satisfied.
-    var misuseMessageID: MessageID { messageID("\(id)-misuse") }
+    var misuseMessageID: MessageID { Self.messageID(Self.misuseId) }
 
     /// Creates a new message id in current package domain.
     ///
     /// - Parameters id: The message id.
     /// - Returns: Created message id.
-    func messageID(_ id: String) -> MessageID {
-        return .init(
+    static func messageID(_ id: String) -> MessageID {
+        .init(
             domain: "com.SwiftyLab.MetaCodable",
             id: id
         )
@@ -78,12 +82,11 @@ extension Attribute {
         else { return [] }
 
         let declSyntaxChoice = choices.first { choice in
-            if case .node(let type) = choice {
-                return type is AttributableDeclSyntax.Type
-                    && syntax.is(type)
-            } else {
+            guard case .node(let type) = choice else {
                 return false
             }
+            return type is AttributableDeclSyntax.Type
+                && syntax.is(type)
         }
 
         guard
@@ -106,7 +109,7 @@ extension Attribute {
     ///   is attached to.
     /// - Returns: Whether this attribute is applied more than once.
     func isDuplicated(in declaration: some SyntaxProtocol) -> Bool {
-        return Self.attributes(attachedTo: declaration).count > 1
+        Self.attributes(attachedTo: declaration).count > 1
     }
 
     /// Creates a new diagnostic message instance at current attribute node
@@ -122,7 +125,7 @@ extension Attribute {
         message: String, id: MessageID,
         severity: DiagnosticSeverity
     ) -> MetaCodableMessage {
-        return .init(
+        .init(
             macro: self.node,
             message: message,
             messageID: id,

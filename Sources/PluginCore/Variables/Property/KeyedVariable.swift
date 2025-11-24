@@ -49,7 +49,7 @@ extension KeyedVariable: PropertyVariable where Var: PropertyVariable {
     /// is set as `true`. Otherwise depends on whether
     /// underlying variable is to be decoded.
     var requireDecodable: Bool? {
-        return options.code ? base.requireDecodable : base.decode
+        options.code ? base.requireDecodable : base.decode
     }
     /// Whether the variable type requires `Encodable` conformance.
     ///
@@ -58,7 +58,7 @@ extension KeyedVariable: PropertyVariable where Var: PropertyVariable {
     /// is set as `true`. Otherwise depends on whether
     /// underlying variable is to be encoded.
     var requireEncodable: Bool? {
-        return options.code ? base.requireEncodable : base.encode
+        options.code ? base.requireEncodable : base.encode
     }
 }
 

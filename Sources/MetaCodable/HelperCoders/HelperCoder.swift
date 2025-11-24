@@ -139,7 +139,7 @@ public extension HelperCoder {
     /// - Throws: If decoding fails due to corrupted or invalid data.
     @inlinable
     func decodeIfPresent(from decoder: Decoder) throws -> Coded? {
-        return try? self.decode(from: decoder)
+        try? self.decode(from: decoder)
     }
 
     /// Decodes a value of the ``HelperCoder/Coded`` type from the given
@@ -159,7 +159,7 @@ public extension HelperCoder {
         from container: DecodingContainer,
         forKey key: DecodingContainer.Key
     ) throws -> Coded {
-        return try self.decode(from: container.superDecoder(forKey: key))
+        try self.decode(from: container.superDecoder(forKey: key))
     }
 
     /// Decodes an optional value of the ``HelperCoder/Coded`` type from

@@ -76,7 +76,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
     /// - Parameter location: The decoding location.
     /// - Returns: Whether class implements `Decodable` conformance.
     private func implementDecodable(location: TypeCodingLocation) -> Bool {
-        return !decl.memberBlock.members.contains { member in
+        !decl.memberBlock.members.contains { member in
             guard
                 let decl = member.decl.as(InitializerDeclSyntax.self),
                 decl.signature.parameterClause.parameters.count == 1,
@@ -94,7 +94,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
     /// - Parameter location: The decoding location.
     /// - Returns: Whether class implements `Encodable` conformance.
     private func implementEncodable(location: TypeCodingLocation) -> Bool {
-        return !decl.memberBlock.members.contains { member in
+        !decl.memberBlock.members.contains { member in
             guard
                 let decl = member.decl.as(FunctionDeclSyntax.self),
                 decl.name.text == location.method.name.text,
