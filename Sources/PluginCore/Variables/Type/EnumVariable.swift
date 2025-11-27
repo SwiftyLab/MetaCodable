@@ -81,17 +81,17 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 "self = .\(name)"
             }
         }
-		let caseEncodeExpr: CaseCode = { name, variables in
-			let args = Self.encodingArgs(representing: variables)
-			let callee: ExprSyntax = ".\(name)"
-			let fExpr =
-				if !args.isEmpty {
-					FunctionCallExprSyntax(calledExpression: callee) { args }
-				} else {
-					FunctionCallExprSyntax(calledExpression: callee) {}
-				}
-			return ExprSyntax(fExpr)
-		}
+        let caseEncodeExpr: CaseCode = { name, variables in
+            let args = Self.encodingArgs(representing: variables)
+            let callee: ExprSyntax = ".\(name)"
+            let fExpr =
+                if !args.isEmpty {
+                    FunctionCallExprSyntax(calledExpression: callee) { args }
+                } else {
+                    FunctionCallExprSyntax(calledExpression: callee) {}
+                }
+            return ExprSyntax(fExpr)
+        }
         self.init(
             from: decl, in: context,
             caseDecodeExpr: caseDecodeExpr, caseEncodeExpr: caseEncodeExpr,
