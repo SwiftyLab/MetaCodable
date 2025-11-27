@@ -84,13 +84,19 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         let caseEncodeExpr: CaseCode = { name, variables in
             let args = Self.encodingArgs(representing: variables)
             let callee: ExprSyntax = ".\(name)"
-            let fExpr =
-                if !args.isEmpty {
-                    FunctionCallExprSyntax(calledExpression: callee) { args }
-                } else {
-                    FunctionCallExprSyntax(calledExpression: callee) {}
-                }
-            return ExprSyntax(fExpr)
+            if args.isEmpty {
+                /// No associated values: return just the case name without parentheses
+                return callee
+            } else {
+                let fExpr = FunctionCallExprSyntax(
+                    calledExpression: callee,
+                    leftParen: .leftParenToken(),
+                    arguments: args,
+                    rightParen: .rightParenToken(),
+                    trailingClosure: nil
+                )
+                return ExprSyntax(fExpr)
+            }
         }
         self.init(
             from: decl, in: context,
@@ -878,3 +884,4 @@ fileprivate extension EnumVariable {
     /// This encoder is passed to each case for encoding.
     static var contentEncoder: TokenSyntax { "contentEncoder" }
 }
+
