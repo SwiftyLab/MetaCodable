@@ -3,7 +3,7 @@
 protocol NumberCodingStrategy: ValueCodingStrategy where Value == Self {}
 
 public extension ValueCodingStrategy
-where Value: Decodable & ExpressibleByIntegerLiteral & LosslessStringConvertible & SendableMetatype
+where Value: Decodable & ExpressibleByIntegerLiteral & LosslessStringConvertible & Sendable
 {
     /// Decodes numeric data from the given `decoder`.
     ///
