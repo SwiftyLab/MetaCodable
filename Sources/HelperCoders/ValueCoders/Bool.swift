@@ -26,7 +26,7 @@ extension Bool: ValueCodingStrategy {
             ]
             guard
                 let value = try fallbacks.lazy.compactMap({
-                    return try $0(decoder)
+                    try $0(decoder)
                 }).first
             else { throw error }
             return value

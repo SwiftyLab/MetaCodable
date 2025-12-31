@@ -44,7 +44,7 @@ struct TextPost: ExtPost, IntPost, AdjPost, DynamicCodable {
 @Codable
 struct PicturePost: ExtPost, IntPost, AdjPost, DynamicCodable {
     static var identifier: DynamicCodableIdentifier<String> {
-        return ["picture", "photo"]
+        ["picture", "photo"]
     }
 
     let id: UUID

@@ -35,11 +35,9 @@ extension TypeVariable {
     ///
     /// - Returns: The protocol type with name if exists.
     func `protocol`(named name: String, in types: [TypeSyntax]) -> TypeSyntax? {
-        return
-            if let conf = types.first(
-                where: { $0.trimmed.description == name }
-            )
-        {
+        if let conf = types.first(
+            where: { $0.trimmed.description == name }
+        ) {
             conf
         } else if types.contains(
             where: { $0.description.contains(name) }
@@ -63,7 +61,7 @@ extension TypeVariable {
         named names: String...,
         in protocols: [TypeSyntax]
     ) -> [TypeSyntax] {
-        return names.compactMap { self.protocol(named: $0, in: protocols) }
+        names.compactMap { self.protocol(named: $0, in: protocols) }
     }
 }
 
@@ -129,7 +127,7 @@ package struct TypeCodingLocation {
         /// - Parameter methodName: The method name to use
         /// - Returns: The decode method data.
         package static func decode(methodName: String = "init") -> Self {
-            return Method(
+            Method(
                 name: .identifier(methodName), protocol: "Decodable",
                 argLabel: "from", arg: "decoder", argType: "any Decoder"
             )

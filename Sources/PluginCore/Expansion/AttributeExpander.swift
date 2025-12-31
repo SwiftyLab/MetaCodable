@@ -14,7 +14,7 @@ struct AttributeExpander {
     /// the declaration provided.
     let variable: any TypeVariable
     /// The options to use when generating declarations.
-    private let options: Options
+    let options: Options
 
     /// Creates a new registrar with provided data.
     ///

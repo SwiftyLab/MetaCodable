@@ -14,7 +14,7 @@
 /// - Parameter helper: The value that performs decoding and encoding.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The `helper`'s ``HelperCoder/Coded``
@@ -23,7 +23,7 @@
 /// - Important: When using with enums and protocols if ``HelperCoder/Coded``
 ///   is other than `String` type must be provided with ``CodedAs()`` macro.
 ///
-/// - Important: This attribute must be used combined with ``Codable()``
+/// - Important: This attribute must be used combined with ``Codable(commonStrategies:)``
 ///   and ``CodedAt(_:)`` when applying to enums/protocols.
 @attached(peer)
 @available(swift 5.9)
@@ -73,7 +73,7 @@ public macro CodedBy<T: HelperCoder>(_ helper: T) =
 ///   - properties: The key path to properties passed to the creation action.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The `Parent` type must be the current `struct`/`class`/`actor`
@@ -139,7 +139,7 @@ public macro CodedBy<Parent, Helper: HelperCoder, each Property>(
 ///   - properties: The key path to properties passed to the creation action.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The `Parent` type must be the current `struct`/`class`/`actor`
@@ -166,7 +166,7 @@ public macro CodedBy<Parent, Helper: HelperCoder, each Argument, each Property>(
 ///   - properties: The key path to properties passed to the creation action.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The `Parent` type must be the current `struct`/`class`/`actor`
@@ -196,7 +196,7 @@ public macro CodedBy<Parent, Helper: HelperCoder, Argument1, each Property>(
 ///   - properties: The key path to properties passed to the creation action.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The `Parent` type must be the current `struct`/`class`/`actor`
@@ -229,7 +229,7 @@ public macro CodedBy<
 ///   - properties: The key path to properties passed to the creation action.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
 /// - Important: The `Parent` type must be the current `struct`/`class`/`actor`

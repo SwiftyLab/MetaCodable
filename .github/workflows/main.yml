@@ -36,14 +36,9 @@ jobs:
         {
           "include": [
             {
-              "os": "ubuntu-latest",
+              "os": "macos-15",
               "language": "swift",
-              "swift": "latest"
-            },
-            {
-              "os": "macos-latest",
-              "language": "swift",
-              "swift": "latest"
+              "swift": "6.1.2"
             }
           ]
         }
@@ -53,9 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Spellcheck Action
-      uses: rojopolis/spellcheck-github-actions@0.44.0
+      uses: rojopolis/spellcheck-github-actions@0.51.0
       with:
         config_path: .github/config/spellcheck.yaml
 
@@ -69,15 +64,123 @@ jobs:
           "include": [
             {
               "os": "ubuntu-latest",
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "5.9",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-22.04",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
+            },
+            {
+              "os": "ubuntu-22.04",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-22.04",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-22.04",
+              "swift": "5.10",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.0",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "509.1.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "510.0.3"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "600.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
+              "swift": "6.1",
+              "dependencies": {
+                "swift-syntax": "601.0.1"
+              }
+            },
+            {
+              "os": "ubuntu-latest",
               "swift": "latest"
             },
             {
-              "os": "macos-13",
-              "swift": "5.9"
-            },
-            {
-              "os": "macos-latest",
-              "swift": "latest"
+              "os": "macos-15",
+              "swift": "6.1.2"
             }
           ]
         }

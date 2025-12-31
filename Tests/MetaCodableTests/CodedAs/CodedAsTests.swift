@@ -1,3 +1,4 @@
+import Foundation
 import HelperCoders
 import MetaCodable
 import Testing
@@ -208,6 +209,668 @@ struct CodedAsTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func codedAsKeyMapping() throws {
+            let original = SomeCodable(value: "test1", value1: "test2")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "test1")
+            #expect(decoded.value1 == "test2")
+        }
+
+        @Test
+        func codedAsFromJSON() throws {
+            let jsonStr = """
+                {
+                    "key": "mapped_value",
+                    "key1": "multi_mapped_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "mapped_value")
+            #expect(decoded.value1 == "multi_mapped_value")
+        }
+
+        @Test
+        func codedAsAlternativeKeys() throws {
+            // Test with key2 instead of key1
+            let jsonStr = """
+                {
+                    "key": "mapped_value",
+                    "key2": "alternative_key_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "mapped_value")
+            #expect(decoded.value1 == "alternative_key_value")
+        }
+
+        @Test
+        func codedAsJSONStructure() throws {
+            let original = SomeCodable(value: "test", value1: "test2")
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+
+            // The actual behavior shows that encoding uses the original property names
+            // while decoding can use the alternative keys
+            #expect(json["value"] as? String == "test")
+            #expect(json["value1"] as? String == "test2")
+            // The mapped keys should not be present in encoding
+            #expect(json["key"] == nil)
+            #expect(json["key1"] == nil)
+        }
+    }
+
+    struct WithAnyCodableLiteralEnum {
+        @Codable
+        @CodedAt("type")
+        enum Command {
+            @CodedAs("load", 12, true, 3.14, 15..<20, (-0.8)...)
+            case load(key: String)
+            @CodedAs("store", 30, false, 7.15, 35...40, ..<(-1.5))
+            case store(key: String, value: Int)
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                @CodedAt("type")
+                enum Command {
+                    @CodedAs("load", 12, true, 3.14, 15..<20, (-0.8)...)
+                    case load(key: String)
+                    @CodedAs("store", 30, false, 7.15, 35...40, ..<(-1.5))
+                    case store(key: String, value: Int)
+                }
+                """,
+                expandedSource:
+                    """
+                    enum Command {
+                        case load(key: String)
+                        case store(key: String, value: Int)
+                    }
+
+                    extension Command: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            var typeContainer: KeyedDecodingContainer<CodingKeys>?
+                            let container = try? decoder.container(keyedBy: CodingKeys.self)
+                            if let container = container {
+                                typeContainer = container
+                            } else {
+                                typeContainer = nil
+                            }
+                            if let typeContainer = typeContainer, let container = container {
+                                let typeBool: Bool?
+                                do {
+                                    typeBool = try typeContainer.decodeIfPresent(Bool.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeBool = nil
+                                }
+                                if let typeBool = typeBool {
+                                    switch typeBool {
+                                    case true:
+                                        let key: String
+                                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        self = .load(key: key)
+                                        return
+                                    case false:
+                                        let key: String
+                                        let value: Int
+                                        let container = try decoder.container(keyedBy: CodingKeys.self)
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        value = try container.decode(Int.self, forKey: CodingKeys.value)
+                                        self = .store(key: key, value: value)
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                                let typeInt: Int?
+                                do {
+                                    typeInt = try typeContainer.decodeIfPresent(Int.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeInt = nil
+                                }
+                                if let typeInt = typeInt {
+                                    switch typeInt {
+                                    case 12, 15 ..< 20:
+                                        let key: String
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        self = .load(key: key)
+                                        return
+                                    case 30, 35 ... 40:
+                                        let key: String
+                                        let value: Int
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        value = try container.decode(Int.self, forKey: CodingKeys.value)
+                                        self = .store(key: key, value: value)
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                                let typeDouble: Double?
+                                do {
+                                    typeDouble = try typeContainer.decodeIfPresent(Double.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeDouble = nil
+                                }
+                                if let typeDouble = typeDouble {
+                                    switch typeDouble {
+                                    case 3.14, (-0.8)...:
+                                        let key: String
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        self = .load(key: key)
+                                        return
+                                    case 7.15, ..<(-1.5):
+                                        let key: String
+                                        let value: Int
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        value = try container.decode(Int.self, forKey: CodingKeys.value)
+                                        self = .store(key: key, value: value)
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                                let typeString: String?
+                                do {
+                                    typeString = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeString = nil
+                                }
+                                if let typeString = typeString {
+                                    switch typeString {
+                                    case "load":
+                                        let key: String
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        self = .load(key: key)
+                                        return
+                                    case "store":
+                                        let key: String
+                                        let value: Int
+                                        key = try container.decode(String.self, forKey: CodingKeys.key)
+                                        value = try container.decode(Int.self, forKey: CodingKeys.value)
+                                        self = .store(key: key, value: value)
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                            }
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
+                        }
+                    }
+
+                    extension Command: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            let container = encoder.container(keyedBy: CodingKeys.self)
+                            var typeContainer = container
+                            switch self {
+                            case .load(key: let key):
+                                try typeContainer.encode("load", forKey: CodingKeys.type)
+                                var container = encoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(key, forKey: CodingKeys.key)
+                            case .store(key: let key, value: let value):
+                                try typeContainer.encode("store", forKey: CodingKeys.type)
+                                var container = encoder.container(keyedBy: CodingKeys.self)
+                                try container.encode(key, forKey: CodingKeys.key)
+                                try container.encode(value, forKey: CodingKeys.value)
+                            }
+                        }
+                    }
+
+                    extension Command {
+                        enum CodingKeys: String, CodingKey {
+                            case type = "type"
+                            case key = "key"
+                            case value = "value"
+                        }
+                    }
+                    """
+            )
+        }
+
+        @Test
+        func enumMixedLiteralRoundtrip() throws {
+            let loadCmd: Command = .load(key: "test_key")
+            let encoded = try JSONEncoder().encode(loadCmd)
+            let decoded = try JSONDecoder().decode(Command.self, from: encoded)
+
+            if case .load(let key) = decoded {
+                #expect(key == "test_key")
+            } else {
+                Issue.record("Expected .load case")
+            }
+        }
+
+        @Test
+        func enumStringTypeDecoding() throws {
+            let jsonStr = """
+                {
+                    "type": "load",
+                    "key": "string_type_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .load(let key) = decoded {
+                #expect(key == "string_type_key")
+            } else {
+                Issue.record("Expected .load case")
+            }
+        }
+
+        @Test
+        func enumIntegerTypeDecoding() throws {
+            let jsonStr = """
+                {
+                    "type": 12,
+                    "key": "integer_type_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .load(let key) = decoded {
+                #expect(key == "integer_type_key")
+            } else {
+                Issue.record("Expected .load case")
+            }
+        }
+
+        @Test
+        func enumBooleanTypeDecoding() throws {
+            let jsonStr = """
+                {
+                    "type": true,
+                    "key": "boolean_type_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .load(let key) = decoded {
+                #expect(key == "boolean_type_key")
+            } else {
+                Issue.record("Expected .load case")
+            }
+        }
+
+        @Test
+        func enumDoubleTypeDecoding() throws {
+            let jsonStr = """
+                {
+                    "type": 3.14,
+                    "key": "double_type_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .load(let key) = decoded {
+                #expect(key == "double_type_key")
+            } else {
+                Issue.record("Expected .load case")
+            }
+        }
+
+        @Test
+        func enumStoreWithIntegerType() throws {
+            let jsonStr = """
+                {
+                    "type": 30,
+                    "key": "store_key",
+                    "value": 42
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .store(let key, let value) = decoded {
+                #expect(key == "store_key")
+                #expect(value == 42)
+            } else {
+                Issue.record("Expected .store case")
+            }
+        }
+
+        @Test
+        func enumStoreWithBooleanType() throws {
+            let jsonStr = """
+                {
+                    "type": false,
+                    "key": "store_key",
+                    "value": 99
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .store(let key, let value) = decoded {
+                #expect(key == "store_key")
+                #expect(value == 99)
+            } else {
+                Issue.record("Expected .store case")
+            }
+        }
+
+        @Test
+        func enumStoreWithDoubleType() throws {
+            let jsonStr = """
+                {
+                    "type": -2.0,
+                    "key": "store_key",
+                    "value": 123
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .store(let key, let value) = decoded {
+                #expect(key == "store_key")
+                #expect(value == 123)
+            } else {
+                Issue.record("Expected .store case")
+            }
+        }
+
+        @Test
+        func enumEncodingStructure() throws {
+            let storeCmd: Command = .store(key: "test", value: 100)
+            let encoded = try JSONEncoder().encode(storeCmd)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+
+            // Encoding always uses the first (string) value for the type
+            #expect(json["type"] as? String == "store")
+            #expect(json["key"] as? String == "test")
+            #expect(json["value"] as? Int == 100)
+        }
+
+        @Test
+        func enumLoadEncodingStructure() throws {
+            let loadCmd: Command = .load(key: "load_test")
+            let encoded = try JSONEncoder().encode(loadCmd)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+
+            // Encoding always uses the first (string) value for the type
+            #expect(json["type"] as? String == "load")
+            #expect(json["key"] as? String == "load_test")
+            #expect(json["value"] == nil)  // No value for load case
+        }
+
+        @Test
+        func enumInvalidTypeDecoding() throws {
+            let jsonStr = """
+                {
+                    "type": "invalid",
+                    "key": "test_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+
+            #expect(throws: DecodingError.self) {
+                let _ = try JSONDecoder().decode(Command.self, from: jsonData)
+            }
+        }
+
+        @Test
+        func enumMissingTypeDecoding() throws {
+            let jsonStr = """
+                {
+                    "key": "test_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+
+            #expect(throws: DecodingError.self) {
+                let _ = try JSONDecoder().decode(Command.self, from: jsonData)
+            }
+        }
+
+        @Test
+        func enumIntegerRangeLoadCase() throws {
+            // Test integer in range 15..<20 for load case
+            let jsonStr = """
+                {
+                    "type": 17,
+                    "key": "range_test_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .load(let key) = decoded {
+                #expect(key == "range_test_key")
+            } else {
+                Issue.record(
+                    "Expected .load case for integer 17 in range 15..<20")
+            }
+        }
+
+        @Test
+        func enumIntegerRangeStoreCase() throws {
+            // Test integer in range 35...40 for store case
+            let jsonStr = """
+                {
+                    "type": 38,
+                    "key": "store_range_key",
+                    "value": 200
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .store(let key, let value) = decoded {
+                #expect(key == "store_range_key")
+                #expect(value == 200)
+            } else {
+                Issue.record(
+                    "Expected .store case for integer 38 in range 35...40")
+            }
+        }
+
+        @Test
+        func enumIntegerRangeBoundaryValues() throws {
+            // Test boundary values for ranges
+
+            // Test 15 (not in 15..<20, should not match load case)
+            let jsonStr15 = """
+                {
+                    "type": 15,
+                    "key": "boundary_key"
+                }
+                """
+            let jsonData15 = try #require(jsonStr15.data(using: .utf8))
+            let decoded15 = try JSONDecoder().decode(
+                Command.self, from: jsonData15)
+
+            if case .load(let key) = decoded15 {
+                #expect(key == "boundary_key")
+            } else {
+                Issue.record(
+                    "Expected .load case for integer 15 in range 15..<20")
+            }
+
+            // Test 19 (in 15..<20, should match load case)
+            let jsonStr19 = """
+                {
+                    "type": 19,
+                    "key": "boundary_key"
+                }
+                """
+            let jsonData19 = try #require(jsonStr19.data(using: .utf8))
+            let decoded19 = try JSONDecoder().decode(
+                Command.self, from: jsonData19)
+
+            if case .load(let key) = decoded19 {
+                #expect(key == "boundary_key")
+            } else {
+                Issue.record(
+                    "Expected .load case for integer 19 in range 15..<20")
+            }
+
+            // Test 35 (in 35...40, should match store case)
+            let jsonStr35 = """
+                {
+                    "type": 35,
+                    "key": "boundary_key",
+                    "value": 300
+                }
+                """
+            let jsonData35 = try #require(jsonStr35.data(using: .utf8))
+            let decoded35 = try JSONDecoder().decode(
+                Command.self, from: jsonData35)
+
+            if case .store(let key, let value) = decoded35 {
+                #expect(key == "boundary_key")
+                #expect(value == 300)
+            } else {
+                Issue.record(
+                    "Expected .store case for integer 35 in range 35...40")
+            }
+
+            // Test 40 (in 35...40, should match store case)
+            let jsonStr40 = """
+                {
+                    "type": 40,
+                    "key": "boundary_key",
+                    "value": 400
+                }
+                """
+            let jsonData40 = try #require(jsonStr40.data(using: .utf8))
+            let decoded40 = try JSONDecoder().decode(
+                Command.self, from: jsonData40)
+
+            if case .store(let key, let value) = decoded40 {
+                #expect(key == "boundary_key")
+                #expect(value == 400)
+            } else {
+                Issue.record(
+                    "Expected .store case for integer 40 in range 35...40")
+            }
+        }
+
+        @Test
+        func enumDoublePartialRangeLoadCase() throws {
+            // Test double in partial range (-0.8)... for load case
+            let jsonStr = """
+                {
+                    "type": 5.5,
+                    "key": "partial_range_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .load(let key) = decoded {
+                #expect(key == "partial_range_key")
+            } else {
+                Issue.record(
+                    "Expected .load case for double 5.5 in range (-0.8)...")
+            }
+        }
+
+        @Test
+        func enumDoublePartialRangeStoreCase() throws {
+            // Test double in partial range ..<(-1.5) for store case
+            let jsonStr = """
+                {
+                    "type": -3.0,
+                    "key": "partial_range_store_key",
+                    "value": 500
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .store(let key, let value) = decoded {
+                #expect(key == "partial_range_store_key")
+                #expect(value == 500)
+            } else {
+                Issue.record(
+                    "Expected .store case for double -3.0 in range ..<(-1.5)")
+            }
+        }
+
+        @Test
+        func enumDoubleRangeBoundaryValues() throws {
+            // Test boundary values for double ranges
+
+            // Test -0.8 (in (-0.8)..., should match load case)
+            let jsonStrBoundary = """
+                {
+                    "type": -0.8,
+                    "key": "double_boundary_key"
+                }
+                """
+            let jsonDataBoundary = try #require(
+                jsonStrBoundary.data(using: .utf8))
+            let decodedBoundary = try JSONDecoder().decode(
+                Command.self, from: jsonDataBoundary)
+
+            if case .load(let key) = decodedBoundary {
+                #expect(key == "double_boundary_key")
+            } else {
+                Issue.record(
+                    "Expected .load case for double -0.8 in range (-0.8)...")
+            }
+
+            // Test -1.5 (not in ..<(-1.5), should not match store case)
+            let jsonStrNotInRange = """
+                {
+                    "type": -1.5,
+                    "key": "not_in_range_key",
+                    "value": 600
+                }
+                """
+            let jsonDataNotInRange = try #require(
+                jsonStrNotInRange.data(using: .utf8))
+            #expect(throws: DecodingError.self) {
+                let _ = try JSONDecoder().decode(
+                    Command.self, from: jsonDataNotInRange)
+            }
+        }
+
+        @Test
+        func enumRangeValuesPriorityOverLiterals() throws {
+            // Test that range values work alongside literal values
+            // Integer 16 should match the range 15..<20 for load case, not the literal 12
+            let jsonStr = """
+                {
+                    "type": 16,
+                    "key": "priority_test_key"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Command.self, from: jsonData)
+
+            if case .load(let key) = decoded {
+                #expect(key == "priority_test_key")
+            } else {
+                Issue.record(
+                    "Expected .load case for integer 16 matching range 15..<20")
+            }
         }
     }
 

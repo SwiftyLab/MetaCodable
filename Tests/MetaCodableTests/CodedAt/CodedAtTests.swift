@@ -1,10 +1,10 @@
+import Foundation
 import MetaCodable
 import Testing
 
 @testable import PluginCore
 
 struct CodedAtTests {
-
     @Test
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
@@ -350,6 +350,38 @@ struct CodedAtTests {
                     """
             )
         }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = SomeCodable(value: "test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "test")
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "key": "custom_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "custom_value")
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = SomeCodable(value: "encoded_value")
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["key"] as? String == "encoded_value")
+        }
     }
 
     struct WithSinglePathOnOptionalType {
@@ -402,6 +434,33 @@ struct CodedAtTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func decodingAndEncodingWithValue() throws {
+            let original = SomeCodable(value: "optional_test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "optional_test")
+        }
+
+        @Test
+        func decodingAndEncodingWithNil() throws {
+            let original = SomeCodable(value: nil)
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == nil)
+        }
+
+        @Test
+        func decodingFromJSONWithMissingKey() throws {
+            let jsonStr = "{}"
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == nil)
         }
 
         struct ForceUnwrap {

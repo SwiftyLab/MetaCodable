@@ -118,6 +118,6 @@ extension PropertyAttribute {
     /// - Returns: Uninitialized variable declaration validation diagnostic
     ///   producer.
     func attachedToInitializedVariable() -> UninitializedVariableDecl<Self> {
-        return .init(self)
+        .init(self)
     }
 }

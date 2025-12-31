@@ -15,7 +15,7 @@ package struct Default: PropertyAttribute {
     /// This expression should be used only when value is missing
     /// in the decoding syntax.
     var onMissingExpr: ExprSyntax {
-        return node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
+        node.arguments?.as(LabeledExprListSyntax.self)?.first { expr in
             expr.label?.tokenKind == .identifier("ifMissing")
         }?.expression
             ?? node.arguments!
@@ -69,7 +69,7 @@ package struct Default: PropertyAttribute {
     ///
     /// - Returns: The built diagnoser instance.
     func diagnoser() -> DiagnosticProducer {
-        return AggregatedDiagnosticProducer {
+        AggregatedDiagnosticProducer {
             expect(syntaxes: VariableDeclSyntax.self)
             attachedToNonStaticVariable()
             cantDuplicate()
@@ -117,7 +117,7 @@ where Initialization == RequiredInitialization {
     func with(
         onMissingExpr mExpr: ExprSyntax, onErrorExpr eExpr: ExprSyntax?
     ) -> DefaultValueVariable<Self> {
-        return .init(
+        .init(
             base: self, options: .init(onMissingExpr: mExpr, onErrorExpr: eExpr)
         )
     }

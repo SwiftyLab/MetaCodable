@@ -75,3 +75,7 @@ Level up `MetaCodable`'s generated implementations with helpers assisting common
 ### Sequence
 
 - ``SequenceCoder``
+
+### Strategies
+
+- ``HelperCoderStrategy``

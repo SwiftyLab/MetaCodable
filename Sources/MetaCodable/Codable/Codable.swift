@@ -13,12 +13,13 @@
 ///     coding key path, with variable name as coding key.
 ///   * Use ``CodedAt(_:)`` with no path arguments, when type is composition
 ///     of multiple `Codable` types.
-///   * Use ``CodedAs(_:_:)`` to provide additional coding key values where
-///     field value can appear.
+///   * Use ``CodedAs(_:_:)-8wdaz`` to provide additional coding key values
+///     where field value can appear.
 ///   * Use ``CodedBy(_:)`` to provide custom decoding/encoding behavior for
 ///     `Codable` types or implement decoding/encoding for non-`Codable` types.
 ///   * Use ``Default(_:)`` to provide default value when decoding fails.
-///   * Use ``CodedAs(_:_:)`` to provide custom values for enum cases.
+///   * Use ``CodedAs(_:_:)-8wdaz`` and ``CodedAs(_:_:)-4n3ze``
+///     to provide custom values for enum cases.
 ///   * Use ``CodedAt(_:)`` to provide enum-case/protocol identifier tag path.
 ///   * Use ``CodedAs()`` to provide enum-case/protocol identifier tag type.
 ///   * Use ``ContentAt(_:_:)`` to provided enum-case/protocol content path.
@@ -46,6 +47,10 @@
 ///   * If attached declaration already conforms to `Codable` this macro expansion
 ///     is skipped.
 ///
+/// - Parameters:
+///   - commonStrategies: An array of CodableCommonStrategy values specifying
+///   type conversion strategies to be automatically applied to all properties of the type.
+///
 /// - Important: The attached declaration must be of a `struct`, `class`, `enum`
 ///   or `actor` type. [See the limitations for this macro](<doc:Limitations>).
 @attached(
@@ -58,17 +63,17 @@
     names: named(CodingKeys), named(init(from:)), named(encode(to:))
 )
 @available(swift 5.9)
-public macro Codable() =
+public macro Codable(commonStrategies: [CodableCommonStrategy] = []) =
     #externalMacro(module: "MacroPlugin", type: "Codable")
 
 /// Indicates whether super class conforms to `Codable` or not.
 ///
-/// By default, ``Codable()`` assumes class inherits `Decodable`
+/// By default, ``Codable(commonStrategies:)`` assumes class inherits `Decodable`
 /// or `Encodable` conformance if it doesn't receive protocol needs
 /// to be conformed from the compiler. Using this macro, it can be explicitly
 /// indicated that the class doesn't inherit conformance in such cases.
 ///
-/// Following code indicates ``Codable()`` that `Item` class doesn't
+/// Following code indicates ``Codable(commonStrategies:)`` that `Item` class doesn't
 /// inherit conformance:
 /// ```swift
 /// @Codable
@@ -87,7 +92,7 @@ public macro Codable() =
 ///   - encodable: Whether super class conforms to `Encodable`.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a class declaration. ``Codable()`` macro uses this macro
+///   is a class declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 @attached(peer)
 @available(swift 5.9)

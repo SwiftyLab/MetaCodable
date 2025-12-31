@@ -21,6 +21,6 @@ extension VariableInitialization {
     /// Converts current initialization type to
     /// type-erased `AnyInitialization`.
     var any: AnyInitialization {
-        return .init(base: self)
+        .init(base: self)
     }
 }

@@ -1,10 +1,10 @@
+import Foundation
 import MetaCodable
 import Testing
 
 @testable import PluginCore
 
 struct ExplicitCodingTests {
-
     struct GetterOnlyVariable {
         @Codable
         struct SomeCodable {
@@ -48,6 +48,25 @@ struct ExplicitCodingTests {
                     """
             )
         }
+
+        @Test
+        func encodingOnly() throws {
+            let original = SomeCodable()
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["value"] as? String == "some")
+        }
+
+        @Test
+        func decodingEmpty() throws {
+            let jsonStr = "{}"
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "some")
+        }
     }
 
     struct ExplicitGetterOnlyVariable {
@@ -55,9 +74,7 @@ struct ExplicitCodingTests {
         struct SomeCodable {
             @CodedIn
             var value: String {
-                get {
-                    "some"
-                }
+                "some"
             }
         }
 
@@ -104,6 +121,25 @@ struct ExplicitCodingTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func encodingOnly() throws {
+            let original = SomeCodable()
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["value"] as? String == "some")
+        }
+
+        @Test
+        func decodingEmpty() throws {
+            let jsonStr = "{}"
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "some")
         }
     }
 
@@ -158,6 +194,25 @@ struct ExplicitCodingTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func encodingOnly() throws {
+            let original = SomeCodable()
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["value"] as? String == "someVal")
+        }
+
+        @Test
+        func decodingEmpty() throws {
+            let jsonStr = "{}"
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "someVal")
         }
     }
 

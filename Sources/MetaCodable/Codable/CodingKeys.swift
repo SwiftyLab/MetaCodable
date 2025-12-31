@@ -25,7 +25,7 @@
 ///     let description: String
 /// }
 /// ```
-/// The ``Codable()`` macro generated code will transform field names
+/// The ``Codable(commonStrategies:)`` macro generated code will transform field names
 /// to snake-case in the `Codable` implementation.
 ///
 /// Similarly, for enums associated value label can be kept camel-cased while
@@ -88,10 +88,10 @@
 ///   ``CodedAt(_:)`` will remain unchanged.
 ///
 /// - Note: This macro on its own only validates if attached declaration
-///   is a variable declaration. ``Codable()`` macro uses this macro
+///   is a variable declaration. ``Codable(commonStrategies:)`` macro uses this macro
 ///   when generating final implementations.
 ///
-/// - Important: This attribute must be used combined with ``Codable()``.
+/// - Important: This attribute must be used combined with ``Codable(commonStrategies:)``.
 ///
 /// [Swift API Design Guidelines]:
 /// https://www.swift.org/documentation/api-design-guidelines/#general-conventions

@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import Testing
 
@@ -46,6 +47,33 @@ struct AccessModifierTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func openClassDecodingOnly() throws {
+            // Open class doesn't have memberwise init, only decoder init
+            let jsonStr = """
+                {
+                    "value": "open_test"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "open_test")
+        }
+
+        @Test
+        func openClassFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "open_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "open_value")
         }
     }
 
@@ -97,6 +125,28 @@ struct AccessModifierTests {
                     }
                     """
             )
+        }
+
+        @Test
+        func publicStructDecodingAndEncoding() throws {
+            let original = SomeCodable(value: "public_test")
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: encoded)
+            #expect(decoded.value == "public_test")
+        }
+
+        @Test
+        func publicStructFromJSON() throws {
+            let jsonStr = """
+                {
+                    "value": "public_value"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                SomeCodable.self, from: jsonData)
+            #expect(decoded.value == "public_value")
         }
     }
 

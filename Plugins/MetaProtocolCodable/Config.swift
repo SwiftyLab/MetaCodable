@@ -80,13 +80,54 @@ extension Config: Codable {
     /// - Returns: The file path URL.
     static func url(forFilePath filePath: String) -> URL {
         #if canImport(Darwin)
-        if #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *) {
-            return URL(filePath: filePath)
-        } else {
+        guard
+            #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *)
+        else {
             return URL(fileURLWithPath: filePath)
         }
+        return URL(filePath: filePath)
         #else
         return URL(fileURLWithPath: filePath)
+        #endif
+    }
+
+    /// Returns file path as string converting provided URL.
+    ///
+    /// Uses platform and version specific API to create string file path.
+    ///
+    /// - Parameter url: The path to file as URL.
+    /// - Returns: The file path string.
+    static func filePath(forURL url: URL) -> String {
+        #if canImport(Darwin)
+        guard
+            #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *)
+        else {
+            return url.path
+        }
+        return url.path(percentEncoded: false)
+        #else
+        return url.path
+        #endif
+    }
+
+    /// Returns a URL by appending the specified path to the URL.
+    ///
+    /// This method doesn’t percent-encode any path separators.
+    ///
+    /// - Parameters:
+    ///   - path: The path component to append to the URL.
+    ///   - url: The base URL to which the path will be appended.
+    /// - Returns: A new URL with the path component appended.
+    static func appending(path: String, to url: URL) -> URL {
+        #if canImport(Darwin)
+        guard
+            #available(macOS 13, iOS 16, macCatalyst 16, tvOS 16, watchOS 9, *)
+        else {
+            return url.appendingPathComponent(path)
+        }
+        return url.appending(path: path)
+        #else
+        return url.appendingPathComponent(path)
         #endif
     }
 }

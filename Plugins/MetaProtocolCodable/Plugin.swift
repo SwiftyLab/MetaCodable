@@ -20,9 +20,8 @@ struct MetaProtocolCodable: BuildToolPlugin {
     func fetchConfig<Target: MetaProtocolCodableSourceTarget>(
         for target: Target
     ) throws -> Config {
-        let pathStr = try target.configPath(named: "metacodableconfig")
-        guard let pathStr else { return .init(scan: .target) }
-        let path = Config.url(forFilePath: pathStr)
+        let path = try target.configPath(named: "metacodableconfig")
+        guard let path = path else { return .init(scan: .target) }
         let conf = try Data(contentsOf: path)
         let pConf = try? PropertyListDecoder().decode(Config.self, from: conf)
         let config = try pConf ?? JSONDecoder().decode(Config.self, from: conf)
@@ -50,32 +49,35 @@ struct MetaProtocolCodable: BuildToolPlugin {
         let (allTargets, imports) = config.scanInput(for: target, in: context)
 
         // Setup folder
-        let genFolder = context.pluginWorkDirectory.appending(["ProtocolGen"])
+        let genFolder = Config.appending(
+            path: "ProtocolGen", to: context.pluginWorkDirectoryURL
+        )
         try FileManager.default.createDirectory(
-            atPath: genFolder.string, withIntermediateDirectories: true
+            at: genFolder, withIntermediateDirectories: true
         )
 
         // Create source scan commands
-        var intermFiles: [Path] = []
+        var intermFiles: [URL] = []
         var buildCommands = allTargets.flatMap { target in
             return target.sourceFiles(withSuffix: "swift").map { file in
                 let moduleName = target.moduleName
-                let fileName = file.path.stem
+                let fileName = file.url.deletingPathExtension()
+                    .lastPathComponent
                 let genFileName = "\(moduleName)-\(fileName)-gen.json"
-                let genFile = genFolder.appending([genFileName])
+                let genFile = Config.appending(path: genFileName, to: genFolder)
                 intermFiles.append(genFile)
                 return Command.buildCommand(
                     displayName: """
                         Parse source file "\(fileName)" in module "\(moduleName)"
                         """,
-                    executable: tool.path,
+                    executable: tool.url,
                     arguments: [
                         "parse",
-                        file.path.string,
+                        Config.filePath(forURL: file.url),
                         "--output",
-                        genFile.string,
+                        Config.filePath(forURL: genFile),
                     ],
-                    inputFiles: [file.path],
+                    inputFiles: [file.url],
                     outputFiles: [genFile]
                 )
             }
@@ -84,20 +86,22 @@ struct MetaProtocolCodable: BuildToolPlugin {
         // Create syntax generation command
         let moduleName = target.moduleName
         let genFileName = "\(moduleName)+ProtocolHelperCoders.swift"
-        let genPath = genFolder.appending(genFileName)
-        var genArgs = ["generate", "--output", genPath.string]
+        let genPath = Config.appending(path: genFileName, to: genFolder)
+        var genArgs = [
+            "generate", "--output", Config.filePath(forURL: genPath),
+        ]
         for `import` in imports {
             genArgs.append(contentsOf: ["--module", `import`])
         }
         for file in intermFiles {
-            genArgs.append(file.string)
+            genArgs.append(Config.filePath(forURL: file))
         }
         buildCommands.append(
             .buildCommand(
                 displayName: """
                     Generate protocol decoding/encoding syntax for "\(moduleName)"
                     """,
-                executable: tool.path,
+                executable: tool.url,
                 arguments: genArgs,
                 inputFiles: intermFiles,
                 outputFiles: [genPath]
@@ -147,7 +151,7 @@ extension MetaProtocolCodable: XcodeBuildToolPlugin {
     func createBuildCommands(
         context: XcodePluginContext, target: XcodeTarget
     ) throws -> [Command] {
-        return try self.createBuildCommands(
+        try self.createBuildCommands(
             in: context, for: target
         )
     }

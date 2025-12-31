@@ -80,7 +80,7 @@ package struct MemberwiseInitGenerator {
     /// - Returns: The newly created generator with provided
     ///            initialization items collections.
     func update(with collections: [[Item]]) -> Self {
-        return .init(options: options, collections: collections)
+        .init(options: options, collections: collections)
     }
 
     /// Adds the provided required initialization item to generator.
@@ -130,8 +130,8 @@ package struct MemberwiseInitGenerator {
     func declarations(
         in context: some MacroExpansionContext
     ) -> [InitializerDeclSyntax] {
-        return collections.map { items in
-            return InitializerDeclSyntax(
+        collections.map { items in
+            InitializerDeclSyntax(
                 modifiers: options.modifiers,
                 signature: .init(
                     parameterClause: .init(

@@ -73,7 +73,7 @@ internal extension Double {
     static func numberValue<Number>(
         from decoder: Decoder
     ) -> Number? where Number: ExpressibleByIntegerLiteral {
-        return Number(exact: try? Self(from: decoder))
+        Number(exact: try? Self(from: decoder))
     }
 }
 

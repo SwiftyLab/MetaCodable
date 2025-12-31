@@ -5,10 +5,10 @@
 ///
 /// Conforming to this `protocol` allows type to be decoded/encoded dynamically
 /// if it conforms to any additional `protocol`(s) that declare dynamic
-/// decoding/encoding with attached ``Codable()`` macro, while the conformed
+/// decoding/encoding with attached ``Codable(commonStrategies:)`` macro, while the conformed
 /// types can be declared in several different targets.
 ///
-/// To use dynamic decoding, first declare a protocol with ``Codable()`` macro
+/// To use dynamic decoding, first declare a protocol with ``Codable(commonStrategies:)`` macro
 /// attached that represents common data. i.e. for dynamic `Post` data:
 ///
 /// ``` json

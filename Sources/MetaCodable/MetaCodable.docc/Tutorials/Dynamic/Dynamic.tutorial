@@ -34,7 +34,7 @@
             }
 
             @Step {
-                Attach ``Codable()`` attribute to this protocol.
+                Attach ``Codable(commonStrategies:)`` attribute to this protocol.
 
                 @Code(name: "Post.swift", file: DynamicPost-02.swift) {
                     @Image(source: DynamicPost-01.png, alt: "Post variations JSON representation")
@@ -140,7 +140,7 @@
             }
 
             @Step {
-                Provide ``MetaCodableConfig/Scan`` mode in ``MetaCodableConfig`` file to control source files accross dependency targets scanned for ``Codable()`` protocol variation data.
+                Provide ``MetaCodableConfig/Scan`` mode in ``MetaCodableConfig`` file to control source files accross dependency targets scanned for ``Codable(commonStrategies:)`` protocol variation data.
 
                 @Code(name: "meta_codable_config.json", file: meta_codable_config-02.json) {
                     @Image(source: MetaCodableConfig.png, alt: "MetaCodableConfig.plist configuration file")

@@ -86,23 +86,43 @@ extension CodedIn: KeyPathProvider {
     }
 }
 
-extension Registration where Key == [String] {
+extension Registration where Key == PathKey {
     /// Update registration with `CodingKey` path data.
     ///
     /// New registration is updated with the provided `CodingKey` path from provider,
     /// updating current `CodingKey` path data.
     ///
-    /// - Parameter provider: The `CodingKey` path data provider.
+    /// - Parameters:
+    ///   - provider: The main `CodingKey` path data provider used for both encoding and decoding
+    ///     when specific providers are not available.
+    ///   - decodingProvider: The `CodingKey` path data provider specifically for decoding.
+    ///     When non-nil, overrides the decoding path from the main provider.
+    ///   - encodingProvider: The `CodingKey` path data provider specifically for encoding.
+    ///     When non-nil, overrides the encoding path from the main provider.
     /// - Returns: Newly built registration with additional `CodingKey` path data.
     func registerKeyPath(
-        provider: KeyPathProvider
+        provider: KeyPathProvider,
+        forDecoding decodingProvider: KeyPathProvider?,
+        forEncoding encodingProvider: KeyPathProvider?
     ) -> Registration<Decl, Key, KeyedVariable<Var>> {
         typealias Output = KeyedVariable<Var>
         let options = Output.Options(code: provider.provided)
         let newVar = Output(base: self.variable, options: options)
         let output = self.updating(with: newVar)
-        guard provider.provided else { return output }
-        let updatedPath = provider.keyPath(withExisting: self.key)
-        return output.updating(with: updatedPath)
+        var decodingPath = key.decoding
+        var encodingPath = key.encoding
+        if provider.provided {
+            decodingPath = provider.keyPath(withExisting: decodingPath)
+            encodingPath = provider.keyPath(withExisting: encodingPath)
+        }
+        if let decodingProvider = decodingProvider {
+            decodingPath = decodingProvider.keyPath(withExisting: decodingPath)
+        }
+        if let encodingProvider = encodingProvider {
+            encodingPath = encodingProvider.keyPath(withExisting: encodingPath)
+        }
+        let updatedKey = PathKey(decoding: decodingPath, encoding: encodingPath)
+        // Update the key path with the new key
+        return output.updating(with: updatedKey)
     }
 }

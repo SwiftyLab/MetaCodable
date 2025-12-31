@@ -57,6 +57,6 @@ struct DiagnosticsBuilder {
     static func buildBlock(
         _ producers: DiagnosticProducer...
     ) -> [DiagnosticProducer] {
-        return producers
+        producers
     }
 }

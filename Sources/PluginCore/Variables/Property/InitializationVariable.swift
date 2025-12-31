@@ -50,7 +50,7 @@ where
     /// doesn't specify explicit encoding. Otherwise depends on whether
     /// underlying variable is to be decoded.
     var encode: Bool? {
-        return base.encode ?? (options.initialized || options.`init`)
+        base.encode ?? (options.initialized || options.`init`)
     }
 
     /// Whether the variable type requires `Decodable` conformance.
@@ -59,7 +59,7 @@ where
     /// `Decodable` conformance, if variable can be
     /// initialized otherwise `false`.
     var requireDecodable: Bool? {
-        return options.`init` ? base.requireDecodable : false
+        options.`init` ? base.requireDecodable : false
     }
     /// Whether the variable type requires `Encodable` conformance.
     ///
@@ -68,7 +68,7 @@ where
     /// specifies explicit encoding. Otherwise depends on
     /// whether underlying variable is to be decoded.
     var requireEncodable: Bool? {
-        return base.requireEncodable ?? (options.initialized || options.`init`)
+        base.requireEncodable ?? (options.initialized || options.`init`)
     }
 
     /// Provides the code syntax for decoding this variable
@@ -109,7 +109,7 @@ where
     func initializing(
         in context: some MacroExpansionContext
     ) -> AnyInitialization {
-        return if options.`init` {
+        if options.`init` {
             if options.initialized {
                 base.initializing(in: context).optionalize.any
             } else {

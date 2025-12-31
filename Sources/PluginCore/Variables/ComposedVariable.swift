@@ -43,7 +43,7 @@ extension ComposedVariable {
         in context: some MacroExpansionContext,
         from location: Wrapped.CodingLocation
     ) -> Wrapped.Generated {
-        return base.decoding(in: context, from: location)
+        base.decoding(in: context, from: location)
     }
 
     /// Provides the code syntax for encoding this variable
@@ -61,7 +61,7 @@ extension ComposedVariable {
         in context: some MacroExpansionContext,
         to location: Wrapped.CodingLocation
     ) -> Wrapped.Generated {
-        return base.encoding(in: context, to: location)
+        base.encoding(in: context, to: location)
     }
 }
 
@@ -94,7 +94,7 @@ where Self: ConditionalVariable, Wrapped: ConditionalVariable {
     ///
     /// Provides arguments of underlying variable value.
     var conditionArguments: LabeledExprListSyntax {
-        return base.conditionArguments
+        base.conditionArguments
     }
 }
 
@@ -144,7 +144,7 @@ where Self: PropertyVariable, Wrapped: PropertyVariable {
     /// - Parameter variable: The variable to check for.
     /// - Returns: Whether this variable is dependent on the provided variable.
     func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
-        return base.depends(on: variable)
+        base.depends(on: variable)
     }
 }
 
@@ -162,7 +162,7 @@ where
     /// - Returns: The type of initialization for variable.
     func initializing(in context: some MacroExpansionContext) -> Initialization
     where Initialization == Wrapped.Initialization {
-        return base.initializing(in: context)
+        base.initializing(in: context)
     }
 }
 
@@ -196,6 +196,6 @@ extension ComposedVariable where Self: TypeVariable, Wrapped: TypeVariable {
         confirmingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
     ) -> MemberBlockItemListSyntax {
-        return base.codingKeys(confirmingTo: protocols, in: context)
+        base.codingKeys(confirmingTo: protocols, in: context)
     }
 }

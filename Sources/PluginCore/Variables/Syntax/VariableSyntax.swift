@@ -24,7 +24,7 @@ extension VariableSyntax {
     /// - Parameter context: The context in which to perform the macro expansion.
     /// - Returns: The `Variable` instance.
     func codableVariable(in context: some MacroExpansionContext) -> Variable {
-        return .init(from: self, in: context)
+        .init(from: self, in: context)
     }
 }
 

@@ -61,7 +61,7 @@ extension ProtocolGen {
         /// - Parameter data: The data to merge.
         /// - Returns: The merged data.
         func merging(_ data: Self) -> Self {
-            return .aggregate(datas: [self, data])
+            .aggregate(datas: [self, data])
         }
 
         /// Creates new `SourceData` merging current data
@@ -105,7 +105,7 @@ extension ProtocolGen {
         /// - Parameter datas: The datas to merge.
         /// - Returns: The new data.
         static func aggregate(datas: [Self]) -> Self {
-            return datas.reduce(
+            datas.reduce(
                 into: Self.init(protocols: [:])
             ) { partialResult, data in
                 partialResult.protocols.merge(data.protocols) { old, new in
