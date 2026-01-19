@@ -176,7 +176,10 @@ jobs:
             },
             {
               "os": "ubuntu-latest",
-              "swift": "latest"
+              "swift": "6.2",
+              "dependencies": {
+                "swift-syntax": "602.0.0"
+              }
             },
             {
               "os": "macos-15",
@@ -184,6 +187,11 @@ jobs:
             }
           ]
         }
+      # disable until prebuilt macro issues are fixed
+      # {
+      #   "os": "ubuntu-latest",
+      #   "swift": "latest"
+      # },
 
   cocoapods-test:
     name: CocoaPods
