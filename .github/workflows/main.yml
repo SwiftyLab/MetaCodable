@@ -175,6 +175,13 @@ jobs:
               }
             },
             {
+              "os": "ubuntu-latest",
+              "swift": "6.2",
+              "dependencies": {
+                "swift-syntax": "602.0.0"
+              }
+            },
+            {
               "os": "macos-15",
               "swift": "6.1.2"
             }
