@@ -21,7 +21,9 @@ extension TaggedEnumSwitcherVariable {
     ///   - location: The decoding location.
     ///   - coder: The decoder for cases.
     ///   - context: The context in which to perform the macro expansion.
-    ///   - default: Whether default case is needed.
+    ///   - default: Whether default case is needed. Note that for Bool type,
+    ///     the default case is automatically skipped since both true and false
+    ///     cases are explicitly handled, avoiding unreachable default warnings.
     ///   - forceDecodingReturn: Whether to force explicit `return` statements in each
     ///     switch case. When `true`, adds a `return` statement after the case assignment
     ///     for early exit. Defaults to `false` for backward compatibility.
@@ -60,7 +62,7 @@ extension TaggedEnumSwitcherVariable {
                 }
             }
 
-            if `default` {
+            if `default` && header.type != .bool {
                 SwitchCaseSyntax(label: .default(.init())) {
                     "break"
                 }

@@ -332,8 +332,6 @@ struct CodedAsTests {
                                         value = try container.decode(Int.self, forKey: CodingKeys.value)
                                         self = .store(key: key, value: value)
                                         return
-                                    default:
-                                        break
                                     }
                                 }
                                 let typeInt: Int?

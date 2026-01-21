@@ -707,7 +707,7 @@ struct UnTagged: PeerMacro {
 /// implementation depending on the type of attached declaration:
 ///   * `struct`/`class`/`enum`/`actor` types: Expansion of `Decodable`
 ///     protocol conformance members.
-public struct ConformDecodable: MemberMacro, ExtensionMacro {
+struct ConformDecodable: MemberMacro, ExtensionMacro {
     /// Expand to produce members for `Decodable`.
     ///
     /// Membership macro expansion for `ConformDecodable` macro
@@ -719,7 +719,7 @@ public struct ConformDecodable: MemberMacro, ExtensionMacro {
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: Delegated member expansion from `PluginCore.ConformDecodable`.
-    public static func expansion(
+    static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
         in context: some MacroExpansionContext
@@ -743,7 +743,7 @@ public struct ConformDecodable: MemberMacro, ExtensionMacro {
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: Delegated member expansion from `PluginCore.ConformDecodable`.
-    public static func expansion(
+    static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
         conformingTo protocols: [TypeSyntax],
@@ -769,7 +769,7 @@ public struct ConformDecodable: MemberMacro, ExtensionMacro {
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: Delegated extension expansion from `PluginCore.ConformDecodable`.
-    public static func expansion(
+    static func expansion(
         of node: AttributeSyntax,
         attachedTo declaration: some DeclGroupSyntax,
         providingExtensionsOf type: some TypeSyntaxProtocol,
@@ -791,7 +791,7 @@ public struct ConformDecodable: MemberMacro, ExtensionMacro {
 /// implementation depending on the type of attached declaration:
 ///   * `struct`/`class`/`enum`/`actor` types: Expansion of `Encodable`
 ///     protocol conformance members.
-public struct ConformEncodable: MemberMacro, ExtensionMacro {
+struct ConformEncodable: MemberMacro, ExtensionMacro {
     /// Expand to produce members for `Encodable`.
     ///
     /// Membership macro expansion for `ConformEncodable` macro
@@ -803,7 +803,7 @@ public struct ConformEncodable: MemberMacro, ExtensionMacro {
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: Delegated member expansion from `PluginCore.ConformEncodable`.
-    public static func expansion(
+    static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
         in context: some MacroExpansionContext
@@ -827,7 +827,7 @@ public struct ConformEncodable: MemberMacro, ExtensionMacro {
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: Delegated member expansion from `PluginCore.ConformEncodable`.
-    public static func expansion(
+    static func expansion(
         of node: AttributeSyntax,
         providingMembersOf declaration: some DeclGroupSyntax,
         conformingTo protocols: [TypeSyntax],
@@ -853,7 +853,7 @@ public struct ConformEncodable: MemberMacro, ExtensionMacro {
     ///   - context: The context in which to perform the macro expansion.
     ///
     /// - Returns: Delegated extension expansion from `PluginCore.ConformEncodable`.
-    public static func expansion(
+    static func expansion(
         of node: AttributeSyntax,
         attachedTo declaration: some DeclGroupSyntax,
         providingExtensionsOf type: some TypeSyntaxProtocol,

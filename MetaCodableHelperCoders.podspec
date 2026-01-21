@@ -4,4 +4,8 @@ Pod::Spec.new do |s|
   s.module_name = "HelperCoders"
   s.define
   s.dependency 'MetaCodableMacro', "= #{s.version}"
+
+  s.pod_target_xcconfig = {
+    'OTHER_SWIFT_FLAGS' => "-Xfrontend -package-name -Xfrontend MetaCodable",
+  }
 end
