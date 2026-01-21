@@ -1,4 +1,5 @@
 require 'json'
+require 'ostruct'
 
 module MetaCodable
   module Spec

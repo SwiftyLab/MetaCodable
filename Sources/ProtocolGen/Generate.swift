@@ -270,12 +270,14 @@ extension ProtocolGen {
             let dMethod = TypeCodingLocation.Method.decode(methodName: "decode")
             let dConform = TypeSyntax(stringLiteral: dMethod.protocol)
             let dLocation = TypeCodingLocation(
-                method: dMethod, conformance: dConform)
+                method: dMethod, conformance: dConform
+            )
             let dGenerated = variable.decoding(in: context, from: dLocation)
             let eMethod = TypeCodingLocation.Method.encode
             let eConform = TypeSyntax(stringLiteral: eMethod.protocol)
             let eLocation = TypeCodingLocation(
-                method: eMethod, conformance: eConform)
+                method: eMethod, conformance: eConform
+            )
             let eGenerated = variable.encoding(in: context, to: eLocation)
             let codingKeys = variable.codingKeys(
                 confirmingTo: [dConform, eConform], in: context

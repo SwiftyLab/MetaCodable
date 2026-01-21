@@ -78,6 +78,7 @@ struct CodableTests {
         }
 
         @Test
+        @available(*, deprecated, message: "Deprecated")
         func availableAttributeEncoding() throws {
             let original = SomeCodable(value: "deprecated_test")
             let encoded = try JSONEncoder().encode(original)
@@ -87,6 +88,7 @@ struct CodableTests {
         }
 
         @Test
+        @available(*, deprecated, message: "Deprecated")
         func availableAttributeFromJSON() throws {
             let jsonStr = """
                 {
@@ -564,7 +566,7 @@ struct CodableTests {
 #if canImport(MacroPlugin)
 @testable import MacroPlugin
 
-let allMacros: [String: Macro.Type] = [
+let allMacros: [String: (Macro & Sendable).Type] = [
     "CodedAt": MacroPlugin.CodedAt.self,
     "DecodedAt": MacroPlugin.DecodedAt.self,
     "EncodedAt": MacroPlugin.EncodedAt.self,
@@ -577,8 +579,8 @@ let allMacros: [String: Macro.Type] = [
     "IgnoreDecoding": MacroPlugin.IgnoreDecoding.self,
     "IgnoreEncoding": MacroPlugin.IgnoreEncoding.self,
     "Codable": MacroPlugin.Codable.self,
-    "ConformDecodable": ConformDecodable.self,
-    "ConformEncodable": ConformEncodable.self,
+    "ConformDecodable": MacroPlugin.ConformDecodable.self,
+    "ConformEncodable": MacroPlugin.ConformEncodable.self,
     "MemberInit": MacroPlugin.MemberInit.self,
     "CodingKeys": MacroPlugin.CodingKeys.self,
     "IgnoreCodingInitialized": MacroPlugin.IgnoreCodingInitialized.self,
@@ -586,7 +588,7 @@ let allMacros: [String: Macro.Type] = [
     "UnTagged": MacroPlugin.UnTagged.self,
 ]
 #else
-let allMacros: [String: Macro.Type] = [
+let allMacros: [String: (Macro & Sendable).Type] = [
     "CodedAt": CodedAt.self,
     "DecodedAt": DecodedAt.self,
     "EncodedAt": EncodedAt.self,

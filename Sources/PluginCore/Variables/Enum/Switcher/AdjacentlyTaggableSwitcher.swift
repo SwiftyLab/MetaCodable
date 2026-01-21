@@ -148,9 +148,25 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
         contentAt decoder: TokenSyntax
     ) -> CodeBlockItemListSyntax {
         let coder = location.coder
-        let container = self.variable.decodeContainer
-        let containerType = self.identifierContainerType()
-        let idetifierDecodingSyntax =
+        let container = self.variable.decoder
+        let (_, key) = identifierVariableAndKey(
+            identifier, withType: "_", context: context
+        )
+        let decodingKeys = codingKeys.add(
+            keys: key.decoding, field: identifier, context: context
+        )
+
+        let containerType: TypeSyntax
+        let propLocation: PropertyCodingLocation
+        if let decodingKey = decodingKeys.last?.expr {
+            propLocation = .container(container, key: decodingKey, method: nil)
+            containerType = self.identifierContainerType()
+        } else {
+            propLocation = .coder(container, method: nil)
+            containerType = "any Decoder"
+        }
+
+        var idetifierDecodingSyntax =
             EnumVariable.CaseValue.TypeOf.all(
                 inheritedType: identifierType
             ).compactMap { type in
@@ -165,22 +181,16 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
 
                 guard let switchExpr = switchExpr, switchExpr.cases.count > 1
                 else { return nil }
-                return CodeBlockItemListSyntax {
-                    let typesyntax = type.syntax(
-                        optional: identifierType == nil)
-                    let (variable, key) = identifierVariableAndKey(
-                        identifier, withType: typesyntax, context: context
-                    )
-                    let decodingKey = codingKeys.add(
-                        keys: key.decoding, field: identifier, context: context
-                    ).last!.expr
+                let typesyntax = type.syntax(
+                    optional: identifierType == nil
+                )
+                let (variable, _) = identifierVariableAndKey(
+                    identifier, withType: typesyntax, context: context
+                )
 
+                return CodeBlockItemListSyntax {
                     "let \(identifier): \(type.syntax(optional: identifierType == nil))"
-                    variable.decoding(
-                        in: context,
-                        from: .container(
-                            container, key: decodingKey, method: nil)
-                    )
+                    variable.decoding(in: context, from: propLocation)
 
                     switch variable.decodingFallback {
                     case .ifMissing where identifierType == nil,
@@ -197,6 +207,33 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                     }
                 }
             } as [CodeBlockItemListSyntax]
+
+        if rawRepresentable {
+            let rawVariable = createRawValueVariable()
+            let decoding = rawVariable.decoding(
+                in: context, from: propLocation
+            )
+
+            idetifierDecodingSyntax.insert(
+                CodeBlockItemListSyntax {
+                    "let rawValue: RawValue?"
+                    """
+                    do {
+                        \(decoding)
+                    } catch {
+                        rawValue = nil
+                    }
+                    """
+                    """
+                    if let rawValue = rawValue, let selfValue = Self(rawValue: rawValue) {
+                        self = selfValue
+                        return
+                    }
+                    """
+                },
+                at: 0
+            )
+        }
 
         return CodeBlockItemListSyntax {
             if !idetifierDecodingSyntax.isEmpty {
@@ -219,7 +256,7 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                         }
 
                     let header: SyntaxNodeString =
-                        topContainerOptional
+                        topContainerOptional && !rawRepresentable
                         ? "if let \(container) = \(container), let \(location.container) = \(location.container)"
                         : "if let \(container) = \(container)"
                     try! IfExprSyntax(header) {
@@ -235,6 +272,28 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
             }
             self.unmatchedErrorSyntax(from: decoder)
         }
+    }
+
+    /// Creates a raw value variable for RawRepresentable enum decoding.
+    ///
+    /// Constructs a variable for handling raw values in RawRepresentable enums.
+    /// This method creates a basic property variable for raw value decoding, then
+    /// applies the variable builder to transform it into the appropriate variable
+    /// type for the specific enum implementation.
+    ///
+    /// - Returns: A variable configured for raw value decoding, transformed through
+    ///   the variable builder to match the enum's variable type requirements.
+    func createRawValueVariable() -> Variable {
+        let rawVariable = BasicPropertyVariable(
+            name: "rawValue", type: "RawValue", value: nil,
+            decodePrefix: "", encodePrefix: ""
+        )
+        let registration = Registration(
+            decl: decl, key: PathKey(decoding: [], encoding: []),
+            variable: rawVariable
+        )
+        let output = self.variableBuilder(registration)
+        return output.variable
     }
 
     /// Determines the container type for identifier decoding.
@@ -254,9 +313,9 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
     /// Creates an identifier variable and its associated key path.
     ///
     /// Constructs a property variable for the enum identifier with the specified
-    /// type and applies the variable builder transformation. If no explicit
-    /// identifier type is set, wraps the variable with default value handling
-    /// to gracefully handle missing or invalid identifiers by defaulting to `nil`.
+    /// type. If no explicit identifier type is set, wraps the variable with
+    /// default value handling to gracefully handle missing or invalid identifiers
+    /// by defaulting to `nil`.
     ///
     /// - Parameters:
     ///   - identifier: The identifier token name for the variable.
@@ -281,7 +340,7 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
         else { return (output.variable.any, output.key) }
 
         let outVariable = DefaultValueVariable(
-            base: output.variable,
+            base: input.variable,
             options: .init(onMissingExpr: "nil", onErrorExpr: "nil")
         ).any
         return (outVariable, output.key)
@@ -304,6 +363,21 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
         contentAt encoder: TokenSyntax
     ) -> CodeBlockItemListSyntax {
         let coder = location.coder
+        let container = self.variable.encoder
+        let (_, key) = self.identifierVariableAndKey(
+            identifier, withType: "_", context: context
+        )
+        let encodingKeys = codingKeys.add(
+            keys: key.encoding, field: identifier, context: context
+        )
+
+        let propLocation: PropertyCodingLocation
+        if let encodingKey = encodingKeys.last?.expr {
+            propLocation = .container(container, key: encodingKey, method: nil)
+        } else {
+            propLocation = .coder(container, method: nil)
+        }
+
         return CodeBlockItemListSyntax {
             encodingNode.encoding(
                 in: context, to: .withCoder(coder, keyType: location.keyType)
@@ -312,19 +386,17 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                 over: location.selfValue, at: location, from: encoder,
                 in: context, withDefaultCase: location.hasDefaultCase
             ) { name in
-                let container = variable.encodeContainer
-                let (variable, key) = identifierVariableAndKey(
+                let (variable, _) = identifierVariableAndKey(
                     name, withType: "_", context: context
                 )
-                let encodingKey = codingKeys.add(
-                    keys: key.encoding, field: identifier, context: context
-                ).last!.expr
-                return variable.encoding(
-                    in: context,
-                    to: .container(container, key: encodingKey, method: nil)
-                )
+                return variable.encoding(in: context, to: propLocation)
             }
-            if let switchExpr = switchExpr {
+
+            if rawRepresentable {
+                createRawValueVariable().encoding(
+                    in: context, to: propLocation
+                )
+            } else if let switchExpr = switchExpr {
                 switchExpr
             }
         }

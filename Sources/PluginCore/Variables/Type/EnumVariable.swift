@@ -146,8 +146,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
             switcher: switcher, codingKeys: codingKeys
         ) { input in
             input.checkForInternalTagging(
-                container: Self.typeContainer, identifier: Self.type,
-                codingKeys: codingKeys,
+                decl: decl, coderPrefix: Self.typeCoderPrefix,
+                identifier: Self.type, codingKeys: codingKeys,
                 forceDecodingReturn: forceInternalTaggingDecodingReturn,
                 context: context
             ) { registration in
@@ -860,10 +860,10 @@ package extension EnumVariable {
 }
 
 fileprivate extension EnumVariable {
-    /// The default name for identifier type root container.
+    /// The default prefix for identifier type coder variables.
     ///
-    /// This container is passed to each case for decoding.
-    static var typeContainer: TokenSyntax { "typeContainer" }
+    /// This prefix is used to generate coder variable names for each case.
+    static var typeCoderPrefix: TokenSyntax { Self.type }
     /// The default name for top-level root container.
     ///
     /// This container is passed to each case for decoding.
@@ -884,4 +884,3 @@ fileprivate extension EnumVariable {
     /// This encoder is passed to each case for encoding.
     static var contentEncoder: TokenSyntax { "contentEncoder" }
 }
-

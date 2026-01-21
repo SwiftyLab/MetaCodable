@@ -61,17 +61,13 @@ enum SomeEnum {
 }
 ```
 
-### Why enums with raw value aren't supported?
-
-`Swift` compiler by default generates `Codable` conformance for `enum`s with raw value and `MetaCodable` has nothing extra to add for these type of `enum`s. Hence, in this case the default compiler generated implementation can be used.
-
 ### Why actor conformance to Encodable not generated?
 
 For `actor`s ``Codable(commonStrategies:)`` generates `Decodable` conformance, while `Encodable` conformance isn't generated, only `encode(to:)` method implementation is generated which is isolated to `actor`.
 
 To generate `Encodable` conformance, the `encode(to:)` method must be `nonisolated` to `actor`, and since `encode(to:)` method must be synchronous making it `nonisolated` will prevent accessing mutable properties.
 
-Due to these limitations, `Encodable` conformance isn't generated, users has to implement the conformance manually.
+Due to these limitations, `Encodable` conformance isn't generated, users have to implement the conformance manually.
 
 ### Why MetaProtocolCodable plugin can't scan Xcode target dependencies?
 

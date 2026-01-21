@@ -28,10 +28,12 @@ Pod::Spec.new do |s|
     :execution_position => :before_compile
   }
 
-  xcconfig = {
+  s.user_target_xcconfig = {
     'OTHER_SWIFT_FLAGS' => "-Xfrontend -load-plugin-executable -Xfrontend #{plugin_path}",
     'METACODABLE_PLUGIN_BUILD_ENVIRONMENT' => 'METACODABLE_BEING_USED_FROM_COCOAPODS=true'
   }
-  s.user_target_xcconfig = xcconfig
-  s.pod_target_xcconfig = xcconfig
+  s.pod_target_xcconfig = {
+    'OTHER_SWIFT_FLAGS' => "-Xfrontend -load-plugin-executable -Xfrontend #{plugin_path} -Xfrontend -package-name -Xfrontend MetaCodable",
+    'METACODABLE_PLUGIN_BUILD_ENVIRONMENT' => 'METACODABLE_BEING_USED_FROM_COCOAPODS=true'
+  }
 end
