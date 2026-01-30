@@ -6,7 +6,9 @@ import XCTest
 
 @testable import PluginCore
 
+@Suite("Raw Representable Enum Tests")
 struct RawRepresentableEnumTests {
+    @Suite("Raw Representable Enum - String Representation")
     struct StringRepresentation {
         @Codable
         enum Status: String, CaseIterable {
@@ -15,7 +17,7 @@ struct RawRepresentableEnumTests {
             case pending = "pending"
         }
 
-        @Test
+        @Test("Generates @Codable conformance for enum (RawRepresentableEnumTests #1)", .tags(.codable, .encoding, .enums, .macroExpansion, .optionals, .rawRepresentable))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -118,7 +120,7 @@ struct RawRepresentableEnumTests {
             #expect(decoded == status)
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #93)", .tags(.decoding, .rawRepresentable))
         func directDecoding() throws {
             let jsonString = "\"active\""
             let jsonData = jsonString.data(using: .utf8)!
@@ -130,6 +132,7 @@ struct RawRepresentableEnumTests {
         }
     }
 
+    @Suite("Raw Representable Enum - Int Representation")
     struct IntRepresentation {
         @Codable
         enum Priority: Int, CaseIterable {
@@ -138,7 +141,7 @@ struct RawRepresentableEnumTests {
             case high = 3
         }
 
-        @Test
+        @Test("Generates @Codable conformance for enum (RawRepresentableEnumTests #2)", .tags(.codable, .encoding, .enums, .macroExpansion, .optionals, .rawRepresentable))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -254,6 +257,7 @@ struct RawRepresentableEnumTests {
         }
     }
 
+    @Suite("Raw Representable Enum - CodedAt")
     struct WithCodedAt {
         @Codable
         @CodedAt("level")
@@ -263,7 +267,7 @@ struct RawRepresentableEnumTests {
             case advanced = "advanced"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (RawRepresentableEnumTests #27)", .tags(.codable, .codedAt, .decoding, .encoding, .enums, .macroExpansion, .optionals, .rawRepresentable))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -380,6 +384,7 @@ struct RawRepresentableEnumTests {
         }
     }
 
+    @Suite("Raw Representable Enum - CodedAs")
     struct WithCodedAs {
         @Codable
         enum Command: String {
@@ -622,7 +627,7 @@ struct RawRepresentableEnumTests {
 
         // MARK: - Error Cases
 
-        @Test
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #94)", .tags(.decoding, .rawRepresentable))
         func invalidCodedAsValueDecoding() throws {
             let jsonString = "\"INVALID\""
             let jsonData = jsonString.data(using: .utf8)!
@@ -633,7 +638,7 @@ struct RawRepresentableEnumTests {
             }
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #95)", .tags(.decoding, .rawRepresentable))
         func invalidResponseCodeDecoding() throws {
             let jsonString = "999"  // Not in any CodedAs range
             let jsonData = jsonString.data(using: .utf8)!
@@ -646,7 +651,7 @@ struct RawRepresentableEnumTests {
 
         // MARK: - Array and Collection Tests
 
-        @Test
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #96)", .tags(.decoding, .rawRepresentable))
         func httpMethodArrayDecoding() throws {
             // Test that we can decode arrays with mixed CodedAs and raw values
             let jsonString = """
@@ -664,7 +669,7 @@ struct RawRepresentableEnumTests {
             #expect(decoded == expected)
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #97)", .tags(.decoding, .rawRepresentable))
         func responseCodeArrayDecoding() throws {
             // Test decoding array of response codes with CodedAs values
             let jsonString = """
@@ -688,6 +693,7 @@ struct RawRepresentableEnumTests {
         }
     }
 
+    @Suite("Raw Representable Enum - CodedBy")
     struct WithCodedBy {
         @Codable
         @CodedBy(ValueCoder<Int>())

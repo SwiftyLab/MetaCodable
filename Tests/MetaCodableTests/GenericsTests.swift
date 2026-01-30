@@ -4,14 +4,27 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Generics Tests")
 struct GenericsTests {
+    @Suite("Generics - Single Generic Type Expansion")
     struct SingleGenericTypeExpansion {
         @Codable
         struct GenericCodable<T> {
             let value: T
         }
 
-        @Test
+        @Test(
+            "Generates @Codable conformance for struct (GenericsTests #7)",
+            .tags(
+                .codable,
+                .decoding,
+                .encoding,
+                .enums,
+                .generics,
+                .macroExpansion,
+                .structs
+            )
+        )
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -49,7 +62,7 @@ struct GenericsTests {
             )
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (GenericsTests #16)", .tags(.decoding, .encoding, .generics))
         func decodingAndEncoding() throws {
             let original = GenericCodable(value: "test")
             let encoded = try JSONEncoder().encode(original)
@@ -58,7 +71,7 @@ struct GenericsTests {
             #expect(decoded.value == "test")
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (GenericsTests #17)", .tags(.decoding, .encoding, .generics))
         func decodingAndEncodingWithInt() throws {
             let original = GenericCodable(value: 42)
             let encoded = try JSONEncoder().encode(original)
@@ -67,7 +80,7 @@ struct GenericsTests {
             #expect(decoded.value == 42)
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (GenericsTests #51)", .tags(.decoding, .generics))
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -81,6 +94,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Multiple Generic Type Expansion")
     struct MultipleGenericTypeExpansion {
         @Codable
         struct GenericCodable<T, U, V> {
@@ -89,7 +103,7 @@ struct GenericsTests {
             let value3: V
         }
 
-        @Test
+        @Test("Generates @Codable conformance for struct (GenericsTests #8)", .tags(.codable, .decoding, .encoding, .enums, .generics, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -137,7 +151,7 @@ struct GenericsTests {
             )
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (GenericsTests #18)", .tags(.decoding, .encoding, .generics))
         func decodingAndEncoding() throws {
             let original = GenericCodable(
                 value1: "test", value2: 42, value3: true)
@@ -149,7 +163,7 @@ struct GenericsTests {
             #expect(decoded.value3 == true)
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (GenericsTests #52)", .tags(.decoding, .generics))
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -167,6 +181,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Enum Multiple Generic Type Expansion")
     struct EnumMultipleGenericTypeExpansion {
         @Codable
         enum GenericCodable<T, U, V> {
@@ -175,7 +190,7 @@ struct GenericsTests {
             case three(V)
         }
 
-        @Test
+        @Test("Generates @Codable conformance for enum", .tags(.codable, .encoding, .enums, .generics, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -255,7 +270,7 @@ struct GenericsTests {
             )
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (GenericsTests #19)", .tags(.decoding, .encoding, .generics))
         func decodingAndEncodingCaseOne() throws {
             let original: GenericCodable<String, Int, Bool> = .one("test")
             let encoded = try JSONEncoder().encode(original)
@@ -268,7 +283,7 @@ struct GenericsTests {
             }
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (GenericsTests #20)", .tags(.decoding, .encoding, .generics))
         func decodingAndEncodingCaseTwo() throws {
             let original: GenericCodable<String, Int, Bool> = .two(42)
             let encoded = try JSONEncoder().encode(original)
@@ -281,7 +296,7 @@ struct GenericsTests {
             }
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (GenericsTests #53)", .tags(.decoding, .generics))
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -299,6 +314,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Mixed Generic Type Expansion")
     struct MixedGenericTypeExpansion {
         @Codable
         struct GenericCodable<T> {
@@ -306,7 +322,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test
+        @Test("Generates @Codable conformance for struct (GenericsTests #9)", .tags(.codable, .decoding, .encoding, .enums, .generics, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -350,6 +366,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Class Mixed Generic Type Expansion")
     struct ClassMixedGenericTypeExpansion {
         @Codable
         class GenericCodable<T> {
@@ -357,7 +374,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test
+        @Test("Generates @Codable conformance for class (GenericsTests #3)", .tags(.classes, .codable, .decoding, .encoding, .enums, .generics, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -401,6 +418,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Enum Mixed Generic Type Expansion")
     struct EnumMixedGenericTypeExpansion {
         @Codable
         enum GenericCodable<T> {
@@ -409,7 +427,7 @@ struct GenericsTests {
             case two(String)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (GenericsTests #16)", .tags(.codable, .encoding, .enums, .generics, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -478,6 +496,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Ignored Generic Type Expansion")
     struct IgnoredGenericTypeExpansion {
         @Codable
         struct GenericCodable<T> {
@@ -485,7 +504,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test
+        @Test("Generates @Codable conformance for struct (GenericsTests #10)", .tags(.codable, .decoding, .encoding, .enums, .generics, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -526,6 +545,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Helper Coded Generic Type Expansion")
     struct HelperCodedGenericTypeExpansion {
         @Codable
         struct GenericCodable<T> {
@@ -534,7 +554,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (GenericsTests #80)", .tags(.codable, .codedBy, .decoding, .encoding, .enums, .generics, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -579,6 +599,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Ignored Encoding Generic Type Expansion")
     struct IgnoredEncodingGenericTypeExpansion {
         @Codable
         struct GenericCodable<T> {
@@ -587,7 +608,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (GenericsTests #81)", .tags(.codable, .decoding, .encoding, .enums, .generics, .ignoreEncoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -631,6 +652,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Class Ignored Encoding Generic Type Expansion")
     struct ClassIgnoredEncodingGenericTypeExpansion {
         @Codable
         class GenericCodable<T> {
@@ -639,7 +661,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class (GenericsTests #5)", .tags(.classes, .codable, .decoding, .encoding, .enums, .generics, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -683,6 +705,7 @@ struct GenericsTests {
         }
     }
 
+    @Suite("Generics - Enum Ignored Encoding Generic Type Expansion")
     struct EnumIgnoredEncodingGenericTypeExpansion {
         @Codable
         enum GenericCodable<T> {
@@ -691,7 +714,7 @@ struct GenericsTests {
             case two(String)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (GenericsTests #17)", .tags(.codable, .encoding, .enums, .generics, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
