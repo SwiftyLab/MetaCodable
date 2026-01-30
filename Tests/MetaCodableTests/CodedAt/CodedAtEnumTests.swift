@@ -6,7 +6,7 @@ import Testing
 
 @Suite("Coded At Enum Tests")
 struct CodedAtEnumTests {
-    @Test("misuse On Non Enum Declaration")
+    @Test("Reports error when @CodedAt is used without @Codable")
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -41,7 +41,7 @@ struct CodedAtEnumTests {
         )
     }
 
-    @Test("duplicated Misuse")
+    @Test("Reports error when @Codable is applied multiple times")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -185,7 +185,7 @@ struct CodedAtEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (CodedAtEnumTests #5)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -288,7 +288,7 @@ struct CodedAtEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (CodedAtEnumTests #6)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -385,7 +385,7 @@ struct CodedAtEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (CodedAtEnumTests #7)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -500,7 +500,7 @@ struct CodedAtEnumTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtEnumTests #15)")
         func expansion() throws {
             assertMacroExpansion(
                 """

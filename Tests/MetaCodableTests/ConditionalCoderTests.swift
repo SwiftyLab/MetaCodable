@@ -79,7 +79,7 @@ struct ConditionalCoderTests {
     // MARK: - decodeIfPresent Tests
     
     /// Tests that `decodeIfPresent` uses the decoder coder and returns value.
-    @Test("decodeIfPresent returns value when data is valid")
+    @Test("Decodes from JSON successfully (ConditionalCoderTests #34)")
     func decodeIfPresentReturnsValue() throws {
         let json = #"{"value": "test"}"#
         let data = json.data(using: .utf8)!
@@ -89,7 +89,7 @@ struct ConditionalCoderTests {
     }
     
     /// Tests that `decodeIfPresent` returns nil when value is null.
-    @Test("decodeIfPresent returns nil when value is null")
+    @Test("Decodes from JSON successfully (ConditionalCoderTests #35)")
     func decodeIfPresentReturnsNilForNull() throws {
         let json = #"{"value": null}"#
         let data = json.data(using: .utf8)!
@@ -99,7 +99,7 @@ struct ConditionalCoderTests {
     }
     
     /// Tests that `decodeIfPresent` returns nil when key is missing.
-    @Test("decodeIfPresent returns nil when key is missing")
+    @Test("Decodes from JSON successfully (ConditionalCoderTests #36)")
     func decodeIfPresentReturnsNilForMissingKey() throws {
         let json = #"{}"#
         let data = json.data(using: .utf8)!
@@ -111,7 +111,7 @@ struct ConditionalCoderTests {
     // MARK: - encodeIfPresent Tests
     
     /// Tests that `encodeIfPresent` uses the encoder coder when value is present.
-    @Test("encodeIfPresent encodes when value is present")
+    @Test("Encodes to JSON successfully (ConditionalCoderTests #7)")
     func encodeIfPresentEncodesValue() throws {
         let wrapper = EncodingWrapper(value: "test")
         let data = try JSONEncoder().encode(wrapper)
@@ -121,7 +121,7 @@ struct ConditionalCoderTests {
     }
     
     /// Tests that `encodeIfPresent` skips encoding when value is nil.
-    @Test("encodeIfPresent skips encoding when value is nil")
+    @Test("Encodes to JSON successfully (ConditionalCoderTests #8)")
     func encodeIfPresentSkipsNil() throws {
         let wrapper = EncodingWrapper(value: nil)
         let data = try JSONEncoder().encode(wrapper)

@@ -17,7 +17,7 @@ struct RawRepresentableEnumTests {
             case pending = "pending"
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for enum (RawRepresentableEnumTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -120,7 +120,7 @@ struct RawRepresentableEnumTests {
             #expect(decoded == status)
         }
 
-        @Test("direct Decoding")
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #93)")
         func directDecoding() throws {
             let jsonString = "\"active\""
             let jsonData = jsonString.data(using: .utf8)!
@@ -141,7 +141,7 @@ struct RawRepresentableEnumTests {
             case high = 3
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for enum (RawRepresentableEnumTests #2)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -267,7 +267,7 @@ struct RawRepresentableEnumTests {
             case advanced = "advanced"
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (RawRepresentableEnumTests #27)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -627,7 +627,7 @@ struct RawRepresentableEnumTests {
 
         // MARK: - Error Cases
 
-        @Test("invalid Coded As Value Decoding")
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #94)")
         func invalidCodedAsValueDecoding() throws {
             let jsonString = "\"INVALID\""
             let jsonData = jsonString.data(using: .utf8)!
@@ -638,7 +638,7 @@ struct RawRepresentableEnumTests {
             }
         }
 
-        @Test("invalid Response Code Decoding")
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #95)")
         func invalidResponseCodeDecoding() throws {
             let jsonString = "999"  // Not in any CodedAs range
             let jsonData = jsonString.data(using: .utf8)!
@@ -651,7 +651,7 @@ struct RawRepresentableEnumTests {
 
         // MARK: - Array and Collection Tests
 
-        @Test("http Method Array Decoding")
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #96)")
         func httpMethodArrayDecoding() throws {
             // Test that we can decode arrays with mixed CodedAs and raw values
             let jsonString = """
@@ -669,7 +669,7 @@ struct RawRepresentableEnumTests {
             #expect(decoded == expected)
         }
 
-        @Test("response Code Array Decoding")
+        @Test("Decodes from JSON successfully (RawRepresentableEnumTests #97)")
         func responseCodeArrayDecoding() throws {
             // Test decoding array of response codes with CodedAs values
             let jsonString = """

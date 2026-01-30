@@ -17,7 +17,7 @@ struct CodedInHelperTests {
             let value: [String]
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedInHelperTests #64)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -74,7 +74,7 @@ struct CodedInHelperTests {
             let value: [String]?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedInHelperTests #65)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -132,7 +132,7 @@ struct CodedInHelperTests {
             let value: [String]
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperTests #66)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -193,7 +193,7 @@ struct CodedInHelperTests {
             let value: [String]?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperTests #67)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -258,7 +258,7 @@ struct CodedInHelperTests {
             let value: [String]
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperTests #68)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -322,7 +322,7 @@ struct CodedInHelperTests {
             let value: [String]?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperTests #69)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -404,7 +404,7 @@ struct CodedInHelperTests {
             let value3: [String]?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperTests #70)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -500,7 +500,7 @@ struct CodedInHelperTests {
             let value2: [String]?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperTests #71)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -576,7 +576,7 @@ struct CodedInHelperTests {
             let value2: [String]?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for class with nested paths (CodedInHelperTests #10)")
         func expansion() throws {
             assertMacroExpansion(
                 """

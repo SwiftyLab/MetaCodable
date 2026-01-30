@@ -14,7 +14,7 @@ struct GroupedVariableTests {
             let one, two, three: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedVariableTests #87)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -65,7 +65,7 @@ struct GroupedVariableTests {
             )
         }
 
-        @Test("decoding And Encoding")
+        @Test("Encodes and decodes successfully (GroupedVariableTests #21)")
         func decodingAndEncoding() throws {
             let original = SomeCodable(
                 one: "first", two: "second", three: "third")
@@ -77,7 +77,7 @@ struct GroupedVariableTests {
             #expect(decoded.three == "third")
         }
 
-        @Test("decoding From J S O N")
+        @Test("Decodes from JSON successfully (GroupedVariableTests #54)")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -94,7 +94,7 @@ struct GroupedVariableTests {
             #expect(decoded.three == "value3")
         }
 
-        @Test("encoding To J S O N")
+        @Test("Encodes to JSON successfully (GroupedVariableTests #17)")
         func encodingToJSON() throws {
             let original = SomeCodable(one: "a", two: "b", three: "c")
             let encoded = try JSONEncoder().encode(original)
@@ -115,7 +115,7 @@ struct GroupedVariableTests {
             let one, two: String, three: String = ""
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedVariableTests #88)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -173,7 +173,7 @@ struct GroupedVariableTests {
             let one, two: String, three: Int
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedVariableTests #89)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -271,7 +271,7 @@ struct GroupedVariableTests {
             let one: String, two: String = "", three: Int
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedVariableTests #90)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -329,7 +329,7 @@ struct GroupedVariableTests {
             let one: String, two = "", three: Int
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedVariableTests #91)")
         func expansion() throws {
             assertMacroExpansion(
                 """

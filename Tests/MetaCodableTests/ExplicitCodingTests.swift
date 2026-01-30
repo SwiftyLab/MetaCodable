@@ -14,7 +14,7 @@ struct ExplicitCodingTests {
             var value: String { "some" }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #76)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -51,7 +51,7 @@ struct ExplicitCodingTests {
             )
         }
 
-        @Test("encoding Only")
+        @Test("Encodes to JSON successfully (ExplicitCodingTests #14)")
         func encodingOnly() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -61,7 +61,7 @@ struct ExplicitCodingTests {
             #expect(json["value"] as? String == "some")
         }
 
-        @Test("decoding Empty")
+        @Test("Decodes from JSON successfully (ExplicitCodingTests #48)")
         func decodingEmpty() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -81,7 +81,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #77)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -126,7 +126,7 @@ struct ExplicitCodingTests {
             )
         }
 
-        @Test("encoding Only")
+        @Test("Encodes to JSON successfully (ExplicitCodingTests #15)")
         func encodingOnly() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -136,7 +136,7 @@ struct ExplicitCodingTests {
             #expect(json["value"] as? String == "some")
         }
 
-        @Test("decoding Empty")
+        @Test("Decodes from JSON successfully (ExplicitCodingTests #49)")
         func decodingEmpty() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -157,7 +157,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #78)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -200,7 +200,7 @@ struct ExplicitCodingTests {
             )
         }
 
-        @Test("encoding Only")
+        @Test("Encodes to JSON successfully (ExplicitCodingTests #16)")
         func encodingOnly() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -210,7 +210,7 @@ struct ExplicitCodingTests {
             #expect(json["value"] as? String == "someVal")
         }
 
-        @Test("decoding Empty")
+        @Test("Decodes from JSON successfully (ExplicitCodingTests #50)")
         func decodingEmpty() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -231,7 +231,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for class (ExplicitCodingTests #4)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -289,7 +289,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #79)")
         func expansion() throws {
             assertMacroExpansion(
                 """

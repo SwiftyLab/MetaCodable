@@ -15,7 +15,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedAtDefaultOnlyMissingTests #14)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -63,7 +63,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedAtDefaultOnlyMissingTests #15)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -110,7 +110,7 @@ struct CodedAtDefaultOnlyMissingTests {
                 let value: String!
             }
 
-            @Test("expansion")
+            @Test("Generates macro expansion with @Codable for struct (CodedAtDefaultOnlyMissingTests #16)")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -159,7 +159,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedAtDefaultOnlyMissingTests #17)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -215,7 +215,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedAtDefaultOnlyMissingTests #18)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -270,7 +270,7 @@ struct CodedAtDefaultOnlyMissingTests {
                 let value: String!
             }
 
-            @Test("expansion")
+            @Test("Generates macro expansion with @Codable for struct (CodedAtDefaultOnlyMissingTests #19)")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -327,7 +327,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtDefaultOnlyMissingTests #5)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -397,7 +397,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtDefaultOnlyMissingTests #6)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -466,7 +466,7 @@ struct CodedAtDefaultOnlyMissingTests {
                 let value: String!
             }
 
-            @Test("expansion")
+            @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtDefaultOnlyMissingTests #7)")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -544,7 +544,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value4: String!
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtDefaultOnlyMissingTests #8)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -652,7 +652,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value6: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtDefaultOnlyMissingTests #9)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -779,7 +779,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value6: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for class with nested paths (CodedAtDefaultOnlyMissingTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """

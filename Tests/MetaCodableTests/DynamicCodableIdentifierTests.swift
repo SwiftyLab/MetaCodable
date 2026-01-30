@@ -15,7 +15,7 @@ struct DynamicCodableIdentifierTests {
     ///
     /// DynamicCodableIdentifier uses string-based keys only,
     /// so integer initialization is not supported.
-    @Test("init(intValue:) returns nil")
+    @Test("Tests init int value returns nil")
     func initIntValueReturnsNil() {
         let identifier = DynamicCodableIdentifier<String>(intValue: 0)
         #expect(identifier == nil)
@@ -28,7 +28,7 @@ struct DynamicCodableIdentifierTests {
     }
     
     /// Tests that `intValue` property always returns nil.
-    @Test("intValue property returns nil")
+    @Test("Tests int value property returns nil")
     func intValuePropertyReturnsNil() {
         let identifier: DynamicCodableIdentifier<String> = .one("test")
         #expect(identifier.intValue == nil)
@@ -40,7 +40,7 @@ struct DynamicCodableIdentifierTests {
     // MARK: - init(stringValue:) Tests
     
     /// Tests that `init(stringValue:)` creates a single identifier.
-    @Test("init(stringValue:) creates single identifier")
+    @Test("Tests init string value creates single identifier")
     func initStringValueCreatesSingleIdentifier() {
         let identifier = DynamicCodableIdentifier<String>(stringValue: "test")
         #expect(identifier != nil)
@@ -50,21 +50,21 @@ struct DynamicCodableIdentifierTests {
     // MARK: - stringValue Tests
     
     /// Tests that `stringValue` returns the value for single identifier.
-    @Test("stringValue returns value for single identifier")
+    @Test("Tests string value returns single value")
     func stringValueReturnsSingleValue() {
         let identifier: DynamicCodableIdentifier<String> = .one("myKey")
         #expect(identifier.stringValue == "myKey")
     }
     
     /// Tests that `stringValue` returns first value for multiple identifiers.
-    @Test("stringValue returns first value for multiple identifiers")
+    @Test("Tests string value returns first value")
     func stringValueReturnsFirstValue() {
         let identifier: DynamicCodableIdentifier<String> = .many(["first", "second", "third"])
         #expect(identifier.stringValue == "first")
     }
     
     /// Tests that `stringValue` returns empty string for empty multiple identifiers.
-    @Test("stringValue returns empty string for empty array")
+    @Test("Tests string value returns empty for empty array")
     func stringValueReturnsEmptyForEmptyArray() {
         let identifier: DynamicCodableIdentifier<String> = .many([])
         #expect(identifier.stringValue == "")
@@ -73,7 +73,7 @@ struct DynamicCodableIdentifierTests {
     // MARK: - Pattern Matching Tests
     
     /// Tests pattern matching with single identifier.
-    @Test("pattern matching works with single identifier")
+    @Test("Tests pattern matching single identifier")
     func patternMatchingSingleIdentifier() {
         let identifier: DynamicCodableIdentifier<String> = .one("type")
         
@@ -92,7 +92,7 @@ struct DynamicCodableIdentifierTests {
     }
     
     /// Tests pattern matching with multiple identifiers.
-    @Test("pattern matching works with multiple identifiers")
+    @Test("Tests pattern matching multiple identifiers")
     func patternMatchingMultipleIdentifiers() {
         let identifier: DynamicCodableIdentifier<String> = .many(["type", "kind", "category"])
         

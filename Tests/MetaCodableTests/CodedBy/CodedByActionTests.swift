@@ -44,7 +44,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #52)")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -170,7 +170,7 @@ struct CodedByActionTests {
             )
         }
 
-        @Test("custom Coder Version Behavior")
+        @Test("Encodes and decodes successfully (CodedByActionTests #12)")
         func customCoderVersionBehavior() throws {
             // Test version 1 behavior
             let dog1 = Dog(name: "Buddy", version: 1, info: Dog.Info(tag: 5))
@@ -189,7 +189,7 @@ struct CodedByActionTests {
             #expect(decoded2.info.tag == 5)  // Should be 5 after encode(-1) then decode(+1)
         }
 
-        @Test("custom Coder From J S O N")
+        @Test("Decodes from JSON successfully (CodedByActionTests #30)")
         func customCoderFromJSON() throws {
             let jsonStr = """
                 {
@@ -245,7 +245,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #53)")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -427,7 +427,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #37)")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -609,7 +609,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #38)")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -808,7 +808,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #39)")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -1032,7 +1032,7 @@ struct CodedByActionTests {
         }
         #endif
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #54)")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -1204,7 +1204,7 @@ struct CodedByActionTests {
         }
         #endif
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #55)")
         func expansion() {
             assertMacroExpansion(
                 """

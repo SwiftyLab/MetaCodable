@@ -6,7 +6,7 @@ import Testing
 
 @Suite("Ignore Coding Tests")
 struct IgnoreCodingTests {
-    @Test("misuse On Uninitialized Variable")
+    @Test("Reports error for @Codable misuse (IgnoreCodingTests #5)")
     func misuseOnUninitializedVariable() throws {
         assertMacroExpansion(
             """
@@ -97,7 +97,7 @@ struct IgnoreCodingTests {
         )
     }
 
-    @Test("misuse With Invalid Combination")
+    @Test("Reports error for @Codable misuse (IgnoreCodingTests #6)")
     func misuseWithInvalidCombination() throws {
         assertMacroExpansion(
             """
@@ -155,7 +155,7 @@ struct IgnoreCodingTests {
             var one: String = "some"
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #92)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -184,7 +184,7 @@ struct IgnoreCodingTests {
             )
         }
 
-        @Test("ignore Coding Behavior")
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #18)")
         func ignoreCodingBehavior() throws {
             let original = SomeCodable()
             #expect(original.one == "some")  // Default value
@@ -196,7 +196,7 @@ struct IgnoreCodingTests {
             }
         }
 
-        @Test("ignore Coding From J S O N")
+        @Test("Decodes from JSON successfully (IgnoreCodingTests #89)")
         func ignoreCodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -223,7 +223,7 @@ struct IgnoreCodingTests {
                 let four: String
             }
 
-            @Test("expansion")
+            @Test("Generates macro expansion with @Codable for struct with optional properties")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -270,7 +270,7 @@ struct IgnoreCodingTests {
                 )
             }
 
-            @Test("decoding")
+            @Test("Decodes from JSON successfully (IgnoreCodingTests #90)")
             func decoding() throws {
                 let json = try #require("{\"four\":\"som\"}".data(using: .utf8))
                 let obj = try JSONDecoder().decode(SomeCodable.self, from: json)
@@ -280,7 +280,7 @@ struct IgnoreCodingTests {
                 #expect(obj.four == "som")
             }
 
-            @Test("encoding")
+            @Test("Encodes to JSON successfully (IgnoreCodingTests #19)")
             func encoding() throws {
                 let obj = SomeCodable(one: "one", two: "two", four: "some")
                 let json = try JSONEncoder().encode(obj)
@@ -300,7 +300,7 @@ struct IgnoreCodingTests {
             case bool(_ variableBool: Bool)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #18)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -343,7 +343,7 @@ struct IgnoreCodingTests {
             var one: String = "some"
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #93)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -389,7 +389,7 @@ struct IgnoreCodingTests {
             case bool(_ variableBool: Bool)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #19)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -448,7 +448,7 @@ struct IgnoreCodingTests {
             var two: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #94)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -501,7 +501,7 @@ struct IgnoreCodingTests {
             var two: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #95)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -549,7 +549,7 @@ struct IgnoreCodingTests {
             )
         }
 
-        @Test("ignore")
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #20)")
         func ignore() throws {
             let obj = SomeCodable(one: "", two: "")
             let data = try JSONEncoder().encode(obj)
@@ -559,7 +559,7 @@ struct IgnoreCodingTests {
             #expect(dict["two"] == nil)
         }
 
-        @Test("encode")
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #21)")
         func encode() throws {
             let obj = SomeCodable(one: "some", two: "some")
             let data = try JSONEncoder().encode(obj)
@@ -569,7 +569,7 @@ struct IgnoreCodingTests {
             #expect(dict["two"] == "some")
         }
 
-        @Test("decode")
+        @Test("Decodes from JSON successfully (IgnoreCodingTests #91)")
         func decode() throws {
             let json = "{\"one\": \"\", \"two\": \"\"}".data(using: .utf8)!
             let obj = try JSONDecoder().decode(SomeCodable.self, from: json)
@@ -586,7 +586,7 @@ struct IgnoreCodingTests {
             case bool(_ variableBool: Bool)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #20)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -651,7 +651,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #21)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -767,7 +767,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #22)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -876,7 +876,7 @@ struct IgnoreCodingTests {
             var four: String = "some"
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (IgnoreCodingTests #83)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -957,7 +957,7 @@ struct IgnoreCodingTests {
             var four: String = "some"
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for class with nested paths (IgnoreCodingTests #12)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1036,7 +1036,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #23)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1133,7 +1133,7 @@ struct IgnoreCodingTests {
             var shouldIgnoreTwo: Bool
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #96)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1186,7 +1186,7 @@ struct IgnoreCodingTests {
             )
         }
 
-        @Test("ignore")
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #22)")
         func ignore() throws {
             let obj = SomeCodable(
                 one: "", two: "ignored", shouldIgnoreTwo: true)
@@ -1198,7 +1198,7 @@ struct IgnoreCodingTests {
             #expect(dict["shouldIgnoreTwo"] as? Bool == true)
         }
 
-        @Test("encode")
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #23)")
         func encode() throws {
             let obj = SomeCodable(
                 one: "some", two: "some", shouldIgnoreTwo: false)
@@ -1210,7 +1210,7 @@ struct IgnoreCodingTests {
             #expect(dict["shouldIgnoreTwo"] as? Bool == false)
         }
 
-        @Test("decode")
+        @Test("Decodes from JSON successfully (IgnoreCodingTests #92)")
         func decode() throws {
             let json =
                 "{\"one\": \"\", \"two\": \"value\", \"shouldIgnoreTwo\": true}"
@@ -1232,7 +1232,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #24)")
         func expansion() throws {
             assertMacroExpansion(
                 """

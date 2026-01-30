@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Non Conforming Coder Tests")
 struct NonConformingCoderTests {
-    @Test("test Decoding Actual Float")
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #25)")
     func testDecodingActualFloat() throws {
         let json = try mockJSON(5.5)
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -15,7 +15,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == 5.5)
     }
 
-    @Test("test Decoding Stringified Float")
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #26)")
     func testDecodingStringifiedFloat() throws {
         let json = try mockJSON("5.5")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -25,7 +25,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == 5.5)
     }
 
-    @Test("test Decoding Positive Infinity")
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #27)")
     func testDecodingPositiveInfinity() throws {
         let json = try mockJSON("➕♾️")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -35,7 +35,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == .infinity)
     }
 
-    @Test("test Decoding Negative Infinity")
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #28)")
     func testDecodingNegativeInfinity() throws {
         let json = try mockJSON("➖♾️")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -45,7 +45,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == -.infinity)
     }
 
-    @Test("test Decoding Not A Number")
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #29)")
     func testDecodingNotANumber() throws {
         let json = try mockJSON("😞")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -55,7 +55,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float.isNaN)
     }
 
-    @Test("invalid Decoding")
+    @Test("Decodes from JSON successfully (NonConformingCoderTests #66)")
     func invalidDecoding() throws {
         let json = try mockJSON("random")
         #expect(throws: DecodingError.self) {

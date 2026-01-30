@@ -6,7 +6,7 @@ import Testing
 
 @Suite("Default Tests")
 struct DefaultTests {
-    @Test("misuse On Non Variable Declaration")
+    @Test("Reports error for @Default misuse")
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -37,7 +37,7 @@ struct DefaultTests {
         )
     }
 
-    @Test("misuse On Static Variable")
+    @Test("Reports error for @Default misuse (DefaultTests #1)")
     func misuseOnStaticVariable() throws {
         assertMacroExpansion(
             """
@@ -66,7 +66,7 @@ struct DefaultTests {
         )
     }
 
-    @Test("duplicated Misuse")
+    @Test("Reports error when @Default is applied multiple times")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -115,7 +115,7 @@ struct DefaultTests {
             let number: Int
         }
 
-        @Test("default Value Usage")
+        @Test("Decodes from JSON successfully (DefaultTests #2)")
         func defaultValueUsage() throws {
             // Test with missing keys in JSON
             let jsonStr = "{}"
@@ -126,7 +126,7 @@ struct DefaultTests {
             #expect(decoded.number == 42)
         }
 
-        @Test("override Default Values")
+        @Test("Decodes from JSON successfully (DefaultTests #3)")
         func overrideDefaultValues() throws {
             // Test with provided values in JSON
             let jsonStr = """
@@ -142,7 +142,7 @@ struct DefaultTests {
             #expect(decoded.number == 100)
         }
 
-        @Test("encoding With Defaults")
+        @Test("Encodes and decodes successfully (DefaultTests #1)")
         func encodingWithDefaults() throws {
             let original = SomeCodable(value: "test", number: 99)
             let encoded = try JSONEncoder().encode(original)

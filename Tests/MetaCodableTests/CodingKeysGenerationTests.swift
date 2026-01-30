@@ -13,7 +13,7 @@ struct CodingKeysGenerationTests {
             let `internal`: String
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct (CodingKeysGenerationTests #6)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -51,7 +51,7 @@ struct CodingKeysGenerationTests {
             )
         }
 
-        @Test("decoding And Encoding")
+        @Test("Encodes and decodes successfully (CodingKeysGenerationTests #14)")
         func decodingAndEncoding() throws {
             let original = SomeCodable(internal: "reserved")
             let encoded = try JSONEncoder().encode(original)
@@ -60,7 +60,7 @@ struct CodingKeysGenerationTests {
             #expect(decoded.internal == "reserved")
         }
 
-        @Test("decoding From J S O N")
+        @Test("Decodes from JSON successfully (CodingKeysGenerationTests #32)")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -84,7 +84,7 @@ struct CodingKeysGenerationTests {
             let val2: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodingKeysGenerationTests #79)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -135,7 +135,7 @@ struct CodingKeysGenerationTests {
             )
         }
 
-        @Test("decoding And Encoding")
+        @Test("Encodes and decodes successfully (CodingKeysGenerationTests #15)")
         func decodingAndEncoding() throws {
             let original = SomeCodable(val1: "first", val2: "second")
             let encoded = try JSONEncoder().encode(original)
@@ -145,7 +145,7 @@ struct CodingKeysGenerationTests {
             #expect(decoded.val2 == "second")
         }
 
-        @Test("decoding From J S O N")
+        @Test("Decodes from JSON successfully (CodingKeysGenerationTests #33)")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -173,7 +173,7 @@ struct CodingKeysGenerationTests {
             let val: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodingKeysGenerationTests #80)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -228,7 +228,7 @@ struct CodingKeysGenerationTests {
             let val3: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodingKeysGenerationTests #81)")
         func expansion() throws {
             assertMacroExpansion(
                 """

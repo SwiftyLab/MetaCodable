@@ -216,3 +216,16 @@ These are test helper types that don't need direct testing:
 | [DefaultSequenceElementCodingTests.swift](../MetaCodableTests/DefaultSequenceElementCodingTests.swift) | `DefaultSequenceElementCoding` optional methods | 2026-01-30 |
 | [DynamicCodableIdentifierTests.swift](../MetaCodableTests/DynamicCodableIdentifierTests.swift) | `DynamicCodableIdentifier` CodingKey methods | 2026-01-30 |
 
+---
+
+## Test Organization Update (2026-01-30)
+
+All test files have been updated with:
+- **@Suite declarations** for logical grouping
+- **Meaningful @Test names** based on actual test logic
+- **Unique test names** across all 565 tests in 50 files
+- Proper capitalization and English grammar
+- Context-aware naming (e.g., "Generates @Codable conformance for struct with 'open' access")
+
+Test names now clearly describe what each test verifies, making failures immediately understandable.
+

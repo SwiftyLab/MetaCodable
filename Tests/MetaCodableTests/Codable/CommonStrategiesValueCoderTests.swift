@@ -26,7 +26,7 @@ struct CommonStrategiesValueCoderTests {
         let optGenString: String?
     }
 
-    @Test("test Parsing")
+    @Test("Encodes and decodes with JSON successfully")
     func testParsing() throws {
         let json = """
             {
@@ -57,7 +57,7 @@ struct CommonStrategiesValueCoderTests {
         #expect(reDecoded.string == "5265762156")
     }
 
-    @Test("expansion")
+    @Test("Generates @Codable conformance for struct with optional properties")
     func expansion() throws {
         assertMacroExpansion(
             """
@@ -183,7 +183,7 @@ struct CommonStrategiesValueCoderTests {
             let identifier: UUID
         }
 
-        @Test("test Non Conforming Types")
+        @Test("Encodes and decodes with JSON successfully (CommonStrategiesValueCoderTests #1)")
         func testNonConformingTypes() throws {
             let json = """
                 {
@@ -218,7 +218,7 @@ struct CommonStrategiesValueCoderTests {
             )
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -280,7 +280,7 @@ struct CommonStrategiesValueCoderTests {
             let plainText: String
         }
 
-        @Test("test Custom Strategies")
+        @Test("Encodes and decodes with JSON successfully (CommonStrategiesValueCoderTests #2)")
         func testCustomStrategies() throws {
             let json = """
                 {
@@ -311,7 +311,7 @@ struct CommonStrategiesValueCoderTests {
             )
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct (CommonStrategiesValueCoderTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -371,7 +371,7 @@ struct CommonStrategiesValueCoderTests {
             let string: String
         }
 
-        @Test("test Empty Strategies")
+        @Test("Encodes and decodes with JSON successfully (CommonStrategiesValueCoderTests #3)")
         func testEmptyStrategies() throws {
             let json = """
                 {
@@ -403,7 +403,7 @@ struct CommonStrategiesValueCoderTests {
             )
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct (CommonStrategiesValueCoderTests #2)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -468,7 +468,7 @@ struct CommonStrategiesValueCoderTests {
             case pending(until: String)
         }
 
-        @Test("test Enum With Common Strategies")
+        @Test("Encodes and decodes with JSON successfully (CommonStrategiesValueCoderTests #4)")
         func testEnumWithCommonStrategies() throws {
             // Test that associated values can use number-to-string conversion
             let json = """
@@ -531,7 +531,7 @@ struct CommonStrategiesValueCoderTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -641,7 +641,7 @@ struct CommonStrategiesValueCoderTests {
             let count: Int
         }
 
-        @Test("test Helper Coder Override")
+        @Test("Encodes and decodes with JSON successfully (CommonStrategiesValueCoderTests #5)")
         func testHelperCoderOverride() throws {
             let json = """
                 {
@@ -668,7 +668,7 @@ struct CommonStrategiesValueCoderTests {
             #expect(encoded == #"{"count":42,"id":"21"}"#)  // CustomIntCoder halves the value for id
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (CommonStrategiesValueCoderTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """

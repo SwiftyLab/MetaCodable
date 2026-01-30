@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Value Coder Tests")
 struct ValueCoderTests {
-    @Test("actual Type Decoding")
+    @Test("Encodes and decodes successfully (ValueCoderTests #35)")
     func actualTypeDecoding() throws {
         let json = try mockJSON(true, 5, 5.5, "some")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -22,7 +22,7 @@ struct ValueCoderTests {
     }
 
     // MARK: Bool
-    @Test("int To Boolean Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #78)")
     func intToBooleanDecoding() throws {
         let json1 = try mockJSON(1, 5, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -32,7 +32,7 @@ struct ValueCoderTests {
         #expect(!model2.bool)
     }
 
-    @Test("int To Boolean Decoding Failure")
+    @Test("Decodes from JSON successfully (ValueCoderTests #79)")
     func intToBooleanDecodingFailure() throws {
         #expect(throws: DecodingError.self) {
             let json = try mockJSON(2, 5, 5.5, "some")
@@ -40,7 +40,7 @@ struct ValueCoderTests {
         }
     }
 
-    @Test("float To Boolean Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #80)")
     func floatToBooleanDecoding() throws {
         let json1 = try mockJSON(1.0, 5, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -50,7 +50,7 @@ struct ValueCoderTests {
         #expect(!model2.bool)
     }
 
-    @Test("float To Boolean Decoding Failure")
+    @Test("Decodes from JSON successfully (ValueCoderTests #81)")
     func floatToBooleanDecodingFailure() throws {
         #expect(throws: DecodingError.self) {
             let json = try mockJSON(1.1, 5, 5.5, "some")
@@ -81,7 +81,7 @@ struct ValueCoderTests {
     }
 
     // MARK: Int
-    @Test("bool To Int Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #82)")
     func boolToIntDecoding() throws {
         let json1 = try mockJSON(true, true, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -91,7 +91,7 @@ struct ValueCoderTests {
         #expect(model2.int == 0)
     }
 
-    @Test("float To Int Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #83)")
     func floatToIntDecoding() throws {
         let json1 = try mockJSON(true, 5.0, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -101,7 +101,7 @@ struct ValueCoderTests {
         #expect(model2.int == 0)
     }
 
-    @Test("float To Int Decoding Failure")
+    @Test("Decodes from JSON successfully (ValueCoderTests #84)")
     func floatToIntDecodingFailure() throws {
         #expect(throws: DecodingError.self) {
             let json = try mockJSON(true, 5.5, 5.5, "some")
@@ -125,7 +125,7 @@ struct ValueCoderTests {
     }
 
     // MARK: Float
-    @Test("bool To Float Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #85)")
     func boolToFloatDecoding() throws {
         let json1 = try mockJSON(true, 5, true, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -135,7 +135,7 @@ struct ValueCoderTests {
         #expect(model2.double == 0)
     }
 
-    @Test("int To Float Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #86)")
     func intToFloatDecoding() throws {
         let json1 = try mockJSON(true, 5, 5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -161,7 +161,7 @@ struct ValueCoderTests {
     }
 
     // MARK: String
-    @Test("bool To String Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #87)")
     func boolToStringDecoding() throws {
         let json1 = try mockJSON(true, 5, 5.5, true)
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -171,7 +171,7 @@ struct ValueCoderTests {
         #expect(model2.string == "false")
     }
 
-    @Test("int To String Decoding")
+    @Test("Decodes from JSON successfully (ValueCoderTests #88)")
     func intToStringDecoding() throws {
         let json1 = try mockJSON(true, 5, 5.5, 5)
         let model1 = try JSONDecoder().decode(Model.self, from: json1)

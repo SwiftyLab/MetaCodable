@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Date Coder Tests")
 struct DateCoderTests {
-    @Test("decoding")
+    @Test("Encodes and decodes with JSON successfully (DateCoderTests #10)")
     func decoding() throws {
         let jsonStr = """
             {
@@ -31,7 +31,7 @@ struct DateCoderTests {
         #expect(newModel == model)
     }
 
-    @Test("invalid Decoding")
+    @Test("Decodes from JSON successfully (DateCoderTests #56)")
     func invalidDecoding() throws {
         let jsonStr = """
             {

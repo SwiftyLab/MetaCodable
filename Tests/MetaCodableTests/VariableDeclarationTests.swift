@@ -14,7 +14,7 @@ struct VariableDeclarationTests {
             let value: String = "some"
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #101)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -54,7 +54,7 @@ struct VariableDeclarationTests {
             )
         }
 
-        @Test("decoding And Encoding")
+        @Test("Encodes and decodes successfully (VariableDeclarationTests #38)")
         func decodingAndEncoding() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -63,7 +63,7 @@ struct VariableDeclarationTests {
             #expect(decoded.value == "some")
         }
 
-        @Test("decoding From Empty J S O N")
+        @Test("Decodes from JSON successfully (VariableDeclarationTests #101)")
         func decodingFromEmptyJSON() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -72,7 +72,7 @@ struct VariableDeclarationTests {
             #expect(decoded.value == "some")
         }
 
-        @Test("encoding To J S O N")
+        @Test("Encodes to JSON successfully (VariableDeclarationTests #24)")
         func encodingToJSON() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -91,7 +91,7 @@ struct VariableDeclarationTests {
             var value: String = "some"
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #102)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -146,7 +146,7 @@ struct VariableDeclarationTests {
             var value: String { "some" }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #103)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -189,7 +189,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #104)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -241,7 +241,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #105)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -296,7 +296,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #106)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -376,7 +376,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #107)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -465,7 +465,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #108)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -518,7 +518,7 @@ struct VariableDeclarationTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #109)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -610,7 +610,7 @@ struct VariableDeclarationTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with optional properties (VariableDeclarationTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """

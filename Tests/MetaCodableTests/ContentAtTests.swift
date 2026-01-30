@@ -7,7 +7,7 @@ import Testing
 
 @Suite("Content At Tests")
 struct ContentAtTests {
-    @Test("misuse On Non Enum Declaration")
+    @Test("Reports error when @ContentAt is used without @Codable")
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -57,7 +57,7 @@ struct ContentAtTests {
             case store(key: String, value: Int)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (ContentAtTests #10)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -147,7 +147,7 @@ struct ContentAtTests {
             )
         }
 
-        @Test("content At Encoding Structure")
+        @Test("Encodes to JSON successfully (ContentAtTests #10)")
         func contentAtEncodingStructure() throws {
             let loadCommand: Command = .load(key: "test_key")
             let encoded = try JSONEncoder().encode(loadCommand)
@@ -160,7 +160,7 @@ struct ContentAtTests {
             #expect(content["key"] as? String == "test_key")
         }
 
-        @Test("content At From J S O N")
+        @Test("Decodes from JSON successfully (ContentAtTests #40)")
         func contentAtFromJSON() throws {
             // The decoding expects key/value at root level, not in content
             let jsonStr = """
@@ -181,7 +181,7 @@ struct ContentAtTests {
             }
         }
 
-        @Test("content At J S O N Structure")
+        @Test("Encodes to JSON successfully (ContentAtTests #11)")
         func contentAtJSONStructure() throws {
             let storeCommand: Command = .store(key: "test", value: 100)
             let encoded = try JSONEncoder().encode(storeCommand)
@@ -209,7 +209,7 @@ struct ContentAtTests {
             case store(key: String, value: Int)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (ContentAtTests #11)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -311,7 +311,7 @@ struct ContentAtTests {
             case store(key: String, value: Int)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (ContentAtTests #12)")
         func expansion() throws {
             assertMacroExpansion(
                 """

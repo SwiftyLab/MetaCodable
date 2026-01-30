@@ -13,7 +13,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for class with 'open' access")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -51,7 +51,7 @@ struct AccessModifierTests {
             )
         }
 
-        @Test("open Class Decoding Only")
+        @Test("Decodes class from JSON successfully")
         func openClassDecodingOnly() throws {
             // Open class doesn't have memberwise init, only decoder init
             let jsonStr = """
@@ -65,7 +65,7 @@ struct AccessModifierTests {
             #expect(decoded.value == "open_test")
         }
 
-        @Test("open Class From J S O N")
+        @Test("Decodes from JSON successfully")
         func openClassFromJSON() throws {
             let jsonStr = """
                 {
@@ -87,7 +87,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with 'public' access")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -130,7 +130,7 @@ struct AccessModifierTests {
             )
         }
 
-        @Test("public Struct Decoding And Encoding")
+        @Test("Encodes and decodes successfully")
         func publicStructDecodingAndEncoding() throws {
             let original = SomeCodable(value: "public_test")
             let encoded = try JSONEncoder().encode(original)
@@ -139,7 +139,7 @@ struct AccessModifierTests {
             #expect(decoded.value == "public_test")
         }
 
-        @Test("public Struct From J S O N")
+        @Test("Decodes from JSON successfully (AccessModifierTests #1)")
         func publicStructFromJSON() throws {
             let jsonStr = """
                 {
@@ -161,7 +161,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct")
         func expansion() throws {
             assertMacroExpansion(
                 """

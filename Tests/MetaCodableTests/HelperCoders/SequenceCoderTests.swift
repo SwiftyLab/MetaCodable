@@ -8,7 +8,7 @@ struct SequenceCoderTests {
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
 
-    @Test("invalid Data Type")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #67)")
     func invalidDataType() throws {
         #expect(throws: DecodingError.self) {
             let json = #"{"data":1}"#.data(using: .utf8)!
@@ -16,14 +16,14 @@ struct SequenceCoderTests {
         }
     }
 
-    @Test("empty Data")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #68)")
     func emptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(Container.self, from: json)
         #expect(val.data.isEmpty)
     }
 
-    @Test("valid Data")
+    @Test("Encodes and decodes successfully (SequenceCoderTests #30)")
     func validData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(Container.self, from: json)
@@ -32,7 +32,7 @@ struct SequenceCoderTests {
         #expect(data == json)
     }
 
-    @Test("invalid Data")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #69)")
     func invalidData() throws {
         #expect(throws: DecodingError.self) {
             let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
@@ -40,7 +40,7 @@ struct SequenceCoderTests {
         }
     }
 
-    @Test("lossy Invalid Data Type")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #70)")
     func lossyInvalidDataType() throws {
         #expect(throws: DecodingError.self) {
             let json = #"{"data":1}"#.data(using: .utf8)!
@@ -48,14 +48,14 @@ struct SequenceCoderTests {
         }
     }
 
-    @Test("lossy Empty Data")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #71)")
     func lossyEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyContainer.self, from: json)
         #expect(val.data.isEmpty)
     }
 
-    @Test("lossy Valid Data")
+    @Test("Encodes and decodes successfully (SequenceCoderTests #31)")
     func lossyValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyContainer.self, from: json)
@@ -64,28 +64,28 @@ struct SequenceCoderTests {
         #expect(data == json)
     }
 
-    @Test("lossy Invalid Data")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #72)")
     func lossyInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyContainer.self, from: json)
         #expect(val.data == ["1", "2"])
     }
 
-    @Test("default Invalid Data Type")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #73)")
     func defaultInvalidDataType() throws {
         let json = #"{"data":1}"#.data(using: .utf8)!
         let val = try decoder.decode(DefaultContainer.self, from: json)
         #expect(val.data == ["some"])
     }
 
-    @Test("default Empty Data")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #74)")
     func defaultEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(DefaultContainer.self, from: json)
         #expect(val.data == ["some"])
     }
 
-    @Test("default Valid Data")
+    @Test("Encodes and decodes successfully (SequenceCoderTests #32)")
     func defaultValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(DefaultContainer.self, from: json)
@@ -94,7 +94,7 @@ struct SequenceCoderTests {
         #expect(data == json)
     }
 
-    @Test("default Invalid Data")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #75)")
     func defaultInvalidData() throws {
         #expect(throws: DecodingError.self) {
             let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
@@ -102,21 +102,21 @@ struct SequenceCoderTests {
         }
     }
 
-    @Test("lossy Default Invalid Data Type")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #76)")
     func lossyDefaultInvalidDataType() throws {
         let json = #"{"data":1}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)
         #expect(val.data == ["some"])
     }
 
-    @Test("lossy Default Empty Data")
+    @Test("Decodes from JSON successfully (SequenceCoderTests #77)")
     func lossyDefaultEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)
         #expect(val.data == ["some"])
     }
 
-    @Test("lossy Default Valid Data")
+    @Test("Encodes and decodes successfully (SequenceCoderTests #33)")
     func lossyDefaultValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)
@@ -125,7 +125,7 @@ struct SequenceCoderTests {
         #expect(data == json)
     }
 
-    @Test("lossy Default Invalid Data")
+    @Test("Encodes and decodes successfully (SequenceCoderTests #34)")
     func lossyDefaultInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try decoder.decode(LossyDefaultContainer.self, from: json)

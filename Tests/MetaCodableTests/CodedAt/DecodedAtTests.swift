@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Decoded At Tests")
 struct DecodedAtTests {
-    @Test("misuse On Non Variable Declaration")
+    @Test("Reports error for @DecodedAt misuse")
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -36,7 +36,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test("misuse On Grouped Variable Declaration")
+    @Test("Reports error for @DecodedAt misuse (DecodedAtTests #1)")
     func misuseOnGroupedVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -57,7 +57,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test("misuse On Static Variable Declaration")
+    @Test("Reports error for @DecodedAt misuse (DecodedAtTests #2)")
     func misuseOnStaticVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -86,7 +86,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test("misuse In Combination With Coded In Macro")
+    @Test("Reports error for @CodedIn misuse")
     func misuseInCombinationWithCodedInMacro() throws {
         assertMacroExpansion(
             """
@@ -125,7 +125,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test("misuse In Combination With Coded At Macro")
+    @Test("Reports error for @CodedAt misuse (DecodedAtTests #4)")
     func misuseInCombinationWithCodedAtMacro() throws {
         assertMacroExpansion(
             """
@@ -164,7 +164,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test("duplicated Misuse")
+    @Test("Reports error when @DecodedAt is applied multiple times")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -212,7 +212,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (DecodedAtTests #40)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -265,7 +265,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (DecodedAtTests #41)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -317,7 +317,7 @@ struct DecodedAtTests {
                 let value: String!
             }
 
-            @Test("expansion")
+            @Test("Generates macro expansion with @Codable for struct (DecodedAtTests #42)")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -371,7 +371,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (DecodedAtTests #43)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -426,7 +426,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (DecodedAtTests #44)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -480,7 +480,7 @@ struct DecodedAtTests {
                 let value: String!
             }
 
-            @Test("expansion")
+            @Test("Generates macro expansion with @Codable for struct (DecodedAtTests #45)")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -536,7 +536,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (DecodedAtTests #29)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -595,7 +595,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (DecodedAtTests #30)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -663,7 +663,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (DecodedAtTests #31)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -723,7 +723,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (DecodedAtTests #32)")
         func expansion() throws {
             assertMacroExpansion(
                 """

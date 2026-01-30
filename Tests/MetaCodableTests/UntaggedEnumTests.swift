@@ -7,7 +7,7 @@ import XCTest
 
 @Suite("Untagged Enum Tests")
 struct UntaggedEnumTests {
-    @Test("misuse On Non Enum Declaration")
+    @Test("Reports error for @Codable misuse (UntaggedEnumTests #7)")
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -57,7 +57,7 @@ struct UntaggedEnumTests {
         )
     }
 
-    @Test("misuse In Combination With Coded At Macro")
+    @Test("Reports error for @Codable misuse (UntaggedEnumTests #8)")
     func misuseInCombinationWithCodedAtMacro() throws {
         assertMacroExpansion(
             """
@@ -146,7 +146,7 @@ struct UntaggedEnumTests {
         )
     }
 
-    @Test("duplicated Misuse")
+    @Test("Reports error for @Codable misuse (UntaggedEnumTests #9)")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -252,7 +252,7 @@ struct UntaggedEnumTests {
             case dictionary([String: Self])
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (UntaggedEnumTests #28)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -375,7 +375,7 @@ struct UntaggedEnumTests {
             )
         }
 
-        @Test("decoding And Encoding Bool")
+        @Test("Encodes and decodes successfully (UntaggedEnumTests #36)")
         func decodingAndEncodingBool() throws {
             let original: CodableValue = .bool(true)
             let encoded = try JSONEncoder().encode(original)
@@ -388,7 +388,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test("decoding And Encoding String")
+        @Test("Encodes and decodes successfully (UntaggedEnumTests #37)")
         func decodingAndEncodingString() throws {
             let original: CodableValue = .string("test")
             let encoded = try JSONEncoder().encode(original)
@@ -401,7 +401,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test("decoding From J S O N Primitives")
+        @Test("Decodes from JSON successfully (UntaggedEnumTests #98)")
         func decodingFromJSONPrimitives() throws {
             // Test bool
             let boolJson = "true".data(using: .utf8)!
@@ -434,7 +434,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test("decoding From J S O N Array")
+        @Test("Decodes from JSON successfully (UntaggedEnumTests #99)")
         func decodingFromJSONArray() throws {
             let arrayJson = "[true, \"test\", 123]".data(using: .utf8)!
             let arrayDecoded = try JSONDecoder().decode(
@@ -468,7 +468,7 @@ struct UntaggedEnumTests {
             case `nil`
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (UntaggedEnumTests #29)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -591,7 +591,7 @@ struct UntaggedEnumTests {
             )
         }
 
-        @Test("decoding")
+        @Test("Decodes from JSON successfully (UntaggedEnumTests #100)")
         func decoding() throws {
             let data = try JSONDecoder().decode(
                 CodableValue.self, from: heterogenousJSONData
@@ -617,7 +617,7 @@ struct UntaggedEnumTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (UntaggedEnumTests #30)")
         func expansion() throws {
             assertMacroExpansion(
                 """

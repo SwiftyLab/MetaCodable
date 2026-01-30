@@ -30,7 +30,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Reports error for @Codable misuse (CodableTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -80,7 +80,7 @@ struct CodableTests {
             )
         }
 
-        @Test("encoding works with available attribute")
+        @Test("Encodes and decodes successfully (CodableTests #4)")
         @available(*, deprecated, message: "Deprecated")
         func availableAttributeEncoding() throws {
             let original = SomeCodable(value: "deprecated_test")
@@ -90,7 +90,7 @@ struct CodableTests {
             #expect(decoded.value == "deprecated_test")
         }
 
-        @Test("decoding from JSON works with available attribute")
+        @Test("Decodes from JSON successfully (CodableTests #6)")
         @available(*, deprecated, message: "Deprecated")
         func availableAttributeFromJSON() throws {
             let jsonStr = """
@@ -118,7 +118,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for struct with 'public' access")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -166,7 +166,7 @@ struct CodableTests {
             )
         }
 
-        @Test("basic Codable encoding works")
+        @Test("Encodes and decodes successfully (CodableTests #5)")
         func basicCodableEncoding() throws {
             let original = SomeCodable(value: "basic_test")
             let encoded = try JSONEncoder().encode(original)
@@ -175,7 +175,7 @@ struct CodableTests {
             #expect(decoded.value == "basic_test")
         }
 
-        @Test("basic Codable decoding from JSON works")
+        @Test("Decodes from JSON successfully (CodableTests #7)")
         func basicCodableFromJSON() throws {
             let jsonStr = """
                 {
@@ -188,7 +188,7 @@ struct CodableTests {
             #expect(decoded.value == "basic_value")
         }
 
-        @Test("static properties are ignored in encoding")
+        @Test("Encodes to JSON successfully (CodableTests #1)")
         func staticPropertiesIgnored() throws {
             let original = SomeCodable(value: "test")
             let encoded = try JSONEncoder().encode(original)
@@ -211,7 +211,7 @@ struct CodableTests {
             let value3: String?
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for struct with optional properties (CodableTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -270,7 +270,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for struct (CodableTests #3)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -320,7 +320,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for struct (CodableTests #4)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -375,7 +375,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for struct (CodableTests #5)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -428,7 +428,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for class")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -492,7 +492,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for class (CodableTests #1)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -540,7 +540,7 @@ struct CodableTests {
             }
         }
 
-        @Test("expansion generates correct Codable implementation")
+        @Test("Generates @Codable conformance for class (CodableTests #2)")
         func expansion() throws {
             assertMacroExpansion(
                 """

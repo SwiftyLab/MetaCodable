@@ -13,7 +13,7 @@ struct GroupedMutableVariableTests {
             var one, two, three: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #82)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -73,7 +73,7 @@ struct GroupedMutableVariableTests {
             var one, two: String, three: String = ""
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #83)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -138,7 +138,7 @@ struct GroupedMutableVariableTests {
             var one, two: String, three: Int
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #84)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -240,7 +240,7 @@ struct GroupedMutableVariableTests {
             var one: String, two: String = "", three: Int
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #85)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -297,7 +297,7 @@ struct GroupedMutableVariableTests {
         }
     }
 
-    @Test("mixed Types With Some Initialized Without Explicit Typing")
+    @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #86)")
     func mixedTypesWithSomeInitializedWithoutExplicitTyping() throws {
         assertMacroExpansion(
             """

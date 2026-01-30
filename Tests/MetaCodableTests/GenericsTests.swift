@@ -13,7 +13,7 @@ struct GenericsTests {
             let value: T
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct (GenericsTests #7)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -51,7 +51,7 @@ struct GenericsTests {
             )
         }
 
-        @Test("decoding And Encoding")
+        @Test("Encodes and decodes successfully (GenericsTests #16)")
         func decodingAndEncoding() throws {
             let original = GenericCodable(value: "test")
             let encoded = try JSONEncoder().encode(original)
@@ -60,7 +60,7 @@ struct GenericsTests {
             #expect(decoded.value == "test")
         }
 
-        @Test("decoding And Encoding With Int")
+        @Test("Encodes and decodes successfully (GenericsTests #17)")
         func decodingAndEncodingWithInt() throws {
             let original = GenericCodable(value: 42)
             let encoded = try JSONEncoder().encode(original)
@@ -69,7 +69,7 @@ struct GenericsTests {
             #expect(decoded.value == 42)
         }
 
-        @Test("decoding From J S O N")
+        @Test("Decodes from JSON successfully (GenericsTests #51)")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -92,7 +92,7 @@ struct GenericsTests {
             let value3: V
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct (GenericsTests #8)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -140,7 +140,7 @@ struct GenericsTests {
             )
         }
 
-        @Test("decoding And Encoding")
+        @Test("Encodes and decodes successfully (GenericsTests #18)")
         func decodingAndEncoding() throws {
             let original = GenericCodable(
                 value1: "test", value2: 42, value3: true)
@@ -152,7 +152,7 @@ struct GenericsTests {
             #expect(decoded.value3 == true)
         }
 
-        @Test("decoding From J S O N")
+        @Test("Decodes from JSON successfully (GenericsTests #52)")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -179,7 +179,7 @@ struct GenericsTests {
             case three(V)
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for enum")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -259,7 +259,7 @@ struct GenericsTests {
             )
         }
 
-        @Test("decoding And Encoding Case One")
+        @Test("Encodes and decodes successfully (GenericsTests #19)")
         func decodingAndEncodingCaseOne() throws {
             let original: GenericCodable<String, Int, Bool> = .one("test")
             let encoded = try JSONEncoder().encode(original)
@@ -272,7 +272,7 @@ struct GenericsTests {
             }
         }
 
-        @Test("decoding And Encoding Case Two")
+        @Test("Encodes and decodes successfully (GenericsTests #20)")
         func decodingAndEncodingCaseTwo() throws {
             let original: GenericCodable<String, Int, Bool> = .two(42)
             let encoded = try JSONEncoder().encode(original)
@@ -285,7 +285,7 @@ struct GenericsTests {
             }
         }
 
-        @Test("decoding From J S O N")
+        @Test("Decodes from JSON successfully (GenericsTests #53)")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -311,7 +311,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct (GenericsTests #9)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -363,7 +363,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for class (GenericsTests #3)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -416,7 +416,7 @@ struct GenericsTests {
             case two(String)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (GenericsTests #16)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -493,7 +493,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test("expansion")
+        @Test("Generates @Codable conformance for struct (GenericsTests #10)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -543,7 +543,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GenericsTests #80)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -597,7 +597,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for struct (GenericsTests #81)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -650,7 +650,7 @@ struct GenericsTests {
             let str: String
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for class (GenericsTests #5)")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -703,7 +703,7 @@ struct GenericsTests {
             case two(String)
         }
 
-        @Test("expansion")
+        @Test("Generates macro expansion with @Codable for enum (GenericsTests #17)")
         func expansion() throws {
             assertMacroExpansion(
                 """
