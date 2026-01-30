@@ -249,6 +249,7 @@ All 529 tests are tagged for easy filtering and organization using Swift Testing
 **Coverage Tags:** `.coverage` (for coverage-specific tests)
 
 **Example Usage:**
+
 ```swift
 @Test("Generates @Codable conformance for struct with 'open' access", 
       .tags(.codable, .macroExpansion, .structs, .accessModifiers))
