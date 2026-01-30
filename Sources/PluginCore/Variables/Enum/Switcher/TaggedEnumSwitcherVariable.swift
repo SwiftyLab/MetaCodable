@@ -40,6 +40,25 @@ extension TaggedEnumSwitcherVariable {
         preSyntax: (TokenSyntax) -> CodeBlockItemListSyntax
     ) -> SwitchExprSyntax? {
         var switchable = false
+
+        // For Bool type, check if both true and false values are present
+        var hasBoolTrue = false
+        var hasBoolFalse = false
+        if header.type == .bool {
+            for (_, value) in location.cases {
+                let boolValues = value.decodeExprs.filter { $0.type == .bool }
+                for boolValue in boolValues {
+                    let valueStr = boolValue.syntax.trimmedDescription
+                    if valueStr == "true" {
+                        hasBoolTrue = true
+                    } else if valueStr == "false" {
+                        hasBoolFalse = true
+                    }
+                }
+            }
+        }
+        let skipDefaultForBool = header.type == .bool && hasBoolTrue && hasBoolFalse
+
         let switchExpr = SwitchExprSyntax(subject: header.syntax) {
             for (`case`, value) in location.cases where `case`.decode ?? true {
                 let values = value.decodeExprs
@@ -62,7 +81,7 @@ extension TaggedEnumSwitcherVariable {
                 }
             }
 
-            if `default` && header.type != .bool {
+            if `default` && !skipDefaultForBool {
                 SwitchCaseSyntax(label: .default(.init())) {
                     "break"
                 }
