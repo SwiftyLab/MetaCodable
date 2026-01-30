@@ -24,10 +24,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Set up Swift toolchain
-        uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: "6.1"
+      - name: Show Swift version
+        run: swift --version
       
       - name: Cache SwiftPM dependencies
         uses: actions/cache@v4
