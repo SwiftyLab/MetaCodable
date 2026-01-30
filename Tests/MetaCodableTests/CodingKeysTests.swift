@@ -3,8 +3,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coding Keys Tests")
 struct CodingKeysTests {
-    @Test
+    @Test("misuse In Absence Of Codable")
     func misuseInAbsenceOfCodable() throws {
         assertMacroExpansion(
             """
@@ -39,7 +40,7 @@ struct CodingKeysTests {
         )
     }
 
-    @Test
+    @Test("misuse On Duplication Absence Of Codable")
     func misuseOnDuplicationAbsenceOfCodable() throws {
         assertMacroExpansion(
             """
@@ -113,6 +114,7 @@ struct CodingKeysTests {
         )
     }
 
+    @Suite("Coding Keys - Came Case To Pascal Case")
     struct CameCaseToPascalCase {
         @Codable
         @CodingKeys(.PascalCase)
@@ -122,7 +124,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -172,6 +174,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Came Case To Snake Case")
     struct CameCaseToSnakeCase {
         @Codable
         @CodingKeys(.snake_case)
@@ -181,7 +184,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -231,6 +234,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Class Came Case To Snake Case")
     struct ClassCameCaseToSnakeCase {
         @Codable
         @CodingKeys(.snake_case)
@@ -240,7 +244,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -290,6 +294,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Enum Came Case To Snake Case")
     struct EnumCameCaseToSnakeCase {
         @Codable
         @CodingKeys(.snake_case)
@@ -303,7 +308,7 @@ struct CodingKeysTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -415,6 +420,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Came Case To Camel Snake Case")
     struct CameCaseToCamelSnakeCase {
         @Codable
         @CodingKeys(.camel_Snake_Case)
@@ -424,7 +430,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -474,6 +480,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Came Case To Screaming Snake Case")
     struct CameCaseToScreamingSnakeCase {
         @Codable
         @CodingKeys(.SCREAMING_SNAKE_CASE)
@@ -483,7 +490,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -533,6 +540,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Came Case To Kebab Case")
     struct CameCaseToKebabCase {
         @Codable
         @CodingKeys(.kebab－case)
@@ -542,7 +550,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -592,6 +600,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Came Case To Screaming Kebab Case")
     struct CameCaseToScreamingKebabCase {
         @Codable
         @CodingKeys(.SCREAMING－KEBAB－CASE)
@@ -601,7 +610,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -651,6 +660,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Came Case To Train Case")
     struct CameCaseToTrainCase {
         @Codable
         @CodingKeys(.Train－Case)
@@ -660,7 +670,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -710,6 +720,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Snake Case To Came Case")
     struct SnakeCaseToCameCase {
         @Codable
         @CodingKeys(.camelCase)
@@ -719,7 +730,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -769,6 +780,7 @@ struct CodingKeysTests {
         }
     }
 
+    @Suite("Coding Keys - Enum Cases Support")
     struct EnumCasesSupport {
         @Codable
         enum SomeEnum {
@@ -783,7 +795,7 @@ struct CodingKeysTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

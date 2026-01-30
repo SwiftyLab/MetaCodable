@@ -4,14 +4,16 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Access Modifier Tests")
 struct AccessModifierTests {
+    @Suite("Access Modifier - Open")
     struct Open {
         @Codable
         open class SomeCodable {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -49,7 +51,7 @@ struct AccessModifierTests {
             )
         }
 
-        @Test
+        @Test("open Class Decoding Only")
         func openClassDecodingOnly() throws {
             // Open class doesn't have memberwise init, only decoder init
             let jsonStr = """
@@ -63,7 +65,7 @@ struct AccessModifierTests {
             #expect(decoded.value == "open_test")
         }
 
-        @Test
+        @Test("open Class From J S O N")
         func openClassFromJSON() throws {
             let jsonStr = """
                 {
@@ -77,6 +79,7 @@ struct AccessModifierTests {
         }
     }
 
+    @Suite("Access Modifier - Public")
     struct Public {
         @Codable
         @MemberInit
@@ -84,7 +87,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -127,7 +130,7 @@ struct AccessModifierTests {
             )
         }
 
-        @Test
+        @Test("public Struct Decoding And Encoding")
         func publicStructDecodingAndEncoding() throws {
             let original = SomeCodable(value: "public_test")
             let encoded = try JSONEncoder().encode(original)
@@ -136,7 +139,7 @@ struct AccessModifierTests {
             #expect(decoded.value == "public_test")
         }
 
-        @Test
+        @Test("public Struct From J S O N")
         func publicStructFromJSON() throws {
             let jsonStr = """
                 {
@@ -150,6 +153,7 @@ struct AccessModifierTests {
         }
     }
 
+    @Suite("Access Modifier - Package")
     struct Package {
         @Codable
         @MemberInit
@@ -157,7 +161,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -201,6 +205,7 @@ struct AccessModifierTests {
         }
     }
 
+    @Suite("Access Modifier - Others")
     struct Others {
         struct Internal {
             @Codable

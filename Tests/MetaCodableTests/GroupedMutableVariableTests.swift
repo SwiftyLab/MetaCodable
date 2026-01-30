@@ -3,7 +3,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Grouped Mutable Variable Tests")
 struct GroupedMutableVariableTests {
+    @Suite("Grouped Mutable Variable - No Customization")
     struct WithoutAnyCustomization {
         @Codable
         @MemberInit
@@ -11,7 +13,7 @@ struct GroupedMutableVariableTests {
             var one, two, three: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -63,6 +65,7 @@ struct GroupedMutableVariableTests {
         }
     }
 
+    @Suite("Grouped Mutable Variable - Explicit")
     struct WithSomeInitializedWithExplicitTyping {
         @Codable
         @MemberInit
@@ -70,7 +73,7 @@ struct GroupedMutableVariableTests {
             var one, two: String, three: String = ""
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -127,6 +130,7 @@ struct GroupedMutableVariableTests {
         }
     }
 
+    @Suite("Grouped Mutable Variable - Mixed Types")
     struct MixedTypes {
         @Codable
         @MemberInit
@@ -134,7 +138,7 @@ struct GroupedMutableVariableTests {
             var one, two: String, three: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -228,6 +232,7 @@ struct GroupedMutableVariableTests {
     //     )
     // }
 
+    @Suite("Grouped Mutable Variable - Explicit")
     struct MixedTypesWithSomeInitializedWithExplicitTyping {
         @Codable
         @MemberInit
@@ -235,7 +240,7 @@ struct GroupedMutableVariableTests {
             var one: String, two: String = "", three: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -292,7 +297,7 @@ struct GroupedMutableVariableTests {
         }
     }
 
-    @Test
+    @Test("mixed Types With Some Initialized Without Explicit Typing")
     func mixedTypesWithSomeInitializedWithoutExplicitTyping() throws {
         assertMacroExpansion(
             """

@@ -5,8 +5,10 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded By Action Tests")
 struct CodedByActionTests {
     // https://forums.swift.org/t/codable-passing-data-to-child-decoder/12757
+    @Suite("Coded By Action - Dependency Before")
     struct DependencyBefore {
         @Codable
         struct Dog {
@@ -42,7 +44,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -168,7 +170,7 @@ struct CodedByActionTests {
             )
         }
 
-        @Test
+        @Test("custom Coder Version Behavior")
         func customCoderVersionBehavior() throws {
             // Test version 1 behavior
             let dog1 = Dog(name: "Buddy", version: 1, info: Dog.Info(tag: 5))
@@ -187,7 +189,7 @@ struct CodedByActionTests {
             #expect(decoded2.info.tag == 5)  // Should be 5 after encode(-1) then decode(+1)
         }
 
-        @Test
+        @Test("custom Coder From J S O N")
         func customCoderFromJSON() throws {
             let jsonStr = """
                 {
@@ -207,6 +209,7 @@ struct CodedByActionTests {
     }
 
     // https://forums.swift.org/t/codable-passing-data-to-child-decoder/12757
+    @Suite("Coded By Action - Dependency After")
     struct DependencyAfter {
         @Codable
         struct Dog {
@@ -242,7 +245,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -383,6 +386,7 @@ struct CodedByActionTests {
     }
 
     // https://stackoverflow.com/questions/62242365/access-property-of-parent-struct-in-a-nested-codable-struct-when-decoding-the-ch
+    @Suite("Coded By Action - Nested Property Dependency Before")
     struct NestedPropertyDependencyBefore {
         @Codable
         struct Item: Identifiable {
@@ -423,7 +427,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -564,6 +568,7 @@ struct CodedByActionTests {
     }
 
     // https://stackoverflow.com/questions/62242365/access-property-of-parent-struct-in-a-nested-codable-struct-when-decoding-the-ch
+    @Suite("Coded By Action - Nested Property Dependency After")
     struct NestedPropertyDependencyAfter {
         @Codable
         struct Item: Identifiable {
@@ -604,7 +609,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -758,6 +763,7 @@ struct CodedByActionTests {
         }
     }
 
+    @Suite("Coded By Action - Multi Chained Dependency")
     struct MultiChainedDependency {
         @Codable
         struct SomeCodable {
@@ -802,7 +808,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -971,6 +977,7 @@ struct CodedByActionTests {
         }
     }
 
+    @Suite("Coded By Action - Array Dependency")
     struct ArrayDependency {
         #if swift(>=6)
         @Codable
@@ -1025,7 +1032,7 @@ struct CodedByActionTests {
         }
         #endif
 
-        @Test
+        @Test("expansion")
         func expansion() {
             assertMacroExpansion(
                 """
@@ -1155,6 +1162,7 @@ struct CodedByActionTests {
         }
     }
 
+    @Suite("Coded By Action - Lossy Set Dependency")
     struct LossySetDependency {
         #if swift(>=6)
         @Codable
@@ -1196,7 +1204,7 @@ struct CodedByActionTests {
         }
         #endif
 
-        @Test
+        @Test("expansion")
         func expansion() {
             assertMacroExpansion(
                 """

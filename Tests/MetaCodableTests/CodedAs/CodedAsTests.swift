@@ -5,8 +5,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded As Tests")
 struct CodedAsTests {
-    @Test
+    @Test("misuse On Grouped Variable Declaration")
     func misuseOnGroupedVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -27,7 +28,7 @@ struct CodedAsTests {
         )
     }
 
-    @Test
+    @Test("misuse On Static Variable Declaration")
     func misuseOnStaticVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -56,7 +57,7 @@ struct CodedAsTests {
         )
     }
 
-    @Test
+    @Test("misuse In Combination With Ignore Coding Macro")
     func misuseInCombinationWithIgnoreCodingMacro() throws {
         assertMacroExpansion(
             """
@@ -95,7 +96,7 @@ struct CodedAsTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -134,6 +135,7 @@ struct CodedAsTests {
         )
     }
 
+    @Suite("Coded As - With Value")
     struct WithValue {
         @Codable
         struct SomeCodable {
@@ -143,7 +145,7 @@ struct CodedAsTests {
             let value1: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -211,7 +213,7 @@ struct CodedAsTests {
             )
         }
 
-        @Test
+        @Test("coded As Key Mapping")
         func codedAsKeyMapping() throws {
             let original = SomeCodable(value: "test1", value1: "test2")
             let encoded = try JSONEncoder().encode(original)
@@ -221,7 +223,7 @@ struct CodedAsTests {
             #expect(decoded.value1 == "test2")
         }
 
-        @Test
+        @Test("coded As From J S O N")
         func codedAsFromJSON() throws {
             let jsonStr = """
                 {
@@ -236,7 +238,7 @@ struct CodedAsTests {
             #expect(decoded.value1 == "multi_mapped_value")
         }
 
-        @Test
+        @Test("coded As Alternative Keys")
         func codedAsAlternativeKeys() throws {
             // Test with key2 instead of key1
             let jsonStr = """
@@ -252,7 +254,7 @@ struct CodedAsTests {
             #expect(decoded.value1 == "alternative_key_value")
         }
 
-        @Test
+        @Test("coded As J S O N Structure")
         func codedAsJSONStructure() throws {
             let original = SomeCodable(value: "test", value1: "test2")
             let encoded = try JSONEncoder().encode(original)
@@ -270,6 +272,7 @@ struct CodedAsTests {
         }
     }
 
+    @Suite("Coded As - With Any Codable Literal Enum")
     struct WithAnyCodableLiteralEnum {
         @Codable
         @CodedAt("type")
@@ -280,7 +283,7 @@ struct CodedAsTests {
             case store(key: String, value: Int)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -444,7 +447,7 @@ struct CodedAsTests {
             )
         }
 
-        @Test
+        @Test("enum Mixed Literal Roundtrip")
         func enumMixedLiteralRoundtrip() throws {
             let loadCmd: Command = .load(key: "test_key")
             let encoded = try JSONEncoder().encode(loadCmd)
@@ -457,7 +460,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum String Type Decoding")
         func enumStringTypeDecoding() throws {
             let jsonStr = """
                 {
@@ -475,7 +478,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Integer Type Decoding")
         func enumIntegerTypeDecoding() throws {
             let jsonStr = """
                 {
@@ -493,7 +496,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Boolean Type Decoding")
         func enumBooleanTypeDecoding() throws {
             let jsonStr = """
                 {
@@ -511,7 +514,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Double Type Decoding")
         func enumDoubleTypeDecoding() throws {
             let jsonStr = """
                 {
@@ -529,7 +532,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Store With Integer Type")
         func enumStoreWithIntegerType() throws {
             let jsonStr = """
                 {
@@ -549,7 +552,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Store With Boolean Type")
         func enumStoreWithBooleanType() throws {
             let jsonStr = """
                 {
@@ -569,7 +572,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Store With Double Type")
         func enumStoreWithDoubleType() throws {
             let jsonStr = """
                 {
@@ -589,7 +592,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Encoding Structure")
         func enumEncodingStructure() throws {
             let storeCmd: Command = .store(key: "test", value: 100)
             let encoded = try JSONEncoder().encode(storeCmd)
@@ -603,7 +606,7 @@ struct CodedAsTests {
             #expect(json["value"] as? Int == 100)
         }
 
-        @Test
+        @Test("enum Load Encoding Structure")
         func enumLoadEncodingStructure() throws {
             let loadCmd: Command = .load(key: "load_test")
             let encoded = try JSONEncoder().encode(loadCmd)
@@ -617,7 +620,7 @@ struct CodedAsTests {
             #expect(json["value"] == nil)  // No value for load case
         }
 
-        @Test
+        @Test("enum Invalid Type Decoding")
         func enumInvalidTypeDecoding() throws {
             let jsonStr = """
                 {
@@ -632,7 +635,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Missing Type Decoding")
         func enumMissingTypeDecoding() throws {
             let jsonStr = """
                 {
@@ -646,7 +649,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Integer Range Load Case")
         func enumIntegerRangeLoadCase() throws {
             // Test integer in range 15..<20 for load case
             let jsonStr = """
@@ -666,7 +669,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Integer Range Store Case")
         func enumIntegerRangeStoreCase() throws {
             // Test integer in range 35...40 for store case
             let jsonStr = """
@@ -688,7 +691,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Integer Range Boundary Values")
         func enumIntegerRangeBoundaryValues() throws {
             // Test boundary values for ranges
 
@@ -769,7 +772,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Double Partial Range Load Case")
         func enumDoublePartialRangeLoadCase() throws {
             // Test double in partial range (-0.8)... for load case
             let jsonStr = """
@@ -789,7 +792,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Double Partial Range Store Case")
         func enumDoublePartialRangeStoreCase() throws {
             // Test double in partial range ..<(-1.5) for store case
             let jsonStr = """
@@ -811,7 +814,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Double Range Boundary Values")
         func enumDoubleRangeBoundaryValues() throws {
             // Test boundary values for double ranges
 
@@ -850,7 +853,7 @@ struct CodedAsTests {
             }
         }
 
-        @Test
+        @Test("enum Range Values Priority Over Literals")
         func enumRangeValuesPriorityOverLiterals() throws {
             // Test that range values work alongside literal values
             // Integer 16 should match the range 15..<20 for load case, not the literal 12
@@ -872,6 +875,7 @@ struct CodedAsTests {
         }
     }
 
+    @Suite("Coded As - With Helper And Value")
     struct WithHelperAndValue {
         @Codable
         struct SomeCodable {
@@ -887,7 +891,7 @@ struct CodedAsTests {
             let value1: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -958,6 +962,7 @@ struct CodedAsTests {
         }
     }
 
+    @Suite("Coded As - Default")
     struct WithDefaultValue {
         @Codable
         struct SomeCodable {
@@ -969,7 +974,7 @@ struct CodedAsTests {
             let value1: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1053,6 +1058,7 @@ struct CodedAsTests {
         }
     }
 
+    @Suite("Coded As - With Helper And Default Value")
     struct WithHelperAndDefaultValue {
         @Codable
         struct SomeCodable {
@@ -1070,7 +1076,7 @@ struct CodedAsTests {
             let value1: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1156,6 +1162,7 @@ struct CodedAsTests {
         }
     }
 
+    @Suite("Coded As - Coding Key Case Name Collision Handling")
     struct CodingKeyCaseNameCollisionHandling {
         @Codable
         struct TestCodable {
@@ -1163,7 +1170,7 @@ struct CodedAsTests {
             var fooBar: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1214,6 +1221,7 @@ struct CodedAsTests {
         }
     }
 
+    @Suite("Coded As - Coding Key Case Name Collision Handling With Duplicate Aliases")
     struct CodingKeyCaseNameCollisionHandlingWithDuplicateAliases {
         @Codable
         struct TestCodable {
@@ -1221,7 +1229,7 @@ struct CodedAsTests {
             var fooBar: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

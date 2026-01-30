@@ -4,7 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Variable Declaration Tests")
 struct VariableDeclarationTests {
+    @Suite("Variable Declaration - Initialized Immutable Variable")
     struct InitializedImmutableVariable {
         @Codable
         @MemberInit
@@ -12,7 +14,7 @@ struct VariableDeclarationTests {
             let value: String = "some"
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -52,7 +54,7 @@ struct VariableDeclarationTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding")
         func decodingAndEncoding() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -61,7 +63,7 @@ struct VariableDeclarationTests {
             #expect(decoded.value == "some")
         }
 
-        @Test
+        @Test("decoding From Empty J S O N")
         func decodingFromEmptyJSON() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -70,7 +72,7 @@ struct VariableDeclarationTests {
             #expect(decoded.value == "some")
         }
 
-        @Test
+        @Test("encoding To J S O N")
         func encodingToJSON() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -81,6 +83,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Initialized Mutable Variable")
     struct InitializedMutableVariable {
         @Codable
         @MemberInit
@@ -88,7 +91,7 @@ struct VariableDeclarationTests {
             var value: String = "some"
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -135,6 +138,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Getter Only Variable")
     struct GetterOnlyVariable {
         @Codable
         @MemberInit
@@ -142,7 +146,7 @@ struct VariableDeclarationTests {
             var value: String { "some" }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -175,6 +179,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Explicit Getter Only Variable")
     struct ExplicitGetterOnlyVariable {
         @Codable
         @MemberInit
@@ -184,7 +189,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -225,6 +230,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Getter Only Variable With Multi Line Statements")
     struct GetterOnlyVariableWithMultiLineStatements {
         @Codable
         @MemberInit
@@ -235,7 +241,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -274,6 +280,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Variable With Property Observers")
     struct VariableWithPropertyObservers {
         @Codable
         @MemberInit
@@ -289,7 +296,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -353,6 +360,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Initialized Variable With Property Observers")
     struct InitializedVariableWithPropertyObservers {
         @Codable
         @MemberInit
@@ -368,7 +376,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -443,6 +451,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Computed Property")
     struct ComputedProperty {
         @Codable
         @MemberInit
@@ -456,7 +465,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -501,6 +510,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Optional Syntax Variable")
     struct OptionalSyntaxVariable {
         @Codable
         @MemberInit
@@ -508,7 +518,7 @@ struct VariableDeclarationTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -592,6 +602,7 @@ struct VariableDeclarationTests {
         }
     }
 
+    @Suite("Variable Declaration - Generic Syntax Optional Variable")
     struct GenericSyntaxOptionalVariable {
         @Codable
         @MemberInit
@@ -599,7 +610,7 @@ struct VariableDeclarationTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

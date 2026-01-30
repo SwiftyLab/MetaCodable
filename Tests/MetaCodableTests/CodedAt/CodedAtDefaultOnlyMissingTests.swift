@@ -3,7 +3,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded At Default Only Missing Tests")
 struct CodedAtDefaultOnlyMissingTests {
+    @Suite("Coded At Default Only Missing - With No Path")
     struct WithNoPath {
         @Codable
         @MemberInit
@@ -13,7 +15,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -51,6 +53,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - With No Path On Optional Type")
     struct WithNoPathOnOptionalType {
         @Codable
         @MemberInit
@@ -60,7 +63,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -97,6 +100,7 @@ struct CodedAtDefaultOnlyMissingTests {
             )
         }
 
+        @Suite("Coded At Default Only Missing - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -106,7 +110,7 @@ struct CodedAtDefaultOnlyMissingTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -145,6 +149,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - With Single Path")
     struct WithSinglePath {
         @Codable
         @MemberInit
@@ -154,7 +159,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -200,6 +205,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - With Single Path On Optional Type")
     struct WithSinglePathOnOptionalType {
         @Codable
         @MemberInit
@@ -209,7 +215,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -254,6 +260,7 @@ struct CodedAtDefaultOnlyMissingTests {
             )
         }
 
+        @Suite("Coded At Default Only Missing - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -263,7 +270,7 @@ struct CodedAtDefaultOnlyMissingTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -310,6 +317,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - With Nested Path")
     struct WithNestedPath {
         @Codable
         @MemberInit
@@ -319,7 +327,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -379,6 +387,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - With Nested Path On Optional Type")
     struct WithNestedPathOnOptionalType {
         @Codable
         @MemberInit
@@ -388,7 +397,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -447,6 +456,7 @@ struct CodedAtDefaultOnlyMissingTests {
             )
         }
 
+        @Suite("Coded At Default Only Missing - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -456,7 +466,7 @@ struct CodedAtDefaultOnlyMissingTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -517,6 +527,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - With Nested Path On Multi Optional Types")
     struct WithNestedPathOnMultiOptionalTypes {
         @Codable
         @MemberInit
@@ -533,7 +544,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value4: String!
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -619,6 +630,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - With Nested Path On Mixed Types")
     struct WithNestedPathOnMixedTypes {
         @Codable
         @MemberInit
@@ -640,7 +652,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value6: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -746,6 +758,7 @@ struct CodedAtDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded At Default Only Missing - Class With Nested Path On Mixed Types")
     struct ClassWithNestedPathOnMixedTypes {
         @Codable
         class SomeCodable {
@@ -766,7 +779,7 @@ struct CodedAtDefaultOnlyMissingTests {
             let value6: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

@@ -4,7 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Grouped Variable Tests")
 struct GroupedVariableTests {
+    @Suite("Grouped Variable - No Customization")
     struct WithoutAnyCustomization {
         @Codable
         @MemberInit
@@ -12,7 +14,7 @@ struct GroupedVariableTests {
             let one, two, three: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -63,7 +65,7 @@ struct GroupedVariableTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding")
         func decodingAndEncoding() throws {
             let original = SomeCodable(
                 one: "first", two: "second", three: "third")
@@ -75,7 +77,7 @@ struct GroupedVariableTests {
             #expect(decoded.three == "third")
         }
 
-        @Test
+        @Test("decoding From J S O N")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -92,7 +94,7 @@ struct GroupedVariableTests {
             #expect(decoded.three == "value3")
         }
 
-        @Test
+        @Test("encoding To J S O N")
         func encodingToJSON() throws {
             let original = SomeCodable(one: "a", two: "b", three: "c")
             let encoded = try JSONEncoder().encode(original)
@@ -105,6 +107,7 @@ struct GroupedVariableTests {
         }
     }
 
+    @Suite("Grouped Variable - Explicit")
     struct WithSomeInitializedWithExplicitTyping {
         @Codable
         @MemberInit
@@ -112,7 +115,7 @@ struct GroupedVariableTests {
             let one, two: String, three: String = ""
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -162,6 +165,7 @@ struct GroupedVariableTests {
         }
     }
 
+    @Suite("Grouped Variable - Mixed Types")
     struct MixedTypes {
         @Codable
         @MemberInit
@@ -169,7 +173,7 @@ struct GroupedVariableTests {
             let one, two: String, three: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -259,6 +263,7 @@ struct GroupedVariableTests {
     //     )
     // }
 
+    @Suite("Grouped Variable - Explicit")
     struct MixedTypesWithSomeInitializedWithExplicitTyping {
         @Codable
         @MemberInit
@@ -266,7 +271,7 @@ struct GroupedVariableTests {
             let one: String, two: String = "", three: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -316,6 +321,7 @@ struct GroupedVariableTests {
         }
     }
 
+    @Suite("Grouped Variable - Mixed Types With Some Initialized Without Explicit Typing")
     struct MixedTypesWithSomeInitializedWithoutExplicitTyping {
         @Codable
         @MemberInit
@@ -323,7 +329,7 @@ struct GroupedVariableTests {
             let one: String, two = "", three: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

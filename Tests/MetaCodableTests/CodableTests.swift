@@ -14,7 +14,10 @@ import SwiftSyntaxMacrosGenericTestSupport
 import SwiftSyntaxMacrosTestSupport
 #endif
 
+@Suite("Codable Tests")
 struct CodableTests {
+    
+    @Suite("Codable - Available Attribute")
     struct WithoutAvailableAttribute {
         @Codable
         @available(*, deprecated, message: "Deprecated")
@@ -27,7 +30,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -77,7 +80,7 @@ struct CodableTests {
             )
         }
 
-        @Test
+        @Test("encoding works with available attribute")
         @available(*, deprecated, message: "Deprecated")
         func availableAttributeEncoding() throws {
             let original = SomeCodable(value: "deprecated_test")
@@ -87,7 +90,7 @@ struct CodableTests {
             #expect(decoded.value == "deprecated_test")
         }
 
-        @Test
+        @Test("decoding from JSON works with available attribute")
         @available(*, deprecated, message: "Deprecated")
         func availableAttributeFromJSON() throws {
             let jsonStr = """
@@ -102,6 +105,8 @@ struct CodableTests {
         }
     }
 
+    
+    @Suite("Codable - No Customization")
     struct WithoutAnyCustomization {
         @Codable
         struct SomeCodable {
@@ -113,7 +118,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -161,7 +166,7 @@ struct CodableTests {
             )
         }
 
-        @Test
+        @Test("basic Codable encoding works")
         func basicCodableEncoding() throws {
             let original = SomeCodable(value: "basic_test")
             let encoded = try JSONEncoder().encode(original)
@@ -170,7 +175,7 @@ struct CodableTests {
             #expect(decoded.value == "basic_test")
         }
 
-        @Test
+        @Test("basic Codable decoding from JSON works")
         func basicCodableFromJSON() throws {
             let jsonStr = """
                 {
@@ -183,7 +188,7 @@ struct CodableTests {
             #expect(decoded.value == "basic_value")
         }
 
-        @Test
+        @Test("static properties are ignored in encoding")
         func staticPropertiesIgnored() throws {
             let original = SomeCodable(value: "test")
             let encoded = try JSONEncoder().encode(original)
@@ -197,6 +202,7 @@ struct CodableTests {
         }
     }
 
+    @Suite("Codable - No Customization")
     struct WithOptionalTypeWithoutAnyCustomization {
         @Codable
         struct SomeCodable {
@@ -205,7 +211,7 @@ struct CodableTests {
             let value3: String?
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -254,6 +260,7 @@ struct CodableTests {
         }
     }
 
+    @Suite("Codable - Partial Conformance")
     struct OnlyDecodeConformance {
         @Codable
         struct SomeCodable: Encodable {
@@ -263,7 +270,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -302,6 +309,7 @@ struct CodableTests {
         }
     }
 
+    @Suite("Codable - Partial Conformance")
     struct OnlyEncodeConformance {
         @Codable
         struct SomeCodable: Decodable {
@@ -312,7 +320,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -353,6 +361,7 @@ struct CodableTests {
         }
     }
 
+    @Suite("Codable - Ignored Codable Conformance")
     struct IgnoredCodableConformance {
         @Codable
         struct SomeCodable: Swift.Codable {
@@ -366,7 +375,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -400,6 +409,7 @@ struct CodableTests {
         }
     }
 
+    @Suite("Codable - Super Class Codable Conformance")
     struct SuperClassCodableConformance {
         class SuperCodable: Swift.Codable {}
         enum AnotherDecoder {}
@@ -418,7 +428,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -468,6 +478,7 @@ struct CodableTests {
         }
     }
 
+    @Suite("Codable - Class Ignored Codable Conformance")
     struct ClassIgnoredCodableConformance {
         @Codable
         class SomeCodable: Swift.Codable {
@@ -481,7 +492,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -515,6 +526,7 @@ struct CodableTests {
         }
     }
 
+    @Suite("Codable - Without")
     struct ClassIgnoredCodableConformanceWithoutAny {
         @Codable
         class SomeCodable: Swift.Codable {
@@ -528,7 +540,7 @@ struct CodableTests {
             }
         }
 
-        @Test
+        @Test("expansion generates correct Codable implementation")
         func expansion() throws {
             assertMacroExpansion(
                 """

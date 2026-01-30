@@ -4,6 +4,7 @@ import MetaCodable
 import Testing
 
 // Test for @Codable(commonStrategies: [.codedBy(.valueCoder())])
+@Suite("Common Strategies Value Coder Tests")
 struct CommonStrategiesValueCoderTests {
     @Codable(commonStrategies: [.codedBy(.valueCoder())])
     struct Model {
@@ -25,7 +26,7 @@ struct CommonStrategiesValueCoderTests {
         let optGenString: String?
     }
 
-    @Test
+    @Test("test Parsing")
     func testParsing() throws {
         let json = """
             {
@@ -56,7 +57,7 @@ struct CommonStrategiesValueCoderTests {
         #expect(reDecoded.string == "5265762156")
     }
 
-    @Test
+    @Test("expansion")
     func expansion() throws {
         assertMacroExpansion(
             """
@@ -170,6 +171,7 @@ struct CommonStrategiesValueCoderTests {
     }
 
     // Test 1: Properties that don't conform to ValueCodingStrategy
+    @Suite("Common Strategies Value Coder - Non Conforming Types")
     struct NonConformingTypes {
         @Codable(commonStrategies: [.codedBy(.valueCoder())])
         struct Model {
@@ -181,7 +183,7 @@ struct CommonStrategiesValueCoderTests {
             let identifier: UUID
         }
 
-        @Test
+        @Test("test Non Conforming Types")
         func testNonConformingTypes() throws {
             let json = """
                 {
@@ -216,7 +218,7 @@ struct CommonStrategiesValueCoderTests {
             )
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -266,6 +268,7 @@ struct CommonStrategiesValueCoderTests {
     }
 
     // Test 2: Custom types conforming to ValueCodingStrategy
+    @Suite("Common Strategies Value Coder - Custom Strategies")
     struct CustomStrategies {
         @Codable(commonStrategies: [.codedBy(.valueCoder([CGFloat.self]))])
         struct Model {
@@ -277,7 +280,7 @@ struct CommonStrategiesValueCoderTests {
             let plainText: String
         }
 
-        @Test
+        @Test("test Custom Strategies")
         func testCustomStrategies() throws {
             let json = """
                 {
@@ -308,7 +311,7 @@ struct CommonStrategiesValueCoderTests {
             )
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -358,6 +361,7 @@ struct CommonStrategiesValueCoderTests {
     }
 
     // Test 3: Empty commonStrategies array
+    @Suite("Common Strategies Value Coder - Empty Strategies")
     struct EmptyStrategies {
         @Codable(commonStrategies: [])
         struct Model {
@@ -367,7 +371,7 @@ struct CommonStrategiesValueCoderTests {
             let string: String
         }
 
-        @Test
+        @Test("test Empty Strategies")
         func testEmptyStrategies() throws {
             let json = """
                 {
@@ -399,7 +403,7 @@ struct CommonStrategiesValueCoderTests {
             )
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -454,6 +458,7 @@ struct CommonStrategiesValueCoderTests {
     }
 
     // Test 4: Enum with common strategies
+    @Suite("Common Strategies Value Coder - Enum")
     struct EnumTests {
         @Codable(commonStrategies: [.codedBy(.valueCoder())])
         @CodedAt("type")
@@ -463,7 +468,7 @@ struct CommonStrategiesValueCoderTests {
             case pending(until: String)
         }
 
-        @Test
+        @Test("test Enum With Common Strategies")
         func testEnumWithCommonStrategies() throws {
             // Test that associated values can use number-to-string conversion
             let json = """
@@ -526,7 +531,7 @@ struct CommonStrategiesValueCoderTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -627,6 +632,7 @@ struct CommonStrategiesValueCoderTests {
     }
 
     // Test 5: Overriding helper coder with common strategies
+    @Suite("Common Strategies Value Coder - Helper Coder Override")
     struct HelperCoderOverrideTests {
         @Codable(commonStrategies: [.codedBy(.valueCoder())])
         struct ModelWithOverride {
@@ -635,7 +641,7 @@ struct CommonStrategiesValueCoderTests {
             let count: Int
         }
 
-        @Test
+        @Test("test Helper Coder Override")
         func testHelperCoderOverride() throws {
             let json = """
                 {
@@ -662,7 +668,7 @@ struct CommonStrategiesValueCoderTests {
             #expect(encoded == #"{"count":42,"id":"21"}"#)  // CustomIntCoder halves the value for id
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

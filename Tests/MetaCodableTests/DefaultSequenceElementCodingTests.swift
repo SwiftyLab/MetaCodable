@@ -8,7 +8,7 @@ import Testing
 ///
 /// These tests verify the optional encoding/decoding paths for the default
 /// sequence element coding implementation used in sequence coders.
-@Suite("DefaultSequenceElementCoding Tests")
+@Suite("Default Sequence Element Coding Tests")
 struct DefaultSequenceElementCodingTests {
     
     /// Wrapper for decoding tests with keyed container.

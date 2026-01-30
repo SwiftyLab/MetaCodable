@@ -5,6 +5,7 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Decoded At Encoded At Integration Tests")
 struct DecodedAtEncodedAtIntegrationTests {
     @Codable
     struct Person {
@@ -17,7 +18,7 @@ struct DecodedAtEncodedAtIntegrationTests {
         let age: Int
     }
 
-    @Test
+    @Test("different Paths For Decoding And Encoding")
     func differentPathsForDecodingAndEncoding() throws {
         // Sample JSON with nested structure for decoding
         let jsonData = """
@@ -66,7 +67,7 @@ struct DecodedAtEncodedAtIntegrationTests {
         let createdAt: String
     }
 
-    @Test
+    @Test("complex Nested Structure")
     func complexNestedStructure() throws {
         // Complex nested JSON for decoding
         let jsonData = """
@@ -118,7 +119,7 @@ struct DecodedAtEncodedAtIntegrationTests {
         let value: Int?
     }
 
-    @Test
+    @Test("optional Values")
     func optionalValues() throws {
         // JSON with all values present
         let fullJsonData = """
@@ -174,8 +175,9 @@ struct DecodedAtEncodedAtIntegrationTests {
         #expect(partialEncodedJson["info"] == nil)
     }
 
+    @Suite("Decoded At Encoded At Integration - Enum")
     struct EnumTests {
-        @Test
+        @Test("misuse On Non Enum Declaration")
         func misuseOnNonEnumDeclaration() throws {
             assertMacroExpansion(
                 """
@@ -220,7 +222,7 @@ struct DecodedAtEncodedAtIntegrationTests {
             )
         }
 
-        @Test
+        @Test("duplicated Misuse")
         func duplicatedMisuse() throws {
             assertMacroExpansion(
                 """
@@ -365,6 +367,7 @@ struct DecodedAtEncodedAtIntegrationTests {
             )
         }
 
+        @Suite("Decoded At Encoded At Integration - Without Explicit Type")
         struct WithoutExplicitType {
             @Codable
             @DecodedAt("type")
@@ -374,7 +377,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 case store(key: String, value: Int)
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -467,6 +470,7 @@ struct DecodedAtEncodedAtIntegrationTests {
             }
         }
 
+        @Suite("Decoded At Encoded At Integration - Explicit")
         struct WithExplicitType {
             @Codable
             @DecodedAt("type")
@@ -479,7 +483,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 case store(key: String, value: Int)
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -565,6 +569,7 @@ struct DecodedAtEncodedAtIntegrationTests {
             }
         }
 
+        @Suite("Decoded At Encoded At Integration - With Helper Expression")
         struct WithHelperExpression {
             @Codable
             @DecodedAt("type")
@@ -578,7 +583,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 case store(key: String, value: Int)
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -665,6 +670,7 @@ struct DecodedAtEncodedAtIntegrationTests {
             }
         }
 
+        @Suite("Decoded At Encoded At Integration - With Nested Optional Identifier")
         struct WithNestedOptionalIdentifier {
             @Codable
             @CodedAs<String?>
@@ -695,7 +701,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 }
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """

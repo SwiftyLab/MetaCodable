@@ -4,8 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded At Tests")
 struct CodedAtTests {
-    @Test
+    @Test("misuse On Non Variable Declaration")
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -36,7 +37,7 @@ struct CodedAtTests {
         )
     }
 
-    @Test
+    @Test("misuse On Grouped Variable Declaration")
     func misuseOnGroupedVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -57,7 +58,7 @@ struct CodedAtTests {
         )
     }
 
-    @Test
+    @Test("misuse On Static Variable Declaration")
     func misuseOnStaticVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -86,7 +87,7 @@ struct CodedAtTests {
         )
     }
 
-    @Test
+    @Test("misuse In Combination With Coded In Macro")
     func misuseInCombinationWithCodedInMacro() throws {
         assertMacroExpansion(
             """
@@ -125,7 +126,7 @@ struct CodedAtTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -164,6 +165,7 @@ struct CodedAtTests {
         )
     }
 
+    @Suite("Coded At - With No Path")
     struct WithNoPath {
         @Codable
         @MemberInit
@@ -172,7 +174,7 @@ struct CodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -209,6 +211,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - With No Path On Optional Type")
     struct WithNoPathOnOptionalType {
         @Codable
         @MemberInit
@@ -217,7 +220,7 @@ struct CodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -253,6 +256,7 @@ struct CodedAtTests {
             )
         }
 
+        @Suite("Coded At - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -261,7 +265,7 @@ struct CodedAtTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -299,6 +303,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - With Single Path")
     struct WithSinglePath {
         @Codable
         @MemberInit
@@ -307,7 +312,7 @@ struct CodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -351,7 +356,7 @@ struct CodedAtTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding")
         func decodingAndEncoding() throws {
             let original = SomeCodable(value: "test")
             let encoded = try JSONEncoder().encode(original)
@@ -360,7 +365,7 @@ struct CodedAtTests {
             #expect(decoded.value == "test")
         }
 
-        @Test
+        @Test("decoding From J S O N")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -373,7 +378,7 @@ struct CodedAtTests {
             #expect(decoded.value == "custom_value")
         }
 
-        @Test
+        @Test("encoding To J S O N")
         func encodingToJSON() throws {
             let original = SomeCodable(value: "encoded_value")
             let encoded = try JSONEncoder().encode(original)
@@ -384,6 +389,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - With Single Path On Optional Type")
     struct WithSinglePathOnOptionalType {
         @Codable
         @MemberInit
@@ -392,7 +398,7 @@ struct CodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -436,7 +442,7 @@ struct CodedAtTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding With Value")
         func decodingAndEncodingWithValue() throws {
             let original = SomeCodable(value: "optional_test")
             let encoded = try JSONEncoder().encode(original)
@@ -445,7 +451,7 @@ struct CodedAtTests {
             #expect(decoded.value == "optional_test")
         }
 
-        @Test
+        @Test("decoding And Encoding With Nil")
         func decodingAndEncodingWithNil() throws {
             let original = SomeCodable(value: nil)
             let encoded = try JSONEncoder().encode(original)
@@ -454,7 +460,7 @@ struct CodedAtTests {
             #expect(decoded.value == nil)
         }
 
-        @Test
+        @Test("decoding From J S O N With Missing Key")
         func decodingFromJSONWithMissingKey() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -463,6 +469,7 @@ struct CodedAtTests {
             #expect(decoded.value == nil)
         }
 
+        @Suite("Coded At - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -471,7 +478,7 @@ struct CodedAtTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -517,6 +524,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - With Nested Path")
     struct WithNestedPath {
         @Codable
         @MemberInit
@@ -525,7 +533,7 @@ struct CodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -576,6 +584,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - With Nested Path On Optional Type")
     struct WithNestedPathOnOptionalType {
         @Codable
         @MemberInit
@@ -584,7 +593,7 @@ struct CodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -642,6 +651,7 @@ struct CodedAtTests {
             )
         }
 
+        @Suite("Coded At - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -650,7 +660,7 @@ struct CodedAtTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -710,6 +720,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - With Nested Path On Multi Optional Types")
     struct WithNestedPathOnMultiOptionalTypes {
         @Codable
         @MemberInit
@@ -724,7 +735,7 @@ struct CodedAtTests {
             let value4: String!
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -808,6 +819,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - With Nested Path On Mixed Types")
     struct WithNestedPathOnMixedTypes {
         @Codable
         @MemberInit
@@ -820,7 +832,7 @@ struct CodedAtTests {
             let value3: String!
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -885,6 +897,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - Class With Nested Path On Mixed Types")
     struct ClassWithNestedPathOnMixedTypes {
         @Codable
         class SomeCodable {
@@ -896,7 +909,7 @@ struct CodedAtTests {
             let value3: String!
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -954,6 +967,7 @@ struct CodedAtTests {
         }
     }
 
+    @Suite("Coded At - Actor With Nested Path On Mixed Types")
     struct ActorWithNestedPathOnMixedTypes {
         #if swift(<6)
         @MemberInit
@@ -968,7 +982,7 @@ struct CodedAtTests {
         }
         #endif
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             #if swift(>=6)
             let decodablePrefix = "@preconcurrency "

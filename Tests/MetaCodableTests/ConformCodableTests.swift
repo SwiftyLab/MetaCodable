@@ -9,8 +9,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Conform Encodable Tests")
 struct ConformEncodableTests {
-    @Test
+    @Test("misuse With Codable")
     func misuseWithCodable() throws {
         assertMacroExpansion(
             """
@@ -51,7 +52,7 @@ struct ConformEncodableTests {
         )
     }
 
-    @Test
+    @Test("misuse With Decodable")
     func misuseWithDecodable() throws {
         assertMacroExpansion(
             """
@@ -92,6 +93,7 @@ struct ConformEncodableTests {
         )
     }
 
+    @Suite("Conform Encodable - Without Common Strategies")
     struct WithoutCommonStrategies {
         @ConformEncodable
         struct SomeEncodable {
@@ -99,7 +101,7 @@ struct ConformEncodableTests {
             let count: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -135,6 +137,7 @@ struct ConformEncodableTests {
         }
     }
 
+    @Suite("Conform Encodable - Common Strategies")
     struct WithCommonStrategies {
         @ConformEncodable(commonStrategies: [.codedBy(.valueCoder())])
         struct Model {
@@ -144,7 +147,7 @@ struct ConformEncodableTests {
             let string: String
         }
 
-        @Test
+        @Test("test Parsing")
         func testParsing() throws {
             let model = Model(
                 bool: true, int: 42, double: 3.1416, string: "5265762156")
@@ -166,7 +169,7 @@ struct ConformEncodableTests {
             #expect(reDecoded["string"] as? String == "5265762156")
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -210,6 +213,7 @@ struct ConformEncodableTests {
         }
     }
 
+    @Suite("Conform Encodable - With Custom Coding Keys")
     struct WithCustomCodingKeys {
         @ConformEncodable
         struct SomeEncodable {
@@ -220,7 +224,7 @@ struct ConformEncodableTests {
             let count: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -263,7 +267,9 @@ struct ConformEncodableTests {
     }
 }
 
+@Suite("Conform Encodable - Conform Decodable")
 struct ConformDecodableTests {
+    @Suite("Conform Encodable - Without Common Strategies")
     struct WithoutCommonStrategies {
         @ConformDecodable
         struct SomeDecodable {
@@ -271,7 +277,7 @@ struct ConformDecodableTests {
             let count: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -306,7 +312,7 @@ struct ConformDecodableTests {
             )
         }
 
-        @Test
+        @Test("decoding Only")
         func decodingOnly() throws {
             // Since SomeDecodable only conforms to Decodable, we can only test decoding
             let jsonStr = """
@@ -322,7 +328,7 @@ struct ConformDecodableTests {
             #expect(decoded.count == 42)
         }
 
-        @Test
+        @Test("decoding From J S O N")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -338,6 +344,7 @@ struct ConformDecodableTests {
         }
     }
 
+    @Suite("Conform Encodable - Common Strategies")
     struct WithCommonStrategies {
         @ConformDecodable(commonStrategies: [.codedBy(.valueCoder())])
         struct Model {
@@ -347,7 +354,7 @@ struct ConformDecodableTests {
             let string: String
         }
 
-        @Test
+        @Test("test Parsing")
         func testParsing() throws {
             let json = """
                 {
@@ -368,7 +375,7 @@ struct ConformDecodableTests {
             #expect(model.string == "5265762156")
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -412,6 +419,7 @@ struct ConformDecodableTests {
         }
     }
 
+    @Suite("Conform Encodable - With Custom Coding Keys")
     struct WithCustomCodingKeys {
         @ConformEncodable
         struct SomeEncodable {
@@ -422,7 +430,7 @@ struct ConformDecodableTests {
             let count: Int
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

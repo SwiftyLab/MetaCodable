@@ -4,14 +4,16 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coding Keys Generation Tests")
 struct CodingKeysGenerationTests {
+    @Suite("Coding Keys Generation - Backtick Expression")
     struct BacktickExpression {
         @Codable
         struct SomeCodable {
             let `internal`: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -49,7 +51,7 @@ struct CodingKeysGenerationTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding")
         func decodingAndEncoding() throws {
             let original = SomeCodable(internal: "reserved")
             let encoded = try JSONEncoder().encode(original)
@@ -58,7 +60,7 @@ struct CodingKeysGenerationTests {
             #expect(decoded.internal == "reserved")
         }
 
-        @Test
+        @Test("decoding From J S O N")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -72,6 +74,7 @@ struct CodingKeysGenerationTests {
         }
     }
 
+    @Suite("Coding Keys Generation - Reserved Names")
     struct ReservedNames {
         @Codable
         struct SomeCodable {
@@ -81,7 +84,7 @@ struct CodingKeysGenerationTests {
             let val2: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -132,7 +135,7 @@ struct CodingKeysGenerationTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding")
         func decodingAndEncoding() throws {
             let original = SomeCodable(val1: "first", val2: "second")
             let encoded = try JSONEncoder().encode(original)
@@ -142,7 +145,7 @@ struct CodingKeysGenerationTests {
             #expect(decoded.val2 == "second")
         }
 
-        @Test
+        @Test("decoding From J S O N")
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -162,6 +165,7 @@ struct CodingKeysGenerationTests {
         }
     }
 
+    @Suite("Coding Keys Generation - Names Beginning With Number")
     struct NamesBeginningWithNumber {
         @Codable
         struct SomeCodable {
@@ -169,7 +173,7 @@ struct CodingKeysGenerationTests {
             let val: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -212,6 +216,7 @@ struct CodingKeysGenerationTests {
         }
     }
 
+    @Suite("Coding Keys Generation - Nested Properties In Same Container")
     struct NestedPropertiesInSameContainer {
         @Codable
         struct SomeCodable {
@@ -223,7 +228,7 @@ struct CodingKeysGenerationTests {
             let val3: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

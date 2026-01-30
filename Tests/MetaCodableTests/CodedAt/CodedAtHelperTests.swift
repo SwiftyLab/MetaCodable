@@ -5,7 +5,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded At Helper Tests")
 struct CodedAtHelperTests {
+    @Suite("Coded At Helper - With No Path")
     struct WithNoPath {
         @Codable
         @MemberInit
@@ -17,7 +19,7 @@ struct CodedAtHelperTests {
             let value: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -54,7 +56,7 @@ struct CodedAtHelperTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding")
         func decodingAndEncoding() throws {
             let original = SomeCodable(value: ["test1", "test2"])
             let encoded = try JSONEncoder().encode(original)
@@ -63,7 +65,7 @@ struct CodedAtHelperTests {
             #expect(decoded.value == ["test1", "test2"])
         }
 
-        @Test
+        @Test("decoding From J S O N Array")
         func decodingFromJSONArray() throws {
             let jsonStr = """
                 ["value1", "value2", "value3"]
@@ -74,7 +76,7 @@ struct CodedAtHelperTests {
             #expect(decoded.value == ["value1", "value2", "value3"])
         }
 
-        @Test
+        @Test("lossy Decoding With Invalid Values")
         func lossyDecodingWithInvalidValues() throws {
             let jsonStr = """
                 ["valid", 123, "another_valid", null, true]
@@ -87,6 +89,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - With No Path On Optional Type")
     struct WithNoPathOnOptionalType {
         @Codable
         @MemberInit
@@ -98,7 +101,7 @@ struct CodedAtHelperTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -136,6 +139,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - With Single Path")
     struct WithSinglePath {
         @Codable
         @MemberInit
@@ -147,7 +151,7 @@ struct CodedAtHelperTests {
             let value: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -193,6 +197,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - With Single Path On Optional Type")
     struct WithSinglePathOnOptionalType {
         @Codable
         @MemberInit
@@ -204,7 +209,7 @@ struct CodedAtHelperTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -250,6 +255,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - With Nested Path")
     struct WithNestedPath {
         @Codable
         @MemberInit
@@ -261,7 +267,7 @@ struct CodedAtHelperTests {
             let value: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -313,6 +319,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - With Nested Path On Optional Type")
     struct WithNestedPathOnOptionalType {
         @Codable
         @MemberInit
@@ -324,7 +331,7 @@ struct CodedAtHelperTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -384,6 +391,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - With Nested Path On Multi Optional Types")
     struct WithNestedPathOnMultiOptionalTypes {
         @Codable
         @MemberInit
@@ -405,7 +413,7 @@ struct CodedAtHelperTests {
             let value3: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -484,6 +492,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - With Nested Path On Mixed Types")
     struct WithNestedPathOnMixedTypes {
         @Codable
         @MemberInit
@@ -500,7 +509,7 @@ struct CodedAtHelperTests {
             let value2: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -560,6 +569,7 @@ struct CodedAtHelperTests {
         }
     }
 
+    @Suite("Coded At Helper - Class With Nested Path On Mixed Types")
     struct ClassWithNestedPathOnMixedTypes {
         @Codable
         class SomeCodable {
@@ -575,7 +585,7 @@ struct CodedAtHelperTests {
             let value2: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

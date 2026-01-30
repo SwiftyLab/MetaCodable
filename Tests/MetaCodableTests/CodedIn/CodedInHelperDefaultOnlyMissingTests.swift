@@ -4,7 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded In Helper Default Only Missing Tests")
 struct CodedInHelperDefaultOnlyMissingTests {
+    @Suite("Coded In Helper Default Only Missing - With No Path")
     struct WithNoPath {
         @Codable
         @MemberInit
@@ -16,7 +18,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -62,6 +64,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - With No Path On Optional Type")
     struct WithNoPathOnOptionalType {
         @Codable
         @MemberInit
@@ -74,7 +77,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -121,6 +124,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - With Single Path")
     struct WithSinglePath {
         @Codable
         @MemberInit
@@ -133,7 +137,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -187,6 +191,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - With Single Path On Optional Type")
     struct WithSinglePathOnOptionalType {
         @Codable
         @MemberInit
@@ -199,7 +204,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -253,6 +258,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - With Nested Path")
     struct WithNestedPath {
         @Codable
         @MemberInit
@@ -265,7 +271,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -326,6 +332,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - With Nested Path On Optional Type")
     struct WithNestedPathOnOptionalType {
         @Codable
         @MemberInit
@@ -338,7 +345,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -399,6 +406,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - With Nested Path On Multi Optional Types")
     struct WithNestedPathOnMultiOptionalTypes {
         @Codable
         @MemberInit
@@ -427,7 +435,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value5: [String]?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -526,6 +534,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - With Nested Path On Mixed Types")
     struct WithNestedPathOnMixedTypes {
         @Codable
         @MemberInit
@@ -558,7 +567,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value6: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -665,6 +674,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
         }
     }
 
+    @Suite("Coded In Helper Default Only Missing - Class With Nested Path On Mixed Types")
     struct ClassWithNestedPathOnMixedTypes {
         @Codable
         class SomeCodable {
@@ -696,7 +706,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value6: [String]
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

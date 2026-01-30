@@ -6,7 +6,7 @@ import Testing
 ///
 /// These tests verify the optional encoding/decoding paths that have
 /// default implementations in the `HelperCoder` protocol extension.
-@Suite("HelperCoder Protocol Tests")
+@Suite("Helper Coder Tests")
 struct HelperCoderTests {
     
     /// A simple helper coder for testing that wraps String values.

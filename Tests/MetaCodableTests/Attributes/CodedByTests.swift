@@ -2,8 +2,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded By Tests")
 struct CodedByTests {
-    @Test
+    @Test("misuse On Non Variable Declaration")
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -34,7 +35,7 @@ struct CodedByTests {
         )
     }
 
-    @Test
+    @Test("misuse On Static Variable")
     func misuseOnStaticVariable() throws {
         assertMacroExpansion(
             """
@@ -63,7 +64,7 @@ struct CodedByTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """

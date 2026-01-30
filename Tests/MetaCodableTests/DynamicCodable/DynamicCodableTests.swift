@@ -2,8 +2,9 @@ import Foundation
 import MetaCodable
 import Testing
 
+@Suite("Dynamic Codable Tests")
 struct DynamicCodableTests {
-    @Test
+    @Test("page With Ext Post")
     func pageWithExtPost() throws {
         let page = try JSONDecoder().decode(
             PageWithExtPosts.self, from: dataPageWithExtPosts
@@ -26,7 +27,7 @@ struct DynamicCodableTests {
         }
     }
 
-    @Test
+    @Test("page With Int Post")
     func pageWithIntPost() throws {
         let page = try JSONDecoder().decode(
             PageWithIntPosts.self, from: dataPageWithIntPosts
@@ -49,7 +50,7 @@ struct DynamicCodableTests {
         }
     }
 
-    @Test
+    @Test("page With Adj Post")
     func pageWithAdjPost() throws {
         let page = try JSONDecoder().decode(
             PageWithAdjPosts.self, from: dataPageWithAdjPosts
@@ -72,7 +73,7 @@ struct DynamicCodableTests {
         }
     }
 
-    @Test
+    @Test("response")
     func response() throws {
         let rResponse = try JSONDecoder().decode(
             Response.self, from: registrationResponseAttributesData

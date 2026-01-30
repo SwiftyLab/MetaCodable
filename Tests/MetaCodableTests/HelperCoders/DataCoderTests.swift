@@ -3,8 +3,9 @@ import HelperCoders
 import MetaCodable
 import Testing
 
+@Suite("Data Coder Tests")
 struct DataCoderTests {
-    @Test
+    @Test("decoding")
     func decoding() throws {
         let jsonStr = """
             {
@@ -19,7 +20,7 @@ struct DataCoderTests {
         #expect(newModel == model)
     }
 
-    @Test
+    @Test("invalid Data Decoding")
     func invalidDataDecoding() throws {
         let jsonStr = """
             {

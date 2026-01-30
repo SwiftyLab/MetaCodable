@@ -3,8 +3,9 @@ import HelperCoders
 import MetaCodable
 import Testing
 
+@Suite("Helper Coders Tests")
 struct HelperCodersTests {
-    @Test
+    @Test("conditional And Optional Coding")
     func conditionalAndOptionalCoding() throws {
         let jsonStr = """
             {
@@ -24,7 +25,7 @@ struct HelperCodersTests {
         #expect(model.optionalDate == nil)
     }
 
-    @Test
+    @Test("property Wrapper Coding")
     func propertyWrapperCoding() throws {
         let jsonStr = """
             {

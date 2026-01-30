@@ -4,8 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Default Tests")
 struct DefaultTests {
-    @Test
+    @Test("misuse On Non Variable Declaration")
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -36,7 +37,7 @@ struct DefaultTests {
         )
     }
 
-    @Test
+    @Test("misuse On Static Variable")
     func misuseOnStaticVariable() throws {
         assertMacroExpansion(
             """
@@ -65,7 +66,7 @@ struct DefaultTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -104,6 +105,7 @@ struct DefaultTests {
         )
     }
 
+    @Suite("Default - Default Value Behavior")
     struct DefaultValueBehavior {
         @Codable
         struct SomeCodable {
@@ -113,7 +115,7 @@ struct DefaultTests {
             let number: Int
         }
 
-        @Test
+        @Test("default Value Usage")
         func defaultValueUsage() throws {
             // Test with missing keys in JSON
             let jsonStr = "{}"
@@ -124,7 +126,7 @@ struct DefaultTests {
             #expect(decoded.number == 42)
         }
 
-        @Test
+        @Test("override Default Values")
         func overrideDefaultValues() throws {
             // Test with provided values in JSON
             let jsonStr = """
@@ -140,7 +142,7 @@ struct DefaultTests {
             #expect(decoded.number == 100)
         }
 
-        @Test
+        @Test("encoding With Defaults")
         func encodingWithDefaults() throws {
             let original = SomeCodable(value: "test", number: 99)
             let encoded = try JSONEncoder().encode(original)

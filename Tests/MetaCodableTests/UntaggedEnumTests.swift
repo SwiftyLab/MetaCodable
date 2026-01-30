@@ -5,8 +5,9 @@ import XCTest
 
 @testable import PluginCore
 
+@Suite("Untagged Enum Tests")
 struct UntaggedEnumTests {
-    @Test
+    @Test("misuse On Non Enum Declaration")
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -56,7 +57,7 @@ struct UntaggedEnumTests {
         )
     }
 
-    @Test
+    @Test("misuse In Combination With Coded At Macro")
     func misuseInCombinationWithCodedAtMacro() throws {
         assertMacroExpansion(
             """
@@ -145,7 +146,7 @@ struct UntaggedEnumTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -236,6 +237,7 @@ struct UntaggedEnumTests {
         )
     }
 
+    @Suite("Untagged Enum - Without Fallback Case")
     struct WithoutFallbackCase {
         @Codable
         @UnTagged
@@ -250,7 +252,7 @@ struct UntaggedEnumTests {
             case dictionary([String: Self])
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -373,7 +375,7 @@ struct UntaggedEnumTests {
             )
         }
 
-        @Test
+        @Test("decoding And Encoding Bool")
         func decodingAndEncodingBool() throws {
             let original: CodableValue = .bool(true)
             let encoded = try JSONEncoder().encode(original)
@@ -386,7 +388,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test
+        @Test("decoding And Encoding String")
         func decodingAndEncodingString() throws {
             let original: CodableValue = .string("test")
             let encoded = try JSONEncoder().encode(original)
@@ -399,7 +401,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test
+        @Test("decoding From J S O N Primitives")
         func decodingFromJSONPrimitives() throws {
             // Test bool
             let boolJson = "true".data(using: .utf8)!
@@ -432,7 +434,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test
+        @Test("decoding From J S O N Array")
         func decodingFromJSONArray() throws {
             let arrayJson = "[true, \"test\", 123]".data(using: .utf8)!
             let arrayDecoded = try JSONDecoder().decode(
@@ -450,6 +452,7 @@ struct UntaggedEnumTests {
         }
     }
 
+    @Suite("Untagged Enum - With Fallback Case")
     struct WithFallbackCase {
         @Codable
         @UnTagged
@@ -465,7 +468,7 @@ struct UntaggedEnumTests {
             case `nil`
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -588,7 +591,7 @@ struct UntaggedEnumTests {
             )
         }
 
-        @Test
+        @Test("decoding")
         func decoding() throws {
             let data = try JSONDecoder().decode(
                 CodableValue.self, from: heterogenousJSONData
@@ -602,6 +605,7 @@ struct UntaggedEnumTests {
         }
     }
 
+    @Suite("Untagged Enum - Nested Decoding")
     struct NestedDecoding {
         @Codable
         @UnTagged
@@ -613,7 +617,7 @@ struct UntaggedEnumTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

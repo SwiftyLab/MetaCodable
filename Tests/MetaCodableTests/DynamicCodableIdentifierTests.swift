@@ -6,7 +6,7 @@ import Testing
 ///
 /// These tests verify the CodingKey protocol implementation for
 /// DynamicCodableIdentifier, including integer and string initialization.
-@Suite("DynamicCodableIdentifier CodingKey Tests")
+@Suite("Dynamic Codable Identifier Tests")
 struct DynamicCodableIdentifierTests {
     
     // MARK: - init(intValue:) Tests

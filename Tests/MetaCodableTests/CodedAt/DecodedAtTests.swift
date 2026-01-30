@@ -3,8 +3,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Decoded At Tests")
 struct DecodedAtTests {
-    @Test
+    @Test("misuse On Non Variable Declaration")
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -35,7 +36,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test
+    @Test("misuse On Grouped Variable Declaration")
     func misuseOnGroupedVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -56,7 +57,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test
+    @Test("misuse On Static Variable Declaration")
     func misuseOnStaticVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -85,7 +86,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test
+    @Test("misuse In Combination With Coded In Macro")
     func misuseInCombinationWithCodedInMacro() throws {
         assertMacroExpansion(
             """
@@ -124,7 +125,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test
+    @Test("misuse In Combination With Coded At Macro")
     func misuseInCombinationWithCodedAtMacro() throws {
         assertMacroExpansion(
             """
@@ -163,7 +164,7 @@ struct DecodedAtTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -202,6 +203,7 @@ struct DecodedAtTests {
         )
     }
 
+    @Suite("Decoded At - With No Path")
     struct WithNoPath {
         @Codable
         @MemberInit
@@ -210,7 +212,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -254,6 +256,7 @@ struct DecodedAtTests {
         }
     }
 
+    @Suite("Decoded At - With No Path On Optional Type")
     struct WithNoPathOnOptionalType {
         @Codable
         @MemberInit
@@ -262,7 +265,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -305,6 +308,7 @@ struct DecodedAtTests {
             )
         }
 
+        @Suite("Decoded At - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -313,7 +317,7 @@ struct DecodedAtTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -358,6 +362,7 @@ struct DecodedAtTests {
         }
     }
 
+    @Suite("Decoded At - With Single Path")
     struct WithSinglePath {
         @Codable
         @MemberInit
@@ -366,7 +371,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -412,6 +417,7 @@ struct DecodedAtTests {
         }
     }
 
+    @Suite("Decoded At - With Single Path On Optional Type")
     struct WithSinglePathOnOptionalType {
         @Codable
         @MemberInit
@@ -420,7 +426,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -465,6 +471,7 @@ struct DecodedAtTests {
             )
         }
 
+        @Suite("Decoded At - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -473,7 +480,7 @@ struct DecodedAtTests {
                 let value: String!
             }
 
-            @Test
+            @Test("expansion")
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -520,6 +527,7 @@ struct DecodedAtTests {
         }
     }
 
+    @Suite("Decoded At - With Nested Path")
     struct WithNestedPath {
         @Codable
         @MemberInit
@@ -528,7 +536,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -578,6 +586,7 @@ struct DecodedAtTests {
         }
     }
 
+    @Suite("Decoded At - With Nested Path On Optional Type")
     struct WithNestedPathOnOptionalType {
         @Codable
         @MemberInit
@@ -586,7 +595,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -644,6 +653,7 @@ struct DecodedAtTests {
         }
     }
 
+    @Suite("Decoded At - DecodedAt")
     struct WithDecodedAtAndEncodedAt {
         @Codable
         @MemberInit
@@ -653,7 +663,7 @@ struct DecodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -703,6 +713,7 @@ struct DecodedAtTests {
         }
     }
 
+    @Suite("Decoded At - DecodedAt")
     struct WithDecodedAtAndEncodedAtOnOptionalType {
         @Codable
         @MemberInit
@@ -712,7 +723,7 @@ struct DecodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

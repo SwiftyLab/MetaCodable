@@ -7,7 +7,7 @@ import Testing
 ///
 /// These tests verify the conditional encoding/decoding paths where
 /// separate coders are used for decoding and encoding operations.
-@Suite("ConditionalCoder Tests")
+@Suite("Conditional Coder Tests")
 struct ConditionalCoderTests {
     
     /// A decoder-only coder that prefixes decoded strings.

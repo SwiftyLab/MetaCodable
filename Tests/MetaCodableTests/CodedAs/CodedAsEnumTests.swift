@@ -5,8 +5,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded As Enum Tests")
 struct CodedAsEnumTests {
-    @Test
+    @Test("misuse On Non Case Declaration")
     func misuseOnNonCaseDeclaration() throws {
         assertMacroExpansion(
             """
@@ -46,7 +47,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test
+    @Test("invalid Range Expression Type Diagnostic")
     func invalidRangeExpressionTypeDiagnostic() throws {
         assertMacroExpansion(
             """
@@ -164,7 +165,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -209,7 +210,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test
+    @Test("misuse In Combination With Ignore Coding Macro")
     func misuseInCombinationWithIgnoreCodingMacro() throws {
         assertMacroExpansion(
             """
@@ -254,7 +255,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test
+    @Test("misuse On Non Enum Declaration")
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -301,6 +302,7 @@ struct CodedAsEnumTests {
         )
     }
 
+    @Suite("Coded As Enum - CodedBy")
     struct WithCodedByMacro {
         @Codable
         @CodedAt("type")
@@ -313,7 +315,7 @@ struct CodedAsEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -398,6 +400,7 @@ struct CodedAsEnumTests {
         }
     }
 
+    @Suite("Coded As Enum - Externally Tagged Custom Value")
     struct ExternallyTaggedCustomValue {
         @Codable
         enum SomeEnum {
@@ -410,7 +413,7 @@ struct CodedAsEnumTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -531,6 +534,7 @@ struct CodedAsEnumTests {
         }
     }
 
+    @Suite("Coded As Enum - Internally Tagged Custom Value")
     struct InternallyTaggedCustomValue {
         @Codable
         @CodedAt("type")
@@ -544,7 +548,7 @@ struct CodedAsEnumTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """

@@ -4,8 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded At Enum Tests")
 struct CodedAtEnumTests {
-    @Test
+    @Test("misuse On Non Enum Declaration")
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -40,7 +41,7 @@ struct CodedAtEnumTests {
         )
     }
 
-    @Test
+    @Test("duplicated Misuse")
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -175,6 +176,7 @@ struct CodedAtEnumTests {
         )
     }
 
+    @Suite("Coded At Enum - Without Explicit Type")
     struct WithoutExplicitType {
         @Codable
         @CodedAt("type")
@@ -183,7 +185,7 @@ struct CodedAtEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -274,6 +276,7 @@ struct CodedAtEnumTests {
         }
     }
 
+    @Suite("Coded At Enum - Explicit")
     struct WithExplicitType {
         @Codable
         @CodedAt("type")
@@ -285,7 +288,7 @@ struct CodedAtEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -369,6 +372,7 @@ struct CodedAtEnumTests {
         }
     }
 
+    @Suite("Coded At Enum - With Helper Expression")
     struct WithHelperExpression {
         @Codable
         @CodedAt("type")
@@ -381,7 +385,7 @@ struct CodedAtEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -466,6 +470,7 @@ struct CodedAtEnumTests {
         }
     }
 
+    @Suite("Coded At Enum - With Nested Optional Identifier")
     struct WithNestedOptionalIdentifier {
         @Codable
         @CodedAs<String?>
@@ -495,7 +500,7 @@ struct CodedAtEnumTests {
             }
         }
 
-        @Test
+        @Test("expansion")
         func expansion() throws {
             assertMacroExpansion(
                 """
