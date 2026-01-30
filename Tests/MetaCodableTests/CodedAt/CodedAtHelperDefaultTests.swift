@@ -4,7 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Coded At Helper Default Tests")
 struct CodedAtHelperDefaultTests {
+    @Suite("Coded At Helper Default - With No Path")
     struct WithNoPath {
         @Codable
         @MemberInit
@@ -17,7 +19,7 @@ struct CodedAtHelperDefaultTests {
             let value: [String]
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (CodedAtHelperDefaultTests #26)", .tags(.codable, .codedAt, .codedBy, .default, .encoding, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -60,6 +62,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - With No Path On Optional Type")
     struct WithNoPathOnOptionalType {
         @Codable
         @MemberInit
@@ -72,7 +75,7 @@ struct CodedAtHelperDefaultTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (CodedAtHelperDefaultTests #27)", .tags(.codable, .codedAt, .codedBy, .default, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -115,6 +118,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - With Single Path")
     struct WithSinglePath {
         @Codable
         @MemberInit
@@ -127,7 +131,7 @@ struct CodedAtHelperDefaultTests {
             let value: [String]
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (CodedAtHelperDefaultTests #28)", .tags(.codable, .codedAt, .codedBy, .default, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -182,6 +186,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - With Single Path On Optional Type")
     struct WithSinglePathOnOptionalType {
         @Codable
         @MemberInit
@@ -194,7 +199,7 @@ struct CodedAtHelperDefaultTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (CodedAtHelperDefaultTests #29)", .tags(.codable, .codedAt, .codedBy, .default, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -249,6 +254,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - With Nested Path")
     struct WithNestedPath {
         @Codable
         @MemberInit
@@ -261,7 +267,7 @@ struct CodedAtHelperDefaultTests {
             let value: [String]
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtHelperDefaultTests #16)", .tags(.codable, .codedAt, .codedBy, .default, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -350,6 +356,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - With Nested Path On Optional Type")
     struct WithNestedPathOnOptionalType {
         @Codable
         @MemberInit
@@ -362,7 +369,7 @@ struct CodedAtHelperDefaultTests {
             let value: [String]?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtHelperDefaultTests #17)", .tags(.codable, .codedAt, .codedBy, .default, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -451,6 +458,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - With Nested Path On Multi Optional Types")
     struct WithNestedPathOnMultiOptionalTypes {
         @Codable
         @MemberInit
@@ -479,7 +487,7 @@ struct CodedAtHelperDefaultTests {
             let value5: [String]?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtHelperDefaultTests #18)", .tags(.codable, .codedAt, .codedBy, .default, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -602,6 +610,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - With Nested Path On Mixed Types")
     struct WithNestedPathOnMixedTypes {
         @Codable
         @MemberInit
@@ -634,7 +643,7 @@ struct CodedAtHelperDefaultTests {
             let value6: [String]
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedAtHelperDefaultTests #19)", .tags(.codable, .codedAt, .codedBy, .decoding, .default, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -760,6 +769,7 @@ struct CodedAtHelperDefaultTests {
         }
     }
 
+    @Suite("Coded At Helper Default - Class With Nested Path On Mixed Types")
     struct ClassWithNestedPathOnMixedTypes {
         @Codable
         class SomeCodable {
@@ -791,7 +801,7 @@ struct CodedAtHelperDefaultTests {
             let value6: [String]
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class with nested paths (CodedAtHelperDefaultTests #3)", .tags(.classes, .codable, .codedAt, .codedBy, .decoding, .default, .encoding, .enums, .macroExpansion, .optionals))
         func expansion() throws {
             assertMacroExpansion(
                 """

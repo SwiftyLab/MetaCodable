@@ -3,8 +3,9 @@ import HelperCoders
 import MetaCodable
 import Testing
 
+@Suite("Non Conforming Coder Tests")
 struct NonConformingCoderTests {
-    @Test
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #25)", .tags(.decoding, .encoding, .nonConformingCoder))
     func testDecodingActualFloat() throws {
         let json = try mockJSON(5.5)
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -14,7 +15,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == 5.5)
     }
 
-    @Test
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #26)", .tags(.decoding, .encoding, .nonConformingCoder))
     func testDecodingStringifiedFloat() throws {
         let json = try mockJSON("5.5")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -24,7 +25,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == 5.5)
     }
 
-    @Test
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #27)", .tags(.decoding, .encoding, .nonConformingCoder))
     func testDecodingPositiveInfinity() throws {
         let json = try mockJSON("➕♾️")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -34,7 +35,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == .infinity)
     }
 
-    @Test
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #28)", .tags(.decoding, .encoding, .nonConformingCoder))
     func testDecodingNegativeInfinity() throws {
         let json = try mockJSON("➖♾️")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -44,7 +45,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float == -.infinity)
     }
 
-    @Test
+    @Test("Encodes and decodes successfully (NonConformingCoderTests #29)", .tags(.decoding, .encoding, .nonConformingCoder))
     func testDecodingNotANumber() throws {
         let json = try mockJSON("😞")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -54,7 +55,7 @@ struct NonConformingCoderTests {
         #expect(parsedModel.float.isNaN)
     }
 
-    @Test
+    @Test("Decodes from JSON successfully (NonConformingCoderTests #66)", .tags(.decoding, .nonConformingCoder))
     func invalidDecoding() throws {
         let json = try mockJSON("random")
         #expect(throws: DecodingError.self) {

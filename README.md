@@ -1,5 +1,6 @@
 # MetaCodable
 
+[![Swift `build` & `test`](https://github.com/qizh/MetaCodable/actions/workflows/swift.yml/badge.svg?branch=tests%2Fimprove%2Fcoverage%2F30-01-26)](https://github.com/qizh/MetaCodable/actions/workflows/swift.yml)
 [![API Docs](http://img.shields.io/badge/Read_the-docs-2196f3.svg)](https://swiftpackageindex.com/SwiftyLab/MetaCodable/documentation/metacodable)
 [![Swift Package Manager Compatible](https://img.shields.io/github/v/tag/SwiftyLab/MetaCodable?label=SPM&color=orange)](https://badge.fury.io/gh/SwiftyLab%2FMetaCodable)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/MetaCodable.svg?label=CocoaPods&color=C90005)](https://badge.fury.io/co/MetaCodable)

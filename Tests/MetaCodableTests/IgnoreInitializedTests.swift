@@ -3,8 +3,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Ignore Initialized Tests")
 struct IgnoreInitializedTests {
-    @Test
+    @Test("Reports error when @IgnoreCodingInitialized is used without @Codable", .tags(.codable, .errorHandling, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion, .structs))
     func misuse() throws {
         assertMacroExpansion(
             """
@@ -35,6 +36,7 @@ struct IgnoreInitializedTests {
         )
     }
 
+    @Suite("Ignore Initialized - Ignore")
     struct Ignore {
         @Codable
         @IgnoreCodingInitialized
@@ -42,7 +44,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #97)", .tags(.codable, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -72,6 +74,7 @@ struct IgnoreInitializedTests {
         }
     }
 
+    @Suite("Ignore Initialized - Class Ignore")
     struct ClassIgnore {
         @Codable
         @IgnoreCodingInitialized
@@ -79,7 +82,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class (IgnoreInitializedTests #6)", .tags(.classes, .codable, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -111,6 +114,7 @@ struct IgnoreInitializedTests {
         }
     }
 
+    @Suite("Ignore Initialized - Enum Ignore")
     struct EnumIgnore {
         @Codable
         @IgnoreCodingInitialized
@@ -124,7 +128,7 @@ struct IgnoreInitializedTests {
             case multi(_ variable: Bool, val: Int, String = "text")
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreInitializedTests #25)", .tags(.codable, .codedAs, .decoding, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -221,6 +225,7 @@ struct IgnoreInitializedTests {
         }
     }
 
+    @Suite("Ignore Initialized - Enum Case Ignore")
     struct EnumCaseIgnore {
         @Codable
         enum SomeEnum {
@@ -234,7 +239,7 @@ struct IgnoreInitializedTests {
             case multi(_ variable: Bool, val: Int, String = "text")
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreInitializedTests #26)", .tags(.codable, .codedAs, .decoding, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -334,6 +339,7 @@ struct IgnoreInitializedTests {
         }
     }
 
+    @Suite("Ignore Initialized - Explicit Coding With Ignore")
     struct ExplicitCodingWithIgnore {
         @Codable
         @IgnoreCodingInitialized
@@ -342,7 +348,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #98)", .tags(.codable, .codedIn, .decoding, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -383,6 +389,7 @@ struct IgnoreInitializedTests {
         }
     }
 
+    @Suite("Ignore Initialized - Explicit Coding With Top And Decode Ignore")
     struct ExplicitCodingWithTopAndDecodeIgnore {
         @Codable
         @IgnoreCodingInitialized
@@ -392,7 +399,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #99)", .tags(.codable, .codedIn, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .ignoreDecoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -432,6 +439,7 @@ struct IgnoreInitializedTests {
         }
     }
 
+    @Suite("Ignore Initialized - Explicit Coding With Top And Encode Ignore")
     struct ExplicitCodingWithTopAndEncodeIgnore {
         @Codable
         @IgnoreCodingInitialized
@@ -441,7 +449,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #100)", .tags(.codable, .codedIn, .decoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .ignoreEncoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

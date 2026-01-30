@@ -4,7 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Explicit Coding Tests")
 struct ExplicitCodingTests {
+    @Suite("Explicit Coding - Getter Only Variable")
     struct GetterOnlyVariable {
         @Codable
         struct SomeCodable {
@@ -12,7 +14,7 @@ struct ExplicitCodingTests {
             var value: String { "some" }
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #76)", .tags(.codable, .codedIn, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -49,7 +51,7 @@ struct ExplicitCodingTests {
             )
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (ExplicitCodingTests #14)", .tags(.encoding, .optionals))
         func encodingOnly() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -59,7 +61,7 @@ struct ExplicitCodingTests {
             #expect(json["value"] as? String == "some")
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (ExplicitCodingTests #48)", .tags(.decoding))
         func decodingEmpty() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -69,6 +71,7 @@ struct ExplicitCodingTests {
         }
     }
 
+    @Suite("Explicit Coding - Explicit Getter Only Variable")
     struct ExplicitGetterOnlyVariable {
         @Codable
         struct SomeCodable {
@@ -78,7 +81,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #77)", .tags(.codable, .codedIn, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -123,7 +126,7 @@ struct ExplicitCodingTests {
             )
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (ExplicitCodingTests #15)", .tags(.encoding, .optionals))
         func encodingOnly() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -133,7 +136,7 @@ struct ExplicitCodingTests {
             #expect(json["value"] as? String == "some")
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (ExplicitCodingTests #49)", .tags(.decoding))
         func decodingEmpty() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -143,6 +146,7 @@ struct ExplicitCodingTests {
         }
     }
 
+    @Suite("Explicit Coding - Getter Only Variable With Multi Line Statements")
     struct GetterOnlyVariableWithMultiLineStatements {
         @Codable
         struct SomeCodable {
@@ -153,7 +157,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #78)", .tags(.codable, .codedIn, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -196,7 +200,7 @@ struct ExplicitCodingTests {
             )
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (ExplicitCodingTests #16)", .tags(.encoding, .optionals))
         func encodingOnly() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -206,7 +210,7 @@ struct ExplicitCodingTests {
             #expect(json["value"] as? String == "someVal")
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (ExplicitCodingTests #50)", .tags(.decoding))
         func decodingEmpty() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -216,6 +220,7 @@ struct ExplicitCodingTests {
         }
     }
 
+    @Suite("Explicit Coding - Class Getter Only Variable With Multi Line Statements")
     struct ClassGetterOnlyVariableWithMultiLineStatements {
         @Codable
         class SomeCodable {
@@ -226,7 +231,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class (ExplicitCodingTests #4)", .tags(.classes, .codable, .codedIn, .encoding, .enums, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -270,6 +275,7 @@ struct ExplicitCodingTests {
         }
     }
 
+    @Suite("Explicit Coding - Computed Property")
     struct ComputedProperty {
         @Codable
         struct SomeCodable {
@@ -283,7 +289,7 @@ struct ExplicitCodingTests {
             }
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (ExplicitCodingTests #79)", .tags(.codable, .codedIn, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

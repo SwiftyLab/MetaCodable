@@ -5,8 +5,9 @@ import XCTest
 
 @testable import PluginCore
 
+@Suite("Untagged Enum Tests")
 struct UntaggedEnumTests {
-    @Test
+    @Test("Reports error for @Codable misuse (UntaggedEnumTests #7)", .tags(.codable, .decoding, .encoding, .enums, .errorHandling, .macroExpansion, .structs, .untagged))
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -56,7 +57,7 @@ struct UntaggedEnumTests {
         )
     }
 
-    @Test
+    @Test("Reports error for @Codable misuse (UntaggedEnumTests #8)", .tags(.codable, .codedAt, .encoding, .enums, .errorHandling, .macroExpansion, .untagged))
     func misuseInCombinationWithCodedAtMacro() throws {
         assertMacroExpansion(
             """
@@ -145,7 +146,7 @@ struct UntaggedEnumTests {
         )
     }
 
-    @Test
+    @Test("Reports error for @Codable misuse (UntaggedEnumTests #9)", .tags(.codable, .encoding, .enums, .errorHandling, .macroExpansion, .untagged))
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -236,6 +237,7 @@ struct UntaggedEnumTests {
         )
     }
 
+    @Suite("Untagged Enum - Without Fallback Case")
     struct WithoutFallbackCase {
         @Codable
         @UnTagged
@@ -250,7 +252,7 @@ struct UntaggedEnumTests {
             case dictionary([String: Self])
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (UntaggedEnumTests #28)", .tags(.codable, .encoding, .enums, .macroExpansion, .untagged))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -373,7 +375,7 @@ struct UntaggedEnumTests {
             )
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (UntaggedEnumTests #36)", .tags(.decoding, .encoding, .untagged))
         func decodingAndEncodingBool() throws {
             let original: CodableValue = .bool(true)
             let encoded = try JSONEncoder().encode(original)
@@ -386,7 +388,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (UntaggedEnumTests #37)", .tags(.decoding, .encoding, .untagged))
         func decodingAndEncodingString() throws {
             let original: CodableValue = .string("test")
             let encoded = try JSONEncoder().encode(original)
@@ -399,7 +401,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (UntaggedEnumTests #98)", .tags(.decoding, .untagged))
         func decodingFromJSONPrimitives() throws {
             // Test bool
             let boolJson = "true".data(using: .utf8)!
@@ -432,7 +434,7 @@ struct UntaggedEnumTests {
             }
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (UntaggedEnumTests #99)", .tags(.decoding, .untagged))
         func decodingFromJSONArray() throws {
             let arrayJson = "[true, \"test\", 123]".data(using: .utf8)!
             let arrayDecoded = try JSONDecoder().decode(
@@ -450,6 +452,7 @@ struct UntaggedEnumTests {
         }
     }
 
+    @Suite("Untagged Enum - With Fallback Case")
     struct WithFallbackCase {
         @Codable
         @UnTagged
@@ -465,7 +468,7 @@ struct UntaggedEnumTests {
             case `nil`
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (UntaggedEnumTests #29)", .tags(.codable, .encoding, .enums, .macroExpansion, .untagged))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -588,7 +591,7 @@ struct UntaggedEnumTests {
             )
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (UntaggedEnumTests #100)", .tags(.decoding, .untagged))
         func decoding() throws {
             let data = try JSONDecoder().decode(
                 CodableValue.self, from: heterogenousJSONData
@@ -602,6 +605,7 @@ struct UntaggedEnumTests {
         }
     }
 
+    @Suite("Untagged Enum - Nested Decoding")
     struct NestedDecoding {
         @Codable
         @UnTagged
@@ -613,7 +617,7 @@ struct UntaggedEnumTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (UntaggedEnumTests #30)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .optionals, .untagged))
         func expansion() throws {
             assertMacroExpansion(
                 """
