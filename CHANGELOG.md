@@ -10,7 +10,6 @@
 ### 🐛 Fixes
 
 * fixed optional types not detected with `valueCoder` strategy ([#141](https://github.com/SwiftyLab/MetaCodable/issues/141)) ([5873c3e](https://github.com/SwiftyLab/MetaCodable/commit/5873c3e33ab98e61c06304bfc2a2c93ab199d65d))
-* removed unreachable `default` case warnings for `Bool` type switches in macro-generated code
 
 ## [1.5.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.4.0...v1.5.0) (2025-07-08)
 
