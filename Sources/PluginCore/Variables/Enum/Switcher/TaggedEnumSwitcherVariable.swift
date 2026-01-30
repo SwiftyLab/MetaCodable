@@ -11,25 +11,34 @@ import SwiftSyntaxMacros
 protocol TaggedEnumSwitcherVariable: EnumSwitcherVariable {}
 
 extension TaggedEnumSwitcherVariable {
-    /// Provides the switch expression for decoding.
+    /// Provides a `switch` expression used to decode a tagged enum variable.
     ///
-    /// Based on enum-cases the each case for switch expression is generated.
-    /// Final expression generated combining all cases with provided parameters.
+    /// Generates a `switch` over `header` by mapping each eligible enum case in `location`
+    /// to a corresponding `case` clause. Each generated clause runs `preSyntax` for the
+    /// matched tag value and then emits the decoding code for that enum case.
     ///
     /// - Parameters:
-    ///   - header: The switch header cases are compared to.
-    ///   - location: The decoding location.
-    ///   - coder: The decoder for cases.
-    ///   - context: The context in which to perform the macro expansion.
-    ///   - default: Whether default case is needed. Note that for Bool type,
-    ///     the default case is automatically skipped since both true and false
-    ///     cases are explicitly handled, avoiding unreachable default warnings.
-    ///   - forceDecodingReturn: Whether to force explicit `return` statements in each
-    ///     switch case. When `true`, adds a `return` statement after the case assignment
-    ///     for early exit. Defaults to `false` for backward compatibility.
-    ///   - preSyntax: The callback to generate case variation data.
+    ///   - header: The expression whose value is matched by the `switch`.
+    ///   - location: The decoding location containing tagged enum cases.
+    ///   - coder: The decoder token used by generated decoding code.
+    ///   - context: The macro expansion context.
+    ///   - default: Whether to include a `default` case.
+    ///   - forceDecodingReturn:
+    ///     - When `true`, emits an explicit `return` after each `case` assignment
+    ///       for early exit.
+    ///     - Defaults to `false` for backward compatibility.
+    ///   - preSyntax: A callback used to generate case-variation syntax for the matched
+    ///     tag value.
     ///
-    /// - Returns: The generated switch expression.
+    /// - Important: For `Bool` tags, the `default` case is omitted only when both `true`
+    ///   and `false` are explicitly covered. With partial coverage (only one of the two
+    ///   values), the `default` case is retained.
+    ///
+    /// - Returns: A `SwitchExprSyntax` when at least one matching switch case can be
+    ///   generated; otherwise `nil`.
+    ///
+    /// - Complexity: `O(𝑛)` in the number of tagged cases in `location`.
+    ///   - Plus the number of tag expressions scanned for `Bool` coverage.
     func decodeSwitchExpression(
         over header: EnumVariable.CaseValue.Expr,
         at location: EnumSwitcherLocation,
