@@ -1,55 +1,58 @@
 import Testing
 
-/// Test tags for organizing and filtering MetaCodable tests.
+// MARK: Test Tags
+
+/// Test tags for organizing and filtering `MetaCodable` tests.
 extension Tag {
-    // MARK: - Macro Tags
     
-    /// Tests for @Codable macro
+    // MARK: Macro
+    
+    /// Tests for `@Codable` macro
     @Tag static var codable: Self
     
-    /// Tests for @CodedAt macro
+    /// Tests for `@CodedAt` macro
     @Tag static var codedAt: Self
     
-    /// Tests for @CodedIn macro
+    /// Tests for `@CodedIn` macro
     @Tag static var codedIn: Self
     
-    /// Tests for @CodedBy macro
+    /// Tests for `@CodedBy` macro
     @Tag static var codedBy: Self
     
-    /// Tests for @CodedAs macro
+    /// Tests for `@CodedAs` macro
     @Tag static var codedAs: Self
     
-    /// Tests for @CodingKeys macro
+    /// Tests for `@CodingKeys` macro
     @Tag static var codingKeys: Self
     
-    /// Tests for @Default macro
+    /// Tests for `@Default` macro
     @Tag static var `default`: Self
     
-    /// Tests for @IgnoreCoding macro
+    /// Tests for `@IgnoreCoding` macro
     @Tag static var ignoreCoding: Self
     
-    /// Tests for @IgnoreDecoding macro
+    /// Tests for `@IgnoreDecoding` macro
     @Tag static var ignoreDecoding: Self
     
-    /// Tests for @IgnoreEncoding macro
+    /// Tests for `@IgnoreEncoding` macro
     @Tag static var ignoreEncoding: Self
     
-    /// Tests for @IgnoreCodingInitialized macro
+    /// Tests for `@IgnoreCodingInitialized` macro
     @Tag static var ignoreCodingInitialized: Self
     
-    /// Tests for @ContentAt macro
+    /// Tests for `@ContentAt` macro
     @Tag static var contentAt: Self
     
-    /// Tests for @UnTagged macro
+    /// Tests for `@UnTagged` macro
     @Tag static var untagged: Self
     
-    /// Tests for @MemberInit macro
+    /// Tests for `@MemberInit` macro
     @Tag static var memberInit: Self
     
-    /// Tests for @Inherits macro
+    /// Tests for `@Inherits` macro
     @Tag static var inherits: Self
     
-    // MARK: - Test Type Tags
+    // MARK: Test Type
     
     /// Tests that verify macro expansion output
     @Tag static var macroExpansion: Self
@@ -66,9 +69,9 @@ extension Tag {
     /// Integration tests combining multiple features
     @Tag static var integration: Self
     
-    // MARK: - Feature Tags
+    // MARK: Feature
     
-    /// Tests for HelperCoder and related types
+    /// Tests for `HelperCoder` and related types
     @Tag static var helperCoders: Self
     
     /// Tests for dynamic coding features
@@ -83,32 +86,32 @@ extension Tag {
     /// Tests for access modifier handling
     @Tag static var accessModifiers: Self
     
-    /// Tests for optional/nil handling
+    /// Tests for `Optional`/`nil` handling
     @Tag static var optionals: Self
     
-    /// Tests for enum types
+    /// Tests for `enum` types
     @Tag static var enums: Self
     
-    /// Tests for struct types
+    /// Tests for `struct` types
     @Tag static var structs: Self
     
-    /// Tests for class types
+    /// Tests for `class` types
     @Tag static var classes: Self
     
-    /// Tests for raw representable types
+    /// Tests for `RawRepresentable` types
     @Tag static var rawRepresentable: Self
     
-    // MARK: - Coverage Tags
+    // MARK: Coverage
     
     /// Tests created specifically for coverage improvement
     @Tag static var coverage: Self
     
-    // MARK: - Helper Coder Tags
+    // MARK: Helper Coder
     
     /// Tests for date coders
     @Tag static var dateCoder: Self
     
-    /// Tests for data coders (Base64)
+    /// Tests for data coders (`Base64`)
     @Tag static var dataCoder: Self
     
     /// Tests for sequence coders

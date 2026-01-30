@@ -10,6 +10,8 @@ import Testing
 @Suite("Conditional Coder Tests")
 struct ConditionalCoderTests {
     
+    // MARK: Prefix & Suffix
+    
     /// A decoder-only coder that prefixes decoded strings.
     struct PrefixDecoder: HelperCoder {
         let prefix: String
@@ -35,6 +37,8 @@ struct ConditionalCoderTests {
             try container.encode("\(value):\(suffix)")
         }
     }
+    
+    // MARK: Wrappers
     
     /// Wrapper for decoding tests.
     struct DecodingWrapper: Decodable {
@@ -76,57 +80,64 @@ struct ConditionalCoderTests {
         }
     }
     
-    // MARK: - decodeIfPresent Tests
+    // MARK: Decode if present
     
-    /// Tests that `decodeIfPresent` uses the decoder coder and returns value.
-    @Test("Decodes from JSON successfully (ConditionalCoderTests #34)", .tags(.conditionalCoder, .decoding))
-    func decodeIfPresentReturnsValue() throws {
-        let json = #"{"value": "test"}"#
-        let data = json.data(using: .utf8)!
+    @Suite("Coder Tests → Decode if Present")
+    struct DecodeIfPresentCoderTests {
+        /// Tests that `decodeIfPresent` uses the decoder coder and returns value.
+        @Test("Decodes from JSON successfully (ConditionalCoderTests #34)", .tags(.conditionalCoder, .decoding))
+        func decodeIfPresentReturnsValue() throws {
+            let json = #"{"value": "test"}"#
+            let data = json.data(using: .utf8)!
+            
+            let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
+            #expect(result.value == "decoded:test")
+        }
         
-        let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
-        #expect(result.value == "decoded:test")
+        /// Tests that `decodeIfPresent` returns nil when value is null.
+        @Test("Decodes from JSON successfully (ConditionalCoderTests #35)", .tags(.conditionalCoder, .decoding))
+        func decodeIfPresentReturnsNilForNull() throws {
+            let json = #"{"value": null}"#
+            let data = json.data(using: .utf8)!
+            
+            let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
+            #expect(result.value == nil)
+        }
+        
+        /// Tests that `decodeIfPresent` returns nil when key is missing.
+        @Test("Decodes from JSON successfully (ConditionalCoderTests #36)", .tags(.conditionalCoder, .decoding))
+        func decodeIfPresentReturnsNilForMissingKey() throws {
+            let json = #"{}"#
+            let data = json.data(using: .utf8)!
+            
+            let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
+            #expect(result.value == nil)
+        }
     }
     
-    /// Tests that `decodeIfPresent` returns nil when value is null.
-    @Test("Decodes from JSON successfully (ConditionalCoderTests #35)", .tags(.conditionalCoder, .decoding))
-    func decodeIfPresentReturnsNilForNull() throws {
-        let json = #"{"value": null}"#
-        let data = json.data(using: .utf8)!
-        
-        let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
-        #expect(result.value == nil)
-    }
+    // MARK: Encode if present
     
-    /// Tests that `decodeIfPresent` returns nil when key is missing.
-    @Test("Decodes from JSON successfully (ConditionalCoderTests #36)", .tags(.conditionalCoder, .decoding))
-    func decodeIfPresentReturnsNilForMissingKey() throws {
-        let json = #"{}"#
-        let data = json.data(using: .utf8)!
+    @Suite("Coder Tests → Encode if Present")
+    struct EncodeIfPresentCoderTests {
+        /// Tests that `encodeIfPresent` uses the encoder coder
+        /// when value is present.
+        @Test("Encodes to JSON successfully (ConditionalCoderTests #7)", .tags(.conditionalCoder, .encoding))
+        func encodeIfPresentEncodesValue() throws {
+            let wrapper = EncodingWrapper(value: "test")
+            let data = try JSONEncoder().encode(wrapper)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json.contains("test:encoded"))
+        }
         
-        let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
-        #expect(result.value == nil)
-    }
-    
-    // MARK: - encodeIfPresent Tests
-    
-    /// Tests that `encodeIfPresent` uses the encoder coder when value is present.
-    @Test("Encodes to JSON successfully (ConditionalCoderTests #7)", .tags(.conditionalCoder, .encoding))
-    func encodeIfPresentEncodesValue() throws {
-        let wrapper = EncodingWrapper(value: "test")
-        let data = try JSONEncoder().encode(wrapper)
-        let json = String(data: data, encoding: .utf8)!
-        
-        #expect(json.contains("test:encoded"))
-    }
-    
-    /// Tests that `encodeIfPresent` skips encoding when value is nil.
-    @Test("Encodes to JSON successfully (ConditionalCoderTests #8)", .tags(.conditionalCoder, .encoding))
-    func encodeIfPresentSkipsNil() throws {
-        let wrapper = EncodingWrapper(value: nil)
-        let data = try JSONEncoder().encode(wrapper)
-        let json = String(data: data, encoding: .utf8)!
-        
-        #expect(json == "{}")
+        /// Tests that `encodeIfPresent` skips encoding when value is nil.
+        @Test("Encodes to JSON successfully (ConditionalCoderTests #8)", .tags(.conditionalCoder, .encoding))
+        func encodeIfPresentSkipsNil() throws {
+            let wrapper = EncodingWrapper(value: nil)
+            let data = try JSONEncoder().encode(wrapper)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json == "{}")
+        }
     }
 }

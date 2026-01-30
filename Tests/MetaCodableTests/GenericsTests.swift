@@ -13,18 +13,7 @@ struct GenericsTests {
             let value: T
         }
 
-        @Test(
-            "Generates @Codable conformance for struct (GenericsTests #7)",
-            .tags(
-                .codable,
-                .decoding,
-                .encoding,
-                .enums,
-                .generics,
-                .macroExpansion,
-                .structs
-            )
-        )
+        @Test("Generates @Codable conformance for struct (GenericsTests #7)", .tags(.codable, .decoding, .encoding, .enums, .generics, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

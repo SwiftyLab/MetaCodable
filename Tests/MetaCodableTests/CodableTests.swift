@@ -30,18 +30,7 @@ struct CodableTests {
             }
         }
 
-        @Test(
-            "Reports error for @Codable misuse (CodableTests #1)",
-            .tags(
-                .codable,
-                .decoding,
-                .encoding,
-                .enums,
-                .errorHandling,
-                .macroExpansion,
-                .structs
-            )
-        )
+        @Test("Reports error for @Codable misuse (CodableTests #1)", .tags(.codable, .decoding, .encoding, .enums, .errorHandling, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

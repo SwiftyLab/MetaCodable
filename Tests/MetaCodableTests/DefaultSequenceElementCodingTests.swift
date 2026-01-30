@@ -41,137 +41,154 @@ struct DefaultSequenceElementCodingTests {
         }
     }
     
-    // MARK: - decodeIfPresent(from:) Tests
+    // MARK: decodeIfPresent(from:)
     
-    /// Tests that `decodeIfPresent(from:)` returns value from single value container.
-    @Test("Decodes struct from JSON successfully", .tags(.coverage, .decoding, .default, .optionals, .structs))
-    func decodeIfPresentFromDecoderReturnsValue() throws {
-        let json = #""test""#
-        let data = json.data(using: .utf8)!
+    @Suite("Decode if present from decoder")
+    struct DecodeIfPresentFromDecoderTests {
         
-        struct SingleValueWrapper: Decodable {
-            let value: String?
+        /// Tests that `decodeIfPresent(from:)` returns value
+        /// from single value container.
+        @Test("Decodes single value struct from JSON successfully", .tags(.coverage, .decoding, .default, .optionals, .structs))
+        func decodeIfPresentFromDecoderReturnsValue() throws {
+            let json = #""test""#
+            let data = json.data(using: .utf8)!
             
-            init(from decoder: Decoder) throws {
-                let coder = DefaultSequenceElementCoding<String>()
-                self.value = try coder.decodeIfPresent(from: decoder)
+            struct SingleValueWrapper: Decodable {
+                let value: String?
+                
+                init(from decoder: Decoder) throws {
+                    let coder = DefaultSequenceElementCoding<String>()
+                    self.value = try coder.decodeIfPresent(from: decoder)
+                }
             }
+            
+            let result = try JSONDecoder().decode(SingleValueWrapper.self, from: data)
+            #expect(result.value == "test")
         }
         
-        let result = try JSONDecoder().decode(SingleValueWrapper.self, from: data)
-        #expect(result.value == "test")
+        /// Tests that `decodeIfPresent(from:)` returns nil for null.
+        @Test("Decodes nil for null from JSON successfully", .tags(.coverage, .decoding, .default, .optionals, .structs))
+        func decodeIfPresentFromDecoderReturnsNilForNull() throws {
+            let json = #"null"#
+            let data = json.data(using: .utf8)!
+            
+            struct SingleValueWrapper: Decodable {
+                let value: String?
+                
+                init(from decoder: Decoder) throws {
+                    let coder = DefaultSequenceElementCoding<String>()
+                    self.value = try coder.decodeIfPresent(from: decoder)
+                }
+            }
+            
+            let result = try JSONDecoder().decode(SingleValueWrapper.self, from: data)
+            #expect(result.value == nil)
+        }
     }
     
-    /// Tests that `decodeIfPresent(from:)` returns nil for null.
-    @Test("Decodes struct from JSON successfully (DefaultSequenceElementCodingTests #1)", .tags(.coverage, .decoding, .default, .optionals, .structs))
-    func decodeIfPresentFromDecoderReturnsNilForNull() throws {
-        let json = #"null"#
-        let data = json.data(using: .utf8)!
+    // MARK: decodeIfPresent(from:forKey:)
+    
+    @Suite("Decode if present from decoder for keyed container")
+    struct DecodeIfPresentFromDecoderForKeyedContainerTests {
         
-        struct SingleValueWrapper: Decodable {
-            let value: String?
+        /// Tests that `decodeIfPresent(from:forKey:)` returns value when present.
+        @Test("Decodes from JSON successfully", .tags(.coverage, .decoding, .default))
+        func decodeIfPresentFromKeyedContainerReturnsValue() throws {
+            let json = #"{"value": "test"}"#
+            let data = json.data(using: .utf8)!
             
-            init(from decoder: Decoder) throws {
-                let coder = DefaultSequenceElementCoding<String>()
-                self.value = try coder.decodeIfPresent(from: decoder)
-            }
+            let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
+            #expect(result.value == "test")
         }
         
-        let result = try JSONDecoder().decode(SingleValueWrapper.self, from: data)
-        #expect(result.value == nil)
-    }
-    
-    // MARK: - decodeIfPresent(from:forKey:) Tests
-    
-    /// Tests that `decodeIfPresent(from:forKey:)` returns value when present.
-    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #41)", .tags(.coverage, .decoding, .default))
-    func decodeIfPresentFromKeyedContainerReturnsValue() throws {
-        let json = #"{"value": "test"}"#
-        let data = json.data(using: .utf8)!
-        
-        let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
-        #expect(result.value == "test")
-    }
-    
-    /// Tests that `decodeIfPresent(from:forKey:)` returns nil for null.
-    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #42)", .tags(.coverage, .decoding, .default))
-    func decodeIfPresentFromKeyedContainerReturnsNilForNull() throws {
-        let json = #"{"value": null}"#
-        let data = json.data(using: .utf8)!
-        
-        let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
-        #expect(result.value == nil)
-    }
-    
-    /// Tests that `decodeIfPresent(from:forKey:)` returns nil for missing key.
-    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #43)", .tags(.coverage, .decoding, .default))
-    func decodeIfPresentFromKeyedContainerReturnsNilForMissingKey() throws {
-        let json = #"{}"#
-        let data = json.data(using: .utf8)!
-        
-        let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
-        #expect(result.value == nil)
-    }
-    
-    // MARK: - encodeIfPresent(_:to:) Tests
-    
-    /// Tests that `encodeIfPresent(_:to:)` encodes value when present.
-    @Test("Encodes struct to JSON successfully", .tags(.coverage, .default, .encoding, .optionals, .structs))
-    func encodeIfPresentToEncoderEncodesValue() throws {
-        struct SingleValueWrapper: Encodable {
-            let value: String?
+        /// Tests that `decodeIfPresent(from:forKey:)` returns nil for null.
+        @Test("Decodes nil for null value from JSON successfully", .tags(.coverage, .decoding, .default))
+        func decodeIfPresentFromKeyedContainerReturnsNilForNull() throws {
+            let json = #"{"value": null}"#
+            let data = json.data(using: .utf8)!
             
-            func encode(to encoder: Encoder) throws {
-                let coder = DefaultSequenceElementCoding<String>()
-                try coder.encodeIfPresent(value, to: encoder)
-            }
+            let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
+            #expect(result.value == nil)
         }
         
-        let wrapper = SingleValueWrapper(value: "test")
-        let data = try JSONEncoder().encode(wrapper)
-        let json = String(data: data, encoding: .utf8)!
-        
-        #expect(json == #""test""#)
+        /// Tests that `decodeIfPresent(from:forKey:)` returns nil for missing key.
+        @Test("Decodes from empty JSON successfully", .tags(.coverage, .decoding, .default))
+        func decodeIfPresentFromKeyedContainerReturnsNilForMissingKey() throws {
+            let json = #"{}"#
+            let data = json.data(using: .utf8)!
+            
+            let result = try JSONDecoder().decode(DecodingWrapper.self, from: data)
+            #expect(result.value == nil)
+        }
     }
     
-    /// Tests that `encodeIfPresent(_:to:)` encodes null for nil.
-    @Test("Encodes struct to JSON successfully (DefaultSequenceElementCodingTests #1)", .tags(.coverage, .default, .encoding, .optionals, .structs))
-    func encodeIfPresentToEncoderEncodesNullForNil() throws {
-        struct SingleValueWrapper: Encodable {
-            let value: String?
-            
-            func encode(to encoder: Encoder) throws {
-                let coder = DefaultSequenceElementCoding<String>()
-                try coder.encodeIfPresent(value, to: encoder)
+    // MARK: encodeIfPresent(_:to:)
+    
+    @Suite("Encode to Encoder if value present")
+    struct EncodeToEncoderIfValuePresentTests {
+        
+        /// Tests that `encodeIfPresent(_:to:)` encodes value when present.
+        @Test("Encodes struct with value to JSON successfully", .tags(.coverage, .default, .encoding, .optionals, .structs))
+        func encodeIfPresentToEncoderEncodesValue() throws {
+            struct SingleValueWrapper: Encodable {
+                let value: String?
+                
+                func encode(to encoder: Encoder) throws {
+                    let coder = DefaultSequenceElementCoding<String>()
+                    try coder.encodeIfPresent(value, to: encoder)
+                }
             }
+            
+            let wrapper = SingleValueWrapper(value: "test")
+            let data = try JSONEncoder().encode(wrapper)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json == #""test""#)
         }
         
-        let wrapper = SingleValueWrapper(value: nil)
-        let data = try JSONEncoder().encode(wrapper)
-        let json = String(data: data, encoding: .utf8)!
-        
-        #expect(json == "null")
+        /// Tests that `encodeIfPresent(_:to:)` encodes null for nil.
+        @Test("Encodes null for nil to JSON successfully", .tags(.coverage, .default, .encoding, .optionals, .structs))
+        func encodeIfPresentToEncoderEncodesNullForNil() throws {
+            struct SingleValueWrapper: Encodable {
+                let value: String?
+                
+                func encode(to encoder: Encoder) throws {
+                    let coder = DefaultSequenceElementCoding<String>()
+                    try coder.encodeIfPresent(value, to: encoder)
+                }
+            }
+            
+            let wrapper = SingleValueWrapper(value: nil)
+            let data = try JSONEncoder().encode(wrapper)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json == "null")
+        }
     }
     
-    // MARK: - encodeIfPresent(_:to:atKey:) Tests
+    // MARK: encodeIfPresent(_:to:atKey:)
     
-    /// Tests that `encodeIfPresent(_:to:atKey:)` encodes value when present.
-    @Test("Encodes to JSON successfully (DefaultSequenceElementCodingTests #12)", .tags(.coverage, .default, .encoding))
-    func encodeIfPresentToKeyedContainerEncodesValue() throws {
-        let wrapper = EncodingWrapper(value: "test")
-        let data = try JSONEncoder().encode(wrapper)
-        let json = String(data: data, encoding: .utf8)!
+    @Suite("Encode to Encoder if value present for keyed container")
+    struct EncodeToEncoderIfValuePresentForKeyedContainerTests {
         
-        #expect(json.contains("test"))
-    }
-    
-    /// Tests that `encodeIfPresent(_:to:atKey:)` skips encoding for nil.
-    @Test("Encodes to JSON successfully (DefaultSequenceElementCodingTests #13)", .tags(.coverage, .default, .encoding))
-    func encodeIfPresentToKeyedContainerSkipsNil() throws {
-        let wrapper = EncodingWrapper(value: nil)
-        let data = try JSONEncoder().encode(wrapper)
-        let json = String(data: data, encoding: .utf8)!
+        /// Tests that `encodeIfPresent(_:to:atKey:)` encodes value when present.
+        @Test("Encodes value to JSON successfully", .tags(.coverage, .default, .encoding))
+        func encodeIfPresentToKeyedContainerEncodesValue() throws {
+            let wrapper = EncodingWrapper(value: "test")
+            let data = try JSONEncoder().encode(wrapper)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json.contains("test"))
+        }
         
-        #expect(json == "{}")
+        /// Tests that `encodeIfPresent(_:to:atKey:)` skips encoding for nil.
+        @Test("Skips nil encoding to JSON successfully", .tags(.coverage, .default, .encoding))
+        func encodeIfPresentToKeyedContainerSkipsNil() throws {
+            let wrapper = EncodingWrapper(value: nil)
+            let data = try JSONEncoder().encode(wrapper)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json == "{}")
+        }
     }
 }

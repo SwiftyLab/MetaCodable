@@ -31,196 +31,209 @@ struct HelperCoderTests {
         }
     }
     
-    // MARK: - decodeIfPresent Tests
+    // MARK: decodeIfPresent
     
-    /// Tests that `decodeIfPresent` returns a value when valid data is present.
-    @Test("Decodes struct from JSON successfully (HelperCoderTests #2)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
-    func decodeIfPresentWithValidData() throws {
-        let json = #"{"value": "test"}"#
-        let data = json.data(using: .utf8)!
-        let decoder = JSONDecoder()
+    @Suite("Decode if Present Tests with Helper Coders")
+    struct DecodeIfPresentTestsWithHelperCoders {
         
-        struct Container: Decodable {
-            let value: String
+        /// Tests that `decodeIfPresent` returns a value when valid data is present.
+        @Test("Decodes struct from JSON successfully (HelperCoderTests #2)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
+        func decodeIfPresentWithValidData() throws {
+            let json = #"{"value": "test"}"#
+            let data = json.data(using: .utf8)!
+            let decoder = JSONDecoder()
             
-            init(from decoder: Decoder) throws {
-                let container = try decoder.container(keyedBy: CodingKeys.self)
-                let coder = StringWrapperCoder()
-                self.value = try coder.decodeIfPresent(
-                    from: container,
-                    forKey: .value
-                ) ?? "default"
+            struct Container: Decodable {
+                let value: String
+                
+                init(from decoder: Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    let coder = StringWrapperCoder()
+                    self.value = try coder.decodeIfPresent(
+                        from: container,
+                        forKey: .value
+                    ) ?? "default"
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case value
+                }
             }
             
-            enum CodingKeys: String, CodingKey {
-                case value
-            }
+            let result = try decoder.decode(Container.self, from: data)
+            #expect(result.value == "wrapped:test")
         }
         
-        let result = try decoder.decode(Container.self, from: data)
-        #expect(result.value == "wrapped:test")
+        /// Tests that `decodeIfPresent` returns nil when data is null.
+        @Test("Decodes struct from JSON successfully (HelperCoderTests #3)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
+        func decodeIfPresentWithNullData() throws {
+            let json = #"{"value": null}"#
+            let data = json.data(using: .utf8)!
+            let decoder = JSONDecoder()
+            
+            struct Container: Decodable {
+                let value: String?
+                
+                init(from decoder: Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    let coder = StringWrapperCoder()
+                    self.value = try coder.decodeIfPresent(
+                        from: container,
+                        forKey: .value
+                    )
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case value
+                }
+            }
+            
+            let result = try decoder.decode(Container.self, from: data)
+            #expect(result.value == nil)
+        }
+        
+        /// Tests that `decodeIfPresent` returns nil when key is missing.
+        @Test("Decodes struct from JSON successfully (HelperCoderTests #4)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
+        func decodeIfPresentWithMissingKey() throws {
+            let json = #"{}"#
+            let data = json.data(using: .utf8)!
+            let decoder = JSONDecoder()
+            
+            struct Container: Decodable {
+                let value: String?
+                
+                init(from decoder: Decoder) throws {
+                    let container = try decoder.container(keyedBy: CodingKeys.self)
+                    let coder = StringWrapperCoder()
+                    self.value = try coder.decodeIfPresent(
+                        from: container,
+                        forKey: .value
+                    )
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case value
+                }
+            }
+            
+            let result = try decoder.decode(Container.self, from: data)
+            #expect(result.value == nil)
+        }
     }
     
-    /// Tests that `decodeIfPresent` returns nil when data is null.
-    @Test("Decodes struct from JSON successfully (HelperCoderTests #3)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
-    func decodeIfPresentWithNullData() throws {
-        let json = #"{"value": null}"#
-        let data = json.data(using: .utf8)!
-        let decoder = JSONDecoder()
+    // MARK: Encode
+    
+    @Suite("Encode Tests")
+    struct EncodeTests {
         
-        struct Container: Decodable {
-            let value: String?
-            
-            init(from decoder: Decoder) throws {
-                let container = try decoder.container(keyedBy: CodingKeys.self)
-                let coder = StringWrapperCoder()
-                self.value = try coder.decodeIfPresent(
-                    from: container,
-                    forKey: .value
-                )
+        /// Tests that `encode` works for Encodable types.
+        @Test("Encodes struct to JSON successfully (HelperCoderTests #2)", .tags(.encoding, .enums, .helperCoders, .structs))
+        func encodeEncodableType() throws {
+            struct Container: Encodable {
+                let value: String
+                
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    let coder = StringWrapperCoder()
+                    try coder.encode(value, to: &container, atKey: .value)
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case value
+                }
             }
             
-            enum CodingKeys: String, CodingKey {
-                case value
-            }
+            let container = Container(value: "test")
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(container)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json.contains("test"))
         }
         
-        let result = try decoder.decode(Container.self, from: data)
-        #expect(result.value == nil)
+        /// Tests that `encode` does nothing for non-Encodable types
+        /// (default implementation).
+        @Test("Encodes struct to JSON successfully (HelperCoderTests #3)", .tags(.encoding, .enums, .helperCoders, .structs))
+        func encodeNonEncodableType() throws {
+            struct Container: Encodable {
+                let nonEncodable: NonEncodableValue
+                
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    let coder = NonEncodableCoder()
+                    // This should not throw, just do nothing
+                    try coder.encode(nonEncodable, to: &container, atKey: .value)
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case value
+                }
+            }
+            
+            let container = Container(nonEncodable: NonEncodableValue(value: 42))
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(container)
+            let json = String(data: data, encoding: .utf8)!
+            
+            /// The non-encodable value should not appear in the output
+            #expect(!json.contains("42"))
+        }
     }
     
-    /// Tests that `decodeIfPresent` returns nil when key is missing.
-    @Test("Decodes struct from JSON successfully (HelperCoderTests #4)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
-    func decodeIfPresentWithMissingKey() throws {
-        let json = #"{}"#
-        let data = json.data(using: .utf8)!
-        let decoder = JSONDecoder()
+    // MARK: encodeIfPresent
+    
+    @Suite("Encode if Present Tests")
+    struct EncodeIfPresentTests {
         
-        struct Container: Decodable {
-            let value: String?
-            
-            init(from decoder: Decoder) throws {
-                let container = try decoder.container(keyedBy: CodingKeys.self)
-                let coder = StringWrapperCoder()
-                self.value = try coder.decodeIfPresent(
-                    from: container,
-                    forKey: .value
-                )
+        /// Tests that `encodeIfPresent` encodes when value is present.
+        @Test("Encodes struct to JSON successfully (HelperCoderTests #4)", .tags(.encoding, .enums, .helperCoders, .optionals, .structs))
+        func encodeIfPresentWithValue() throws {
+            struct Container: Encodable {
+                let value: String?
+                
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    let coder = StringWrapperCoder()
+                    try coder.encodeIfPresent(value, to: &container, atKey: .value)
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case value
+                }
             }
             
-            enum CodingKeys: String, CodingKey {
-                case value
-            }
+            let container = Container(value: "test")
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(container)
+            let json = String(data: data, encoding: .utf8)!
+            
+            #expect(json.contains("test"))
         }
         
-        let result = try decoder.decode(Container.self, from: data)
-        #expect(result.value == nil)
-    }
-    
-    // MARK: - encode Tests
-    
-    /// Tests that `encode` works for Encodable types.
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #2)", .tags(.encoding, .enums, .helperCoders, .structs))
-    func encodeEncodableType() throws {
-        struct Container: Encodable {
-            let value: String
-            
-            func encode(to encoder: Encoder) throws {
-                var container = encoder.container(keyedBy: CodingKeys.self)
-                let coder = StringWrapperCoder()
-                try coder.encode(value, to: &container, atKey: .value)
+        /// Tests that `encodeIfPresent` skips encoding when value is nil.
+        @Test("Encodes struct to JSON successfully (HelperCoderTests #5)", .tags(.encoding, .enums, .helperCoders, .optionals, .structs))
+        func encodeIfPresentWithNil() throws {
+            struct Container: Encodable {
+                let value: String?
+                
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    let coder = StringWrapperCoder()
+                    try coder.encodeIfPresent(value, to: &container, atKey: .value)
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case value
+                }
             }
             
-            enum CodingKeys: String, CodingKey {
-                case value
-            }
+            let container = Container(value: nil)
+            let encoder = JSONEncoder()
+            let data = try encoder.encode(container)
+            let json = String(data: data, encoding: .utf8)!
+            
+            /// Should be empty object since nil values are skipped
+            #expect(json == "{}")
         }
-        
-        let container = Container(value: "test")
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(container)
-        let json = String(data: data, encoding: .utf8)!
-        
-        #expect(json.contains("test"))
-    }
-    
-    /// Tests that `encode` does nothing for non-Encodable types (default implementation).
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #3)", .tags(.encoding, .enums, .helperCoders, .structs))
-    func encodeNonEncodableType() throws {
-        struct Container: Encodable {
-            let nonEncodable: NonEncodableValue
-            
-            func encode(to encoder: Encoder) throws {
-                var container = encoder.container(keyedBy: CodingKeys.self)
-                let coder = NonEncodableCoder()
-                // This should not throw, just do nothing
-                try coder.encode(nonEncodable, to: &container, atKey: .value)
-            }
-            
-            enum CodingKeys: String, CodingKey {
-                case value
-            }
-        }
-        
-        let container = Container(nonEncodable: NonEncodableValue(value: 42))
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(container)
-        let json = String(data: data, encoding: .utf8)!
-        
-        // The non-encodable value should not appear in the output
-        #expect(!json.contains("42"))
-    }
-    
-    // MARK: - encodeIfPresent Tests
-    
-    /// Tests that `encodeIfPresent` encodes when value is present.
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #4)", .tags(.encoding, .enums, .helperCoders, .optionals, .structs))
-    func encodeIfPresentWithValue() throws {
-        struct Container: Encodable {
-            let value: String?
-            
-            func encode(to encoder: Encoder) throws {
-                var container = encoder.container(keyedBy: CodingKeys.self)
-                let coder = StringWrapperCoder()
-                try coder.encodeIfPresent(value, to: &container, atKey: .value)
-            }
-            
-            enum CodingKeys: String, CodingKey {
-                case value
-            }
-        }
-        
-        let container = Container(value: "test")
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(container)
-        let json = String(data: data, encoding: .utf8)!
-        
-        #expect(json.contains("test"))
-    }
-    
-    /// Tests that `encodeIfPresent` skips encoding when value is nil.
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #5)", .tags(.encoding, .enums, .helperCoders, .optionals, .structs))
-    func encodeIfPresentWithNil() throws {
-        struct Container: Encodable {
-            let value: String?
-            
-            func encode(to encoder: Encoder) throws {
-                var container = encoder.container(keyedBy: CodingKeys.self)
-                let coder = StringWrapperCoder()
-                try coder.encodeIfPresent(value, to: &container, atKey: .value)
-            }
-            
-            enum CodingKeys: String, CodingKey {
-                case value
-            }
-        }
-        
-        let container = Container(value: nil)
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(container)
-        let json = String(data: data, encoding: .utf8)!
-        
-        // Should be empty object since nil values are skipped
-        #expect(json == "{}")
     }
 }
