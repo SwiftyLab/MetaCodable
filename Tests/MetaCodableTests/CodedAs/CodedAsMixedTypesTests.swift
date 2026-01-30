@@ -149,8 +149,6 @@ struct CodedAsMixedTypesTests {
             """
         )
     }
-<<<<<<< HEAD
-=======
 
     /// Tests macro expansion when only `false` is specified for Bool type.
     ///
@@ -291,5 +289,4 @@ struct CodedAsMixedTypesTests {
             """
         )
     }
->>>>>>> bb8f9a5ed (fix: handle partial Bool coverage in TaggedEnumSwitcherVariable)
 }
