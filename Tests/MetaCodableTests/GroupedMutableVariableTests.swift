@@ -13,7 +13,7 @@ struct GroupedMutableVariableTests {
             var one, two, three: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #82)")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #82)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -73,7 +73,7 @@ struct GroupedMutableVariableTests {
             var one, two: String, three: String = ""
         }
 
-        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #83)")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #83)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -138,7 +138,7 @@ struct GroupedMutableVariableTests {
             var one, two: String, three: Int
         }
 
-        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #84)")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #84)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -240,7 +240,7 @@ struct GroupedMutableVariableTests {
             var one: String, two: String = "", three: Int
         }
 
-        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #85)")
+        @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #85)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -297,7 +297,7 @@ struct GroupedMutableVariableTests {
         }
     }
 
-    @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #86)")
+    @Test("Generates macro expansion with @Codable for struct (GroupedMutableVariableTests #86)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
     func mixedTypesWithSomeInitializedWithoutExplicitTyping() throws {
         assertMacroExpansion(
             """

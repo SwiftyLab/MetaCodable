@@ -18,7 +18,7 @@ struct DecodedAtEncodedAtIntegrationTests {
         let age: Int
     }
 
-    @Test("Encodes and decodes with JSON successfully (DecodedAtEncodedAtIntegrationTests #6)")
+    @Test("Encodes and decodes with JSON successfully (DecodedAtEncodedAtIntegrationTests #6)", .tags(.codedAt, .decoding, .encoding, .integration, .optionals))
     func differentPathsForDecodingAndEncoding() throws {
         // Sample JSON with nested structure for decoding
         let jsonData = """
@@ -67,7 +67,7 @@ struct DecodedAtEncodedAtIntegrationTests {
         let createdAt: String
     }
 
-    @Test("Encodes and decodes with JSON successfully (DecodedAtEncodedAtIntegrationTests #7)")
+    @Test("Encodes and decodes with JSON successfully (DecodedAtEncodedAtIntegrationTests #7)", .tags(.codedAt, .decoding, .encoding, .integration, .optionals))
     func complexNestedStructure() throws {
         // Complex nested JSON for decoding
         let jsonData = """
@@ -119,7 +119,7 @@ struct DecodedAtEncodedAtIntegrationTests {
         let value: Int?
     }
 
-    @Test("Encodes and decodes with JSON successfully (DecodedAtEncodedAtIntegrationTests #8)")
+    @Test("Encodes and decodes with JSON successfully (DecodedAtEncodedAtIntegrationTests #8)", .tags(.codedAt, .decoding, .encoding, .integration, .optionals))
     func optionalValues() throws {
         // JSON with all values present
         let fullJsonData = """
@@ -177,7 +177,7 @@ struct DecodedAtEncodedAtIntegrationTests {
 
     @Suite("Decoded At Encoded At Integration - Enum")
     struct EnumTests {
-        @Test("Reports error when @DecodedAt is used without @Codable")
+        @Test("Reports error when @DecodedAt is used without @Codable", .tags(.codable, .codedAt, .enums, .errorHandling, .integration, .macroExpansion))
         func misuseOnNonEnumDeclaration() throws {
             assertMacroExpansion(
                 """
@@ -222,7 +222,7 @@ struct DecodedAtEncodedAtIntegrationTests {
             )
         }
 
-        @Test("Reports error when @Codable is applied multiple times (DecodedAtEncodedAtIntegrationTests #2)")
+        @Test("Reports error when @Codable is applied multiple times (DecodedAtEncodedAtIntegrationTests #2)", .tags(.codable, .codedAt, .decoding, .encoding, .enums, .errorHandling, .integration, .macroExpansion))
         func duplicatedMisuse() throws {
             assertMacroExpansion(
                 """
@@ -377,7 +377,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 case store(key: String, value: Int)
             }
 
-            @Test("Generates macro expansion with @Codable for enum (DecodedAtEncodedAtIntegrationTests #13)")
+            @Test("Generates macro expansion with @Codable for enum (DecodedAtEncodedAtIntegrationTests #13)", .tags(.codable, .codedAt, .decoding, .encoding, .enums, .integration, .macroExpansion, .optionals))
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -483,7 +483,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 case store(key: String, value: Int)
             }
 
-            @Test("Generates macro expansion with @Codable for enum (DecodedAtEncodedAtIntegrationTests #14)")
+            @Test("Generates macro expansion with @Codable for enum (DecodedAtEncodedAtIntegrationTests #14)", .tags(.codable, .codedAs, .codedAt, .decoding, .encoding, .enums, .integration, .macroExpansion))
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -583,7 +583,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 case store(key: String, value: Int)
             }
 
-            @Test("Generates macro expansion with @Codable for enum (DecodedAtEncodedAtIntegrationTests #15)")
+            @Test("Generates macro expansion with @Codable for enum (DecodedAtEncodedAtIntegrationTests #15)", .tags(.codable, .codedAs, .codedAt, .codedBy, .decoding, .encoding, .enums, .integration, .macroExpansion))
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -701,7 +701,7 @@ struct DecodedAtEncodedAtIntegrationTests {
                 }
             }
 
-            @Test("Generates macro expansion with @Codable for struct with nested paths (DecodedAtEncodedAtIntegrationTests #82)")
+            @Test("Generates macro expansion with @Codable for struct with nested paths (DecodedAtEncodedAtIntegrationTests #82)", .tags(.codable, .codedAs, .codedAt, .codedIn, .decoding, .encoding, .enums, .integration, .macroExpansion, .optionals, .structs))
             func expansion() throws {
                 assertMacroExpansion(
                     """

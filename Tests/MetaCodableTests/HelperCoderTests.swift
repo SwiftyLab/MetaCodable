@@ -34,7 +34,7 @@ struct HelperCoderTests {
     // MARK: - decodeIfPresent Tests
     
     /// Tests that `decodeIfPresent` returns a value when valid data is present.
-    @Test("Decodes struct from JSON successfully (HelperCoderTests #2)")
+    @Test("Decodes struct from JSON successfully (HelperCoderTests #2)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
     func decodeIfPresentWithValidData() throws {
         let json = #"{"value": "test"}"#
         let data = json.data(using: .utf8)!
@@ -62,7 +62,7 @@ struct HelperCoderTests {
     }
     
     /// Tests that `decodeIfPresent` returns nil when data is null.
-    @Test("Decodes struct from JSON successfully (HelperCoderTests #3)")
+    @Test("Decodes struct from JSON successfully (HelperCoderTests #3)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
     func decodeIfPresentWithNullData() throws {
         let json = #"{"value": null}"#
         let data = json.data(using: .utf8)!
@@ -90,7 +90,7 @@ struct HelperCoderTests {
     }
     
     /// Tests that `decodeIfPresent` returns nil when key is missing.
-    @Test("Decodes struct from JSON successfully (HelperCoderTests #4)")
+    @Test("Decodes struct from JSON successfully (HelperCoderTests #4)", .tags(.decoding, .enums, .helperCoders, .optionals, .structs))
     func decodeIfPresentWithMissingKey() throws {
         let json = #"{}"#
         let data = json.data(using: .utf8)!
@@ -120,7 +120,7 @@ struct HelperCoderTests {
     // MARK: - encode Tests
     
     /// Tests that `encode` works for Encodable types.
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #2)")
+    @Test("Encodes struct to JSON successfully (HelperCoderTests #2)", .tags(.encoding, .enums, .helperCoders, .structs))
     func encodeEncodableType() throws {
         struct Container: Encodable {
             let value: String
@@ -145,7 +145,7 @@ struct HelperCoderTests {
     }
     
     /// Tests that `encode` does nothing for non-Encodable types (default implementation).
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #3)")
+    @Test("Encodes struct to JSON successfully (HelperCoderTests #3)", .tags(.encoding, .enums, .helperCoders, .structs))
     func encodeNonEncodableType() throws {
         struct Container: Encodable {
             let nonEncodable: NonEncodableValue
@@ -174,7 +174,7 @@ struct HelperCoderTests {
     // MARK: - encodeIfPresent Tests
     
     /// Tests that `encodeIfPresent` encodes when value is present.
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #4)")
+    @Test("Encodes struct to JSON successfully (HelperCoderTests #4)", .tags(.encoding, .enums, .helperCoders, .optionals, .structs))
     func encodeIfPresentWithValue() throws {
         struct Container: Encodable {
             let value: String?
@@ -199,7 +199,7 @@ struct HelperCoderTests {
     }
     
     /// Tests that `encodeIfPresent` skips encoding when value is nil.
-    @Test("Encodes struct to JSON successfully (HelperCoderTests #5)")
+    @Test("Encodes struct to JSON successfully (HelperCoderTests #5)", .tags(.encoding, .enums, .helperCoders, .optionals, .structs))
     func encodeIfPresentWithNil() throws {
         struct Container: Encodable {
             let value: String?

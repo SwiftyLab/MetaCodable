@@ -18,7 +18,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodedInHelperDefaultOnlyMissingTests #60)")
+        @Test("Generates macro expansion with @Codable for struct (CodedInHelperDefaultOnlyMissingTests #60)", .tags(.codable, .codedBy, .codedIn, .default, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -77,7 +77,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]?
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodedInHelperDefaultOnlyMissingTests #61)")
+        @Test("Generates macro expansion with @Codable for struct (CodedInHelperDefaultOnlyMissingTests #61)", .tags(.codable, .codedBy, .codedIn, .default, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -137,7 +137,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #54)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #54)", .tags(.codable, .codedBy, .codedIn, .default, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -204,7 +204,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]?
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #55)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #55)", .tags(.codable, .codedBy, .codedIn, .default, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -271,7 +271,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #56)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #56)", .tags(.codable, .codedBy, .codedIn, .default, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -345,7 +345,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value: [String]?
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #57)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #57)", .tags(.codable, .codedBy, .codedIn, .default, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -435,7 +435,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value5: [String]?
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #58)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #58)", .tags(.codable, .codedBy, .codedIn, .default, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -567,7 +567,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value6: [String]
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #59)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedInHelperDefaultOnlyMissingTests #59)", .tags(.codable, .codedBy, .codedIn, .decoding, .default, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -706,7 +706,7 @@ struct CodedInHelperDefaultOnlyMissingTests {
             let value6: [String]
         }
 
-        @Test("Generates macro expansion with @Codable for class with nested paths (CodedInHelperDefaultOnlyMissingTests #8)")
+        @Test("Generates macro expansion with @Codable for class with nested paths (CodedInHelperDefaultOnlyMissingTests #8)", .tags(.classes, .codable, .codedBy, .codedIn, .decoding, .default, .encoding, .enums, .macroExpansion, .optionals))
         func expansion() throws {
             assertMacroExpansion(
                 """

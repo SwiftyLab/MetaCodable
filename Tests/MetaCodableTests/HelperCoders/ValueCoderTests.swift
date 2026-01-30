@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Value Coder Tests")
 struct ValueCoderTests {
-    @Test("Encodes and decodes successfully (ValueCoderTests #35)")
+    @Test("Encodes and decodes successfully (ValueCoderTests #35)", .tags(.decoding, .encoding, .valueCoder))
     func actualTypeDecoding() throws {
         let json = try mockJSON(true, 5, 5.5, "some")
         let model = try JSONDecoder().decode(Model.self, from: json)
@@ -22,7 +22,7 @@ struct ValueCoderTests {
     }
 
     // MARK: Bool
-    @Test("Decodes from JSON successfully (ValueCoderTests #78)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #78)", .tags(.decoding, .valueCoder))
     func intToBooleanDecoding() throws {
         let json1 = try mockJSON(1, 5, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -32,7 +32,7 @@ struct ValueCoderTests {
         #expect(!model2.bool)
     }
 
-    @Test("Decodes from JSON successfully (ValueCoderTests #79)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #79)", .tags(.decoding, .valueCoder))
     func intToBooleanDecodingFailure() throws {
         #expect(throws: DecodingError.self) {
             let json = try mockJSON(2, 5, 5.5, "some")
@@ -40,7 +40,7 @@ struct ValueCoderTests {
         }
     }
 
-    @Test("Decodes from JSON successfully (ValueCoderTests #80)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #80)", .tags(.decoding, .valueCoder))
     func floatToBooleanDecoding() throws {
         let json1 = try mockJSON(1.0, 5, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -50,7 +50,7 @@ struct ValueCoderTests {
         #expect(!model2.bool)
     }
 
-    @Test("Decodes from JSON successfully (ValueCoderTests #81)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #81)", .tags(.decoding, .valueCoder))
     func floatToBooleanDecodingFailure() throws {
         #expect(throws: DecodingError.self) {
             let json = try mockJSON(1.1, 5, 5.5, "some")
@@ -81,7 +81,7 @@ struct ValueCoderTests {
     }
 
     // MARK: Int
-    @Test("Decodes from JSON successfully (ValueCoderTests #82)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #82)", .tags(.decoding, .valueCoder))
     func boolToIntDecoding() throws {
         let json1 = try mockJSON(true, true, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -91,7 +91,7 @@ struct ValueCoderTests {
         #expect(model2.int == 0)
     }
 
-    @Test("Decodes from JSON successfully (ValueCoderTests #83)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #83)", .tags(.decoding, .valueCoder))
     func floatToIntDecoding() throws {
         let json1 = try mockJSON(true, 5.0, 5.5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -101,7 +101,7 @@ struct ValueCoderTests {
         #expect(model2.int == 0)
     }
 
-    @Test("Decodes from JSON successfully (ValueCoderTests #84)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #84)", .tags(.decoding, .valueCoder))
     func floatToIntDecodingFailure() throws {
         #expect(throws: DecodingError.self) {
             let json = try mockJSON(true, 5.5, 5.5, "some")
@@ -125,7 +125,7 @@ struct ValueCoderTests {
     }
 
     // MARK: Float
-    @Test("Decodes from JSON successfully (ValueCoderTests #85)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #85)", .tags(.decoding, .valueCoder))
     func boolToFloatDecoding() throws {
         let json1 = try mockJSON(true, 5, true, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -135,7 +135,7 @@ struct ValueCoderTests {
         #expect(model2.double == 0)
     }
 
-    @Test("Decodes from JSON successfully (ValueCoderTests #86)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #86)", .tags(.decoding, .valueCoder))
     func intToFloatDecoding() throws {
         let json1 = try mockJSON(true, 5, 5, "some")
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -161,7 +161,7 @@ struct ValueCoderTests {
     }
 
     // MARK: String
-    @Test("Decodes from JSON successfully (ValueCoderTests #87)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #87)", .tags(.decoding, .valueCoder))
     func boolToStringDecoding() throws {
         let json1 = try mockJSON(true, 5, 5.5, true)
         let model1 = try JSONDecoder().decode(Model.self, from: json1)
@@ -171,7 +171,7 @@ struct ValueCoderTests {
         #expect(model2.string == "false")
     }
 
-    @Test("Decodes from JSON successfully (ValueCoderTests #88)")
+    @Test("Decodes from JSON successfully (ValueCoderTests #88)", .tags(.decoding, .valueCoder))
     func intToStringDecoding() throws {
         let json1 = try mockJSON(true, 5, 5.5, 5)
         let model1 = try JSONDecoder().decode(Model.self, from: json1)

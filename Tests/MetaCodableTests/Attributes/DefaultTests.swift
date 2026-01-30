@@ -6,7 +6,7 @@ import Testing
 
 @Suite("Default Tests")
 struct DefaultTests {
-    @Test("Reports error for @Default misuse")
+    @Test("Reports error for @Default misuse", .tags(.default, .errorHandling, .macroExpansion, .structs))
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -37,7 +37,7 @@ struct DefaultTests {
         )
     }
 
-    @Test("Reports error for @Default misuse (DefaultTests #1)")
+    @Test("Reports error for @Default misuse (DefaultTests #1)", .tags(.default, .errorHandling, .macroExpansion, .structs))
     func misuseOnStaticVariable() throws {
         assertMacroExpansion(
             """
@@ -66,7 +66,7 @@ struct DefaultTests {
         )
     }
 
-    @Test("Reports error when @Default is applied multiple times")
+    @Test("Reports error when @Default is applied multiple times", .tags(.default, .errorHandling, .macroExpansion, .structs))
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -115,7 +115,7 @@ struct DefaultTests {
             let number: Int
         }
 
-        @Test("Decodes from JSON successfully (DefaultTests #2)")
+        @Test("Decodes from JSON successfully (DefaultTests #2)", .tags(.decoding, .default))
         func defaultValueUsage() throws {
             // Test with missing keys in JSON
             let jsonStr = "{}"
@@ -126,7 +126,7 @@ struct DefaultTests {
             #expect(decoded.number == 42)
         }
 
-        @Test("Decodes from JSON successfully (DefaultTests #3)")
+        @Test("Decodes from JSON successfully (DefaultTests #3)", .tags(.decoding, .default))
         func overrideDefaultValues() throws {
             // Test with provided values in JSON
             let jsonStr = """
@@ -142,7 +142,7 @@ struct DefaultTests {
             #expect(decoded.number == 100)
         }
 
-        @Test("Encodes and decodes successfully (DefaultTests #1)")
+        @Test("Encodes and decodes successfully (DefaultTests #1)", .tags(.decoding, .default, .encoding))
         func encodingWithDefaults() throws {
             let original = SomeCodable(value: "test", number: 99)
             let encoded = try JSONEncoder().encode(original)

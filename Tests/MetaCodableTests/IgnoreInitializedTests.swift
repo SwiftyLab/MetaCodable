@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Ignore Initialized Tests")
 struct IgnoreInitializedTests {
-    @Test("Reports error when @IgnoreCodingInitialized is used without @Codable")
+    @Test("Reports error when @IgnoreCodingInitialized is used without @Codable", .tags(.codable, .errorHandling, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion, .structs))
     func misuse() throws {
         assertMacroExpansion(
             """
@@ -44,7 +44,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #97)")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #97)", .tags(.codable, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -82,7 +82,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test("Generates macro expansion with @Codable for class (IgnoreInitializedTests #6)")
+        @Test("Generates macro expansion with @Codable for class (IgnoreInitializedTests #6)", .tags(.classes, .codable, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -128,7 +128,7 @@ struct IgnoreInitializedTests {
             case multi(_ variable: Bool, val: Int, String = "text")
         }
 
-        @Test("Generates macro expansion with @Codable for enum (IgnoreInitializedTests #25)")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreInitializedTests #25)", .tags(.codable, .codedAs, .decoding, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -239,7 +239,7 @@ struct IgnoreInitializedTests {
             case multi(_ variable: Bool, val: Int, String = "text")
         }
 
-        @Test("Generates macro expansion with @Codable for enum (IgnoreInitializedTests #26)")
+        @Test("Generates macro expansion with @Codable for enum (IgnoreInitializedTests #26)", .tags(.codable, .codedAs, .decoding, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -348,7 +348,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #98)")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #98)", .tags(.codable, .codedIn, .decoding, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -399,7 +399,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #99)")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #99)", .tags(.codable, .codedIn, .encoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .ignoreDecoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -449,7 +449,7 @@ struct IgnoreInitializedTests {
             var one: String = "some"
         }
 
-        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #100)")
+        @Test("Generates macro expansion with @Codable for struct (IgnoreInitializedTests #100)", .tags(.codable, .codedIn, .decoding, .enums, .ignoreCoding, .ignoreCodingInitialized, .ignoreEncoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Data Coder Tests")
 struct DataCoderTests {
-    @Test("Encodes and decodes with JSON successfully (DataCoderTests #9)")
+    @Test("Encodes and decodes with JSON successfully (DataCoderTests #9)", .tags(.dataCoder, .decoding, .encoding))
     func decoding() throws {
         let jsonStr = """
             {
@@ -20,7 +20,7 @@ struct DataCoderTests {
         #expect(newModel == model)
     }
 
-    @Test("Decodes from JSON successfully (DataCoderTests #55)")
+    @Test("Decodes from JSON successfully (DataCoderTests #55)", .tags(.dataCoder, .decoding))
     func invalidDataDecoding() throws {
         let jsonStr = """
             {

@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Dynamic Codable Tests")
 struct DynamicCodableTests {
-    @Test("Decodes from JSON successfully (DynamicCodableTests #44)")
+    @Test("Decodes from JSON successfully (DynamicCodableTests #44)", .tags(.decoding, .dynamicCoding))
     func pageWithExtPost() throws {
         let page = try JSONDecoder().decode(
             PageWithExtPosts.self, from: dataPageWithExtPosts
@@ -27,7 +27,7 @@ struct DynamicCodableTests {
         }
     }
 
-    @Test("Decodes from JSON successfully (DynamicCodableTests #45)")
+    @Test("Decodes from JSON successfully (DynamicCodableTests #45)", .tags(.decoding, .dynamicCoding))
     func pageWithIntPost() throws {
         let page = try JSONDecoder().decode(
             PageWithIntPosts.self, from: dataPageWithIntPosts
@@ -50,7 +50,7 @@ struct DynamicCodableTests {
         }
     }
 
-    @Test("Decodes from JSON successfully (DynamicCodableTests #46)")
+    @Test("Decodes from JSON successfully (DynamicCodableTests #46)", .tags(.decoding, .dynamicCoding))
     func pageWithAdjPost() throws {
         let page = try JSONDecoder().decode(
             PageWithAdjPosts.self, from: dataPageWithAdjPosts
@@ -73,7 +73,7 @@ struct DynamicCodableTests {
         }
     }
 
-    @Test("Decodes from JSON successfully (DynamicCodableTests #47)")
+    @Test("Decodes from JSON successfully (DynamicCodableTests #47)", .tags(.decoding, .dynamicCoding))
     func response() throws {
         let rResponse = try JSONDecoder().decode(
             Response.self, from: registrationResponseAttributesData

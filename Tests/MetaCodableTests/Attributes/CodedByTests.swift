@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Coded By Tests")
 struct CodedByTests {
-    @Test("Reports error for @CodedBy misuse")
+    @Test("Reports error for @CodedBy misuse", .tags(.codedBy, .errorHandling, .macroExpansion, .structs))
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -35,7 +35,7 @@ struct CodedByTests {
         )
     }
 
-    @Test("Reports error for @CodedBy misuse (CodedByTests #1)")
+    @Test("Reports error for @CodedBy misuse (CodedByTests #1)", .tags(.codedBy, .errorHandling, .macroExpansion, .structs))
     func misuseOnStaticVariable() throws {
         assertMacroExpansion(
             """
@@ -64,7 +64,7 @@ struct CodedByTests {
         )
     }
 
-    @Test("Reports error when @CodedBy is applied multiple times")
+    @Test("Reports error when @CodedBy is applied multiple times", .tags(.codedBy, .errorHandling, .macroExpansion, .structs))
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """

@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Coding Keys Tests")
 struct CodingKeysTests {
-    @Test("Reports error when @CodingKeys is used without @Codable")
+    @Test("Reports error when @CodingKeys is used without @Codable", .tags(.codable, .codingKeys, .errorHandling, .macroExpansion, .structs))
     func misuseInAbsenceOfCodable() throws {
         assertMacroExpansion(
             """
@@ -40,7 +40,7 @@ struct CodingKeysTests {
         )
     }
 
-    @Test("Reports error when @Codable is applied multiple times (CodingKeysTests #1)")
+    @Test("Reports error when @Codable is applied multiple times (CodingKeysTests #1)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .errorHandling, .macroExpansion, .structs))
     func misuseOnDuplicationAbsenceOfCodable() throws {
         assertMacroExpansion(
             """
@@ -124,7 +124,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #68)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #68)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -184,7 +184,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #69)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #69)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -244,7 +244,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for class (CodingKeysTests #3)")
+        @Test("Generates macro expansion with @Codable for class (CodingKeysTests #3)", .tags(.classes, .codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -308,7 +308,7 @@ struct CodingKeysTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("Generates macro expansion with @Codable for enum (CodingKeysTests #8)")
+        @Test("Generates macro expansion with @Codable for enum (CodingKeysTests #8)", .tags(.codable, .codedAs, .codingKeys, .decoding, .encoding, .enums, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -430,7 +430,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #70)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #70)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -490,7 +490,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #71)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #71)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -550,7 +550,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #72)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #72)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -610,7 +610,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #73)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #73)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -670,7 +670,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #74)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #74)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -730,7 +730,7 @@ struct CodingKeysTests {
             let description: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #75)")
+        @Test("Generates macro expansion with @Codable for struct (CodingKeysTests #75)", .tags(.codable, .codingKeys, .decoding, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -795,7 +795,7 @@ struct CodingKeysTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("Generates macro expansion with @Codable for enum (CodingKeysTests #9)")
+        @Test("Generates macro expansion with @Codable for enum (CodingKeysTests #9)", .tags(.codable, .codedAs, .codingKeys, .decoding, .encoding, .enums, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """

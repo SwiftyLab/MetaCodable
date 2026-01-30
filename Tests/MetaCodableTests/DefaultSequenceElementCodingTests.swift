@@ -44,7 +44,7 @@ struct DefaultSequenceElementCodingTests {
     // MARK: - decodeIfPresent(from:) Tests
     
     /// Tests that `decodeIfPresent(from:)` returns value from single value container.
-    @Test("Decodes struct from JSON successfully")
+    @Test("Decodes struct from JSON successfully", .tags(.coverage, .decoding, .default, .optionals, .structs))
     func decodeIfPresentFromDecoderReturnsValue() throws {
         let json = #""test""#
         let data = json.data(using: .utf8)!
@@ -63,7 +63,7 @@ struct DefaultSequenceElementCodingTests {
     }
     
     /// Tests that `decodeIfPresent(from:)` returns nil for null.
-    @Test("Decodes struct from JSON successfully (DefaultSequenceElementCodingTests #1)")
+    @Test("Decodes struct from JSON successfully (DefaultSequenceElementCodingTests #1)", .tags(.coverage, .decoding, .default, .optionals, .structs))
     func decodeIfPresentFromDecoderReturnsNilForNull() throws {
         let json = #"null"#
         let data = json.data(using: .utf8)!
@@ -84,7 +84,7 @@ struct DefaultSequenceElementCodingTests {
     // MARK: - decodeIfPresent(from:forKey:) Tests
     
     /// Tests that `decodeIfPresent(from:forKey:)` returns value when present.
-    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #41)")
+    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #41)", .tags(.coverage, .decoding, .default))
     func decodeIfPresentFromKeyedContainerReturnsValue() throws {
         let json = #"{"value": "test"}"#
         let data = json.data(using: .utf8)!
@@ -94,7 +94,7 @@ struct DefaultSequenceElementCodingTests {
     }
     
     /// Tests that `decodeIfPresent(from:forKey:)` returns nil for null.
-    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #42)")
+    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #42)", .tags(.coverage, .decoding, .default))
     func decodeIfPresentFromKeyedContainerReturnsNilForNull() throws {
         let json = #"{"value": null}"#
         let data = json.data(using: .utf8)!
@@ -104,7 +104,7 @@ struct DefaultSequenceElementCodingTests {
     }
     
     /// Tests that `decodeIfPresent(from:forKey:)` returns nil for missing key.
-    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #43)")
+    @Test("Decodes from JSON successfully (DefaultSequenceElementCodingTests #43)", .tags(.coverage, .decoding, .default))
     func decodeIfPresentFromKeyedContainerReturnsNilForMissingKey() throws {
         let json = #"{}"#
         let data = json.data(using: .utf8)!
@@ -116,7 +116,7 @@ struct DefaultSequenceElementCodingTests {
     // MARK: - encodeIfPresent(_:to:) Tests
     
     /// Tests that `encodeIfPresent(_:to:)` encodes value when present.
-    @Test("Encodes struct to JSON successfully")
+    @Test("Encodes struct to JSON successfully", .tags(.coverage, .default, .encoding, .optionals, .structs))
     func encodeIfPresentToEncoderEncodesValue() throws {
         struct SingleValueWrapper: Encodable {
             let value: String?
@@ -135,7 +135,7 @@ struct DefaultSequenceElementCodingTests {
     }
     
     /// Tests that `encodeIfPresent(_:to:)` encodes null for nil.
-    @Test("Encodes struct to JSON successfully (DefaultSequenceElementCodingTests #1)")
+    @Test("Encodes struct to JSON successfully (DefaultSequenceElementCodingTests #1)", .tags(.coverage, .default, .encoding, .optionals, .structs))
     func encodeIfPresentToEncoderEncodesNullForNil() throws {
         struct SingleValueWrapper: Encodable {
             let value: String?
@@ -156,7 +156,7 @@ struct DefaultSequenceElementCodingTests {
     // MARK: - encodeIfPresent(_:to:atKey:) Tests
     
     /// Tests that `encodeIfPresent(_:to:atKey:)` encodes value when present.
-    @Test("Encodes to JSON successfully (DefaultSequenceElementCodingTests #12)")
+    @Test("Encodes to JSON successfully (DefaultSequenceElementCodingTests #12)", .tags(.coverage, .default, .encoding))
     func encodeIfPresentToKeyedContainerEncodesValue() throws {
         let wrapper = EncodingWrapper(value: "test")
         let data = try JSONEncoder().encode(wrapper)
@@ -166,7 +166,7 @@ struct DefaultSequenceElementCodingTests {
     }
     
     /// Tests that `encodeIfPresent(_:to:atKey:)` skips encoding for nil.
-    @Test("Encodes to JSON successfully (DefaultSequenceElementCodingTests #13)")
+    @Test("Encodes to JSON successfully (DefaultSequenceElementCodingTests #13)", .tags(.coverage, .default, .encoding))
     func encodeIfPresentToKeyedContainerSkipsNil() throws {
         let wrapper = EncodingWrapper(value: nil)
         let data = try JSONEncoder().encode(wrapper)

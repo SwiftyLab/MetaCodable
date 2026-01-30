@@ -7,7 +7,7 @@ import Testing
 
 @Suite("Coded As Enum Tests")
 struct CodedAsEnumTests {
-    @Test("Reports error for @CodedAs misuse")
+    @Test("Reports error for @CodedAs misuse", .tags(.codedAs, .enums, .errorHandling, .macroExpansion))
     func misuseOnNonCaseDeclaration() throws {
         assertMacroExpansion(
             """
@@ -47,7 +47,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test("Reports error for @Codable misuse (CodedAsEnumTests #2)")
+    @Test("Reports error for @Codable misuse (CodedAsEnumTests #2)", .tags(.codable, .codedAs, .codedAt, .decoding, .encoding, .enums, .errorHandling, .macroExpansion, .optionals))
     func invalidRangeExpressionTypeDiagnostic() throws {
         assertMacroExpansion(
             """
@@ -165,7 +165,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test("Reports error when @CodedAs is applied multiple times")
+    @Test("Reports error when @CodedAs is applied multiple times", .tags(.codedAs, .enums, .errorHandling, .macroExpansion))
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -210,7 +210,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test("Reports error for @CodedAs misuse (CodedAsEnumTests #1)")
+    @Test("Reports error for @CodedAs misuse (CodedAsEnumTests #1)", .tags(.codedAs, .enums, .errorHandling, .ignoreCoding, .macroExpansion))
     func misuseInCombinationWithIgnoreCodingMacro() throws {
         assertMacroExpansion(
             """
@@ -255,7 +255,7 @@ struct CodedAsEnumTests {
         )
     }
 
-    @Test("Reports error for @Codable misuse (CodedAsEnumTests #3)")
+    @Test("Reports error for @Codable misuse (CodedAsEnumTests #3)", .tags(.codable, .codedAs, .codedAt, .enums, .errorHandling, .macroExpansion, .structs))
     func misuseOnNonEnumDeclaration() throws {
         assertMacroExpansion(
             """
@@ -315,7 +315,7 @@ struct CodedAsEnumTests {
             case store(key: String, value: Int)
         }
 
-        @Test("Generates macro expansion with @Codable for enum (CodedAsEnumTests #1)")
+        @Test("Generates macro expansion with @Codable for enum (CodedAsEnumTests #1)", .tags(.codable, .codedAs, .codedAt, .codedBy, .decoding, .encoding, .enums, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -413,7 +413,7 @@ struct CodedAsEnumTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("Generates macro expansion with @Codable for enum (CodedAsEnumTests #2)")
+        @Test("Generates macro expansion with @Codable for enum (CodedAsEnumTests #2)", .tags(.codable, .codedAs, .decoding, .encoding, .enums, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -548,7 +548,7 @@ struct CodedAsEnumTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test("Generates macro expansion with @Codable for enum (CodedAsEnumTests #3)")
+        @Test("Generates macro expansion with @Codable for enum (CodedAsEnumTests #3)", .tags(.codable, .codedAs, .codedAt, .decoding, .encoding, .enums, .macroExpansion, .optionals))
         func expansion() throws {
             assertMacroExpansion(
                 """

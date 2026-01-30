@@ -195,8 +195,8 @@ These are test helper types that don't need direct testing:
 
 ### Medium Priority
 
-4. **DefaultSequenceElementCoding optional methods**
-5. **DynamicCodableIdentifier+CodingKey.init(intValue:)**
+1. **DefaultSequenceElementCoding optional methods**
+2. **DynamicCodableIdentifier+CodingKey.init(intValue:)**
 
 ### Low Priority (skip with reason)
 
@@ -221,6 +221,7 @@ These are test helper types that don't need direct testing:
 ## Test Organization Update (2026-01-30)
 
 All test files have been updated with:
+
 - **@Suite declarations** for logical grouping
 - **Meaningful @Test names** based on actual test logic
 - **Unique test names** across all 565 tests in 50 files
@@ -228,4 +229,29 @@ All test files have been updated with:
 - Context-aware naming (e.g., "Generates @Codable conformance for struct with 'open' access")
 
 Test names now clearly describe what each test verifies, making failures immediately understandable.
+
+### Test Tagging System
+
+All 529 tests are tagged for easy filtering and organization using Swift Testing's tag system. Tags are defined in `Tests/MetaCodableTests/Tags.swift`.
+
+**Available Tags:**
+
+**Macro Tags:** `.codable`, `.codedAt`, `.codedIn`, `.codedBy`, `.codedAs`, `.codingKeys`, `.default`, `.ignoreCoding`, `.ignoreDecoding`, `.ignoreEncoding`, `.ignoreCodingInitialized`, `.contentAt`, `.untagged`, `.memberInit`, `.inherits`
+
+**Test Type Tags:** `.macroExpansion`, `.encoding`, `.decoding`, `.errorHandling`, `.integration`
+
+**Feature Tags:** `.helperCoders`, `.dynamicCoding`, `.inheritance`, `.generics`, `.accessModifiers`, `.optionals`
+
+**Type Tags:** `.enums`, `.structs`, `.classes`, `.rawRepresentable`
+
+**Helper Coder Tags:** `.dateCoder`, `.dataCoder`, `.sequenceCoder`, `.lossySequence`, `.valueCoder`, `.nonConformingCoder`, `.conditionalCoder`
+
+**Coverage Tags:** `.coverage` (for coverage-specific tests)
+
+**Example Usage:**
+```swift
+@Test("Generates @Codable conformance for struct with 'open' access", 
+      .tags(.codable, .macroExpansion, .structs, .accessModifiers))
+func expansion() throws { ... }
+```
 

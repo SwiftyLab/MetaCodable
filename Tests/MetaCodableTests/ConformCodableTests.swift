@@ -11,7 +11,7 @@ import Testing
 
 @Suite("Conform Encodable Tests")
 struct ConformEncodableTests {
-    @Test("Reports error for @Codable misuse (ConformCodableTests #4)")
+    @Test("Reports error for @Codable misuse (ConformCodableTests #4)", .tags(.codable, .errorHandling, .macroExpansion, .structs))
     func misuseWithCodable() throws {
         assertMacroExpansion(
             """
@@ -52,7 +52,7 @@ struct ConformEncodableTests {
         )
     }
 
-    @Test("Reports diagnostic error")
+    @Test("Reports diagnostic error", .tags(.errorHandling, .macroExpansion, .structs))
     func misuseWithDecodable() throws {
         assertMacroExpansion(
             """
@@ -101,7 +101,7 @@ struct ConformEncodableTests {
             let count: Int
         }
 
-        @Test("Generates macro expansion for struct")
+        @Test("Generates macro expansion for struct", .tags(.encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -147,7 +147,7 @@ struct ConformEncodableTests {
             let string: String
         }
 
-        @Test("Encodes to JSON successfully (ConformCodableTests #9)")
+        @Test("Encodes to JSON successfully (ConformCodableTests #9)", .tags(.encoding, .optionals))
         func testParsing() throws {
             let model = Model(
                 bool: true, int: 42, double: 3.1416, string: "5265762156")
@@ -169,7 +169,7 @@ struct ConformEncodableTests {
             #expect(reDecoded["string"] as? String == "5265762156")
         }
 
-        @Test("Generates macro expansion for struct (ConformCodableTests #1)")
+        @Test("Generates macro expansion for struct (ConformCodableTests #1)", .tags(.encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -224,7 +224,7 @@ struct ConformEncodableTests {
             let count: Int
         }
 
-        @Test("Generates macro expansion with @CodedAt for struct with nested paths")
+        @Test("Generates macro expansion with @CodedAt for struct with nested paths", .tags(.codedAt, .codedIn, .encoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -277,7 +277,7 @@ struct ConformDecodableTests {
             let count: Int
         }
 
-        @Test("Generates macro expansion for struct (ConformCodableTests #2)")
+        @Test("Generates macro expansion for struct (ConformCodableTests #2)", .tags(.decoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -312,7 +312,7 @@ struct ConformDecodableTests {
             )
         }
 
-        @Test("Decodes from JSON successfully (ConformCodableTests #37)")
+        @Test("Decodes from JSON successfully (ConformCodableTests #37)", .tags(.decoding))
         func decodingOnly() throws {
             // Since SomeDecodable only conforms to Decodable, we can only test decoding
             let jsonStr = """
@@ -328,7 +328,7 @@ struct ConformDecodableTests {
             #expect(decoded.count == 42)
         }
 
-        @Test("Decodes from JSON successfully (ConformCodableTests #38)")
+        @Test("Decodes from JSON successfully (ConformCodableTests #38)", .tags(.decoding))
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -354,7 +354,7 @@ struct ConformDecodableTests {
             let string: String
         }
 
-        @Test("Decodes from JSON successfully (ConformCodableTests #39)")
+        @Test("Decodes from JSON successfully (ConformCodableTests #39)", .tags(.decoding))
         func testParsing() throws {
             let json = """
                 {
@@ -375,7 +375,7 @@ struct ConformDecodableTests {
             #expect(model.string == "5265762156")
         }
 
-        @Test("Generates macro expansion for struct (ConformCodableTests #3)")
+        @Test("Generates macro expansion for struct (ConformCodableTests #3)", .tags(.decoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -430,7 +430,7 @@ struct ConformDecodableTests {
             let count: Int
         }
 
-        @Test("Generates macro expansion with @CodedAt for struct with nested paths (ConformCodableTests #1)")
+        @Test("Generates macro expansion with @CodedAt for struct with nested paths (ConformCodableTests #1)", .tags(.codedAt, .codedIn, .decoding, .enums, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

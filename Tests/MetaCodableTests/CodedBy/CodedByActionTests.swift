@@ -44,7 +44,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #52)")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #52)", .tags(.codable, .codedBy, .decoding, .default, .encoding, .enums, .helperCoders, .macroExpansion, .optionals, .structs))
         func expansion() {
             assertMacroExpansion(
                 """
@@ -170,7 +170,7 @@ struct CodedByActionTests {
             )
         }
 
-        @Test("Encodes and decodes successfully (CodedByActionTests #12)")
+        @Test("Encodes and decodes successfully (CodedByActionTests #12)", .tags(.codedBy, .decoding, .encoding))
         func customCoderVersionBehavior() throws {
             // Test version 1 behavior
             let dog1 = Dog(name: "Buddy", version: 1, info: Dog.Info(tag: 5))
@@ -189,7 +189,7 @@ struct CodedByActionTests {
             #expect(decoded2.info.tag == 5)  // Should be 5 after encode(-1) then decode(+1)
         }
 
-        @Test("Decodes from JSON successfully (CodedByActionTests #30)")
+        @Test("Decodes from JSON successfully (CodedByActionTests #30)", .tags(.codedBy, .decoding))
         func customCoderFromJSON() throws {
             let jsonStr = """
                 {
@@ -245,7 +245,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #53)")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #53)", .tags(.codable, .codedBy, .decoding, .default, .encoding, .enums, .helperCoders, .macroExpansion, .optionals, .structs))
         func expansion() {
             assertMacroExpansion(
                 """
@@ -427,7 +427,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #37)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #37)", .tags(.codable, .codedAt, .codedBy, .decoding, .encoding, .enums, .helperCoders, .ignoreCoding, .macroExpansion, .structs))
         func expansion() {
             assertMacroExpansion(
                 """
@@ -609,7 +609,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #38)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #38)", .tags(.codable, .codedAt, .codedBy, .decoding, .encoding, .enums, .helperCoders, .ignoreCoding, .macroExpansion, .structs))
         func expansion() {
             assertMacroExpansion(
                 """
@@ -808,7 +808,7 @@ struct CodedByActionTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #39)")
+        @Test("Generates macro expansion with @Codable for struct with nested paths (CodedByActionTests #39)", .tags(.codable, .codedAt, .codedBy, .codedIn, .decoding, .default, .encoding, .enums, .helperCoders, .macroExpansion, .optionals, .structs))
         func expansion() {
             assertMacroExpansion(
                 """
@@ -1032,7 +1032,7 @@ struct CodedByActionTests {
         }
         #endif
 
-        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #54)")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #54)", .tags(.codable, .codedBy, .decoding, .encoding, .enums, .helperCoders, .ignoreCoding, .macroExpansion, .structs))
         func expansion() {
             assertMacroExpansion(
                 """
@@ -1204,7 +1204,7 @@ struct CodedByActionTests {
         }
         #endif
 
-        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #55)")
+        @Test("Generates macro expansion with @Codable for struct (CodedByActionTests #55)", .tags(.codable, .codedBy, .decoding, .encoding, .enums, .helperCoders, .ignoreCoding, .macroExpansion, .structs))
         func expansion() {
             assertMacroExpansion(
                 """

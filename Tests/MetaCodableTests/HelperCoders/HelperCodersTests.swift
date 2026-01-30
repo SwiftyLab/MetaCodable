@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Helper Coders Tests")
 struct HelperCodersTests {
-    @Test("Encodes and decodes with JSON successfully (HelperCodersTests #11)")
+    @Test("Encodes and decodes with JSON successfully (HelperCodersTests #11)", .tags(.decoding, .encoding, .helperCoders, .optionals))
     func conditionalAndOptionalCoding() throws {
         let jsonStr = """
             {
@@ -25,7 +25,7 @@ struct HelperCodersTests {
         #expect(model.optionalDate == nil)
     }
 
-    @Test("Encodes and decodes with JSON successfully (HelperCodersTests #12)")
+    @Test("Encodes and decodes with JSON successfully (HelperCodersTests #12)", .tags(.decoding, .encoding, .helperCoders, .optionals))
     func propertyWrapperCoding() throws {
         let jsonStr = """
             {

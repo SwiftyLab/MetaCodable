@@ -14,7 +14,7 @@ struct VariableDeclarationTests {
             let value: String = "some"
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #101)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #101)", .tags(.codable, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -54,7 +54,7 @@ struct VariableDeclarationTests {
             )
         }
 
-        @Test("Encodes and decodes successfully (VariableDeclarationTests #38)")
+        @Test("Encodes and decodes successfully (VariableDeclarationTests #38)", .tags(.decoding, .encoding))
         func decodingAndEncoding() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -63,7 +63,7 @@ struct VariableDeclarationTests {
             #expect(decoded.value == "some")
         }
 
-        @Test("Decodes from JSON successfully (VariableDeclarationTests #101)")
+        @Test("Decodes from JSON successfully (VariableDeclarationTests #101)", .tags(.decoding))
         func decodingFromEmptyJSON() throws {
             let jsonStr = "{}"
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -72,7 +72,7 @@ struct VariableDeclarationTests {
             #expect(decoded.value == "some")
         }
 
-        @Test("Encodes to JSON successfully (VariableDeclarationTests #24)")
+        @Test("Encodes to JSON successfully (VariableDeclarationTests #24)", .tags(.encoding, .optionals))
         func encodingToJSON() throws {
             let original = SomeCodable()
             let encoded = try JSONEncoder().encode(original)
@@ -91,7 +91,7 @@ struct VariableDeclarationTests {
             var value: String = "some"
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #102)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #102)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -146,7 +146,7 @@ struct VariableDeclarationTests {
             var value: String { "some" }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #103)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #103)", .tags(.codable, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -189,7 +189,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #104)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #104)", .tags(.codable, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -241,7 +241,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #105)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #105)", .tags(.codable, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -296,7 +296,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #106)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #106)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -376,7 +376,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #107)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #107)", .tags(.codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -465,7 +465,7 @@ struct VariableDeclarationTests {
             }
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #108)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #108)", .tags(.codable, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -518,7 +518,7 @@ struct VariableDeclarationTests {
             let value: String?
         }
 
-        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #109)")
+        @Test("Generates macro expansion with @Codable for struct (VariableDeclarationTests #109)", .tags(.codable, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -610,7 +610,7 @@ struct VariableDeclarationTests {
             let value: String?
         }
 
-        @Test("Generates macro expansion with @Codable for struct with optional properties (VariableDeclarationTests #1)")
+        @Test("Generates macro expansion with @Codable for struct with optional properties (VariableDeclarationTests #1)", .tags(.codable, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

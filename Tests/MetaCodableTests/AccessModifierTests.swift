@@ -13,7 +13,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test("Generates @Codable conformance for class with 'open' access")
+        @Test("Generates @Codable conformance for class with 'open' access", .tags(.accessModifiers, .classes, .codable, .decoding, .encoding, .enums, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -51,7 +51,7 @@ struct AccessModifierTests {
             )
         }
 
-        @Test("Decodes class from JSON successfully")
+        @Test("Decodes class from JSON successfully", .tags(.accessModifiers, .classes, .decoding))
         func openClassDecodingOnly() throws {
             // Open class doesn't have memberwise init, only decoder init
             let jsonStr = """
@@ -65,7 +65,7 @@ struct AccessModifierTests {
             #expect(decoded.value == "open_test")
         }
 
-        @Test("Decodes from JSON successfully")
+        @Test("Decodes from JSON successfully", .tags(.accessModifiers, .decoding))
         func openClassFromJSON() throws {
             let jsonStr = """
                 {
@@ -87,7 +87,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct with 'public' access")
+        @Test("Generates macro expansion with @Codable for struct with 'public' access", .tags(.accessModifiers, .codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -130,7 +130,7 @@ struct AccessModifierTests {
             )
         }
 
-        @Test("Encodes and decodes successfully")
+        @Test("Encodes and decodes successfully", .tags(.accessModifiers, .decoding, .encoding))
         func publicStructDecodingAndEncoding() throws {
             let original = SomeCodable(value: "public_test")
             let encoded = try JSONEncoder().encode(original)
@@ -139,7 +139,7 @@ struct AccessModifierTests {
             #expect(decoded.value == "public_test")
         }
 
-        @Test("Decodes from JSON successfully (AccessModifierTests #1)")
+        @Test("Decodes from JSON successfully (AccessModifierTests #1)", .tags(.accessModifiers, .decoding))
         func publicStructFromJSON() throws {
             let jsonStr = """
                 {
@@ -161,7 +161,7 @@ struct AccessModifierTests {
             let value: String
         }
 
-        @Test("Generates macro expansion with @Codable for struct")
+        @Test("Generates macro expansion with @Codable for struct", .tags(.accessModifiers, .codable, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
