@@ -769,7 +769,7 @@ struct CodedAtEnumTests {
             if case .type1(let data) = decoded {
                 #expect(data.int == 42)
             } else {
-                #expect(Bool(false), "Expected type1 case")
+                Issue.record("Expected type1 case")
             }
         }
 
@@ -787,7 +787,7 @@ struct CodedAtEnumTests {
             if case .type1(let data) = decoded {
                 #expect(data.int == 42)
             } else {
-                #expect(Bool(false), "Expected type1 case")
+                Issue.record("Expected type1 case")
             }
         }
 
