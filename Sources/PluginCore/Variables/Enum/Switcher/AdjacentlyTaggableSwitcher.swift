@@ -244,6 +244,9 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                 ).combined()
 
                 if containerType.isOptionalTypeSyntax {
+                    let needsContainer = location.cases.contains { variable, _ in
+                        variable.variables.contains { $0.label != nil }
+                    }
                     let topContainerOptional = decodingNode.children
                         .flatMap(\.value.linkedVariables)
                         .allSatisfy { variable in
@@ -256,7 +259,7 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                         }
 
                     let header: SyntaxNodeString =
-                        topContainerOptional && !rawRepresentable
+                        needsContainer && topContainerOptional && !rawRepresentable
                         ? "if let \(container) = \(container), let \(location.container) = \(location.container)"
                         : "if let \(container) = \(container)"
                     try! IfExprSyntax(header) {
