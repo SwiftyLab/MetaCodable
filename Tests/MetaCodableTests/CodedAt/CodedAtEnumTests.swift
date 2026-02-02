@@ -1,3 +1,4 @@
+import Foundation
 import HelperCoders
 import MetaCodable
 import Testing
@@ -671,6 +672,134 @@ struct CodedAtEnumTests {
                     }
                     """
             )
+        }
+    }
+
+    struct WithOnlyAssociatedVariablesAtTopLevel {
+        @Codable
+        @CodedAt("type")
+        enum TypeObject {
+            case type1(Type1)
+
+            @Codable
+            struct Type1 {
+                let int: Int
+            }
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                @CodedAt("type")
+                enum TypeObject {
+                    case type1(Int)
+                }
+                """,
+                expandedSource:
+                    """
+                    enum TypeObject {
+                        case type1(Int)
+                    }
+
+                    extension TypeObject: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            var typeContainer: KeyedDecodingContainer<CodingKeys>?
+                            let container = try? decoder.container(keyedBy: CodingKeys.self)
+                            if let container = container {
+                                typeContainer = container
+                            } else {
+                                typeContainer = nil
+                            }
+                            if let typeContainer = typeContainer {
+                                let typeString: String?
+                                do {
+                                    typeString = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeString = nil
+                                }
+                                if let typeString = typeString {
+                                    switch typeString {
+                                    case "type1":
+                                        let _0: Int
+                                        _0 = try Int(from: decoder)
+                                        self = .type1(_0)
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                            }
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
+                        }
+                    }
+
+                    extension TypeObject: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            let container = encoder.container(keyedBy: CodingKeys.self)
+                            var typeContainer = container
+                            switch self {
+                            case .type1(let _0):
+                                try typeContainer.encode("type1", forKey: CodingKeys.type)
+                                try _0.encode(to: encoder)
+                            }
+                        }
+                    }
+
+                    extension TypeObject {
+                        enum CodingKeys: String, CodingKey {
+                            case type = "type"
+                        }
+                    }
+                    """
+            )
+        }
+
+        @Test
+        func decodingAndEncoding() throws {
+            let original = TypeObject.type1(TypeObject.Type1(int: 42))
+            let encoded = try JSONEncoder().encode(original)
+            let decoded = try JSONDecoder().decode(
+                TypeObject.self, from: encoded)
+            if case .type1(let data) = decoded {
+                #expect(data.int == 42)
+            } else {
+                #expect(Bool(false), "Expected type1 case")
+            }
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "type": "type1",
+                    "int": 42
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(
+                TypeObject.self, from: jsonData)
+            if case .type1(let data) = decoded {
+                #expect(data.int == 42)
+            } else {
+                #expect(Bool(false), "Expected type1 case")
+            }
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = TypeObject.type1(TypeObject.Type1(int: 42))
+            let encoded = try JSONEncoder().encode(original)
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as! [String: Any]
+            #expect(json["type"] as? String == "type1")
+            #expect(json["int"] as? Int == 42)
         }
     }
 }
