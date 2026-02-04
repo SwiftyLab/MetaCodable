@@ -4,8 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Ignore Coding Tests")
 struct IgnoreCodingTests {
-    @Test
+    @Test("Reports error for @Codable misuse (IgnoreCodingTests #5)", .tags(.codable, .encoding, .enums, .errorHandling, .ignoreCoding, .ignoreDecoding, .macroExpansion, .optionals, .structs))
     func misuseOnUninitializedVariable() throws {
         assertMacroExpansion(
             """
@@ -96,7 +97,7 @@ struct IgnoreCodingTests {
         )
     }
 
-    @Test
+    @Test("Reports error for @Codable misuse (IgnoreCodingTests #6)", .tags(.codable, .codedAt, .errorHandling, .ignoreCoding, .macroExpansion, .structs))
     func misuseWithInvalidCombination() throws {
         assertMacroExpansion(
             """
@@ -146,6 +147,7 @@ struct IgnoreCodingTests {
         )
     }
 
+    @Suite("Ignore Coding - Decoding Encoding Ignore")
     struct DecodingEncodingIgnore {
         @Codable
         struct SomeCodable {
@@ -153,7 +155,7 @@ struct IgnoreCodingTests {
             var one: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #92)", .tags(.codable, .ignoreCoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -182,7 +184,7 @@ struct IgnoreCodingTests {
             )
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #18)", .tags(.encoding, .ignoreCoding))
         func ignoreCodingBehavior() throws {
             let original = SomeCodable()
             #expect(original.one == "some")  // Default value
@@ -194,7 +196,7 @@ struct IgnoreCodingTests {
             }
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (IgnoreCodingTests #89)", .tags(.decoding, .ignoreCoding))
         func ignoreCodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -208,6 +210,7 @@ struct IgnoreCodingTests {
             #expect(decoded.one == "some")  // Should keep default value, ignore JSON
         }
 
+        @Suite("Ignore Coding - Optional")
         struct Optional {
             @Codable
             struct SomeCodable {
@@ -220,7 +223,7 @@ struct IgnoreCodingTests {
                 let four: String
             }
 
-            @Test
+            @Test("Generates macro expansion with @Codable for struct with optional properties", .tags(.codable, .decoding, .encoding, .enums, .ignoreCoding, .macroExpansion, .optionals, .structs))
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -267,7 +270,7 @@ struct IgnoreCodingTests {
                 )
             }
 
-            @Test
+            @Test("Decodes from JSON successfully (IgnoreCodingTests #90)", .tags(.decoding, .ignoreCoding))
             func decoding() throws {
                 let json = try #require("{\"four\":\"som\"}".data(using: .utf8))
                 let obj = try JSONDecoder().decode(SomeCodable.self, from: json)
@@ -277,7 +280,7 @@ struct IgnoreCodingTests {
                 #expect(obj.four == "som")
             }
 
-            @Test
+            @Test("Encodes to JSON successfully (IgnoreCodingTests #19)", .tags(.encoding, .ignoreCoding, .optionals))
             func encoding() throws {
                 let obj = SomeCodable(one: "one", two: "two", four: "some")
                 let json = try JSONEncoder().encode(obj)
@@ -289,6 +292,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Enum Decoding Encoding Ignore")
     struct EnumDecodingEncodingIgnore {
         @Codable
         enum SomeEnum {
@@ -296,7 +300,7 @@ struct IgnoreCodingTests {
             case bool(_ variableBool: Bool)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #18)", .tags(.codable, .enums, .ignoreCoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -331,6 +335,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Decoding Ignore")
     struct DecodingIgnore {
         @Codable
         struct SomeCodable {
@@ -338,7 +343,7 @@ struct IgnoreCodingTests {
             var one: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #93)", .tags(.codable, .encoding, .enums, .ignoreCoding, .ignoreDecoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -376,6 +381,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Enum Decoding Ignore")
     struct EnumDecodingIgnore {
         @Codable
         enum SomeEnum {
@@ -383,7 +389,7 @@ struct IgnoreCodingTests {
             case bool(_ variableBool: Bool)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #19)", .tags(.codable, .encoding, .enums, .ignoreCoding, .ignoreDecoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -432,6 +438,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Encoding Ignore")
     struct EncodingIgnore {
         @Codable
         struct SomeCodable {
@@ -441,7 +448,7 @@ struct IgnoreCodingTests {
             var two: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #94)", .tags(.codable, .decoding, .enums, .ignoreCoding, .ignoreEncoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -484,6 +491,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Encoding Ignore With Condition")
     struct EncodingIgnoreWithCondition {
         @Codable
         struct SomeCodable {
@@ -493,7 +501,7 @@ struct IgnoreCodingTests {
             var two: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #95)", .tags(.codable, .decoding, .encoding, .enums, .ignoreCoding, .ignoreEncoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -541,7 +549,7 @@ struct IgnoreCodingTests {
             )
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #20)", .tags(.encoding, .ignoreCoding, .optionals))
         func ignore() throws {
             let obj = SomeCodable(one: "", two: "")
             let data = try JSONEncoder().encode(obj)
@@ -551,7 +559,7 @@ struct IgnoreCodingTests {
             #expect(dict["two"] == nil)
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #21)", .tags(.encoding, .ignoreCoding, .optionals))
         func encode() throws {
             let obj = SomeCodable(one: "some", two: "some")
             let data = try JSONEncoder().encode(obj)
@@ -561,7 +569,7 @@ struct IgnoreCodingTests {
             #expect(dict["two"] == "some")
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (IgnoreCodingTests #91)", .tags(.decoding, .ignoreCoding))
         func decode() throws {
             let json = "{\"one\": \"\", \"two\": \"\"}".data(using: .utf8)!
             let obj = try JSONDecoder().decode(SomeCodable.self, from: json)
@@ -570,6 +578,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Enum Encoding Ignore")
     struct EnumEncodingIgnore {
         @Codable
         enum SomeEnum {
@@ -577,7 +586,7 @@ struct IgnoreCodingTests {
             case bool(_ variableBool: Bool)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #20)", .tags(.codable, .decoding, .enums, .ignoreCoding, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -632,6 +641,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Enum Encoding Ignore With Condition")
     struct EnumEncodingIgnoreWithCondition {
         @Codable
         enum SomeEnum {
@@ -641,7 +651,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #21)", .tags(.codable, .decoding, .encoding, .enums, .ignoreCoding, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -747,6 +757,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Enum Encoding Ignore With Condition Combined")
     struct EnumEncodingIgnoreWithConditionCombined {
         @Codable
         enum SomeEnum {
@@ -756,7 +767,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #22)", .tags(.codable, .decoding, .encoding, .enums, .ignoreCoding, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -847,6 +858,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Combination With Other Macros")
     struct CombinationWithOtherMacros {
         @Codable
         struct SomeCodable {
@@ -864,7 +876,7 @@ struct IgnoreCodingTests {
             var four: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (IgnoreCodingTests #83)", .tags(.codable, .codedAt, .codedIn, .decoding, .encoding, .enums, .ignoreCoding, .ignoreDecoding, .ignoreEncoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -927,6 +939,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Class Combination With Other Macros")
     struct ClassCombinationWithOtherMacros {
         @Codable
         class SomeCodable {
@@ -944,7 +957,7 @@ struct IgnoreCodingTests {
             var four: String = "some"
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class with nested paths (IgnoreCodingTests #12)", .tags(.classes, .codable, .codedAt, .codedIn, .decoding, .encoding, .enums, .ignoreCoding, .ignoreDecoding, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1007,6 +1020,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Enum Combination With Other Macros")
     struct EnumCombinationWithOtherMacros {
         @Codable
         enum SomeEnum {
@@ -1022,7 +1036,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #23)", .tags(.codable, .codedAs, .decoding, .encoding, .enums, .ignoreCoding, .ignoreDecoding, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1108,6 +1122,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Encoding Ignore With Based On Condition")
     struct EncodingIgnoreWithBasedOnCondition {
         @Codable
         struct SomeCodable {
@@ -1118,7 +1133,7 @@ struct IgnoreCodingTests {
             var shouldIgnoreTwo: Bool
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (IgnoreCodingTests #96)", .tags(.codable, .decoding, .encoding, .enums, .ignoreCoding, .ignoreEncoding, .macroExpansion, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -1171,7 +1186,7 @@ struct IgnoreCodingTests {
             )
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #22)", .tags(.encoding, .ignoreCoding, .optionals))
         func ignore() throws {
             let obj = SomeCodable(
                 one: "", two: "ignored", shouldIgnoreTwo: true)
@@ -1183,7 +1198,7 @@ struct IgnoreCodingTests {
             #expect(dict["shouldIgnoreTwo"] as? Bool == true)
         }
 
-        @Test
+        @Test("Encodes to JSON successfully (IgnoreCodingTests #23)", .tags(.encoding, .ignoreCoding, .optionals))
         func encode() throws {
             let obj = SomeCodable(
                 one: "some", two: "some", shouldIgnoreTwo: false)
@@ -1195,7 +1210,7 @@ struct IgnoreCodingTests {
             #expect(dict["shouldIgnoreTwo"] as? Bool == false)
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (IgnoreCodingTests #92)", .tags(.decoding, .ignoreCoding))
         func decode() throws {
             let json =
                 "{\"one\": \"\", \"two\": \"value\", \"shouldIgnoreTwo\": true}"
@@ -1207,6 +1222,7 @@ struct IgnoreCodingTests {
         }
     }
 
+    @Suite("Ignore Coding - Enum Encoding Ignore With Based On Condition")
     struct EnumEncodingIgnoreWithBasedOnCondition {
         @Codable
         enum SomeEnum {
@@ -1216,7 +1232,7 @@ struct IgnoreCodingTests {
             case multi(_ variable: Bool, val: Int, String)
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for enum (IgnoreCodingTests #24)", .tags(.codable, .decoding, .encoding, .enums, .ignoreCoding, .ignoreEncoding, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """

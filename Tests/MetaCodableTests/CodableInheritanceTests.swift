@@ -4,8 +4,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Codable Inheritance Tests")
 struct CodableInheritanceTests {
-    @Test
+    @Test("Reports error for @Codable misuse", .tags(.classes, .codable, .decoding, .encoding, .enums, .errorHandling, .inheritance, .inherits, .macroExpansion, .structs))
     func misuseOnNonClassDeclaration() throws {
         assertMacroExpansion(
             """
@@ -55,6 +56,7 @@ struct CodableInheritanceTests {
         )
     }
 
+    @Suite("Codable Inheritance - No Inheritance")
     struct NoInheritance {
         @Codable
         @Inherits(decodable: false, encodable: false)
@@ -64,7 +66,7 @@ struct CodableInheritanceTests {
             init() {}
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class", .tags(.classes, .codable, .decoding, .encoding, .enums, .inheritance, .inherits, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -108,7 +110,7 @@ struct CodableInheritanceTests {
             )
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (CodableInheritanceTests #2)", .tags(.decoding, .encoding, .inheritance, .inherits))
         func decodingAndEncoding() throws {
             let original = SomeCodable()
             original.value = "inheritance_test"
@@ -118,7 +120,7 @@ struct CodableInheritanceTests {
             #expect(decoded.value == "inheritance_test")
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (CodableInheritanceTests #4)", .tags(.decoding, .inheritance, .inherits))
         func decodingFromJSON() throws {
             let jsonStr = """
                 {
@@ -131,7 +133,7 @@ struct CodableInheritanceTests {
             #expect(decoded.value == "class_value")
         }
 
-        @Test
+        @Test("Encodes to JSON successfully", .tags(.encoding, .inheritance, .inherits, .optionals))
         func encodingToJSON() throws {
             let original = SomeCodable()
             original.value = "encoded_class"
@@ -143,6 +145,7 @@ struct CodableInheritanceTests {
         }
     }
 
+    @Suite("Codable Inheritance - Explicit")
     struct WithExplicitInheritance {
         class SuperCodable: Swift.Codable {}
 
@@ -154,7 +157,7 @@ struct CodableInheritanceTests {
             override init() { super.init() }
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class (CodableInheritanceTests #1)", .tags(.classes, .codable, .decoding, .encoding, .enums, .inheritance, .inherits, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -194,7 +197,7 @@ struct CodableInheritanceTests {
             )
         }
 
-        @Test
+        @Test("Encodes and decodes successfully (CodableInheritanceTests #3)", .tags(.decoding, .encoding, .inheritance, .inherits))
         func inheritanceDecodingAndEncoding() throws {
             let original = SomeCodable()
             original.value = "inherited_test"
@@ -204,7 +207,7 @@ struct CodableInheritanceTests {
             #expect(decoded.value == "inherited_test")
         }
 
-        @Test
+        @Test("Decodes from JSON successfully (CodableInheritanceTests #5)", .tags(.decoding, .inheritance, .inherits))
         func inheritanceFromJSON() throws {
             let jsonStr = """
                 {
@@ -218,6 +221,7 @@ struct CodableInheritanceTests {
         }
     }
 
+    @Suite("Codable Inheritance - Explicit")
     struct WithExplicitPartialInheritance {
         class SuperDecodable: Decodable {}
 
@@ -229,7 +233,7 @@ struct CodableInheritanceTests {
             override init() { super.init() }
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for class (CodableInheritanceTests #2)", .tags(.classes, .codable, .decoding, .encoding, .enums, .inheritance, .inherits, .macroExpansion))
         func expansion() throws {
             assertMacroExpansion(
                 """

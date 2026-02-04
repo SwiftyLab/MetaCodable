@@ -3,8 +3,9 @@ import Testing
 
 @testable import PluginCore
 
+@Suite("Encoded At Tests")
 struct EncodedAtTests {
-    @Test
+    @Test("Reports error for @EncodedAt misuse", .tags(.codedAt, .errorHandling, .macroExpansion, .structs))
     func misuseOnNonVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -35,7 +36,7 @@ struct EncodedAtTests {
         )
     }
 
-    @Test
+    @Test("Reports error for @EncodedAt misuse (EncodedAtTests #1)", .tags(.codedAt, .errorHandling, .macroExpansion, .structs))
     func misuseOnGroupedVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -56,7 +57,7 @@ struct EncodedAtTests {
         )
     }
 
-    @Test
+    @Test("Reports error for @EncodedAt misuse (EncodedAtTests #2)", .tags(.codedAt, .errorHandling, .macroExpansion, .structs))
     func misuseOnStaticVariableDeclaration() throws {
         assertMacroExpansion(
             """
@@ -85,7 +86,7 @@ struct EncodedAtTests {
         )
     }
 
-    @Test
+    @Test("Reports error for @CodedIn misuse (EncodedAtTests #1)", .tags(.codedAt, .codedIn, .errorHandling, .macroExpansion, .structs))
     func misuseInCombinationWithCodedInMacro() throws {
         assertMacroExpansion(
             """
@@ -124,7 +125,7 @@ struct EncodedAtTests {
         )
     }
 
-    @Test
+    @Test("Reports error for @CodedAt misuse (EncodedAtTests #5)", .tags(.codedAt, .errorHandling, .macroExpansion, .structs))
     func misuseInCombinationWithCodedAtMacro() throws {
         assertMacroExpansion(
             """
@@ -163,7 +164,7 @@ struct EncodedAtTests {
         )
     }
 
-    @Test
+    @Test("Reports error when @EncodedAt is applied multiple times", .tags(.codedAt, .errorHandling, .macroExpansion, .structs))
     func duplicatedMisuse() throws {
         assertMacroExpansion(
             """
@@ -202,6 +203,7 @@ struct EncodedAtTests {
         )
     }
 
+    @Suite("Encoded At - With No Path")
     struct WithNoPath {
         @Codable
         @MemberInit
@@ -210,7 +212,7 @@ struct EncodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (EncodedAtTests #46)", .tags(.codable, .codedAt, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -254,6 +256,7 @@ struct EncodedAtTests {
         }
     }
 
+    @Suite("Encoded At - With No Path On Optional Type")
     struct WithNoPathOnOptionalType {
         @Codable
         @MemberInit
@@ -262,7 +265,7 @@ struct EncodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (EncodedAtTests #47)", .tags(.codable, .codedAt, .encoding, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -305,6 +308,7 @@ struct EncodedAtTests {
             )
         }
 
+        @Suite("Encoded At - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -313,7 +317,7 @@ struct EncodedAtTests {
                 let value: String!
             }
 
-            @Test
+            @Test("Generates macro expansion with @Codable for struct (EncodedAtTests #48)", .tags(.codable, .codedAt, .encoding, .enums, .macroExpansion, .memberInit, .structs))
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -358,6 +362,7 @@ struct EncodedAtTests {
         }
     }
 
+    @Suite("Encoded At - With Single Path")
     struct WithSinglePath {
         @Codable
         @MemberInit
@@ -366,7 +371,7 @@ struct EncodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (EncodedAtTests #49)", .tags(.codable, .codedAt, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -412,6 +417,7 @@ struct EncodedAtTests {
         }
     }
 
+    @Suite("Encoded At - With Single Path On Optional Type")
     struct WithSinglePathOnOptionalType {
         @Codable
         @MemberInit
@@ -420,7 +426,7 @@ struct EncodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct (EncodedAtTests #50)", .tags(.codable, .codedAt, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -465,6 +471,7 @@ struct EncodedAtTests {
             )
         }
 
+        @Suite("Encoded At - Force Unwrap")
         struct ForceUnwrap {
             @Codable
             @MemberInit
@@ -473,7 +480,7 @@ struct EncodedAtTests {
                 let value: String!
             }
 
-            @Test
+            @Test("Generates macro expansion with @Codable for struct (EncodedAtTests #51)", .tags(.codable, .codedAt, .enums, .macroExpansion, .memberInit, .structs))
             func expansion() throws {
                 assertMacroExpansion(
                     """
@@ -520,6 +527,7 @@ struct EncodedAtTests {
         }
     }
 
+    @Suite("Encoded At - With Nested Path")
     struct WithNestedPath {
         @Codable
         @MemberInit
@@ -528,7 +536,7 @@ struct EncodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (EncodedAtTests #33)", .tags(.codable, .codedAt, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -578,6 +586,7 @@ struct EncodedAtTests {
         }
     }
 
+    @Suite("Encoded At - With Nested Path On Optional Type")
     struct WithNestedPathOnOptionalType {
         @Codable
         @MemberInit
@@ -586,7 +595,7 @@ struct EncodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (EncodedAtTests #34)", .tags(.codable, .codedAt, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -636,6 +645,7 @@ struct EncodedAtTests {
         }
     }
 
+    @Suite("Encoded At - DecodedAt")
     struct WithDecodedAtAndEncodedAt {
         @Codable
         @MemberInit
@@ -645,7 +655,7 @@ struct EncodedAtTests {
             let value: String
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (EncodedAtTests #35)", .tags(.codable, .codedAt, .decoding, .encoding, .enums, .macroExpansion, .memberInit, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """
@@ -695,6 +705,7 @@ struct EncodedAtTests {
         }
     }
 
+    @Suite("Encoded At - DecodedAt")
     struct WithDecodedAtAndEncodedAtOnOptionalType {
         @Codable
         @MemberInit
@@ -704,7 +715,7 @@ struct EncodedAtTests {
             let value: String?
         }
 
-        @Test
+        @Test("Generates macro expansion with @Codable for struct with nested paths (EncodedAtTests #36)", .tags(.codable, .codedAt, .enums, .macroExpansion, .memberInit, .optionals, .structs))
         func expansion() throws {
             assertMacroExpansion(
                 """

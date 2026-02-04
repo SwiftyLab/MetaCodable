@@ -2,8 +2,9 @@ import Foundation
 import MetaCodable
 import Testing
 
+@Suite("Lossy Sequence Tests")
 struct LossySequenceTests {
-    @Test
+    @Test("Decodes from JSON successfully (LossySequenceTests #57)", .tags(.decoding, .lossySequence))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func invalidDataType() throws {
         #expect(throws: DecodingError.self) {
@@ -12,7 +13,7 @@ struct LossySequenceTests {
         }
     }
 
-    @Test
+    @Test("Decodes from JSON successfully (LossySequenceTests #58)", .tags(.decoding, .lossySequence))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func emptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
@@ -20,7 +21,7 @@ struct LossySequenceTests {
         #expect(val.data == [])
     }
 
-    @Test
+    @Test("Encodes and decodes successfully (LossySequenceTests #22)", .tags(.decoding, .encoding, .lossySequence))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func validData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
@@ -30,7 +31,7 @@ struct LossySequenceTests {
         #expect(data == json)
     }
 
-    @Test
+    @Test("Decodes from JSON successfully (LossySequenceTests #59)", .tags(.decoding, .lossySequence))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func invalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
@@ -38,7 +39,7 @@ struct LossySequenceTests {
         #expect(val.data == ["1", "2"])
     }
 
-    @Test
+    @Test("Decodes from JSON successfully (LossySequenceTests #60)", .tags(.decoding, .lossySequence, .optionals))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func optionalInvalidDataType() throws {
         #expect(throws: DecodingError.self) {
@@ -49,7 +50,7 @@ struct LossySequenceTests {
         }
     }
 
-    @Test
+    @Test("Decodes from JSON successfully (LossySequenceTests #61)", .tags(.decoding, .lossySequence, .optionals))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func optionalEmptyData() throws {
         let json = "{}".data(using: .utf8)!
@@ -57,7 +58,7 @@ struct LossySequenceTests {
         #expect(val.data == nil)
     }
 
-    @Test
+    @Test("Encodes and decodes successfully (LossySequenceTests #23)", .tags(.decoding, .encoding, .lossySequence, .optionals))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func optionalValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
@@ -67,7 +68,7 @@ struct LossySequenceTests {
         #expect(data == json)
     }
 
-    @Test
+    @Test("Decodes from JSON successfully (LossySequenceTests #62)", .tags(.decoding, .lossySequence, .optionals))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func optionalInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
@@ -75,7 +76,7 @@ struct LossySequenceTests {
         #expect(val.data == ["1", "2"])
     }
 
-    @Test
+    @Test("Decodes from JSON successfully (LossySequenceTests #63)", .tags(.decoding, .lossySequence))
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
     func defaultInvalidDataType() throws {
         let json = #"{"data":1}"#.data(using: .utf8)!
@@ -83,16 +84,16 @@ struct LossySequenceTests {
         #expect(val.data == ["some"])
     }
 
-    @Test
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    @Test("Decodes from JSON successfully (LossySequenceTests #64)", .tags(.decoding, .lossySequence))
     func defaultEmptyData() throws {
         let json = #"{"data":[]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(DefaultContainer.self, from: json)
         #expect(val.data == [])
     }
 
-    @Test
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    @Test("Encodes and decodes successfully (LossySequenceTests #24)", .tags(.decoding, .encoding, .lossySequence))
     func defaultValidData() throws {
         let json = #"{"data":["1","2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(DefaultContainer.self, from: json)
@@ -101,8 +102,8 @@ struct LossySequenceTests {
         #expect(data == json)
     }
 
-    @Test
     @available(*, deprecated, message: "Tesing deprecated LossySequenceCoder")
+    @Test("Decodes from JSON successfully (LossySequenceTests #65)", .tags(.decoding, .lossySequence))
     func defaultInvalidData() throws {
         let json = #"{"data":[1,"1",2,"2"]}"#.data(using: .utf8)!
         let val = try JSONDecoder().decode(DefaultContainer.self, from: json)
