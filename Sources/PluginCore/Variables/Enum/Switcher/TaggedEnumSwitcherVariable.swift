@@ -150,7 +150,7 @@ extension EnumSwitcherVariable {
                             generatedCode
                         }
                     } else {
-                        "break"
+                        preSyntax("\(values.first!)")
                     }
                 }
             }
