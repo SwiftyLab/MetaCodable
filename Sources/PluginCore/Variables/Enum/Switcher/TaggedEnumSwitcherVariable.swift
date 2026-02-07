@@ -151,6 +151,7 @@ extension EnumSwitcherVariable {
                         }
                     } else {
                         preSyntax("\(values.first!)")
+                        "break"
                     }
                 }
             }
