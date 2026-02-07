@@ -880,5 +880,25 @@ struct CodedAtEnumTests {
                     """
             )
         }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "type": "foo"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Foo.self, from: jsonData)
+            #expect(decoded == Foo.foo)
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = Foo.foo
+            let encoded = try JSONEncoder().encode(original)
+            let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+            #expect(json?["type"] as? String == "foo")
+        }
     }
 }
