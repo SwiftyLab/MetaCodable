@@ -54,8 +54,13 @@ package struct CodedBy: PropertyAttribute {
                 isEnum || isProtocol,
                 AggregatedDiagnosticProducer {
                     mustBeCombined(with: Codable.self)
-                    mustBeCombined(
-                        with: CodedAt.self, or: DecodedAt.self, EncodedAt.self
+                    `if`(
+                        isRawRepresentableEnum,
+                        mustBeCombined(with: Codable.self),
+                        else: mustBeCombined(
+                            with: CodedAt.self,
+                            or: DecodedAt.self, EncodedAt.self
+                        )
                     )
                 },
                 else: AggregatedDiagnosticProducer {

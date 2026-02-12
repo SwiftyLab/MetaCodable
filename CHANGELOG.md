@@ -1,3 +1,16 @@
+## [1.6.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.5.0...v1.6.0) (2026-01-20)
+
+
+### 🚀 Features
+
+* added support for `RawRepresentable` enum conformance generation ([#147](https://github.com/SwiftyLab/MetaCodable/issues/147)) ([46cb009](https://github.com/SwiftyLab/MetaCodable/commit/46cb009664047db495f92c30bd9b988832f51806))
+* added support for specifying arbitrary primitive enum case values ([#144](https://github.com/SwiftyLab/MetaCodable/issues/144)) ([8e3a24f](https://github.com/SwiftyLab/MetaCodable/commit/8e3a24f6c3ed20fa21ca89322e2317389061e71a))
+
+
+### 🐛 Fixes
+
+* fixed optional types not detected with `valueCoder` strategy ([#141](https://github.com/SwiftyLab/MetaCodable/issues/141)) ([5873c3e](https://github.com/SwiftyLab/MetaCodable/commit/5873c3e33ab98e61c06304bfc2a2c93ab199d65d))
+
 ## [1.5.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.4.0...v1.5.0) (2025-07-08)
 
 

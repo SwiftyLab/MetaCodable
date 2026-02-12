@@ -31,6 +31,7 @@ where
     ///   - decl: The declaration to read data from.
     ///   - context: The context in which to perform the macro expansion.
     ///   - codingKeys: The map where `CodingKeys` maintained.
+    ///   - memberInput: The input data for processing member declarations.
     ///   - builder: The builder action to use to update member variables
     ///     registration data.
     ///
