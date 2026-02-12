@@ -48,9 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
     - name: Spellcheck Action
-      uses: rojopolis/spellcheck-github-actions@0.51.0
+      uses: rojopolis/spellcheck-github-actions@0.57.0
       with:
         config_path: .github/config/spellcheck.yaml
 
@@ -176,7 +176,10 @@ jobs:
             },
             {
               "os": "ubuntu-latest",
-              "swift": "latest"
+              "swift": "6.2",
+              "dependencies": {
+                "swift-syntax": "602.0.0"
+              }
             },
             {
               "os": "macos-15",
@@ -184,6 +187,11 @@ jobs:
             }
           ]
         }
+      # disable until prebuilt macro issues are fixed
+      # {
+      #   "os": "ubuntu-latest",
+      #   "swift": "latest"
+      # },
 
   cocoapods-test:
     name: CocoaPods

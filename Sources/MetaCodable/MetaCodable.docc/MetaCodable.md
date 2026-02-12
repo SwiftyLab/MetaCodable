@@ -10,7 +10,6 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 
 `MetaCodable` framework exposes custom macros which can be used to generate dynamic `Codable` implementations. The core of the framework is ``Codable(commonStrategies:)`` macro which generates the implementation aided by data provided with using other macros.
 
-
 `MetaCodable` aims to supercharge your `Codable` implementations by providing these inbox features:
 
 - Allows custom `CodingKey` value declaration per variable with ``CodedAt(_:)`` passing single argument, instead of requiring you to write all the `CodingKey` values.

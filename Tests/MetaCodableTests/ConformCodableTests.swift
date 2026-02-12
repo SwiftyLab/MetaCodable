@@ -39,15 +39,6 @@ struct ConformEncodableTests {
                     ]
                 ),
                 .init(
-                    id: ConformEncodable.misuseID,
-                    message:
-                        "@ConformEncodable can't be used in combination with @Codable",
-                    line: 1, column: 1,
-                    fixIts: [
-                        .init(message: "Remove @ConformEncodable attribute")
-                    ]
-                ),
-                .init(
                     id: Codable.misuseID,
                     message:
                         "@Codable can't be used in combination with @ConformEncodable",
@@ -79,24 +70,6 @@ struct ConformEncodableTests {
                 }
                 """,
             diagnostics: [
-                .init(
-                    id: ConformEncodable.misuseID,
-                    message:
-                        "@ConformEncodable can't be used in combination with @ConformDecodable",
-                    line: 1, column: 1,
-                    fixIts: [
-                        .init(message: "Remove @ConformEncodable attribute")
-                    ]
-                ),
-                .init(
-                    id: ConformDecodable.misuseID,
-                    message:
-                        "@ConformDecodable can't be used in combination with @ConformEncodable",
-                    line: 2, column: 1,
-                    fixIts: [
-                        .init(message: "Remove @ConformDecodable attribute")
-                    ]
-                ),
                 .init(
                     id: ConformEncodable.misuseID,
                     message:

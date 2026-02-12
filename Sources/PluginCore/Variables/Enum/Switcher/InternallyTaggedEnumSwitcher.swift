@@ -81,6 +81,12 @@ where
     /// This flag is typically set based on the code generation strategy or specific
     /// requirements for the generated decoding implementation.
     let forceDecodingReturn: Bool
+    /// Whether this enum should be treated as RawRepresentable.
+    ///
+    /// When `true`, indicates that the enum has no associated values and should
+    /// be encoded/decoded using RawRepresentable semantics. This affects how
+    /// the enum cases are processed during code generation.
+    let rawRepresentable: Bool
 
     /// Creates an internally tagged enum switcher and configures all components.
     ///
@@ -90,10 +96,10 @@ where
     /// variable with the provided container names.
     ///
     /// - Parameters:
-    ///   - identifierDecodeContainer: The token name for the decoding container variable
-    ///     that will be exposed during decoding operations.
-    ///   - identifierEncodeContainer: The token name for the encoding container variable
-    ///     that will be exposed during encoding operations.
+    ///   - coderPrefix: The prefix for coder variable names that will be used
+    ///     to generate decoder and encoder variable names.
+    ///   - topDecode: Whether the decoding is happening at the top level.
+    ///   - topEncode: Whether the encoding is happening at the top level.
     ///   - identifier: The identifier token name for the enum case identifier variable.
     ///   - identifierType: The optional type syntax for the identifier variable. If nil,
     ///     default fallback handling with nil values will be applied.
@@ -105,23 +111,25 @@ where
     ///   - forceDecodingReturn: Whether to force explicit `return` statements in generated
     ///     decoding switch cases. When `true`, each case includes a `return` after assignment
     ///     for early exit from the switch statement.
+    ///   - rawRepresentable: Whether this enum should be treated as RawRepresentable.
+    ///     When `true`, indicates the enum has no associated values and should use
+    ///     RawRepresentable semantics for encoding/decoding.
     ///   - variableBuilder: The builder function for transforming the basic property
     ///     variable into the final variable type with custom processing.
     init(
-        identifierDecodeContainer: TokenSyntax,
-        identifierEncodeContainer: TokenSyntax,
+        coderPrefix: TokenSyntax, topDecode: Bool, topEncode: Bool,
         identifier: TokenSyntax, identifierType: TypeSyntax?,
         keyPath: PathKey, codingKeys: CodingKeysMap,
         decl: EnumDeclSyntax, context: some MacroExpansionContext,
-        forceDecodingReturn: Bool,
+        forceDecodingReturn: Bool, rawRepresentable: Bool,
         variableBuilder: @escaping VariableBuilder
     ) {
-        precondition(!keyPath.decoding.isEmpty && !keyPath.encoding.isEmpty)
         self.identifier = identifier
         self.identifierType = identifierType
         self.decl = decl
         self.variableBuilder = variableBuilder
         self.forceDecodingReturn = forceDecodingReturn
+        self.rawRepresentable = rawRepresentable
 
         var decodingNode = PropertyVariableTreeNode()
         var encodingNode = PropertyVariableTreeNode()
@@ -145,8 +153,8 @@ where
         )
 
         self.variable = ContainerVariable(
-            decodeContainer: identifierDecodeContainer,
-            encodeContainer: identifierEncodeContainer,
+            coderPrefix: coderPrefix, topDecode: topDecode,
+            topEncode: topEncode,
             base: output.variable, providedType: identifierType
         )
 
@@ -264,27 +272,33 @@ where
 }
 
 extension InternallyTaggedEnumSwitcher {
-    /// A variable value exposing encoding container.
+    /// A variable value exposing decoder and encoder.
     ///
     /// The `ContainerVariable` forwards decoding implementation
-    /// to underlying variable while exposing encoding container via variable
-    /// provided with `encodeContainer` name.
+    /// to underlying variable while exposing decoder and encoder via computed
+    /// properties based on coderPrefix and topLevel flag.
     struct ContainerVariable<Wrapped>: PropertyVariable, ComposedVariable
     where Wrapped: PropertyVariable {
         /// The initialization type of this variable.
         ///
         /// Initialization type is the same as underlying wrapped variable.
         typealias Initialization = Wrapped.Initialization
-        /// The mapped name for decoder.
+        /// The prefix for coder variable names.
         ///
-        /// The decoder at location passed will be exposed
-        /// with this variable name.
-        let decodeContainer: TokenSyntax
-        /// The mapped name for encoder.
+        /// This prefix is used to generate decoder and encoder variable names.
+        let coderPrefix: TokenSyntax
+        /// Whether the decoding is happening at the top level.
         ///
-        /// The encoder at location passed will be exposed
-        /// with this variable name.
-        let encodeContainer: TokenSyntax
+        /// When `true`, indicates that the decoding is happening at the top level
+        /// (directly with decoder). When `false`, indicates that decoding
+        /// is happening within a container.
+        let topDecode: Bool
+        /// Whether the encoding is happening at the top level.
+        ///
+        /// When `true`, indicates that the encoding is happening at the top level
+        /// (directly with encoder). When `false`, indicates that encoding
+        /// is happening within a container.
+        let topEncode: Bool
         /// The value wrapped by this instance.
         ///
         /// The wrapped variable's type data is
@@ -297,6 +311,28 @@ extension InternallyTaggedEnumSwitcher {
         /// during decoding. If the type is optional, missing containers are handled
         /// gracefully. If non-optional or nil, different fallback strategies apply.
         let providedType: TypeSyntax?
+
+        /// The computed decoder variable name.
+        ///
+        /// Generates the decoder variable name based on the coderPrefix and topDecode flag.
+        /// When topDecode is true, appends "Decoder". When false, appends "Container".
+        var decoder: TokenSyntax {
+            guard topDecode else {
+                return "\(coderPrefix)Container"
+            }
+            return "\(coderPrefix)Decoder"
+        }
+
+        /// The computed encoder variable name.
+        ///
+        /// Generates the encoder variable name based on the coderPrefix and topEncode flag.
+        /// When topEncode is true, appends "Encoder". When false, appends "Container".
+        var encoder: TokenSyntax {
+            guard topEncode else {
+                return "\(coderPrefix)Container"
+            }
+            return "\(coderPrefix)Encoder"
+        }
 
         /// Whether the variable is to be decoded.
         ///
@@ -320,23 +356,23 @@ extension InternallyTaggedEnumSwitcher {
         ///
         /// Determines how to handle decoding failures based on the provided type:
         /// - When `providedType` is `nil`: Uses `.ifMissing` fallback for both missing
-        ///   and error cases, setting the container to `nil`.
+        ///   and error cases, setting the decoder to `nil`.
         /// - When `providedType` is optional: Uses `.onlyIfMissing` fallback, setting
-        ///   the container to `nil` only when data is missing.
+        ///   the decoder to `nil` only when data is missing.
         /// - When `providedType` is non-optional: Uses `.throw` strategy, propagating
         ///   decoding errors without fallback handling.
         var decodingFallback: DecodingFallback {
-            let containerFallbackSyntax = CodeBlockItemListSyntax {
-                "\(decodeContainer) = nil"
+            let decoderFallbackSyntax = CodeBlockItemListSyntax {
+                "\(decoder) = nil"
             }
 
             return switch providedType {
             case .none:
                 .ifMissing(
-                    containerFallbackSyntax, ifError: containerFallbackSyntax
+                    decoderFallbackSyntax, ifError: decoderFallbackSyntax
                 )
             case .some(let type) where type.isOptionalTypeSyntax == true:
-                .onlyIfMissing(containerFallbackSyntax)
+                .onlyIfMissing(decoderFallbackSyntax)
             default:
                 .throw
             }
@@ -345,8 +381,8 @@ extension InternallyTaggedEnumSwitcher {
         /// Provides the code syntax for decoding this variable
         /// at the provided location.
         ///
-        /// Assigns the decoding container passed in location to the variable
-        /// created with the `decodeContainer` name provided.
+        /// Assigns the decoder passed in location to the variable
+        /// created with the computed `decoder` name.
         ///
         /// - Parameters:
         ///   - context: The context in which to perform the macro expansion.
@@ -359,17 +395,17 @@ extension InternallyTaggedEnumSwitcher {
         ) -> CodeBlockItemListSyntax {
             switch location {
             case .coder(let decoder, _):
-                fatalError("Error encoding \(Self.self) to \(decoder)")
+                "\(self.decoder) = \(decoder)"
             case .container(let container, _, _):
-                "\(self.decodeContainer) = \(container)"
+                "\(self.decoder) = \(container)"
             }
         }
 
         /// Provides the code syntax for encoding this variable
         /// at the provided location.
         ///
-        /// Assigns the encoding container passed in location to the variable
-        /// created with the `encodeContainer` name provided.
+        /// Assigns the encoder passed in location to the variable
+        /// created with the computed `encoder` name.
         ///
         /// - Parameters:
         ///   - context: The context in which to perform the macro expansion.
@@ -382,9 +418,9 @@ extension InternallyTaggedEnumSwitcher {
         ) -> CodeBlockItemListSyntax {
             switch location {
             case .coder(let encoder, _):
-                fatalError("Error encoding \(Self.self) to \(encoder)")
+                "let \(self.encoder) = \(encoder)"
             case .container(let container, _, _):
-                "var \(self.encodeContainer) = \(container)"
+                "var \(self.encoder) = \(container)"
             }
         }
     }
