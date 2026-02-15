@@ -607,7 +607,6 @@ struct CodableTests {
                             switch self {
                             case .foo:
                                 let _ = container.superEncoder(forKey: CodingKeys.foo)
-                                break
                             }
                         }
                     }

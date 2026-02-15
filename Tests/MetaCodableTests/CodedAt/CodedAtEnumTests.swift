@@ -867,7 +867,6 @@ struct CodedAtEnumTests {
                             switch self {
                             case .foo:
                                 try typeContainer.encode("foo", forKey: CodingKeys.type)
-                                break
                             }
                         }
                     }
