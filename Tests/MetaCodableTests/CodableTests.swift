@@ -561,6 +561,89 @@ struct CodableTests {
             )
         }
     }
+
+    struct EnumWithoutAssociatedVariables {
+        @Codable
+        enum Foo {
+            case foo
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                enum Foo {
+                    case foo
+                }
+                """,
+                expandedSource:
+                    """
+                    enum Foo {
+                        case foo
+                    }
+                    
+                    extension Foo: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            let container = try decoder.container(keyedBy: DecodingKeys.self)
+                            guard container.allKeys.count == 1 else {
+                                let context = DecodingError.Context(
+                                    codingPath: container.codingPath,
+                                    debugDescription: "Invalid number of keys found, expected one."
+                                )
+                                throw DecodingError.typeMismatch(Self.self, context)
+                            }
+                            let contentDecoder = try container.superDecoder(forKey: container.allKeys.first.unsafelyUnwrapped)
+                            switch container.allKeys.first.unsafelyUnwrapped {
+                            case DecodingKeys.foo:
+                                self = .foo
+                            }
+                        }
+                    }
+                    
+                    extension Foo: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            var container = encoder.container(keyedBy: CodingKeys.self)
+                            switch self {
+                            case .foo:
+                                let _ = container.superEncoder(forKey: CodingKeys.foo)
+                                break
+                            }
+                        }
+                    }
+                    
+                    extension Foo {
+                        enum CodingKeys: String, CodingKey {
+                            case foo = "foo"
+                        }
+                        enum DecodingKeys: String, CodingKey {
+                            case foo = "foo"
+                        }
+                    }
+                    """
+            )
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "foo": {}
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Foo.self, from: jsonData)
+            #expect(decoded == Foo.foo)
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = Foo.foo
+            let encoded = try JSONEncoder().encode(original)
+            let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+            #expect((json?["foo"] as? [String: Any])?.isEmpty == true)
+        }
+    }
 }
 
 #if canImport(MacroPlugin)
