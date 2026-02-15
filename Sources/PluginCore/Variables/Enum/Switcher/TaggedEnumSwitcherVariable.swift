@@ -117,7 +117,7 @@ extension EnumSwitcherVariable {
         from coder: TokenSyntax,
         in context: some MacroExpansionContext,
         withDefaultCase default: Bool,
-        preSyntax: (TokenSyntax) -> CodeBlockItemListSyntax
+        preSyntax: ((TokenSyntax, hasContent: Bool)) -> CodeBlockItemListSyntax
     ) -> SwitchExprSyntax? {
         let cases = location.cases
         let allEncodable = cases.allSatisfy { $0.variable.encode ?? true }
@@ -144,15 +144,8 @@ extension EnumSwitcherVariable {
 
                 let generatedCode = generated.code.combined()
                 SwitchCaseSyntax(label: .case(label)) {
-                    if !generatedCode.isEmpty {
-                        CodeBlockItemListSyntax {
-                            preSyntax("\(values.first!)")
-                            generatedCode
-                        }
-                    } else {
-                        preSyntax("\(values.first!)")
-                        "break"
-                    }
+                    preSyntax(("\(values.first!)", !generatedCode.isEmpty))
+                    generatedCode.isEmpty ? "break" : generatedCode
                 }
             }
 
