@@ -144,8 +144,14 @@ extension EnumSwitcherVariable {
 
                 let generatedCode = generated.code.combined()
                 SwitchCaseSyntax(label: .case(label)) {
-                    preSyntax(("\(values.first!)", !generatedCode.isEmpty))
-                    generatedCode.isEmpty ? "break" : generatedCode
+                    let preSyntax = preSyntax(("\(values.first!)", !generatedCode.isEmpty))
+                    preSyntax
+                    if !generatedCode.isEmpty {
+                        generatedCode
+                    }
+                    if preSyntax.isEmpty && generatedCode.isEmpty {
+                        "break"
+                    }
                 }
             }
 
