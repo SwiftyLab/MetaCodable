@@ -185,9 +185,9 @@ struct IgnoreInitializedTests {
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             switch self {
                             case .bool(_: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.bool)
                             case .int(val: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.int)
                             case .string(let _0):
                                 let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                                 try _0.encode(to: contentEncoder)
@@ -297,9 +297,9 @@ struct IgnoreInitializedTests {
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             switch self {
                             case .bool(_: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.bool)
                             case .int(val: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.int)
                             case .string(let _0):
                                 let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                                 try _0.encode(to: contentEncoder)
