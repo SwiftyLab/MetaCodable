@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import Testing
 
@@ -124,6 +125,17 @@ struct IgnoreInitializedTests {
             case multi(_ variable: Bool, val: Int, String = "text")
         }
 
+        @Test func coding() async throws {
+            let encoded = try JSONEncoder().encode(SomeEnum.bool(false))
+            let expected = try JSONSerialization.data(withJSONObject: ["bool": [:]])
+            #expect(encoded == expected)
+            let decoded = try JSONDecoder().decode(SomeEnum.self, from: encoded)
+            switch decoded {
+            case SomeEnum.bool(true): break
+            default: Issue.record("Incorrect default value")
+            }
+        }
+
         @Test
         func expansion() throws {
             assertMacroExpansion(
@@ -232,6 +244,17 @@ struct IgnoreInitializedTests {
             @CodedAs("altString")
             case string(String)
             case multi(_ variable: Bool, val: Int, String = "text")
+        }
+
+        @Test func coding() async throws {
+            let encoded = try JSONEncoder().encode(SomeEnum.int(val: 0))
+            let expected = try JSONSerialization.data(withJSONObject: ["altInt": [:]])
+            #expect(encoded == expected)
+            let decoded = try JSONDecoder().decode(SomeEnum.self, from: encoded)
+            switch decoded {
+            case SomeEnum.int(6): break
+            default: Issue.record("Incorrect default value")
+            }
         }
 
         @Test
