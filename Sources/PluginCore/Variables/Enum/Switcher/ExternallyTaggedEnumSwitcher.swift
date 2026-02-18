@@ -170,9 +170,9 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
             let switchExpr = self.encodeSwitchExpression(
                 over: location.selfValue, at: location, from: contentEncoder,
                 in: context, withDefaultCase: location.hasDefaultCase
-            ) { name in
+            ) { name, hasContent in
                 """
-                let \(contentEncoder) = \(container).superEncoder(forKey: \(name))
+                let \(hasContent ? contentEncoder : "_") = \(container).superEncoder(forKey: \(name))
                 """
             }
             if let switchExpr = switchExpr {

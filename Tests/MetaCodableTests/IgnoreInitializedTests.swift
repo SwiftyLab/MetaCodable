@@ -1,3 +1,4 @@
+import Foundation
 import MetaCodable
 import Testing
 
@@ -124,6 +125,17 @@ struct IgnoreInitializedTests {
             case multi(_ variable: Bool, val: Int, String = "text")
         }
 
+        @Test func coding() async throws {
+            let encoded = try JSONEncoder().encode(SomeEnum.bool(false))
+            let expected = try JSONSerialization.data(withJSONObject: ["bool": [:]])
+            #expect(encoded == expected)
+            let decoded = try JSONDecoder().decode(SomeEnum.self, from: encoded)
+            switch decoded {
+            case SomeEnum.bool(true): break
+            default: Issue.record("Incorrect default value")
+            }
+        }
+
         @Test
         func expansion() throws {
             assertMacroExpansion(
@@ -185,9 +197,9 @@ struct IgnoreInitializedTests {
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             switch self {
                             case .bool(_: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.bool)
                             case .int(val: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.int)
                             case .string(let _0):
                                 let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                                 try _0.encode(to: contentEncoder)
@@ -232,6 +244,17 @@ struct IgnoreInitializedTests {
             @CodedAs("altString")
             case string(String)
             case multi(_ variable: Bool, val: Int, String = "text")
+        }
+
+        @Test func coding() async throws {
+            let encoded = try JSONEncoder().encode(SomeEnum.int(val: 0))
+            let expected = try JSONSerialization.data(withJSONObject: ["altInt": [:]])
+            #expect(encoded == expected)
+            let decoded = try JSONDecoder().decode(SomeEnum.self, from: encoded)
+            switch decoded {
+            case SomeEnum.int(6): break
+            default: Issue.record("Incorrect default value")
+            }
         }
 
         @Test
@@ -297,9 +320,9 @@ struct IgnoreInitializedTests {
                             var container = encoder.container(keyedBy: CodingKeys.self)
                             switch self {
                             case .bool(_: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.bool)
                             case .int(val: _):
-                                break
+                                let _ = container.superEncoder(forKey: CodingKeys.int)
                             case .string(let _0):
                                 let contentEncoder = container.superEncoder(forKey: CodingKeys.string)
                                 try _0.encode(to: contentEncoder)
