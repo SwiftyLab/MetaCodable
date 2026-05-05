@@ -11,16 +11,34 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly
+      interval: weekly
     commit-message:
       prefix: 'ci(Deps): '
+    cooldown:
+      default-days: 5
+      include:
+        - '*'
+    groups:
+      all:
+        applies-to: version-updates
+        patterns:
+          - '*'
 
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: monthly
+      interval: daily
     commit-message:
       prefix: 'ci(Deps): '
+    cooldown:
+      default-days: 3
+      include:
+        - '*'
+    groups:
+      all:
+        applies-to: version-updates
+        patterns:
+          - '*'
 
   - package-ecosystem: devcontainers
     directory: /
