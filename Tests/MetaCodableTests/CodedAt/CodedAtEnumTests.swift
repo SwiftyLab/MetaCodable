@@ -802,4 +802,102 @@ struct CodedAtEnumTests {
             #expect(json["int"] as? Int == 42)
         }
     }
+
+    struct WithoutAssociatedVariables {
+        @Codable
+        @CodedAt("type")
+        enum Foo {
+            case foo
+        }
+
+        @Test
+        func expansion() throws {
+            assertMacroExpansion(
+                """
+                @Codable
+                @CodedAt("type")
+                enum Foo {
+                    case foo
+                }
+                """,
+                expandedSource:
+                    """
+                    enum Foo {
+                        case foo
+                    }
+                    
+                    extension Foo: Decodable {
+                        init(from decoder: any Decoder) throws {
+                            var typeContainer: KeyedDecodingContainer<CodingKeys>?
+                            let container = try? decoder.container(keyedBy: CodingKeys.self)
+                            if let container = container {
+                                typeContainer = container
+                            } else {
+                                typeContainer = nil
+                            }
+                            if let typeContainer = typeContainer {
+                                let typeString: String?
+                                do {
+                                    typeString = try typeContainer.decodeIfPresent(String.self, forKey: CodingKeys.type) ?? nil
+                                } catch {
+                                    typeString = nil
+                                }
+                                if let typeString = typeString {
+                                    switch typeString {
+                                    case "foo":
+                                        self = .foo
+                                        return
+                                    default:
+                                        break
+                                    }
+                                }
+                            }
+                            let context = DecodingError.Context(
+                                codingPath: decoder.codingPath,
+                                debugDescription: "Couldn't match any cases."
+                            )
+                            throw DecodingError.typeMismatch(Self.self, context)
+                        }
+                    }
+                    
+                    extension Foo: Encodable {
+                        func encode(to encoder: any Encoder) throws {
+                            let container = encoder.container(keyedBy: CodingKeys.self)
+                            var typeContainer = container
+                            switch self {
+                            case .foo:
+                                try typeContainer.encode("foo", forKey: CodingKeys.type)
+                            }
+                        }
+                    }
+                    
+                    extension Foo {
+                        enum CodingKeys: String, CodingKey {
+                            case type = "type"
+                        }
+                    }
+                    """
+            )
+        }
+
+        @Test
+        func decodingFromJSON() throws {
+            let jsonStr = """
+                {
+                    "type": "foo"
+                }
+                """
+            let jsonData = try #require(jsonStr.data(using: .utf8))
+            let decoded = try JSONDecoder().decode(Foo.self, from: jsonData)
+            #expect(decoded == Foo.foo)
+        }
+
+        @Test
+        func encodingToJSON() throws {
+            let original = Foo.foo
+            let encoded = try JSONEncoder().encode(original)
+            let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+            #expect(json?["type"] as? String == "foo")
+        }
+    }
 }

@@ -1,3 +1,11 @@
+## [1.6.1](https://github.com/SwiftyLab/MetaCodable/compare/v1.6.0...v1.6.1) (2026-06-24)
+
+
+### 🐛 Fixes
+
+* fixed enum cases encoding without associated values ([#158](https://github.com/SwiftyLab/MetaCodable/issues/158)) ([485b74d](https://github.com/SwiftyLab/MetaCodable/commit/485b74dd811118227e6419b84ac075b96d40f4b1)), closes [#157](https://github.com/SwiftyLab/MetaCodable/issues/157)
+* removed unnecessary container variable warning for enum decoding expansion ([#156](https://github.com/SwiftyLab/MetaCodable/issues/156)) ([ee54b7d](https://github.com/SwiftyLab/MetaCodable/commit/ee54b7d4506d32f58ca260ca6af5475a8a090aa0))
+
 ## [1.6.0](https://github.com/SwiftyLab/MetaCodable/compare/v1.5.0...v1.6.0) (2026-01-20)
 
 
