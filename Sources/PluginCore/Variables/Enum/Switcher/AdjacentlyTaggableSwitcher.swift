@@ -388,7 +388,7 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
             let switchExpr = self.encodeSwitchExpression(
                 over: location.selfValue, at: location, from: encoder,
                 in: context, withDefaultCase: location.hasDefaultCase
-            ) { name in
+            ) { name, _ in
                 let (variable, _) = identifierVariableAndKey(
                     name, withType: "_", context: context
                 )
