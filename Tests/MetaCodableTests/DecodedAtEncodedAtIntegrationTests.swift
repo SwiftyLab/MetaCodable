@@ -413,12 +413,14 @@ struct DecodedAtEncodedAtIntegrationTests {
                                         switch typeString {
                                         case "load":
                                             let key: String
+                                            let container = try decoder.container(keyedBy: CodingKeys.self)
                                             key = try container.decode(String.self, forKey: CodingKeys.key)
                                             self = .load(key: key)
                                             return
                                         case "store":
                                             let key: String
                                             let value: Int
+                                            let container = try decoder.container(keyedBy: CodingKeys.self)
                                             key = try container.decode(String.self, forKey: CodingKeys.key)
                                             value = try container.decode(Int.self, forKey: CodingKeys.value)
                                             self = .store(key: key, value: value)

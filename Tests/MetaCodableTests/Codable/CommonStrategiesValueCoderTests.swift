@@ -566,16 +566,19 @@ struct CommonStrategiesValueCoderTests {
                                     switch typeString {
                                     case "active":
                                         let since: String
+                                        let container = try decoder.container(keyedBy: CodingKeys.self)
                                         since = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.since)
                                         self = .active(since: since)
                                         return
                                     case "inactive":
                                         let reason: String
+                                        let container = try decoder.container(keyedBy: CodingKeys.self)
                                         reason = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.reason)
                                         self = .inactive(reason: reason)
                                         return
                                     case "pending":
                                         let until: String
+                                        let container = try decoder.container(keyedBy: CodingKeys.self)
                                         until = try ValueCoder<String>().decode(from: container, forKey: CodingKeys.until)
                                         self = .pending(until: until)
                                         return
