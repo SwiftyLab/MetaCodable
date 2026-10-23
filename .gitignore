@@ -59,6 +59,7 @@ Package.resolved
 *.o
 *.d
 *.swiftdeps*
+*.dia
 
 # CocoaPods
 #
