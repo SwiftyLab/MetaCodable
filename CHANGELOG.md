@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/SwiftyLab/MetaCodable/compare/v1.6.1...v1.6.2) (2026-10-23)
+
+
+### 🐛 Fixes
+
+* decode adjacently tagged enum content from content key ([#167](https://github.com/SwiftyLab/MetaCodable/issues/167)) ([3047f65](https://github.com/SwiftyLab/MetaCodable/commit/3047f6531f35f2cb7a27194b46a886b87e11bad8))
+
 ## [1.6.1](https://github.com/SwiftyLab/MetaCodable/compare/v1.6.0...v1.6.1) (2026-06-24)
 
 
