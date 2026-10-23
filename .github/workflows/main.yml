@@ -63,28 +63,28 @@ jobs:
         {
           "include": [
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "5.9",
               "dependencies": {
                 "swift-syntax": "509.1.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "5.9",
               "dependencies": {
                 "swift-syntax": "510.0.3"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "5.9",
               "dependencies": {
                 "swift-syntax": "600.0.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "5.9",
               "dependencies": {
                 "swift-syntax": "601.0.1"
@@ -119,63 +119,63 @@ jobs:
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.0",
               "dependencies": {
                 "swift-syntax": "509.1.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.0",
               "dependencies": {
                 "swift-syntax": "510.0.3"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.0",
               "dependencies": {
                 "swift-syntax": "600.0.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.0",
               "dependencies": {
                 "swift-syntax": "601.0.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.1",
               "dependencies": {
                 "swift-syntax": "509.1.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.1",
               "dependencies": {
                 "swift-syntax": "510.0.3"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.1",
               "dependencies": {
                 "swift-syntax": "600.0.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.1",
               "dependencies": {
                 "swift-syntax": "601.0.1"
               }
             },
             {
-              "os": "ubuntu-latest",
+              "os": "ubuntu-24.04",
               "swift": "6.2",
               "dependencies": {
                 "swift-syntax": "602.0.0"
