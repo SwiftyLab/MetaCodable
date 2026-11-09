@@ -43,11 +43,20 @@ extension TaggedEnumSwitcherVariable {
                 let values = value.decodeExprs
                     .filter { $0.type == header.type }
                     .map(\.syntax)
-                let cLocation = EnumCaseCodingLocation(
-                    coder: coder, values: values
-                )
-                let generated = `case`.decoding(in: context, from: cLocation)
+                // Only generate decoding syntax for cases that match the
+                // current type being considered. Doing so for non-matching
+                // cases is not only wasteful but also mutates shared per-case
+                // node state (e.g. the cached container name), which would
+                // suppress container generation for the type that actually
+                // matches, leading to values being decoded from the wrong
+                // container.
                 if !values.isEmpty {
+                    let cLocation = EnumCaseCodingLocation(
+                        coder: coder, values: values
+                    )
+                    let generated = `case`.decoding(
+                        in: context, from: cLocation
+                    )
                     let _ = { switchable = true }()
                     SwitchCaseSyntax(label: .case(generated.label)) {
                         preSyntax("\(values.first!)")
