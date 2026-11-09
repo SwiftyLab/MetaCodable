@@ -84,11 +84,13 @@ struct CodedAtEnumTests {
                                 switch typeString {
                                 case "bool":
                                     let variable: Bool
+                                    let container = try decoder.container(keyedBy: CodingKeys.self)
                                     variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                                     self = .bool(_: variable)
                                     return
                                 case "int":
                                     let val: Int
+                                    let container = try decoder.container(keyedBy: CodingKeys.self)
                                     val = try container.decode(Int.self, forKey: CodingKeys.val)
                                     self = .int(val: val)
                                     return
@@ -101,6 +103,7 @@ struct CodedAtEnumTests {
                                     let variable: Bool
                                     let val: Int
                                     let _2: String
+                                    let container = try decoder.container(keyedBy: CodingKeys.self)
                                     _2 = try String(from: decoder)
                                     variable = try container.decode(Bool.self, forKey: CodingKeys.variable)
                                     val = try container.decode(Int.self, forKey: CodingKeys.val)
@@ -222,12 +225,14 @@ struct CodedAtEnumTests {
                                     switch typeString {
                                     case "load":
                                         let key: String
+                                        let container = try decoder.container(keyedBy: CodingKeys.self)
                                         key = try container.decode(String.self, forKey: CodingKeys.key)
                                         self = .load(key: key)
                                         return
                                     case "store":
                                         let key: String
                                         let value: Int
+                                        let container = try decoder.container(keyedBy: CodingKeys.self)
                                         key = try container.decode(String.self, forKey: CodingKeys.key)
                                         value = try container.decode(Int.self, forKey: CodingKeys.value)
                                         self = .store(key: key, value: value)

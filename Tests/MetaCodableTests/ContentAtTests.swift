@@ -50,7 +50,7 @@ struct ContentAtTests {
         @Codable
         @CodedAt("type")
         @ContentAt("content")
-        enum Command {
+        enum Command: Equatable {
             case load(key: String)
             case store(key: String, value: Int)
         }
@@ -91,12 +91,14 @@ struct ContentAtTests {
                                     switch typeString {
                                     case "load":
                                         let key: String
+                                        let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                                         key = try container.decode(String.self, forKey: CodingKeys.key)
                                         self = .load(key: key)
                                         return
                                     case "store":
                                         let key: String
                                         let value: Int
+                                        let container = try contentDecoder.container(keyedBy: CodingKeys.self)
                                         key = try container.decode(String.self, forKey: CodingKeys.key)
                                         value = try container.decode(Int.self, forKey: CodingKeys.value)
                                         self = .store(key: key, value: value)
@@ -160,12 +162,15 @@ struct ContentAtTests {
 
         @Test
         func contentAtFromJSON() throws {
-            // The decoding expects key/value at root level, not in content
+            // Associated values are nested under the content key, mirroring
+            // the structure produced by the encoder.
             let jsonStr = """
                 {
                     "type": "store",
-                    "key": "my_key",
-                    "value": 42
+                    "content": {
+                        "key": "my_key",
+                        "value": 42
+                    }
                 }
                 """
             let jsonData = try #require(jsonStr.data(using: .utf8))
@@ -191,6 +196,23 @@ struct ContentAtTests {
             let content = json["content"] as! [String: Any]
             #expect(content["key"] as? String == "test")
             #expect(content["value"] as? Int == 100)
+        }
+
+        @Test
+        func contentAtRoundTrip() throws {
+            // Reproduces https://github.com/SwiftyLab/MetaCodable/issues/163
+            // The encoder nests associated values under the content key, so a
+            // round-trip must be able to decode them back from that same key.
+            for command: Command in [
+                .load(key: "my_key"),
+                .store(key: "my_key", value: 42),
+            ] {
+                let data = try JSONEncoder().encode(command)
+                let decoded = try JSONDecoder().decode(
+                    Command.self, from: data
+                )
+                #expect(decoded == command)
+            }
         }
     }
 
