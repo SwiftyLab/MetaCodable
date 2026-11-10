@@ -29,6 +29,8 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     var caseDecodingSharesRootContainer: Bool {
         base.caseDecodingSharesRootContainer
     }
+    /// Whether the wrapped switcher uses an internal discriminator.
+    var isInternallyTagged: Bool { base.isInternallyTagged }
     /// Whether the wrapped switcher allows direct decoding cases.
     var allowsDirectDecoding: Bool { base.allowsDirectDecoding }
 

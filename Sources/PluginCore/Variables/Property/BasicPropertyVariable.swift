@@ -164,6 +164,28 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
                 \(decodePrefix)\(name) = try \(type)\(optionalToken)(from: \(decoder))
                 """
             }
+        case .coderWithMetadata(let decoder, let passedMethod):
+            let optionalToken: TokenSyntax =
+                passedMethod?.trimmedDescription == "decodeIfPresent" ? "?" : ""
+            var type = type
+            if let implicitlyUnwrappedType = type.as(
+                ImplicitlyUnwrappedOptionalTypeSyntax.self
+            ) {
+                type = TypeSyntax(
+                    OptionalTypeSyntax(
+                        wrappedType: implicitlyUnwrappedType.wrappedType
+                    )
+                )
+            }
+            return CodeBlockItemListSyntax {
+                if hasOptionalType {
+                    "\(decodePrefix)\(name) = try MetaCodableStrictDecoder.decodeOptional(\(type.wrappedType).self, from: \(decoder))"
+                } else {
+                    """
+                    \(decodePrefix)\(name) = try \(type)\(optionalToken)(from: \(decoder))
+                    """
+                }
+            }
         case .container(let container, let key, let passedMethod):
             let (type, defMethod) = codingTypeMethod(forMethod: "decode")
             let method = passedMethod ?? defMethod
@@ -195,7 +217,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
         to location: PropertyCodingLocation
     ) -> CodeBlockItemListSyntax {
         switch location {
-        case .coder(let encoder, _):
+        case .coder(let encoder, _), .coderWithMetadata(let encoder, _):
             return CodeBlockItemListSyntax {
                 """
                 try \(encodePrefix)\(name).encode(to: \(encoder))

@@ -16,6 +16,8 @@ where CodingLocation == EnumCaseCodingLocation, Generated == EnumCaseGenerated {
     var decodingAllowedKeys: [String] { get }
     /// Whether associated values require a keyed decoding container.
     var usesKeyedDecoding: Bool { get }
+    /// Whether associated values include a direct decoding value.
+    var usesDirectDecoding: Bool { get }
 }
 
 extension EnumCaseVariable {
@@ -23,6 +25,8 @@ extension EnumCaseVariable {
     var decodingAllowedKeys: [String] { [] }
     /// Associated values decode directly by default.
     var usesKeyedDecoding: Bool { false }
+    /// Cases without keyed labels have direct decoding values.
+    var usesDirectDecoding: Bool { false }
 
     /// The arguments passed to encoding condition.
     ///

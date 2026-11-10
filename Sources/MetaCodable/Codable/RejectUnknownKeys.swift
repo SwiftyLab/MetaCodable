@@ -36,6 +36,18 @@ public struct MetaCodableStrictDecoder: Decoder {
         }
     }
 
+    /// Decodes an optional value while preserving strict-decoding metadata.
+    public static func decodeOptional<Value: Decodable>(
+        _ type: Value.Type,
+        from decoder: any Decoder
+    ) throws -> Value? {
+        let container = try decoder.singleValueContainer()
+        if container.decodeNil() {
+            return nil
+        }
+        return try Value(from: decoder)
+    }
+
     fileprivate init(base: any Decoder, state: State) {
         self.base = base
         self.state = state

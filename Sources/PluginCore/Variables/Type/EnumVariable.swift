@@ -271,18 +271,21 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         let selfType: ExprSyntax = "\(name).self"
         let code: CodeBlockItemListSyntax
         if cases.contains(where: { $0.variable.decode ?? true }) {
-            let hasDirectDecodingCase =
-                switcher.allowsDirectDecoding
-                && cases.contains {
-                    !$0.variable.usesKeyedDecoding
-                }
+            let hasDirectDecodingCase = cases.contains {
+                !$0.variable.usesKeyedDecoding
+                    || $0.variable.usesDirectDecoding
+                    || $0.variable.variables.count
+                        > $0.variable.decodingAllowedKeys.count
+            }
             let hasDelegatedDirectCase =
-                switcher.caseDecodingSharesRootContainer
-                && cases.contains {
-                    !$0.variable.usesKeyedDecoding
-                }
+                (switcher.caseDecodingSharesRootContainer
+                    || switcher.isInternallyTagged)
+                && hasDirectDecodingCase
+            let deferRootUnknownKeyValidation =
+                hasDelegatedDirectCase
+                || (switcher.isInternallyTagged && hasDirectDecodingCase)
             let shouldPreflightKeyedContainer =
-                !hasDelegatedDirectCase
+                !deferRootUnknownKeyValidation
                 && (switcher.usesKeyedContainer
                     || switcher.allowsDirectDecoding && !hasDirectDecodingCase)
             let shouldConditionallyPreflightKeyedContainer =
@@ -311,7 +314,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     switcher.caseDecodingAdditionalAllowedKeys,
                 additionalAllowedKeysByPath: [:],
                 skipUnknownKeyValidationPaths: [],
-                skipRootUnknownKeyValidation: hasDelegatedDirectCase
+                skipRootUnknownKeyValidation:
+                    deferRootUnknownKeyValidation
             )
             code = CodeBlockItemListSyntax {
                 if location.rejectUnknownKeys {

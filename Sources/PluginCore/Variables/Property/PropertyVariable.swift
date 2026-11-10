@@ -94,6 +94,9 @@ package enum PropertyCodingLocation {
     ///   - coder: The decoder/encoder for decoding/encoding.
     ///   - method: The method to use for decoding/encoding.
     case coder(_ coder: TokenSyntax, method: ExprSyntax?)
+    /// A top-level location that preserves strict decoder metadata for direct
+    /// optional decoding.
+    case coderWithMetadata(_ coder: TokenSyntax, method: ExprSyntax?)
     /// Represents decoding/encoding location at a `CodingKey`
     /// for a container.
     ///

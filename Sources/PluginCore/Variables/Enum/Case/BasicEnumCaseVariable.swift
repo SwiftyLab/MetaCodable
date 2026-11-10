@@ -73,6 +73,10 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     var usesKeyedDecoding: Bool {
         variables.contains { $0.label != nil }
     }
+    /// Whether associated values include an unlabeled direct value.
+    var usesDirectDecoding: Bool {
+        variables.contains { $0.label == nil }
+    }
 
     /// Creates a new enum-case variable from provided data.
     ///
@@ -183,11 +187,15 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
             }
         )
         let directDecoder = context.makeUniqueName("strictDecoder")
+        var directAllowedKeys = location.additionalAllowedKeys
+        for key in decodingAllowedKeys
+        where !directAllowedKeys.contains(key) {
+            directAllowedKeys.append(key)
+        }
         let usesStrictDirectDecoder =
             location.rejectUnknownKeys
-            && !variables.isEmpty
-            && !usesKeyedDecoding
-            && !location.additionalAllowedKeys.isEmpty
+            && usesDirectDecoding
+            && !directAllowedKeys.isEmpty
         let coder =
             usesStrictDirectDecoder ? directDecoder : location.coder
         let generated = decodingNode.decoding(
@@ -195,13 +203,15 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
             from: .withCoder(
                 coder, keyType: codingKeys.type,
                 rejectUnknownKeys: location.rejectUnknownKeys,
-                additionalAllowedKeys: location.additionalAllowedKeys
+                additionalAllowedKeys: location.additionalAllowedKeys,
+                preserveDecoderMetadata: usesStrictDirectDecoder,
+                skipCurrentContainerValidation: usesDirectDecoding
             )
         )
         let newSyntax = CodeBlockItemListSyntax {
             if usesStrictDirectDecoder {
                 let metadata = strictDecodingMetadataSyntax(
-                    ["": location.additionalAllowedKeys]
+                    ["": directAllowedKeys]
                 )
                 "let \(directDecoder) = MetaCodableStrictDecoder(decoder: \(location.coder), allowedKeysByPath: \(metadata))"
             }

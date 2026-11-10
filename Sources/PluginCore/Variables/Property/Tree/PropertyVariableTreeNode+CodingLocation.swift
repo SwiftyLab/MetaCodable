@@ -22,6 +22,8 @@ extension PropertyVariableTreeNode {
         let codingPath: [String]
         /// Paths whose generated validation is deferred.
         let skipUnknownKeyValidationPaths: Set<String>
+        /// Whether direct decoding must preserve strict decoder metadata.
+        let preserveDecoderMetadata: Bool
         /// Whether validation for the current root container is deferred.
         let skipCurrentContainerValidation: Bool
         /// The decoding/encoding progress.
@@ -45,6 +47,7 @@ extension PropertyVariableTreeNode {
             additionalAllowedKeysByPath: [String: [String]],
             codingPath: [String],
             skipUnknownKeyValidationPaths: Set<String>,
+            preserveDecoderMetadata: Bool,
             skipCurrentContainerValidation: Bool
         ) {
             self.context = context
@@ -56,6 +59,7 @@ extension PropertyVariableTreeNode {
             self.codingPath = codingPath
             self.skipUnknownKeyValidationPaths =
                 skipUnknownKeyValidationPaths
+            self.preserveDecoderMetadata = preserveDecoderMetadata
             self.skipCurrentContainerValidation =
                 skipCurrentContainerValidation
         }
@@ -97,6 +101,7 @@ extension PropertyVariableTreeNode {
             additionalAllowedKeys: [String] = [],
             additionalAllowedKeysByPath: [String: [String]] = [:],
             skipUnknownKeyValidationPaths: Set<String> = [],
+            preserveDecoderMetadata: Bool = false,
             skipCurrentContainerValidation: Bool = false
         ) -> Self {
             .init(
@@ -108,6 +113,7 @@ extension PropertyVariableTreeNode {
                 codingPath: [],
                 skipUnknownKeyValidationPaths:
                     skipUnknownKeyValidationPaths,
+                preserveDecoderMetadata: preserveDecoderMetadata,
                 skipCurrentContainerValidation:
                     skipCurrentContainerValidation
             )
@@ -136,8 +142,24 @@ extension PropertyVariableTreeNode {
                 codingPath: codingPath,
                 skipUnknownKeyValidationPaths:
                     skipUnknownKeyValidationPaths,
+                preserveDecoderMetadata: preserveDecoderMetadata,
                 skipCurrentContainerValidation: false
             )
+        }
+
+        /// The decoding/encoding location for an individual variable.
+        var forVariable: PropertyCodingLocation {
+            switch context {
+            case .coder(let coder, keyType: _):
+                if preserveDecoderMetadata {
+                    return .coderWithMetadata(coder, method: nil)
+                }
+                return .coder(coder, method: nil)
+            case .container(let container, let key):
+                return .container(
+                    container.name, key: key.expr, method: nil
+                )
+            }
         }
 
         /// Provides the syntax for decoding at the provided location.

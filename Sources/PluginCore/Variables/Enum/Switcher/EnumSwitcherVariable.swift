@@ -19,6 +19,8 @@ where
     var caseDecodingAdditionalAllowedKeys: [String] { get }
     /// Whether case values are decoded in the same root container.
     var caseDecodingSharesRootContainer: Bool { get }
+    /// Whether the switcher uses an internal discriminator.
+    var isInternallyTagged: Bool { get }
     /// Whether some cases may decode directly from scalar or unkeyed values.
     var allowsDirectDecoding: Bool { get }
     /// Provides node at which case associated variables are registered.
@@ -86,6 +88,8 @@ extension EnumSwitcherVariable {
     var caseDecodingAdditionalAllowedKeys: [String] { [] }
     /// Case values are nested unless a switcher opts into sharing the root.
     var caseDecodingSharesRootContainer: Bool { false }
+    /// Switchers are not internally tagged by default.
+    var isInternallyTagged: Bool { false }
     /// Switchers do not mix direct and keyed representations by default.
     var allowsDirectDecoding: Bool { false }
 

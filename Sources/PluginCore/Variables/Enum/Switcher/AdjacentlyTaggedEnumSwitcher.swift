@@ -30,6 +30,8 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     }
     /// Adjacent case values are decoded from the content container.
     var caseDecodingSharesRootContainer: Bool { false }
+    /// Adjacent tagging wraps an internally tagged discriminator.
+    var isInternallyTagged: Bool { base.isInternallyTagged }
     /// Keys from a nested discriminator container accepted by direct cases.
     var caseDecodingAdditionalAllowedKeys: [String] {
         guard
@@ -261,7 +263,7 @@ extension AdjacentlyTaggedEnumSwitcher {
             from location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let decoder, _):
+            case .coder(let decoder, _), .coderWithMetadata(let decoder, _):
                 "let \(self.decoder) = \(decoder)"
             case .container(let container, let key, _):
                 "let \(self.decoder) = try \(container).superDecoder(forKey: \(key))"
@@ -284,7 +286,7 @@ extension AdjacentlyTaggedEnumSwitcher {
             to location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let encoder, _):
+            case .coder(let encoder, _), .coderWithMetadata(let encoder, _):
                 "let \(self.encoder) = \(encoder)"
             case .container(let container, let key, _):
                 "let \(self.encoder) = \(container).superEncoder(forKey: \(key))"

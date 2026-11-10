@@ -28,6 +28,8 @@ where
     }
     /// Internally tagged case values share the discriminator container.
     var caseDecodingSharesRootContainer: Bool { true }
+    /// This switcher uses an internal discriminator.
+    var isInternallyTagged: Bool { true }
     /// The identifier variable build action type.
     ///
     /// Used to build the identifier data and pass in encoding callback.
@@ -410,7 +412,7 @@ extension InternallyTaggedEnumSwitcher {
             from location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let decoder, _):
+            case .coder(let decoder, _), .coderWithMetadata(let decoder, _):
                 "\(self.decoder) = \(decoder)"
             case .container(let container, _, _):
                 "\(self.decoder) = \(container)"
@@ -433,7 +435,7 @@ extension InternallyTaggedEnumSwitcher {
             to location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let encoder, _):
+            case .coder(let encoder, _), .coderWithMetadata(let encoder, _):
                 "let \(self.encoder) = \(encoder)"
             case .container(let container, _, _):
                 "var \(self.encoder) = \(container)"

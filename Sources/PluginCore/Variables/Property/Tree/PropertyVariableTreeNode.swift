@@ -50,7 +50,7 @@ extension PropertyVariableTreeNode {
         in context: some MacroExpansionContext,
         from location: CodingLocation
     ) -> Generated {
-        let varLocation = location.context.forVariable
+        let varLocation = location.forVariable
         let decodingSyntax = CodeBlockItemListSyntax {
             for variable in data?.variables ?? variables
             where variable.decode ?? true {

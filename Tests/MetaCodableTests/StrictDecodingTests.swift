@@ -50,6 +50,53 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictInternalEnumsAllowDiscriminatorKeysInOptionalPayloads()
+        throws
+    {
+        let data = Data(
+            #"{"type":"item","name":"n","count":1}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictOptionalDelegatedInternalCommand.self,
+            from: data
+        )
+        if case .item(let value) = decoded {
+            #expect(value?.name == "n")
+            #expect(value?.count == 1)
+        } else {
+            Issue.record("Expected optional delegated item case")
+        }
+    }
+
+    @Test
+    func strictInternalEnumsAllowMixedDirectAndKeyedPayloads() throws {
+        let data = Data(
+            #"{"type":"item","name":"n","count":1}"#.utf8
+        )
+        let permissive = try JSONDecoder().decode(
+            StrictMixedInternalCommand.self,
+            from: data
+        )
+        if case .item(let payload, let count) = permissive {
+            #expect(payload.name == "n")
+            #expect(count == 1)
+        } else {
+            Issue.record("Expected mixed delegated item case")
+        }
+
+        let strict = try JSONDecoder().decode(
+            StrictMixedStrictInternalCommand.self,
+            from: data
+        )
+        if case .item(let payload, let count) = strict {
+            #expect(payload.name == "n")
+            #expect(count == 1)
+        } else {
+            Issue.record("Expected mixed strict delegated item case")
+        }
+    }
+
+    @Test
     func strictNestedAdjacentEnumsAllowDelegatedPayloadKeys() throws {
         let data = Data(
             #"{"meta":{"kind":"item","name":"n"}}"#.utf8
@@ -455,6 +502,30 @@ struct StrictDecodingTests {
     @CodedAt("type")
     enum StrictStrictDelegatedInternalCommand {
         case item(StrictDecodingTests.StrictRecord)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
+    enum StrictOptionalDelegatedInternalCommand {
+        case item(StrictDecodingTests.StrictRecord?)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
+    enum StrictMixedInternalCommand {
+        case item(
+            StrictDecodingTests.PermissivePayload,
+            count: Int
+        )
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
+    enum StrictMixedStrictInternalCommand {
+        case item(
+            StrictDecodingTests.StrictRecord,
+            count: Int
+        )
     }
 
     @Codable(rejectUnknownKeys: true)
