@@ -16,6 +16,10 @@ where
     var usesKeyedContainer: Bool { !keyPath.decoding.isEmpty }
     /// The discriminator keys used at the enum root.
     var rootDecodingKeys: [String]? { Array(decodingNode.allowedKeys) }
+    /// The discriminator keys used by internal tagging.
+    var discriminatorDecodingKeys: [String] {
+        Array(decodingNode.allowedKeys)
+    }
     /// Internally tagged case values share the discriminator container.
     var caseDecodingSharesRootContainer: Bool { true }
     /// The identifier variable build action type.

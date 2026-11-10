@@ -17,6 +17,18 @@ struct StrictDecodingTests {
         let name: String
     }
 
+    @Codable
+    struct PermissivePayload {
+        let name: String
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    struct StrictMixedDirectRecord {
+        @CodedAt
+        let payload: StrictDecodingTests.PermissivePayload
+        let count: Int
+    }
+
     @ConformDecodable(rejectUnknownKeys: true)
     struct StrictDecodableRecord {
         let value: String
@@ -112,6 +124,41 @@ struct StrictDecodingTests {
     class StrictChild: StrictBase {
         var child: String = ""
 
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
+    class StrictBaseForPermissiveChild {
+        var base: String = ""
+
+        init() {}
+    }
+
+    @Codable
+    @Inherits(decodable: true, encodable: true)
+    class PermissiveStrictChild: StrictBaseForPermissiveChild {
+        var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
+    class StrictScalarBase {
+        @CodedAt
+        var value: String = ""
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictScalarChild: StrictScalarBase {
         override init() {
             super.init()
         }
@@ -283,6 +330,15 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictInternalEnumsRejectKeysFromOtherCases() throws {
+        try expectDataCorrupted(
+            StrictInternalCommand.self,
+            json: #"{"type":"load","key":"key","value":123}"#,
+            containing: ["value"]
+        )
+    }
+
+    @Test
     func strictRecordRejectsUnknownKeysAndReportsAllKeys() throws {
         try expectDataCorrupted(
             StrictRecord.self,
@@ -296,6 +352,35 @@ struct StrictDecodingTests {
                 """,
             containing: ["first_extra", "second_extra"]
         )
+    }
+
+    @Test
+    func strictChildOfPermissiveInheritanceAcceptsBaseKeys() throws {
+        let data = Data(#"{"base":"base","child":"child"}"#.utf8)
+        let decoded = try JSONDecoder().decode(
+            PermissiveStrictChild.self, from: data
+        )
+        #expect(decoded.base == "base")
+        #expect(decoded.child == "child")
+    }
+
+    @Test
+    func strictMixedDirectAndKeyedRecordsAllowDelegatedKeys() throws {
+        let data = Data(#"{"name":"n","count":1}"#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictMixedDirectRecord.self, from: data
+        )
+        #expect(decoded.payload.name == "n")
+        #expect(decoded.count == 1)
+    }
+
+    @Test
+    func strictScalarClassHierarchiesRemainScalar() throws {
+        let data = Data(#""scalar""#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictScalarChild.self, from: data
+        )
+        #expect(decoded.value == "scalar")
     }
 
     @Test

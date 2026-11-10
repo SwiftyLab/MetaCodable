@@ -11,6 +11,8 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
     var rootDecodingKeys: [String]? { nil }
     /// Untagged case values share their direct decoder.
     var caseDecodingSharesRootContainer: Bool { true }
+    /// Untagged enums have no discriminator keys.
+    var discriminatorDecodingKeys: [String] { [] }
     /// Untagged enums may mix direct and keyed cases.
     var allowsDirectDecoding: Bool { true }
     /// The node at which variables are registered.

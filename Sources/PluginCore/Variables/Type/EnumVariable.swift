@@ -276,9 +276,15 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 && cases.contains {
                     !$0.variable.usesKeyedDecoding
                 }
+            let hasDelegatedDirectCase =
+                switcher.caseDecodingSharesRootContainer
+                && cases.contains {
+                    !$0.variable.usesKeyedDecoding
+                }
             let shouldPreflightKeyedContainer =
-                switcher.usesKeyedContainer
-                || switcher.allowsDirectDecoding && !hasDirectDecodingCase
+                !hasDelegatedDirectCase
+                && (switcher.usesKeyedContainer
+                    || switcher.allowsDirectDecoding && !hasDirectDecodingCase)
             let shouldConditionallyPreflightKeyedContainer =
                 false
             var rootDecodingKeys =
@@ -297,6 +303,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 hasDefaultCase: forceDefault,
                 rejectUnknownKeys: location.rejectUnknownKeys,
                 rootDecodingKeys: rootDecodingKeys,
+                discriminatorDecodingKeys:
+                    switcher.discriminatorDecodingKeys,
                 caseDecodingSharesRootContainer:
                     switcher.caseDecodingSharesRootContainer
             )
@@ -371,6 +379,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 hasDefaultCase: forceDefault,
                 rejectUnknownKeys: false,
                 rootDecodingKeys: [],
+                discriminatorDecodingKeys: [],
                 caseDecodingSharesRootContainer: false
             )
             code = CodeBlockItemListSyntax {

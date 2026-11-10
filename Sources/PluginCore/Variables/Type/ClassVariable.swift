@@ -131,7 +131,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
 
         if location.conformance == nil, implementDecodable(location: location) {
             let overriddenMethod =
-                if location.rejectUnknownKeys && (inherits?.decodable ?? true) {
+                if inherits?.decodable ?? true {
                     TypeCodingLocation.Method(
                         name: method.name, protocol: method.protocol,
                         argLabel: method.argLabel, arg: strictDecoder,
@@ -156,16 +156,20 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         guard
             let generated = group.decoding(in: context, from: newLocation)
         else { return nil }
+        let metadataMap = group.decodingNode.allowedKeysByPath()
+        let hasKeyedMetadata = metadataMap.values.contains { !$0.isEmpty }
         var code: CodeBlockItemListSyntax
-        if overridden, location.rejectUnknownKeys {
+        if overridden {
             let metadata = strictDecodingMetadataSyntax(
-                group.decodingNode.allowedKeysByPath()
+                metadataMap
             )
             code = CodeBlockItemListSyntax {
                 "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(method.arg), allowedKeysByPath: \(metadata))"
                 generated.code
                 "try super.\(method.name)(\(method.argLabel): \(strictDecoder))"
-                "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
+                if location.rejectUnknownKeys, hasKeyedMetadata {
+                    "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
+                }
             }
         } else {
             code =

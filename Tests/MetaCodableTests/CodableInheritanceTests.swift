@@ -174,9 +174,10 @@ struct CodableInheritanceTests {
                         override init() { super.init() }
 
                         required init(from decoder: any Decoder) throws {
-                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            let __macro_local_13strictDecoderfMu_ = MetaCodableStrictDecoder(decoder: decoder, allowedKeysByPath: ["": ["value"]])
+                            let container = try __macro_local_13strictDecoderfMu_.container(keyedBy: CodingKeys.self)
                             self.value = try container.decode(String.self, forKey: CodingKeys.value)
-                            try super.init(from: decoder)
+                            try super.init(from: __macro_local_13strictDecoderfMu_)
                         }
 
                         override func encode(to encoder: any Encoder) throws {
@@ -249,9 +250,10 @@ struct CodableInheritanceTests {
                         override init() { super.init() }
 
                         required init(from decoder: any Decoder) throws {
-                            let container = try decoder.container(keyedBy: CodingKeys.self)
+                            let __macro_local_13strictDecoderfMu_ = MetaCodableStrictDecoder(decoder: decoder, allowedKeysByPath: ["": ["value"]])
+                            let container = try __macro_local_13strictDecoderfMu_.container(keyedBy: CodingKeys.self)
                             self.value = try container.decode(String.self, forKey: CodingKeys.value)
-                            try super.init(from: decoder)
+                            try super.init(from: __macro_local_13strictDecoderfMu_)
                         }
 
                         func encode(to encoder: any Encoder) throws {

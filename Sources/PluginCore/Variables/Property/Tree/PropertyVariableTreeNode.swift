@@ -70,13 +70,14 @@ extension PropertyVariableTreeNode {
             ?? children.contains { _, node in
                 node.linkedVariables.contains { $0.decode ?? true }
             }
-        let strictValidation =
-            location.rejectUnknownKeys
-            && !location.deferUnknownKeyValidation
         let directVariables = data?.variables ?? variables
         let hasDirectDecodableVariables = directVariables.contains {
             $0.decode ?? true
         }
+        let strictValidation =
+            location.rejectUnknownKeys
+            && !location.deferUnknownKeyValidation
+            && !hasDirectDecodableVariables
         let allowedKeys: [String]? =
             if strictValidation {
                 Array(data?.allowedKeys ?? self.allowedKeys)
