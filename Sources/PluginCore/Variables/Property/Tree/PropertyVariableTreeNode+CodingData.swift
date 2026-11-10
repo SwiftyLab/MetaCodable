@@ -49,6 +49,23 @@ protocol VariableTreeNode {
 }
 
 extension VariableTreeNode {
+    /// Returns decoding keys grouped by their container path.
+    func allowedKeysByPath(
+        prefix: [String] = []
+    ) -> [String: [String]] {
+        var result = [
+            prefix.joined(separator: "."): Array(allowedKeys)
+        ]
+        for (key, child) in children {
+            result.merge(
+                child.allowedKeysByPath(
+                    prefix: prefix + [key.description]
+                )
+            ) { _, new in new }
+        }
+        return result
+    }
+
     /// List of all the linked variables registered.
     ///
     /// Gets all variables at current node

@@ -12,6 +12,12 @@ where
     Variable: PropertyVariable,
     Variable.Initialization == RequiredInitialization
 {
+    /// Whether this enum has a keyed discriminator container.
+    var usesKeyedContainer: Bool { !keyPath.decoding.isEmpty }
+    /// The discriminator keys used at the enum root.
+    var rootDecodingKeys: [String]? { Array(decodingNode.allowedKeys) }
+    /// Internally tagged case values share the discriminator container.
+    var caseDecodingSharesRootContainer: Bool { true }
     /// The identifier variable build action type.
     ///
     /// Used to build the identifier data and pass in encoding callback.

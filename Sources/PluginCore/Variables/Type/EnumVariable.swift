@@ -271,21 +271,30 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         let selfType: ExprSyntax = "\(name).self"
         let code: CodeBlockItemListSyntax
         if cases.contains(where: { $0.variable.decode ?? true }) {
+            var rootDecodingKeys =
+                switcher.rootDecodingKeys ?? codingKeys.allKeys
+            if switcher.caseDecodingSharesRootContainer {
+                for key in cases.flatMap({
+                    $0.variable.decodingAllowedKeys
+                }) where !rootDecodingKeys.contains(key) {
+                    rootDecodingKeys.append(key)
+                }
+            }
             let switcherLoc = EnumSwitcherLocation(
                 coder: location.method.arg, container: Self.container,
                 keyType: codingKeys.type, selfType: selfType, selfValue: "_",
                 cases: cases, codeExpr: caseDecodeExpr,
                 hasDefaultCase: forceDefault,
-                rejectUnknownKeys: location.rejectUnknownKeys
+                rejectUnknownKeys: location.rejectUnknownKeys,
+                rootDecodingKeys: rootDecodingKeys,
+                caseDecodingSharesRootContainer:
+                    switcher.caseDecodingSharesRootContainer
             )
             code = CodeBlockItemListSyntax {
                 if location.rejectUnknownKeys, switcher.usesKeyedContainer {
-                    let keys =
-                        switcher.rootDecodingKeys
-                        ?? codingKeys.allKeys
                     strictDecodingValidationSyntax(
                         decoder: "\(location.method.arg)" as ExprSyntax,
-                        allowedKeys: keys
+                        allowedKeys: rootDecodingKeys
                     )
                 }
                 switcher.decoding(in: context, from: switcherLoc)
@@ -340,7 +349,9 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 keyType: codingKeys.type, selfType: selfType, selfValue: expr,
                 cases: cases, codeExpr: caseEncodeExpr,
                 hasDefaultCase: forceDefault,
-                rejectUnknownKeys: false
+                rejectUnknownKeys: false,
+                rootDecodingKeys: [],
+                caseDecodingSharesRootContainer: false
             )
             code = CodeBlockItemListSyntax {
                 switcher.encoding(in: context, to: switcherLocation)

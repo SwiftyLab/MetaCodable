@@ -5,8 +5,12 @@ import SwiftSyntaxMacros
 ///
 /// Tries decoding associated variables for each case until success.
 struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
-    /// Untagged decoding tries values directly from the decoder.
-    var usesKeyedContainer: Bool { false }
+    /// Untagged decoding uses a keyed container when cases have keyed values.
+    var usesKeyedContainer: Bool { !node.allowedKeys.isEmpty }
+    /// The keys shared by keyed untagged cases.
+    var rootDecodingKeys: [String]? { Array(node.allowedKeys) }
+    /// Untagged case values share their direct decoder.
+    var caseDecodingSharesRootContainer: Bool { true }
     /// The node at which variables are registered.
     ///
     /// Associated variables for all cases are registered with the path
@@ -133,7 +137,8 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         let coder = location.coder
         let cLocation = EnumCaseCodingLocation(
             coder: coder, values: [],
-            rejectUnknownKeys: location.rejectUnknownKeys
+            rejectUnknownKeys: location.rejectUnknownKeys,
+            additionalAllowedKeys: []
         )
         let generated = `case`.variable.decoding(in: context, from: cLocation)
         let nResult = decodingSyntax(for: &cases, from: location, in: context)

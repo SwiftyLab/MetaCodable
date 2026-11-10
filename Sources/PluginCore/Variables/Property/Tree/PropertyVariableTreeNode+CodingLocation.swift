@@ -12,8 +12,10 @@ extension PropertyVariableTreeNode {
         let context: Context
         /// Whether generated decoding rejects unsupported keys.
         let rejectUnknownKeys: Bool
-        /// Whether root validation is emitted after superclass decoding.
-        let deferRootUnknownKeyValidation: Bool
+        /// Whether strict validation is emitted after superclass decoding.
+        let deferUnknownKeyValidation: Bool
+        /// Additional keys accepted by the current decoding container.
+        let additionalAllowedKeys: [String]
         /// The decoding/encoding progress.
         ///
         /// All the decoded/encoded variables and
@@ -27,16 +29,17 @@ extension PropertyVariableTreeNode {
         ///   - progress: The decoding/encoding progress.
         ///   - rejectUnknownKeys: Whether generated decoding rejects
         ///     unsupported keys.
-        ///   - deferRootUnknownKeyValidation: Whether root validation is
+        ///   - deferUnknownKeyValidation: Whether strict validation is
         ///     emitted after superclass decoding.
         private init(
             context: Context, progress: Progress, rejectUnknownKeys: Bool,
-            deferRootUnknownKeyValidation: Bool
+            deferUnknownKeyValidation: Bool, additionalAllowedKeys: [String]
         ) {
             self.context = context
             self.progress = progress
             self.rejectUnknownKeys = rejectUnknownKeys
-            self.deferRootUnknownKeyValidation = deferRootUnknownKeyValidation
+            self.deferUnknownKeyValidation = deferUnknownKeyValidation
+            self.additionalAllowedKeys = additionalAllowedKeys
         }
 
         /// Add provided variable to list of already decoded/encoded variable.
@@ -65,19 +68,21 @@ extension PropertyVariableTreeNode {
         ///   - keyType: The `CodingKey` type.
         ///   - rejectUnknownKeys: Whether generated decoding rejects
         ///     unsupported keys.
-        ///   - deferRootUnknownKeyValidation: Whether root validation is
+        ///   - deferUnknownKeyValidation: Whether strict validation is
         ///     emitted after superclass decoding.
         ///
         /// - Returns: The new location updated with provided context.
         static func withCoder(
             _ coder: TokenSyntax, keyType: ExprSyntax,
             rejectUnknownKeys: Bool = false,
-            deferRootUnknownKeyValidation: Bool = false
+            deferUnknownKeyValidation: Bool = false,
+            additionalAllowedKeys: [String] = []
         ) -> Self {
             .init(
                 context: .coder(coder, keyType: keyType), progress: .init(),
                 rejectUnknownKeys: rejectUnknownKeys,
-                deferRootUnknownKeyValidation: deferRootUnknownKeyValidation
+                deferUnknownKeyValidation: deferUnknownKeyValidation,
+                additionalAllowedKeys: additionalAllowedKeys
             )
         }
 
@@ -94,7 +99,8 @@ extension PropertyVariableTreeNode {
             .init(
                 context: .container(container, key: key), progress: progress,
                 rejectUnknownKeys: rejectUnknownKeys,
-                deferRootUnknownKeyValidation: false
+                deferUnknownKeyValidation: deferUnknownKeyValidation,
+                additionalAllowedKeys: []
             )
         }
 

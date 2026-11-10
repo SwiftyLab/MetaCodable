@@ -97,8 +97,8 @@ where
             let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
                 location.method.arg, keyType: codingKeys.type,
                 rejectUnknownKeys: location.rejectUnknownKeys,
-                deferRootUnknownKeyValidation:
-                    location.deferRootUnknownKeyValidation
+                deferUnknownKeyValidation:
+                    location.deferUnknownKeyValidation
             )
             decodingNode.decoding(in: context, from: nLocation).combined()
             nLocation.decoding(in: context)

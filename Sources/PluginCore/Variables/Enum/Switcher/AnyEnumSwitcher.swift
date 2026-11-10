@@ -17,6 +17,10 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     var usesKeyedContainer: Bool { base.usesKeyedContainer }
     /// The exact root keys used by the wrapped switcher when available.
     var rootDecodingKeys: [String]? { base.rootDecodingKeys }
+    /// Whether case values share the wrapped switcher's root container.
+    var caseDecodingSharesRootContainer: Bool {
+        base.caseDecodingSharesRootContainer
+    }
 
     /// Provides node at which case associated variables are registered.
     ///

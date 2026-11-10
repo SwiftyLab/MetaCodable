@@ -113,6 +113,44 @@ struct StrictDecodingTests {
     }
 
     @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
+    class StrictNestedBase {
+        @CodedIn("payload")
+        var base: String = ""
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictNestedChild: StrictNestedBase {
+        @CodedIn("payload")
+        var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable
+    @Inherits(decodable: false, encodable: false)
+    class PermissiveBase {
+        var base: String = ""
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictPermissiveChild: PermissiveBase {
+        var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
     actor StrictActor {
         let value: String
     }
@@ -136,6 +174,24 @@ struct StrictDecodingTests {
     enum StrictAdjacentCommand: Equatable {
         case load(key: String)
         case store(key: String, value: Int)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @UnTagged
+    enum StrictUntaggedCommand {
+        case first(a: Int)
+        case second(b: String)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    enum StrictRawCommand: String {
+        case ready
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("meta", "kind")
+    enum StrictNestedRawCommand: String {
+        case ready
     }
 
     @Test
@@ -264,6 +320,12 @@ struct StrictDecodingTests {
                 }
                 """,
             containing: ["extra"]
+        )
+
+        try expectDataCorrupted(
+            StrictNestedRecord.self,
+            json: #"{"payload":{"value":"decoded","payload":true}}"#,
+            containing: ["payload"]
         )
     }
 
@@ -400,6 +462,28 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictNestedClassInheritanceMergesContainerPaths() throws {
+        let data = Data(
+            #"{"payload":{"base":"base","child":"child"}}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictNestedChild.self, from: data
+        )
+        #expect(decoded.base == "base")
+        #expect(decoded.child == "child")
+    }
+
+    @Test
+    func strictChildOfPermissiveClassAcceptsSuperclassKeys() throws {
+        let data = Data(#"{"base":"base","child":"child"}"#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictPermissiveChild.self, from: data
+        )
+        #expect(decoded.base == "base")
+        #expect(decoded.child == "child")
+    }
+
+    @Test
     func strictExternalEnumsRejectUnknownKeys() throws {
         let data = try encodedData(
             StrictExternalCommand.load(key: "key"),
@@ -441,6 +525,52 @@ struct StrictDecodingTests {
         try expectDataCorrupted(
             StrictAdjacentCommand.self,
             data: data,
+            containing: ["extra"]
+        )
+
+        var rootObject = try #require(
+            JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+        )
+        rootObject["value"] = 123
+        let rootData = try JSONSerialization.data(
+            withJSONObject: rootObject
+        )
+        try expectDataCorrupted(
+            StrictAdjacentCommand.self,
+            data: rootData,
+            containing: ["value"]
+        )
+    }
+
+    @Test
+    func strictUntaggedEnumsValidateEachAttemptedCase() throws {
+        try expectDataCorrupted(
+            StrictUntaggedCommand.self,
+            json: #"{"b":"ok","extra":true}"#,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
+    func strictRawValueEnumsRemainScalar() throws {
+        let data = Data(#""ready""#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictRawCommand.self, from: data
+        )
+        #expect(decoded == .ready)
+    }
+
+    @Test
+    func strictNestedRawValueEnumsValidateTagContainers() throws {
+        let validData = Data(#"{"meta":{"kind":"ready"}}"#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictNestedRawCommand.self, from: validData
+        )
+        #expect(decoded == .ready)
+
+        try expectDataCorrupted(
+            StrictNestedRawCommand.self,
+            json: #"{"meta":{"kind":"ready","extra":true}}"#,
             containing: ["extra"]
         )
     }

@@ -65,6 +65,10 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     ///
     /// It generates keys for associated variables decoding/encoding.
     let codingKeys: CodingKeysMap
+    /// Keys recognized by decoding associated values at the current level.
+    var decodingAllowedKeys: [String] {
+        Array(decodingNode.allowedKeys)
+    }
 
     /// Creates a new enum-case variable from provided data.
     ///
@@ -178,7 +182,8 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
             with: decodingData, in: context,
             from: .withCoder(
                 location.coder, keyType: codingKeys.type,
-                rejectUnknownKeys: location.rejectUnknownKeys
+                rejectUnknownKeys: location.rejectUnknownKeys,
+                additionalAllowedKeys: location.additionalAllowedKeys
             )
         )
         let newSyntax = CodeBlockItemListSyntax {

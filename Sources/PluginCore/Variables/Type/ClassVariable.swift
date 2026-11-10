@@ -127,12 +127,23 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         var modifiers: DeclModifierListSyntax = [.init(name: "required")]
         let method = location.method
         let conformance = TypeSyntax(stringLiteral: method.protocol)
+        let strictDecoder = context.makeUniqueName("strictDecoder")
 
         if location.conformance == nil, implementDecodable(location: location) {
+            let overriddenMethod =
+                if location.rejectUnknownKeys && (inherits?.decodable ?? true) {
+                    TypeCodingLocation.Method(
+                        name: method.name, protocol: method.protocol,
+                        argLabel: method.argLabel, arg: strictDecoder,
+                        argType: method.argType
+                    )
+                } else {
+                    method
+                }
             newLocation = .init(
-                method: method, conformance: conformance,
+                method: overriddenMethod, conformance: conformance,
                 rejectUnknownKeys: location.rejectUnknownKeys,
-                deferRootUnknownKeyValidation:
+                deferUnknownKeyValidation:
                     location.rejectUnknownKeys
                     && (inherits?.decodable ?? true)
             )
@@ -145,22 +156,16 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         guard
             let generated = group.decoding(in: context, from: newLocation)
         else { return nil }
-        let registration =
-            location.rejectUnknownKeys
-            ? strictDecodingRegistrationSyntax(
-                keys: Array(group.decodingNode.allowedKeys)
-            )
-            : CodeBlockItemListSyntax {}
         var code: CodeBlockItemListSyntax
         if overridden, location.rejectUnknownKeys {
+            let metadata = strictDecodingMetadataSyntax(
+                group.decodingNode.allowedKeysByPath()
+            )
             code = CodeBlockItemListSyntax {
-                registration
+                "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(method.arg), allowedKeysByPath: \(metadata))"
                 generated.code
-                "try super.\(method.name)(\(method.argLabel): \(method.arg))"
-                strictDecodingValidationSyntax(
-                    decoder: "\(method.arg)" as ExprSyntax,
-                    allowedKeys: Array(group.decodingNode.allowedKeys)
-                )
+                "try super.\(method.name)(\(method.argLabel): \(strictDecoder))"
+                "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
             }
         } else {
             code =
@@ -170,9 +175,6 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
                     ""
                 }
             code.insert(contentsOf: generated.code, at: code.startIndex)
-            if location.rejectUnknownKeys {
-                code.insert(contentsOf: registration, at: code.startIndex)
-            }
         }
         modifiers.append(contentsOf: generated.modifiers)
         return .init(

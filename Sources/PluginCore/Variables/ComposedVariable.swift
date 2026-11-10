@@ -185,6 +185,10 @@ where Self: EnumCaseVariable, Wrapped: EnumCaseVariable {
     ///
     /// Provides associated variables of the underlying variable value.
     var variables: [any AssociatedVariable] { base.variables }
+    /// Provides decoding keys from the underlying enum case.
+    var decodingAllowedKeys: [String] {
+        base.decodingAllowedKeys
+    }
 }
 
 extension ComposedVariable where Self: TypeVariable, Wrapped: TypeVariable {

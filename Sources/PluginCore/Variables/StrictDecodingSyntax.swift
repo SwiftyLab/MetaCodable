@@ -20,18 +20,19 @@ package func strictDecodingValidationSyntax(
     }
 }
 
-/// Generates registration for class keys used by inherited strict decoding.
-package func strictDecodingRegistrationSyntax(
-    keys: [String]
-) -> CodeBlockItemListSyntax {
-    let values = keys.map {
-        let value =
-            $0
-            .replacingOccurrences(of: "\\", with: "\\\\")
-            .replacingOccurrences(of: "\"", with: "\\\"")
-        return "\"\(value)\""
+/// Generates a dictionary literal for strict decoding key metadata.
+package func strictDecodingMetadataSyntax(
+    _ metadata: [String: [String]]
+) -> ExprSyntax {
+    let entries = metadata.keys.sorted().map { path in
+        let keys = metadata[path, default: []].map {
+            let value =
+                $0
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "\"", with: "\\\"")
+            return "\"\(value)\""
+        }.joined(separator: ", ")
+        return "\"\(path)\": [\(keys)]"
     }.joined(separator: ", ")
-    return CodeBlockItemListSyntax {
-        "MetaCodableStrictDecodingRegistry.register(type: Self.self, keys: [\(raw: values)])"
-    }
+    return ExprSyntax(stringLiteral: "[\(entries)]")
 }

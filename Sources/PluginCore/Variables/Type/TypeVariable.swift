@@ -152,8 +152,8 @@ package struct TypeCodingLocation {
     let conformance: TypeSyntax?
     /// Whether generated decoding rejects unsupported keys.
     let rejectUnknownKeys: Bool
-    /// Whether root validation is emitted after superclass decoding.
-    let deferRootUnknownKeyValidation: Bool
+    /// Whether strict validation is emitted after superclass decoding.
+    let deferUnknownKeyValidation: Bool
 
     /// Creates type decoding/encoding data from provided data.
     ///
@@ -164,7 +164,7 @@ package struct TypeCodingLocation {
         self.init(
             method: method, conformance: conformance,
             rejectUnknownKeys: false,
-            deferRootUnknownKeyValidation: false
+            deferUnknownKeyValidation: false
         )
     }
 
@@ -175,17 +175,17 @@ package struct TypeCodingLocation {
     ///   - conformance: The conformed type.
     ///   - rejectUnknownKeys: Whether generated decoding rejects unsupported
     ///     keys.
-    ///   - deferRootUnknownKeyValidation: Whether root validation is emitted
+    ///   - deferUnknownKeyValidation: Whether strict validation is emitted
     ///     after superclass decoding.
     package init(
         method: Method, conformance: TypeSyntax?,
         rejectUnknownKeys: Bool,
-        deferRootUnknownKeyValidation: Bool = false
+        deferUnknownKeyValidation: Bool = false
     ) {
         self.method = method
         self.conformance = conformance
         self.rejectUnknownKeys = rejectUnknownKeys
-        self.deferRootUnknownKeyValidation = deferRootUnknownKeyValidation
+        self.deferUnknownKeyValidation = deferUnknownKeyValidation
     }
 }
 

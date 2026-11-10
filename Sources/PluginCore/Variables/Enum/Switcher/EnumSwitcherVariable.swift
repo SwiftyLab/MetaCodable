@@ -13,6 +13,8 @@ where
     var usesKeyedContainer: Bool { get }
     /// The exact root keys used by the switcher when available.
     var rootDecodingKeys: [String]? { get }
+    /// Whether case values are decoded in the same root container.
+    var caseDecodingSharesRootContainer: Bool { get }
     /// Provides node at which case associated variables are registered.
     ///
     /// The returned node can be used by enum-case variables to register
@@ -72,6 +74,8 @@ extension EnumSwitcherVariable {
     var usesKeyedContainer: Bool { true }
     /// Switchers use the type coding key map by default.
     var rootDecodingKeys: [String]? { nil }
+    /// Case values are nested unless a switcher opts into sharing the root.
+    var caseDecodingSharesRootContainer: Bool { false }
 
     /// Update provided variable data.
     ///
@@ -132,4 +136,8 @@ package struct EnumSwitcherLocation {
     let hasDefaultCase: Bool
     /// Whether generated decoding rejects unsupported keys.
     let rejectUnknownKeys: Bool
+    /// Keys accepted at the enum root container.
+    let rootDecodingKeys: [String]
+    /// Whether associated case values share the enum root container.
+    let caseDecodingSharesRootContainer: Bool
 }
