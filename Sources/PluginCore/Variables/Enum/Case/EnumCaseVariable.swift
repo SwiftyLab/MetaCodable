@@ -14,11 +14,15 @@ where CodingLocation == EnumCaseCodingLocation, Generated == EnumCaseGenerated {
     var variables: [any AssociatedVariable] { get }
     /// Keys recognized by decoding associated values at the current level.
     var decodingAllowedKeys: [String] { get }
+    /// Whether associated values require a keyed decoding container.
+    var usesKeyedDecoding: Bool { get }
 }
 
 extension EnumCaseVariable {
     /// No associated decoding keys are exposed by default.
     var decodingAllowedKeys: [String] { [] }
+    /// Associated values decode directly by default.
+    var usesKeyedDecoding: Bool { false }
 
     /// The arguments passed to encoding condition.
     ///

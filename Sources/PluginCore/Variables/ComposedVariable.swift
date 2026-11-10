@@ -189,6 +189,10 @@ where Self: EnumCaseVariable, Wrapped: EnumCaseVariable {
     var decodingAllowedKeys: [String] {
         base.decodingAllowedKeys
     }
+    /// Provides keyed-decoding requirements from the underlying enum case.
+    var usesKeyedDecoding: Bool {
+        base.usesKeyedDecoding
+    }
 }
 
 extension ComposedVariable where Self: TypeVariable, Wrapped: TypeVariable {

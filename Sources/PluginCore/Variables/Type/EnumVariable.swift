@@ -274,7 +274,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
             let hasDirectDecodingCase =
                 switcher.allowsDirectDecoding
                 && cases.contains {
-                    $0.variable.decodingAllowedKeys.isEmpty
+                    !$0.variable.usesKeyedDecoding
                 }
             let shouldPreflightKeyedContainer =
                 switcher.usesKeyedContainer

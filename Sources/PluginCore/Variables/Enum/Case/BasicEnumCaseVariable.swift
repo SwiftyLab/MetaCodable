@@ -69,6 +69,10 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     var decodingAllowedKeys: [String] {
         Array(decodingNode.allowedKeys)
     }
+    /// Whether associated values require a keyed decoding container.
+    var usesKeyedDecoding: Bool {
+        variables.contains { $0.label != nil }
+    }
 
     /// Creates a new enum-case variable from provided data.
     ///

@@ -195,6 +195,13 @@ struct StrictDecodingTests {
     }
 
     @Codable(rejectUnknownKeys: true)
+    @UnTagged
+    enum StrictMixedUntaggedCommand: Equatable {
+        case text(String)
+        case record(value: Int)
+    }
+
+    @Codable(rejectUnknownKeys: true)
     enum StrictRawCommand: String {
         case ready
     }
@@ -573,6 +580,15 @@ struct StrictDecodingTests {
             json: #"{"b":"ok","extra":true}"#,
             containing: ["extra"]
         )
+    }
+
+    @Test
+    func strictMixedUntaggedEnumsAllowScalarCases() throws {
+        let data = Data(#""hello""#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictMixedUntaggedCommand.self, from: data
+        )
+        #expect(decoded == .text("hello"))
     }
 
     @Test
