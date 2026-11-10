@@ -307,6 +307,10 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     switcher.discriminatorDecodingKeys,
                 caseDecodingSharesRootContainer:
                     switcher.caseDecodingSharesRootContainer,
+                caseDecodingAdditionalAllowedKeys:
+                    switcher.caseDecodingAdditionalAllowedKeys,
+                additionalAllowedKeysByPath: [:],
+                skipUnknownKeyValidationPaths: [],
                 skipRootUnknownKeyValidation: hasDelegatedDirectCase
             )
             code = CodeBlockItemListSyntax {
@@ -382,6 +386,9 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 rootDecodingKeys: [],
                 discriminatorDecodingKeys: [],
                 caseDecodingSharesRootContainer: false,
+                caseDecodingAdditionalAllowedKeys: [],
+                additionalAllowedKeysByPath: [:],
+                skipUnknownKeyValidationPaths: [],
                 skipRootUnknownKeyValidation: false
             )
             code = CodeBlockItemListSyntax {

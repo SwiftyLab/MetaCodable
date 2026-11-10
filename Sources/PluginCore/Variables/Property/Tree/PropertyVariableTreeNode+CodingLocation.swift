@@ -16,6 +16,12 @@ extension PropertyVariableTreeNode {
         let deferUnknownKeyValidation: Bool
         /// Additional keys accepted by the current decoding container.
         let additionalAllowedKeys: [String]
+        /// Additional keys accepted at nested decoding container paths.
+        let additionalAllowedKeysByPath: [String: [String]]
+        /// The coding path represented by the current decoding location.
+        let codingPath: [String]
+        /// Paths whose generated validation is deferred.
+        let skipUnknownKeyValidationPaths: Set<String>
         /// Whether validation for the current root container is deferred.
         let skipCurrentContainerValidation: Bool
         /// The decoding/encoding progress.
@@ -36,6 +42,9 @@ extension PropertyVariableTreeNode {
         private init(
             context: Context, progress: Progress, rejectUnknownKeys: Bool,
             deferUnknownKeyValidation: Bool, additionalAllowedKeys: [String],
+            additionalAllowedKeysByPath: [String: [String]],
+            codingPath: [String],
+            skipUnknownKeyValidationPaths: Set<String>,
             skipCurrentContainerValidation: Bool
         ) {
             self.context = context
@@ -43,6 +52,10 @@ extension PropertyVariableTreeNode {
             self.rejectUnknownKeys = rejectUnknownKeys
             self.deferUnknownKeyValidation = deferUnknownKeyValidation
             self.additionalAllowedKeys = additionalAllowedKeys
+            self.additionalAllowedKeysByPath = additionalAllowedKeysByPath
+            self.codingPath = codingPath
+            self.skipUnknownKeyValidationPaths =
+                skipUnknownKeyValidationPaths
             self.skipCurrentContainerValidation =
                 skipCurrentContainerValidation
         }
@@ -82,6 +95,8 @@ extension PropertyVariableTreeNode {
             rejectUnknownKeys: Bool = false,
             deferUnknownKeyValidation: Bool = false,
             additionalAllowedKeys: [String] = [],
+            additionalAllowedKeysByPath: [String: [String]] = [:],
+            skipUnknownKeyValidationPaths: Set<String> = [],
             skipCurrentContainerValidation: Bool = false
         ) -> Self {
             .init(
@@ -89,6 +104,10 @@ extension PropertyVariableTreeNode {
                 rejectUnknownKeys: rejectUnknownKeys,
                 deferUnknownKeyValidation: deferUnknownKeyValidation,
                 additionalAllowedKeys: additionalAllowedKeys,
+                additionalAllowedKeysByPath: additionalAllowedKeysByPath,
+                codingPath: [],
+                skipUnknownKeyValidationPaths:
+                    skipUnknownKeyValidationPaths,
                 skipCurrentContainerValidation:
                     skipCurrentContainerValidation
             )
@@ -104,11 +123,19 @@ extension PropertyVariableTreeNode {
         func withContainer(
             _ container: Context.Container, key: CodingKeysMap.Key
         ) -> Self {
-            .init(
+            let codingPath = codingPath + [key.description]
+            return .init(
                 context: .container(container, key: key), progress: progress,
                 rejectUnknownKeys: rejectUnknownKeys,
                 deferUnknownKeyValidation: deferUnknownKeyValidation,
-                additionalAllowedKeys: [],
+                additionalAllowedKeys:
+                    additionalAllowedKeysByPath[
+                        strictDecodingPathKey(codingPath)
+                    ] ?? [],
+                additionalAllowedKeysByPath: additionalAllowedKeysByPath,
+                codingPath: codingPath,
+                skipUnknownKeyValidationPaths:
+                    skipUnknownKeyValidationPaths,
                 skipCurrentContainerValidation: false
             )
         }

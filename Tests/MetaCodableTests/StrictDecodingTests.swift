@@ -30,6 +30,65 @@ struct StrictDecodingTests {
         }
     }
 
+    @Test
+    func strictInternalEnumsAllowDiscriminatorKeysInStrictDirectPayloads()
+        throws
+    {
+        let data = Data(
+            #"{"type":"item","name":"n","count":1}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictStrictDelegatedInternalCommand.self,
+            from: data
+        )
+        if case .item(let value) = decoded {
+            #expect(value.name == "n")
+            #expect(value.count == 1)
+        } else {
+            Issue.record("Expected strict delegated item case")
+        }
+    }
+
+    @Test
+    func strictNestedAdjacentEnumsAllowDelegatedPayloadKeys() throws {
+        let data = Data(
+            #"{"meta":{"kind":"item","name":"n"}}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictNestedAdjacentCommand.self,
+            from: data
+        )
+        if case .item(let value) = decoded {
+            #expect(value.name == "n")
+        } else {
+            Issue.record("Expected nested adjacent item case")
+        }
+    }
+
+    @Codable
+    @Inherits(decodable: false, encodable: false)
+    class PermissiveNestedClassBase {
+        var nestedOnly: String = ""
+
+        init() {}
+    }
+
+    @Codable
+    @Inherits(decodable: true, encodable: true)
+    class PermissiveNestedClass: PermissiveNestedClassBase {
+        override init() {
+            super.init()
+        }
+    }
+
+    struct PermissiveNestedClassCoder: HelperCoder {
+        typealias Coded = PermissiveNestedClass
+
+        func decode(from decoder: Decoder) throws -> PermissiveNestedClass {
+            try PermissiveNestedClass(from: decoder)
+        }
+    }
+
     @Codable(rejectUnknownKeys: true)
     struct StrictMixedDirectRecord {
         @CodedAt
@@ -307,6 +366,48 @@ struct StrictDecodingTests {
         }
     }
 
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
+    class StrictNestedScopeBase {
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictNestedScopeChild: StrictNestedScopeBase {
+        @CodedBy(PermissiveNestedClassCoder())
+        var payload: PermissiveNestedClass = .init()
+
+        override init() {
+            super.init()
+        }
+    }
+
+    struct ManualSuperPayload: Swift.Decodable {
+        let value: String
+    }
+
+    class ManualSuper: Swift.Decodable {
+        var superValue: String = ""
+
+        required init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: ManualKeys.self)
+            superValue = try ManualSuperPayload(
+                from: container.superDecoder()
+            ).value
+        }
+
+        enum ManualKeys: String, CodingKey {
+            case superValue = "super"
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: false)
+    class StrictManualSuperChild: ManualSuper {
+        var child: String = ""
+    }
+
     @Codable
     @Inherits(decodable: false, encodable: false)
     class PermissiveNestedBase {
@@ -352,6 +453,12 @@ struct StrictDecodingTests {
 
     @Codable(rejectUnknownKeys: true)
     @CodedAt("type")
+    enum StrictStrictDelegatedInternalCommand {
+        case item(StrictDecodingTests.StrictRecord)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
     @ContentAt("content")
     enum StrictAdjacentCommand: Equatable {
         case load(key: String)
@@ -377,6 +484,13 @@ struct StrictDecodingTests {
     enum StrictDelegatedUntaggedCommand {
         case record(StrictDecodingTests.StrictRecord)
         case number(value: Int)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("meta", "kind")
+    @ContentAt("meta")
+    enum StrictNestedAdjacentCommand {
+        case item(StrictDecodingTests.PermissivePayload)
     }
 
     @Codable(rejectUnknownKeys: true)
@@ -533,6 +647,37 @@ struct StrictDecodingTests {
                 """,
             containing: ["extra"]
         )
+    }
+
+    @Test
+    func strictNestedInheritedHelperUsesItsOwnKeyScope() throws {
+        let validData = Data(
+            #"{"payload":{"nestedOnly":"nested"}}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictNestedScopeChild.self,
+            from: validData
+        )
+        #expect(decoded.payload.nestedOnly == "nested")
+
+        try expectDataCorrupted(
+            StrictNestedScopeChild.self,
+            json: #"{"payload":{"nestedOnly":"nested"},"nestedOnly":"root"}"#,
+            containing: ["nestedOnly"]
+        )
+    }
+
+    @Test
+    func strictManualSuperclassSuperDecoderKeysRemainSupported() throws {
+        let data = Data(
+            #"{"super":{"value":"super"},"child":"child"}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictManualSuperChild.self,
+            from: data
+        )
+        #expect(decoded.superValue == "super")
+        #expect(decoded.child == "child")
     }
 
     @Test

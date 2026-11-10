@@ -182,15 +182,29 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
                 }
             }
         )
+        let directDecoder = context.makeUniqueName("strictDecoder")
+        let usesStrictDirectDecoder =
+            location.rejectUnknownKeys
+            && !variables.isEmpty
+            && !usesKeyedDecoding
+            && !location.additionalAllowedKeys.isEmpty
+        let coder =
+            usesStrictDirectDecoder ? directDecoder : location.coder
         let generated = decodingNode.decoding(
             with: decodingData, in: context,
             from: .withCoder(
-                location.coder, keyType: codingKeys.type,
+                coder, keyType: codingKeys.type,
                 rejectUnknownKeys: location.rejectUnknownKeys,
                 additionalAllowedKeys: location.additionalAllowedKeys
             )
         )
         let newSyntax = CodeBlockItemListSyntax {
+            if usesStrictDirectDecoder {
+                let metadata = strictDecodingMetadataSyntax(
+                    ["": location.additionalAllowedKeys]
+                )
+                "let \(directDecoder) = MetaCodableStrictDecoder(decoder: \(location.coder), allowedKeysByPath: \(metadata))"
+            }
             for variable in variables where variable.decode ?? true {
                 "let \(variable.name): \(variable.type)"
             }

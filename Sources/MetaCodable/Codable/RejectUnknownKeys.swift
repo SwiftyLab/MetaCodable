@@ -17,8 +17,16 @@ public struct MetaCodableStrictDecoder: Decoder {
     ) {
         if let decoder = decoder as? MetaCodableStrictDecoder {
             self.base = decoder.base
-            self.state = decoder.state
-            self.state.merge(allowedKeysByPath: allowedKeysByPath)
+            let codingPath = decoder.codingPath.map(\.stringValue)
+            if codingPath == decoder.state.rootCodingPath {
+                self.state = decoder.state
+                self.state.merge(allowedKeysByPath: allowedKeysByPath)
+            } else {
+                self.state = .init(
+                    allowedKeysByPath: allowedKeysByPath,
+                    rootCodingPath: codingPath
+                )
+            }
         } else {
             self.base = decoder
             self.state = .init(
@@ -266,9 +274,13 @@ private struct StrictKeyedDecodingContainer<Key: CodingKey>:
     }
 
     func superDecoder() throws -> any Decoder {
-        MetaCodableStrictDecoder(
-            base: try base.superDecoder(), state: state
-        )
+        let decoder = try base.superDecoder()
+        if decoder.codingPath.count > codingPath.count,
+            let key = decoder.codingPath.last
+        {
+            state.record(key: key, at: codingPath)
+        }
+        return MetaCodableStrictDecoder(base: decoder, state: state)
     }
 
     func superDecoder(forKey key: Key) throws -> any Decoder {

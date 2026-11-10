@@ -21,6 +21,10 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     var discriminatorDecodingKeys: [String] {
         base.discriminatorDecodingKeys
     }
+    /// Additional keys accepted by direct case decoders.
+    var caseDecodingAdditionalAllowedKeys: [String] {
+        base.caseDecodingAdditionalAllowedKeys
+    }
     /// Whether case values share the wrapped switcher's root container.
     var caseDecodingSharesRootContainer: Bool {
         base.caseDecodingSharesRootContainer

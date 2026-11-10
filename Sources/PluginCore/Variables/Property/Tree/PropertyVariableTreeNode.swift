@@ -78,6 +78,9 @@ extension PropertyVariableTreeNode {
             location.rejectUnknownKeys
             && !location.deferUnknownKeyValidation
             && !location.skipCurrentContainerValidation
+            && !location.skipUnknownKeyValidationPaths.contains(
+                strictDecodingPathKey(location.codingPath)
+            )
             && !hasDirectDecodableVariables
         let allowedKeys: [String]? =
             if strictValidation {

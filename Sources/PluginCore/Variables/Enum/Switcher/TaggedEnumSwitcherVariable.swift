@@ -55,8 +55,7 @@ extension TaggedEnumSwitcherVariable {
                         coder: coder, values: values,
                         rejectUnknownKeys: location.rejectUnknownKeys,
                         additionalAllowedKeys:
-                            location.caseDecodingSharesRootContainer
-                            ? location.discriminatorDecodingKeys : []
+                            location.caseDecodingAdditionalAllowedKeys
                     )
                     let generated = `case`.decoding(
                         in: context, from: cLocation

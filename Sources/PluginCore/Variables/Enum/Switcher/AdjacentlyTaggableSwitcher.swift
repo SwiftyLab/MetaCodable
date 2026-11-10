@@ -7,6 +7,9 @@ import SwiftSyntaxMacros
 /// Only internally tagged enums can have adjacent tagging, while externally
 /// tagged enums can't have adjacent tagging.
 protocol AdjacentlyTaggableSwitcher: EnumSwitcherVariable {
+    /// The discriminator path used by the wrapped switcher.
+    var discriminatorDecodingPath: [String] { get }
+
     /// Provides the syntax for decoding at the provided location and decoder.
     ///
     /// The generated implementation decodes the identifier variable from
@@ -246,6 +249,10 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                         additionalAllowedKeys:
                             location.caseDecodingSharesRootContainer
                             ? location.rootDecodingKeys : [],
+                        additionalAllowedKeysByPath:
+                            location.additionalAllowedKeysByPath,
+                        skipUnknownKeyValidationPaths:
+                            location.skipUnknownKeyValidationPaths,
                         skipCurrentContainerValidation:
                             location.skipRootUnknownKeyValidation
                     )

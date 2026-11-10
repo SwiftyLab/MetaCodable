@@ -20,6 +20,12 @@ where
     var discriminatorDecodingKeys: [String] {
         Array(decodingNode.allowedKeys)
     }
+    /// The discriminator path used for internal tagging.
+    var discriminatorDecodingPath: [String] { keyPath.decoding }
+    /// Internally tagged direct cases share discriminator keys.
+    var caseDecodingAdditionalAllowedKeys: [String] {
+        discriminatorDecodingKeys
+    }
     /// Internally tagged case values share the discriminator container.
     var caseDecodingSharesRootContainer: Bool { true }
     /// The identifier variable build action type.

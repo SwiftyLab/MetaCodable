@@ -15,6 +15,8 @@ where
     var rootDecodingKeys: [String]? { get }
     /// Keys used by the switcher itself before case values are decoded.
     var discriminatorDecodingKeys: [String] { get }
+    /// Additional keys accepted by direct case decoders.
+    var caseDecodingAdditionalAllowedKeys: [String] { get }
     /// Whether case values are decoded in the same root container.
     var caseDecodingSharesRootContainer: Bool { get }
     /// Whether some cases may decode directly from scalar or unkeyed values.
@@ -80,6 +82,8 @@ extension EnumSwitcherVariable {
     var rootDecodingKeys: [String]? { nil }
     /// Switchers have no separate discriminator keys by default.
     var discriminatorDecodingKeys: [String] { [] }
+    /// Direct case decoders have no additional keys by default.
+    var caseDecodingAdditionalAllowedKeys: [String] { [] }
     /// Case values are nested unless a switcher opts into sharing the root.
     var caseDecodingSharesRootContainer: Bool { false }
     /// Switchers do not mix direct and keyed representations by default.
@@ -150,6 +154,12 @@ package struct EnumSwitcherLocation {
     let discriminatorDecodingKeys: [String]
     /// Whether associated case values share the enum root container.
     let caseDecodingSharesRootContainer: Bool
+    /// Additional keys accepted by direct case decoders.
+    var caseDecodingAdditionalAllowedKeys: [String]
+    /// Additional keys accepted at nested decoding container paths.
+    var additionalAllowedKeysByPath: [String: [String]]
+    /// Paths whose generated validation is deferred.
+    var skipUnknownKeyValidationPaths: Set<String>
     /// Whether root switcher validation is deferred for delegated cases.
     let skipRootUnknownKeyValidation: Bool
 }

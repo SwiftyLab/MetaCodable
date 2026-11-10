@@ -30,6 +30,19 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     }
     /// Adjacent case values are decoded from the content container.
     var caseDecodingSharesRootContainer: Bool { false }
+    /// Keys from a nested discriminator container accepted by direct cases.
+    var caseDecodingAdditionalAllowedKeys: [String] {
+        guard
+            base.discriminatorDecodingPath.count > contentDecodingPath.count,
+            Array(
+                base.discriminatorDecodingPath.dropLast()
+            ) == contentDecodingPath,
+            let key = base.discriminatorDecodingPath.last
+        else { return [] }
+        return [key]
+    }
+    /// The path used for adjacent case content.
+    let contentDecodingPath: [String]
 
     /// Creates switcher variable with provided data.
     ///
@@ -51,6 +64,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         let encodingKeys = codingKeys.add(
             keys: keyPath.encoding, context: context)
         self.variable = .init(decoder: contentDecoder, encoder: contentEncoder)
+        self.contentDecodingPath = keyPath.decoding
         base.registering(variable: variable, decodingKeyPath: decodingKeys)
         base.registering(variable: variable, encodingKeyPath: encodingKeys)
         self.base = base
@@ -120,7 +134,25 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         in context: some MacroExpansionContext,
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
-        base.decoding(
+        var location = location
+        if base.discriminatorDecodingPath.count
+            > contentDecodingPath.count,
+            Array(
+                base.discriminatorDecodingPath.dropLast()
+            ) == contentDecodingPath
+        {
+            let path = strictDecodingPathKey(contentDecodingPath)
+            let caseKeys = location.cases.flatMap {
+                $0.variable.decodingAllowedKeys
+            }
+            if !caseKeys.isEmpty {
+                location.additionalAllowedKeysByPath[path] = caseKeys
+            }
+            if location.skipRootUnknownKeyValidation {
+                location.skipUnknownKeyValidationPaths.insert(path)
+            }
+        }
+        return base.decoding(
             in: context, from: location, contentAt: variable.decoder
         )
     }
