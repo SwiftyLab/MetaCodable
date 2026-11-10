@@ -16,6 +16,8 @@ extension AttributeExpander {
         let availableAttributes: [AttributeSyntax]
         /// Whether generated decoding rejects unsupported keys.
         let rejectUnknownKeys: Bool
+        /// The invalid strict-decoding argument, if one was provided.
+        let invalidRejectUnknownKeysArgument: AttributeSyntax?
 
         /// Memberwise initialization generator with provided options.
         ///
@@ -45,18 +47,21 @@ extension AttributeExpander {
                     return nil
                 }
             }
-            self.rejectUnknownKeys =
-                decl.attributes.compactMap { attribute in
-                    guard
-                        case .attribute(let attr) = attribute,
-                        let arguments = attr.arguments?
-                            .as(LabeledExprListSyntax.self),
-                        let argument = arguments.first(where: {
-                            $0.label?.text == "rejectUnknownKeys"
-                        })
-                    else { return nil }
-                    return Self.booleanValue(argument.expression)
-                }.first ?? false
+            let strictArguments = decl.attributes.compactMap {
+                attribute -> (AttributeSyntax, Bool?)? in
+                guard
+                    case .attribute(let attr) = attribute,
+                    let arguments = attr.arguments?
+                        .as(LabeledExprListSyntax.self),
+                    let argument = arguments.first(where: {
+                        $0.label?.text == "rejectUnknownKeys"
+                    })
+                else { return nil }
+                return (attr, Self.booleanValue(argument.expression))
+            }
+            self.rejectUnknownKeys = strictArguments.first?.1 ?? false
+            self.invalidRejectUnknownKeysArgument =
+                strictArguments.first { $0.1 == nil }?.0
         }
 
         /// Resolves boolean expressions supported by the macro argument.

@@ -1,5 +1,6 @@
 import SwiftSyntax
 import SwiftSyntaxBuilder
+import SwiftDiagnostics
 import SwiftSyntaxMacros
 
 /// A type managing registrations of variable and `CodingKey` data.
@@ -37,7 +38,26 @@ struct AttributeExpander {
             let typeVar = variable as? any TypeVariable
         else { return nil }
         self.variable = typeVar
-        self.options = .init(for: declaration)
+        let options = Options(for: declaration)
+        if let invalid = options.invalidRejectUnknownKeysArgument {
+            context.diagnose(
+                .init(
+                    node: invalid,
+                    message: MetaCodableMessage(
+                        macro: invalid,
+                        message:
+                            "rejectUnknownKeys must be a Boolean literal "
+                            + "or a parenthesized/prefix Boolean literal.",
+                        messageID: Codable.messageID(
+                            "invalid-reject-unknown-keys"
+                        ),
+                        severity: .error
+                    ),
+                    fixIts: []
+                )
+            )
+        }
+        self.options = options
     }
 
     /// Generates extension declarations for `Codable` macro.
