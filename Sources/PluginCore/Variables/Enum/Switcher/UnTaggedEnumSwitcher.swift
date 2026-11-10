@@ -167,10 +167,17 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
 
         let `case` = cases.removeFirst()
         let coder = location.coder
+        let isDirectCase =
+            `case`.variable.usesDirectDecoding
+            || (!`case`.variable.usesKeyedDecoding
+                && !`case`.variable.variables.isEmpty)
         let cLocation = EnumCaseCodingLocation(
             coder: coder, values: [],
-            rejectUnknownKeys: location.rejectUnknownKeys,
-            additionalAllowedKeys: []
+            rejectUnknownKeys:
+                location.rejectUnknownKeys
+                && !isDirectCase,
+            additionalAllowedKeys:
+                `case`.variable.decodingAllowedKeys
         )
         let generated = `case`.variable.decoding(in: context, from: cLocation)
         let nResult = decodingSyntax(

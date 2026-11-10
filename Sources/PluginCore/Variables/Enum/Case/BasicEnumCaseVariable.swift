@@ -67,7 +67,7 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     let codingKeys: CodingKeysMap
     /// Keys recognized by decoding associated values at the current level.
     var decodingAllowedKeys: [String] {
-        Array(decodingNode.allowedKeys)
+        Array(decodingData.allowedKeys)
     }
     /// Whether associated values require a keyed decoding container.
     var usesKeyedDecoding: Bool {
@@ -75,7 +75,14 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     }
     /// Whether associated values include an unlabeled direct value.
     var usesDirectDecoding: Bool {
-        variables.contains { $0.label == nil }
+        let hasDecodedValue = variables.contains { $0.decode ?? true }
+        return hasDecodedValue && !usesKeyedDecoding
+            || decodingData.variables.contains { $0.decode ?? true }
+            || variables.contains { variable in
+                guard variable.decode ?? true else { return false }
+                guard let label = variable.label else { return true }
+                return label.text == "_"
+            }
     }
 
     /// Creates a new enum-case variable from provided data.

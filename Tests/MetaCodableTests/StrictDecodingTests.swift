@@ -31,6 +31,65 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictInternalEnumsAllowDiscriminatorKeysInWildcardPayloads() throws {
+        let data = Data(
+            #"{"type":"item","name":"n","count":1}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictWildcardDelegatedInternalCommand.self,
+            from: data
+        )
+        if case .item(let value) = decoded {
+            #expect(value.name == "n")
+            #expect(value.count == 1)
+        } else {
+            Issue.record("Expected wildcard delegated item case")
+        }
+    }
+
+    @Test
+    func strictOptionalPayloadsPreserveDateAndDataStrategies() throws {
+        enum StrategyKeys: String, CodingKey {
+            case date
+            case data
+        }
+
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.container(keyedBy: StrategyKeys.self)
+            let timestamp = try container.decode(
+                Double.self, forKey: .date
+            )
+            return Date(timeIntervalSince1970: timestamp)
+        }
+        decoder.dataDecodingStrategy = .custom { decoder in
+            let container = try decoder.container(keyedBy: StrategyKeys.self)
+            let value = try container.decode(String.self, forKey: .data)
+            return try #require(Data(base64Encoded: value))
+        }
+
+        let date = try decoder.decode(
+            StrictOptionalStrategyCommand.self,
+            from: Data(#"{"type":"date","date":123}"#.utf8)
+        )
+        if case .date(let value) = date {
+            #expect(value?.timeIntervalSince1970 == 123)
+        } else {
+            Issue.record("Expected date case")
+        }
+
+        let data = try decoder.decode(
+            StrictOptionalStrategyCommand.self,
+            from: Data(#"{"type":"data","data":"AQI="}"#.utf8)
+        )
+        if case .data(let value) = data {
+            #expect(value == Data([1, 2]))
+        } else {
+            Issue.record("Expected data case")
+        }
+    }
+
+    @Test
     func strictInternalEnumsAllowDiscriminatorKeysInStrictDirectPayloads()
         throws
     {
@@ -506,8 +565,21 @@ struct StrictDecodingTests {
 
     @Codable(rejectUnknownKeys: true)
     @CodedAt("type")
+    enum StrictWildcardDelegatedInternalCommand {
+        case item(_: StrictDecodingTests.StrictRecord)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
     enum StrictOptionalDelegatedInternalCommand {
         case item(StrictDecodingTests.StrictRecord?)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
+    enum StrictOptionalStrategyCommand {
+        case date(Date?)
+        case data(Data?)
     }
 
     @Codable(rejectUnknownKeys: true)
