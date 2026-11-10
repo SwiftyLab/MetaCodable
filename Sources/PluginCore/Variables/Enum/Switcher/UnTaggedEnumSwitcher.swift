@@ -145,8 +145,17 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         let generated = `case`.variable.decoding(in: context, from: cLocation)
         let nResult = decodingSyntax(for: &cases, from: location, in: context)
         let catchClauses = CatchClauseListSyntax {
-            CatchClauseSyntax {
-                nResult.syntax
+            if location.rejectUnknownKeys {
+                CatchClauseSyntax("catch let error as DecodingError") {
+                    try! IfExprSyntax("if case .dataCorrupted = error") {
+                        "throw error"
+                    }
+                    nResult.syntax
+                }
+            } else {
+                CatchClauseSyntax {
+                    nResult.syntax
+                }
             }
         }
 
