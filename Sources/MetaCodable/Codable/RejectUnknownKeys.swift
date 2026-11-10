@@ -93,6 +93,10 @@ public struct MetaCodableStrictDecoder: Decoder {
             terminalDecoderPaths.insert(self.path(for: path))
         }
 
+        func clearTerminalDecoder(at path: [any CodingKey]) {
+            terminalDecoderPaths.remove(self.path(for: path))
+        }
+
         func hasContainerPath(_ path: String) -> Bool {
             observedContainerPaths.contains(path)
         }
@@ -288,6 +292,9 @@ public extension Decoder {
         allowedKeys: [String],
         type: Any.Type
     ) throws {
+        if let strictDecoder = self as? MetaCodableStrictDecoder {
+            strictDecoder.state.clearTerminalDecoder(at: codingPath)
+        }
         let rawContainer = try container(
             keyedBy: DynamicCodableIdentifier<String>.self
         )
@@ -324,8 +331,13 @@ public extension Decoder {
             rawContainer = try container(
                 keyedBy: DynamicCodableIdentifier<String>.self
             )
-        } catch DecodingError.typeMismatch {
-            return
+        } catch let error as DecodingError {
+            switch error {
+            case .typeMismatch, .valueNotFound:
+                return
+            default:
+                throw error
+            }
         }
         try rawContainer.rejectUnknownKeys(
             atPath: "",

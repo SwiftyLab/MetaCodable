@@ -174,6 +174,23 @@ struct StrictDecodingTests {
 
     @Codable(rejectUnknownKeys: true)
     @Inherits(decodable: false, encodable: false)
+    class StrictOptionalScalarBase {
+        @CodedAt
+        var value: String? = nil
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictOptionalScalarChild: StrictOptionalScalarBase {
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
     class StrictNestedBase {
         @CodedIn("payload")
         var base: String = ""
@@ -186,6 +203,26 @@ struct StrictDecodingTests {
     class StrictNestedChild: StrictNestedBase {
         @CodedIn("payload")
         var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
+    class StrictStructuralBase {
+        @CodedIn("payload")
+        var base: String = ""
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictStructuralChild: StrictStructuralBase {
+        @CodedIn("payload", "details")
+        var value: String = ""
 
         override init() {
             super.init()
@@ -462,6 +499,15 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictOptionalScalarClassHierarchiesAllowNull() throws {
+        let decoded = try JSONDecoder().decode(
+            StrictOptionalScalarChild.self,
+            from: Data("null".utf8)
+        )
+        #expect(decoded.value == nil)
+    }
+
+    @Test
     func strictRecordDecodesKnownKeys() throws {
         let data = Data(
             """
@@ -683,6 +729,25 @@ struct StrictDecodingTests {
         )
         #expect(decoded.base == "base")
         #expect(decoded.child == "child")
+    }
+
+    @Test
+    func strictStructuralInheritanceDoesNotSkipDeeperPaths() throws {
+        try expectDataCorrupted(
+            StrictStructuralChild.self,
+            json: """
+                {
+                    "payload": {
+                        "base": "base",
+                        "details": {
+                            "value": "value",
+                            "extra": true
+                        }
+                    }
+                }
+                """,
+            containing: ["extra"]
+        )
     }
 
     @Test
