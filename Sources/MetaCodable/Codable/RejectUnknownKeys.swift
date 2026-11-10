@@ -43,6 +43,7 @@ public struct MetaCodableStrictDecoder: Decoder {
         keyedBy type: Key.Type
     ) throws -> KeyedDecodingContainer<Key> {
         let container = try base.container(keyedBy: type)
+        state.recordContainer(at: container.codingPath)
         return KeyedDecodingContainer(
             StrictKeyedDecodingContainer(base: container, state: state)
         )
@@ -89,6 +90,10 @@ public struct MetaCodableStrictDecoder: Decoder {
 
         func hasContainerPath(_ path: String) -> Bool {
             observedContainerPaths.contains(path)
+        }
+
+        func hasContainer(at path: [any CodingKey]) -> Bool {
+            hasContainerPath(self.path(for: path))
         }
 
         func additionalKeys(at path: [any CodingKey]) -> Set<String> {
@@ -306,6 +311,11 @@ public extension Decoder {
         allowedKeysByPath: [String: [String]],
         type: Any.Type
     ) throws {
+        if let strictDecoder = self as? MetaCodableStrictDecoder,
+            !strictDecoder.state.hasContainer(at: codingPath)
+        {
+            return
+        }
         let rawContainer = try container(
             keyedBy: DynamicCodableIdentifier<String>.self
         )

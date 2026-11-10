@@ -215,6 +215,22 @@ struct StrictDecodingTests {
 
     @Codable
     @Inherits(decodable: false, encodable: false)
+    class PermissiveEmptyBase {
+        var base: String = ""
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictEmptyChild: PermissiveEmptyBase {
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable
+    @Inherits(decodable: false, encodable: false)
     class PermissiveNestedBase {
         @CodedIn("payload")
         var base: String = ""
@@ -668,6 +684,21 @@ struct StrictDecodingTests {
         )
         #expect(decoded.base == "base")
         #expect(decoded.child == "child")
+    }
+
+    @Test
+    func strictEmptyChildValidatesInheritedKeyedContainers() throws {
+        let data = Data(#"{"base":"base"}"#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictEmptyChild.self, from: data
+        )
+        #expect(decoded.base == "base")
+
+        try expectDataCorrupted(
+            StrictEmptyChild.self,
+            json: #"{"base":"base","extra":true}"#,
+            containing: ["extra"]
+        )
     }
 
     @Test

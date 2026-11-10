@@ -157,7 +157,6 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
             let generated = group.decoding(in: context, from: newLocation)
         else { return nil }
         let metadataMap = group.decodingNode.allowedKeysByPath()
-        let hasKeyedMetadata = metadataMap.values.contains { !$0.isEmpty }
         var code: CodeBlockItemListSyntax
         if overridden {
             let metadata = strictDecodingMetadataSyntax(
@@ -167,7 +166,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
                 "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(method.arg), allowedKeysByPath: \(metadata))"
                 generated.code
                 "try super.\(method.name)(\(method.argLabel): \(strictDecoder))"
-                if location.rejectUnknownKeys, hasKeyedMetadata {
+                if location.rejectUnknownKeys {
                     "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
                 }
             }
