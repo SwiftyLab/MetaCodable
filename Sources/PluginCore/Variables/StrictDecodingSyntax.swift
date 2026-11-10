@@ -38,6 +38,23 @@ package func strictDecodingValidationSyntax(
     }
 }
 
+/// Generates conditional validation for mixed scalar/keyed enum decoding.
+package func strictDecodingConditionalValidationSyntax(
+    decoder: ExprSyntax,
+    keyType: ExprSyntax,
+    allowedKeys: [String]
+) -> CodeBlockItemListSyntax {
+    let validation = strictDecodingValidationSyntax(
+        decoder: decoder, allowedKeys: allowedKeys
+    )
+    return CodeBlockItemListSyntax {
+        try! IfExprSyntax(
+            "if (try? \(decoder).container(keyedBy: \(keyType))) != nil"
+        ) {
+            validation
+        }
+    }
+}
 /// Generates a dictionary literal for strict decoding key metadata.
 package func strictDecodingMetadataSyntax(
     _ metadata: [String: [String]]

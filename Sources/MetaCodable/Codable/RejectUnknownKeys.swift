@@ -21,7 +21,10 @@ public struct MetaCodableStrictDecoder: Decoder {
             self.state.merge(allowedKeysByPath: allowedKeysByPath)
         } else {
             self.base = decoder
-            self.state = .init(allowedKeysByPath: allowedKeysByPath)
+            self.state = .init(
+                allowedKeysByPath: allowedKeysByPath,
+                rootCodingPath: decoder.codingPath.map(\.stringValue)
+            )
         }
     }
 
@@ -64,18 +67,32 @@ public struct MetaCodableStrictDecoder: Decoder {
     fileprivate final class State {
         var allowedKeysByPath: [String: Set<String>]
         var observedKeysByPath: [String: Set<String>] = [:]
+        var observedContainerPaths: Set<String> = []
+        let rootCodingPath: [String]
 
-        init(allowedKeysByPath: [String: [String]]) {
+        init(
+            allowedKeysByPath: [String: [String]],
+            rootCodingPath: [String]
+        ) {
             self.allowedKeysByPath = allowedKeysByPath.mapValues(Set.init)
+            self.rootCodingPath = rootCodingPath
         }
 
         func record(key: any CodingKey, at path: [any CodingKey]) {
-            let path = Self.path(for: path)
+            let path = self.path(for: path)
             observedKeysByPath[path, default: []].insert(key.stringValue)
         }
 
+        func recordContainer(at path: [any CodingKey]) {
+            observedContainerPaths.insert(self.path(for: path))
+        }
+
+        func hasContainerPath(_ path: String) -> Bool {
+            observedContainerPaths.contains(path)
+        }
+
         func additionalKeys(at path: [any CodingKey]) -> Set<String> {
-            let path = Self.path(for: path)
+            let path = self.path(for: path)
             return (allowedKeysByPath[path] ?? []).union(
                 observedKeysByPath[path] ?? []
             )
@@ -87,10 +104,14 @@ public struct MetaCodableStrictDecoder: Decoder {
             }
         }
 
-        fileprivate static func path(for codingPath: [any CodingKey]) -> String
-        {
-            codingPath.map { key in
-                "\(key.stringValue.utf8.count):\(key.stringValue)"
+        fileprivate func path(for codingPath: [any CodingKey]) -> String {
+            let components = codingPath.map(\.stringValue)
+            let relative =
+                components.starts(with: rootCodingPath)
+                ? Array(components.dropFirst(rootCodingPath.count))
+                : components
+            return relative.map { component in
+                "\(component.utf8.count):\(component)"
             }.joined(separator: "|")
         }
     }
@@ -216,6 +237,7 @@ private struct StrictKeyedDecodingContainer<Key: CodingKey>:
         forKey key: Key
     ) throws -> KeyedDecodingContainer<NestedKey> {
         state.record(key: key, at: codingPath)
+        state.recordContainer(at: codingPath + [key])
         let nested = try base.nestedContainer(keyedBy: type, forKey: key)
         return KeyedDecodingContainer(
             StrictKeyedDecodingContainer<NestedKey>(base: nested, state: state)
@@ -324,10 +346,11 @@ where Key == DynamicCodableIdentifier<String> {
         }
 
         for key in allKeys {
-            let childPath = MetaCodableStrictDecoder.State.path(
-                for: codingPath + [key]
-            )
-            guard allowedKeysByPath[childPath] != nil,
+            let childPath =
+                state?.path(for: codingPath + [key]) ?? path
+            guard
+                allowedKeysByPath[childPath] != nil
+                    || state?.hasContainerPath(childPath) == true,
                 let nested = try? nestedContainer(
                     keyedBy: DynamicCodableIdentifier<String>.self,
                     forKey: key

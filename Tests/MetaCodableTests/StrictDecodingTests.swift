@@ -84,6 +84,11 @@ struct StrictDecodingTests {
         let values: [StrictDecodingTests.StrictRecord]
     }
 
+    @Codable
+    struct StrictEnvelope {
+        let item: StrictDecodingTests.StrictNestedChild
+    }
+
     @Codable(rejectUnknownKeys: true)
     struct StrictEmptyRecord {}
 
@@ -154,6 +159,25 @@ struct StrictDecodingTests {
     @Codable(rejectUnknownKeys: true)
     @Inherits(decodable: true, encodable: true)
     class StrictPermissiveChild: PermissiveBase {
+        var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable
+    @Inherits(decodable: false, encodable: false)
+    class PermissiveNestedBase {
+        @CodedIn("payload")
+        var base: String = ""
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictPermissiveNestedChild: PermissiveNestedBase {
         var child: String = ""
 
         override init() {
@@ -492,6 +516,25 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictNestedClassValidationNormalizesEnclosingCodingPaths() throws {
+        try expectDataCorrupted(
+            StrictEnvelope.self,
+            json: """
+                {
+                    "item": {
+                        "payload": {
+                            "base": "base",
+                            "child": "child",
+                            "extra": true
+                        }
+                    }
+                }
+                """,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
     func strictThreeLevelClassInheritancePreservesDecoderMetadata() throws {
         let data = Data(
             #"{"payload":{"base":"base","child":"child","leaf":"leaf"}}"#.utf8
@@ -512,6 +555,16 @@ struct StrictDecodingTests {
         )
         #expect(decoded.base == "base")
         #expect(decoded.child == "child")
+    }
+
+    @Test
+    func strictChildOfPermissiveClassValidatesInheritedNestedContainers() throws
+    {
+        try expectDataCorrupted(
+            StrictPermissiveNestedChild.self,
+            json: #"{"child":"c","payload":{"base":"b","extra":true}}"#,
+            containing: ["extra"]
+        )
     }
 
     @Test

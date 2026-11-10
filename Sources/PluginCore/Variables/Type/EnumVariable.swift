@@ -279,6 +279,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
             let shouldPreflightKeyedContainer =
                 switcher.usesKeyedContainer
                 || switcher.allowsDirectDecoding && !hasDirectDecodingCase
+            let shouldConditionallyPreflightKeyedContainer =
+                switcher.allowsDirectDecoding && hasDirectDecodingCase
             var rootDecodingKeys =
                 switcher.rootDecodingKeys ?? codingKeys.allKeys
             if switcher.caseDecodingSharesRootContainer {
@@ -299,13 +301,21 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     switcher.caseDecodingSharesRootContainer
             )
             code = CodeBlockItemListSyntax {
-                if location.rejectUnknownKeys
-                    && shouldPreflightKeyedContainer
-                {
-                    strictDecodingValidationSyntax(
-                        decoder: "\(location.method.arg)" as ExprSyntax,
-                        allowedKeys: rootDecodingKeys
-                    )
+                if location.rejectUnknownKeys {
+                    if shouldPreflightKeyedContainer {
+                        strictDecodingValidationSyntax(
+                            decoder: "\(location.method.arg)" as ExprSyntax,
+                            allowedKeys: rootDecodingKeys
+                        )
+                    } else if shouldConditionallyPreflightKeyedContainer,
+                        !rootDecodingKeys.isEmpty
+                    {
+                        strictDecodingConditionalValidationSyntax(
+                            decoder: "\(location.method.arg)" as ExprSyntax,
+                            keyType: codingKeys.type,
+                            allowedKeys: rootDecodingKeys
+                        )
+                    }
                 }
                 switcher.decoding(in: context, from: switcherLoc)
             }
