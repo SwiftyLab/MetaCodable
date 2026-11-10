@@ -645,6 +645,13 @@ struct StrictDecodingTests {
     }
 
     @Codable(rejectUnknownKeys: true)
+    @UnTagged
+    enum StrictTransactionalUntaggedCommand {
+        case number(value: Int)
+        case record(StrictDecodingTests.PermissivePayload, count: Int)
+    }
+
+    @Codable(rejectUnknownKeys: true)
     @CodedAt("meta", "kind")
     @ContentAt("meta")
     enum StrictNestedAdjacentCommand {
@@ -1248,6 +1255,21 @@ struct StrictDecodingTests {
             #expect(value.count == 1)
         } else {
             Issue.record("Expected delegated record case")
+        }
+    }
+
+    @Test
+    func strictUntaggedAttemptsRollbackFailedMetadata() throws {
+        let data = Data(#"{"name":"n","count":1}"#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictTransactionalUntaggedCommand.self,
+            from: data
+        )
+        if case .record(let payload, let count) = decoded {
+            #expect(payload.name == "n")
+            #expect(count == 1)
+        } else {
+            Issue.record("Expected transactional record case")
         }
     }
 

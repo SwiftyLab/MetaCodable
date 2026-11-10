@@ -168,7 +168,10 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         }
 
         let `case` = cases.removeFirst()
-        let coder = location.coder
+        let attempt = context.makeUniqueName("strictAttempt")
+        let attemptDecoder = context.makeUniqueName("strictAttemptDecoder")
+        let coder =
+            location.rejectUnknownKeys ? attemptDecoder : location.coder
         let cLocation = EnumCaseCodingLocation(
             coder: coder, values: [],
             rejectUnknownKeys: location.rejectUnknownKeys,
@@ -188,10 +191,16 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
                     ) {
                         "\(strictError) = decodingError"
                     }
+                    if location.rejectUnknownKeys {
+                        "\(attempt).rollback()"
+                    }
                     nResult.syntax
                 }
             } else {
                 CatchClauseSyntax {
+                    if location.rejectUnknownKeys {
+                        "\(attempt).rollback()"
+                    }
                     nResult.syntax
                 }
             }
@@ -206,6 +215,9 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
             generated.code.codingSyntax
             generated.code.conditionalSyntax
             location.codeExpr(eCase.name, eCase.variables)
+            if location.rejectUnknownKeys {
+                "\(attempt).commit()"
+            }
             "return"
         }
 
@@ -220,6 +232,10 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         let syntax = CodeBlockItemListSyntax {
             if !location.rejectUnknownKeys {
                 generated.code.containerSyntax
+            }
+            if location.rejectUnknownKeys {
+                "let \(attempt) = MetaCodableStrictDecoder.beginAttempt(for: \(location.coder))"
+                "let \(attemptDecoder) = \(attempt).decoder"
             }
             if tVisitor.throws {
                 DoStmtSyntax(catchClauses: catchClauses) {

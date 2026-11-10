@@ -54,6 +54,59 @@ public struct MetaCodableStrictDecoder: Decoder {
         return try Value(from: decoder)
     }
 
+    /// Begins an isolated decoding attempt for backtracking decoders.
+    public static func beginAttempt(for decoder: any Decoder) -> Attempt {
+        guard let strictDecoder = decoder as? MetaCodableStrictDecoder
+        else {
+            return Attempt(decoder: decoder)
+        }
+
+        let isolatedState = strictDecoder.state.copy()
+        let isolatedDecoder = MetaCodableStrictDecoder(
+            base: strictDecoder.base,
+            state: isolatedState
+        )
+        return Attempt(
+            decoder: isolatedDecoder,
+            commit: {
+                strictDecoder.state.replace(with: isolatedState)
+            }
+        )
+    }
+
+    /// An isolated decoding attempt whose state is committed only on success.
+    public final class Attempt {
+        /// The decoder used by this attempt.
+        public let decoder: any Decoder
+        private let commitAction: (() -> Void)?
+        private var finished = false
+
+        fileprivate init(decoder: any Decoder) {
+            self.decoder = decoder
+            self.commitAction = nil
+        }
+
+        fileprivate init(
+            decoder: any Decoder,
+            commit: @escaping () -> Void
+        ) {
+            self.decoder = decoder
+            self.commitAction = commit
+        }
+
+        /// Commits observed metadata and consumed keys to the parent decoder.
+        public func commit() {
+            guard !finished else { return }
+            finished = true
+            commitAction?()
+        }
+
+        /// Discards all metadata and consumed keys observed by the attempt.
+        public func rollback() {
+            finished = true
+        }
+    }
+
     fileprivate init(base: any Decoder, state: State) {
         self.base = base
         self.state = state
@@ -142,6 +195,24 @@ public struct MetaCodableStrictDecoder: Decoder {
             for (path, keys) in allowedKeysByPath {
                 self.allowedKeysByPath[path, default: []].formUnion(keys)
             }
+        }
+
+        func copy() -> State {
+            let copy = State(
+                allowedKeysByPath: allowedKeysByPath.mapValues(Array.init),
+                rootCodingPath: rootCodingPath
+            )
+            copy.observedKeysByPath = observedKeysByPath
+            copy.observedContainerPaths = observedContainerPaths
+            copy.terminalDecoderPaths = terminalDecoderPaths
+            return copy
+        }
+
+        func replace(with other: State) {
+            allowedKeysByPath = other.allowedKeysByPath
+            observedKeysByPath = other.observedKeysByPath
+            observedContainerPaths = other.observedContainerPaths
+            terminalDecoderPaths = other.terminalDecoderPaths
         }
 
         fileprivate func path(for codingPath: [any CodingKey]) -> String {
