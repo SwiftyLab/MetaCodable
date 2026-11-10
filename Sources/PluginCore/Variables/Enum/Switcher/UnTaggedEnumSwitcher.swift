@@ -102,7 +102,8 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
         var cases = location.cases
-        let strictError = location.rejectUnknownKeys
+        let strictError =
+            location.rejectUnknownKeys
             ? context.makeUniqueName("strictDecodingError") : nil
         let result = decodingSyntax(
             for: &cases, from: location, in: context,
@@ -176,13 +177,14 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         )
         let catchClauses = CatchClauseListSyntax {
             if let strictError {
-                CatchClauseSyntax("catch let error as DecodingError") {
-                    try! IfExprSyntax("if case .dataCorrupted = error") {
-                        "\(strictError) = error"
+                CatchClauseSyntax {
+                    try! IfExprSyntax(
+                        "if let decodingError = error as? DecodingError, case .dataCorrupted = decodingError"
+                    ) {
+                        "\(strictError) = decodingError"
                     }
                     nResult.syntax
                 }
-                CatchClauseSyntax { nResult.syntax }
             } else {
                 CatchClauseSyntax {
                     nResult.syntax
