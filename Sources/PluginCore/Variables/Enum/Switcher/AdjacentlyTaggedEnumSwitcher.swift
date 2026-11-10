@@ -34,10 +34,14 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     var caseDecodingAdditionalAllowedKeys: [String] {
         guard
             base.discriminatorDecodingPath.count > contentDecodingPath.count,
-            Array(
-                base.discriminatorDecodingPath.dropLast()
-            ) == contentDecodingPath,
-            let key = base.discriminatorDecodingPath.last
+            base.discriminatorDecodingPath.starts(
+                with: contentDecodingPath
+            )
+        else { return [] }
+        let relativePath = base.discriminatorDecodingPath.dropFirst(
+            contentDecodingPath.count
+        )
+        guard let key = relativePath.first
         else { return [] }
         return [key]
     }
@@ -137,9 +141,9 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         var location = location
         if base.discriminatorDecodingPath.count
             > contentDecodingPath.count,
-            Array(
-                base.discriminatorDecodingPath.dropLast()
-            ) == contentDecodingPath
+            base.discriminatorDecodingPath.starts(
+                with: contentDecodingPath
+            )
         {
             let path = strictDecodingPathKey(contentDecodingPath)
             let caseKeys = location.cases.flatMap {
