@@ -31,6 +31,15 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictInternalEnumsValidateWildcardKeyedPayloads() throws {
+        try expectDataCorrupted(
+            StrictWildcardKeyedInternalCommand.self,
+            json: #"{"type":"item","name":"n","extra":true}"#,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
     func strictInternalEnumsAllowDiscriminatorKeysInWildcardPayloads() throws {
         let data = Data(
             #"{"type":"item","name":"n","count":1}"#.utf8
@@ -567,6 +576,12 @@ struct StrictDecodingTests {
     @CodedAt("type")
     enum StrictWildcardDelegatedInternalCommand {
         case item(_: StrictDecodingTests.StrictRecord)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
+    enum StrictWildcardKeyedInternalCommand {
+        case item(_ name: String)
     }
 
     @Codable(rejectUnknownKeys: true)

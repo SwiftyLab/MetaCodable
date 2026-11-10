@@ -78,11 +78,6 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         let hasDecodedValue = variables.contains { $0.decode ?? true }
         return hasDecodedValue && !usesKeyedDecoding
             || decodingData.variables.contains { $0.decode ?? true }
-            || variables.contains { variable in
-                guard variable.decode ?? true else { return false }
-                guard let label = variable.label else { return true }
-                return label.text == "_"
-            }
     }
 
     /// Creates a new enum-case variable from provided data.

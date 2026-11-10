@@ -193,6 +193,10 @@ where Self: EnumCaseVariable, Wrapped: EnumCaseVariable {
     var usesKeyedDecoding: Bool {
         base.usesKeyedDecoding
     }
+    /// Provides direct-decoding capability from the underlying enum case.
+    var usesDirectDecoding: Bool {
+        base.usesDirectDecoding
+    }
 }
 
 extension ComposedVariable where Self: TypeVariable, Wrapped: TypeVariable {
