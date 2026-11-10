@@ -31,6 +31,10 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     }
     /// Whether the wrapped switcher uses an internal discriminator.
     var isInternallyTagged: Bool { base.isInternallyTagged }
+    /// Whether direct payloads share the wrapped validation container.
+    var directPayloadSharesValidationContainer: Bool {
+        base.directPayloadSharesValidationContainer
+    }
     /// Whether the wrapped switcher allows direct decoding cases.
     var allowsDirectDecoding: Bool { base.allowsDirectDecoding }
 

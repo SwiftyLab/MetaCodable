@@ -30,6 +30,8 @@ where
     var caseDecodingSharesRootContainer: Bool { true }
     /// This switcher uses an internal discriminator.
     var isInternallyTagged: Bool { true }
+    /// Internal direct payloads share the root validation container.
+    var directPayloadSharesValidationContainer: Bool { true }
     /// The identifier variable build action type.
     ///
     /// Used to build the identifier data and pass in encoding callback.

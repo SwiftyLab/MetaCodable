@@ -15,6 +15,8 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
     var discriminatorDecodingKeys: [String] { [] }
     /// Untagged enums may mix direct and keyed cases.
     var allowsDirectDecoding: Bool { true }
+    /// Untagged payloads are decoded directly from the validated root.
+    var directPayloadSharesValidationContainer: Bool { true }
     /// The node at which variables are registered.
     ///
     /// Associated variables for all cases are registered with the path
@@ -167,15 +169,9 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
 
         let `case` = cases.removeFirst()
         let coder = location.coder
-        let isDirectCase =
-            `case`.variable.usesDirectDecoding
-            || (!`case`.variable.usesKeyedDecoding
-                && !`case`.variable.variables.isEmpty)
         let cLocation = EnumCaseCodingLocation(
             coder: coder, values: [],
-            rejectUnknownKeys:
-                location.rejectUnknownKeys
-                && !isDirectCase,
+            rejectUnknownKeys: location.rejectUnknownKeys,
             additionalAllowedKeys:
                 `case`.variable.decodingAllowedKeys
         )

@@ -279,6 +279,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     })
             let hasDelegatedDirectCase =
                 hasDirectDecodingCase
+                && switcher.directPayloadSharesValidationContainer
             let hasAssociatedValues = cases.contains {
                 !$0.variable.variables.isEmpty
             }

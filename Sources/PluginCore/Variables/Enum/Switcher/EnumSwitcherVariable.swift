@@ -21,6 +21,8 @@ where
     var caseDecodingSharesRootContainer: Bool { get }
     /// Whether the switcher uses an internal discriminator.
     var isInternallyTagged: Bool { get }
+    /// Whether direct payloads share the container being strictly validated.
+    var directPayloadSharesValidationContainer: Bool { get }
     /// Whether some cases may decode directly from scalar or unkeyed values.
     var allowsDirectDecoding: Bool { get }
     /// Provides node at which case associated variables are registered.
@@ -90,6 +92,8 @@ extension EnumSwitcherVariable {
     var caseDecodingSharesRootContainer: Bool { false }
     /// Switchers are not internally tagged by default.
     var isInternallyTagged: Bool { false }
+    /// Direct payloads do not share an envelope container by default.
+    var directPayloadSharesValidationContainer: Bool { false }
     /// Switchers do not mix direct and keyed representations by default.
     var allowsDirectDecoding: Bool { false }
 

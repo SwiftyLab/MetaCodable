@@ -32,6 +32,16 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     var caseDecodingSharesRootContainer: Bool { false }
     /// Adjacent tagging wraps an internally tagged discriminator.
     var isInternallyTagged: Bool { base.isInternallyTagged }
+    /// Adjacent direct payloads share validation only when content and tag
+    /// paths are nested in the same container.
+    var directPayloadSharesValidationContainer: Bool {
+        base.caseDecodingSharesRootContainer
+            || (base.discriminatorDecodingPath.count
+                > contentDecodingPath.count
+                && base.discriminatorDecodingPath.starts(
+                    with: contentDecodingPath
+                ))
+    }
     /// Keys from a nested discriminator container accepted by direct cases.
     var caseDecodingAdditionalAllowedKeys: [String] {
         guard
