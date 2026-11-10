@@ -1,6 +1,24 @@
-import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
+
+private func escapedStringLiteral(_ value: String) -> String {
+    value.reduce(into: "") { result, character in
+        switch character {
+        case "\\":
+            result += "\\\\"
+        case "\"":
+            result += "\\\""
+        case "\n":
+            result += "\\n"
+        case "\r":
+            result += "\\r"
+        case "\t":
+            result += "\\t"
+        default:
+            result.append(character)
+        }
+    }
+}
 
 /// Generates validation for unsupported keys at a keyed decoding container.
 package func strictDecodingValidationSyntax(
@@ -9,11 +27,7 @@ package func strictDecodingValidationSyntax(
 ) -> CodeBlockItemListSyntax {
     guard let allowedKeys else { return [] }
     let keys = allowedKeys.map {
-        let value =
-            $0
-            .replacingOccurrences(of: "\\", with: "\\\\")
-            .replacingOccurrences(of: "\"", with: "\\\"")
-        return "\"\(value)\""
+        "\"\(escapedStringLiteral($0))\""
     }.joined(separator: ", ")
     return CodeBlockItemListSyntax {
         "try \(decoder).rejectUnknownKeys(allowedKeys: [\(raw: keys)], type: Self.self)"
@@ -26,13 +40,9 @@ package func strictDecodingMetadataSyntax(
 ) -> ExprSyntax {
     let entries = metadata.keys.sorted().map { path in
         let keys = metadata[path, default: []].map {
-            let value =
-                $0
-                .replacingOccurrences(of: "\\", with: "\\\\")
-                .replacingOccurrences(of: "\"", with: "\\\"")
-            return "\"\(value)\""
+            "\"\(escapedStringLiteral($0))\""
         }.joined(separator: ", ")
-        return "\"\(path)\": [\(keys)]"
+        return "\"\(escapedStringLiteral(path))\": [\(keys)]"
     }.joined(separator: ", ")
     return ExprSyntax(stringLiteral: "[\(entries)]")
 }

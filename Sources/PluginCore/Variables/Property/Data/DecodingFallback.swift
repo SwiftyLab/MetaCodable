@@ -1,4 +1,3 @@
-import Foundation
 import SwiftSyntax
 
 /// Represents possible fallback options for decoding failure.
