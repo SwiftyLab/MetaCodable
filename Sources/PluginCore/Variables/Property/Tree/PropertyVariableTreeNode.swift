@@ -77,6 +77,7 @@ extension PropertyVariableTreeNode {
         let strictValidation =
             location.rejectUnknownKeys
             && !location.deferUnknownKeyValidation
+            && !location.skipCurrentContainerValidation
             && !hasDirectDecodableVariables
         let allowedKeys: [String]? =
             if strictValidation {
@@ -127,9 +128,11 @@ extension PropertyVariableTreeNode {
                     location.rejectUnknownKeys
                     && !location.deferUnknownKeyValidation
                     ? nil : decodingContainer,
-                nestedContainerHasVariables: !self.children.lazy
-                    .flatMap(\.value.variables)
-                    .filter { $0.decode ?? true }.isEmpty,
+                nestedContainerHasVariables:
+                    location.skipCurrentContainerValidation
+                    || !self.children.lazy
+                        .flatMap(\.value.variables)
+                        .filter { $0.decode ?? true }.isEmpty,
                 allowedKeys: allowedKeys
             ) { container in
                 self.decodingContainer = container.name

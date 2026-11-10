@@ -16,6 +16,8 @@ extension PropertyVariableTreeNode {
         let deferUnknownKeyValidation: Bool
         /// Additional keys accepted by the current decoding container.
         let additionalAllowedKeys: [String]
+        /// Whether validation for the current root container is deferred.
+        let skipCurrentContainerValidation: Bool
         /// The decoding/encoding progress.
         ///
         /// All the decoded/encoded variables and
@@ -33,13 +35,16 @@ extension PropertyVariableTreeNode {
         ///     emitted after superclass decoding.
         private init(
             context: Context, progress: Progress, rejectUnknownKeys: Bool,
-            deferUnknownKeyValidation: Bool, additionalAllowedKeys: [String]
+            deferUnknownKeyValidation: Bool, additionalAllowedKeys: [String],
+            skipCurrentContainerValidation: Bool
         ) {
             self.context = context
             self.progress = progress
             self.rejectUnknownKeys = rejectUnknownKeys
             self.deferUnknownKeyValidation = deferUnknownKeyValidation
             self.additionalAllowedKeys = additionalAllowedKeys
+            self.skipCurrentContainerValidation =
+                skipCurrentContainerValidation
         }
 
         /// Add provided variable to list of already decoded/encoded variable.
@@ -76,13 +81,16 @@ extension PropertyVariableTreeNode {
             _ coder: TokenSyntax, keyType: ExprSyntax,
             rejectUnknownKeys: Bool = false,
             deferUnknownKeyValidation: Bool = false,
-            additionalAllowedKeys: [String] = []
+            additionalAllowedKeys: [String] = [],
+            skipCurrentContainerValidation: Bool = false
         ) -> Self {
             .init(
                 context: .coder(coder, keyType: keyType), progress: .init(),
                 rejectUnknownKeys: rejectUnknownKeys,
                 deferUnknownKeyValidation: deferUnknownKeyValidation,
-                additionalAllowedKeys: additionalAllowedKeys
+                additionalAllowedKeys: additionalAllowedKeys,
+                skipCurrentContainerValidation:
+                    skipCurrentContainerValidation
             )
         }
 
@@ -100,7 +108,8 @@ extension PropertyVariableTreeNode {
                 context: .container(container, key: key), progress: progress,
                 rejectUnknownKeys: rejectUnknownKeys,
                 deferUnknownKeyValidation: deferUnknownKeyValidation,
-                additionalAllowedKeys: []
+                additionalAllowedKeys: [],
+                skipCurrentContainerValidation: false
             )
         }
 

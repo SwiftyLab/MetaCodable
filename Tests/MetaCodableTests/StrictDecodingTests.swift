@@ -252,6 +252,12 @@ struct StrictDecodingTests {
 
     @Codable(rejectUnknownKeys: true)
     @CodedAt("type")
+    enum StrictDelegatedInternalCommand {
+        case item(StrictDecodingTests.PermissivePayload)
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @CodedAt("type")
     @ContentAt("content")
     enum StrictAdjacentCommand: Equatable {
         case load(key: String)
@@ -336,6 +342,21 @@ struct StrictDecodingTests {
             json: #"{"type":"load","key":"key","value":123}"#,
             containing: ["value"]
         )
+    }
+
+    @Test
+    func strictInternalEnumsAllowDelegatedPayloadKeys() throws {
+        let data = Data(
+            #"{"type":"item","name":"n"}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictDelegatedInternalCommand.self, from: data
+        )
+        if case .item(let value) = decoded {
+            #expect(value.name == "n")
+        } else {
+            Issue.record("Expected delegated item case")
+        }
     }
 
     @Test

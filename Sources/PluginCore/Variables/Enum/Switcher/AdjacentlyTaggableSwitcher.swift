@@ -245,7 +245,9 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                         rejectUnknownKeys: location.rejectUnknownKeys,
                         additionalAllowedKeys:
                             location.caseDecodingSharesRootContainer
-                            ? location.rootDecodingKeys : []
+                            ? location.rootDecodingKeys : [],
+                        skipCurrentContainerValidation:
+                            location.skipRootUnknownKeyValidation
                     )
                 ).combined()
 

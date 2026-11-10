@@ -306,7 +306,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 discriminatorDecodingKeys:
                     switcher.discriminatorDecodingKeys,
                 caseDecodingSharesRootContainer:
-                    switcher.caseDecodingSharesRootContainer
+                    switcher.caseDecodingSharesRootContainer,
+                skipRootUnknownKeyValidation: hasDelegatedDirectCase
             )
             code = CodeBlockItemListSyntax {
                 if location.rejectUnknownKeys {
@@ -380,7 +381,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 rejectUnknownKeys: false,
                 rootDecodingKeys: [],
                 discriminatorDecodingKeys: [],
-                caseDecodingSharesRootContainer: false
+                caseDecodingSharesRootContainer: false,
+                skipRootUnknownKeyValidation: false
             )
             code = CodeBlockItemListSyntax {
                 switcher.encoding(in: context, to: switcherLocation)

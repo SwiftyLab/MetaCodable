@@ -150,4 +150,6 @@ package struct EnumSwitcherLocation {
     let discriminatorDecodingKeys: [String]
     /// Whether associated case values share the enum root container.
     let caseDecodingSharesRootContainer: Bool
+    /// Whether root switcher validation is deferred for delegated cases.
+    let skipRootUnknownKeyValidation: Bool
 }
