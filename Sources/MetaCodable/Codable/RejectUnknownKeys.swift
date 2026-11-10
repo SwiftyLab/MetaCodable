@@ -15,8 +15,14 @@ public struct MetaCodableStrictDecoder: Decoder {
         decoder: any Decoder,
         allowedKeysByPath: [String: [String]]
     ) {
-        self.base = decoder
-        self.state = .init(allowedKeysByPath: allowedKeysByPath)
+        if let decoder = decoder as? MetaCodableStrictDecoder {
+            self.base = decoder.base
+            self.state = decoder.state
+            self.state.merge(allowedKeysByPath: allowedKeysByPath)
+        } else {
+            self.base = decoder
+            self.state = .init(allowedKeysByPath: allowedKeysByPath)
+        }
     }
 
     fileprivate init(base: any Decoder, state: State) {
@@ -56,7 +62,7 @@ public struct MetaCodableStrictDecoder: Decoder {
     }
 
     fileprivate final class State {
-        let allowedKeysByPath: [String: Set<String>]
+        var allowedKeysByPath: [String: Set<String>]
         var observedKeysByPath: [String: Set<String>] = [:]
 
         init(allowedKeysByPath: [String: [String]]) {
@@ -75,8 +81,17 @@ public struct MetaCodableStrictDecoder: Decoder {
             )
         }
 
-        static func path(for codingPath: [any CodingKey]) -> String {
-            codingPath.map(\.stringValue).joined(separator: ".")
+        func merge(allowedKeysByPath: [String: [String]]) {
+            for (path, keys) in allowedKeysByPath {
+                self.allowedKeysByPath[path, default: []].formUnion(keys)
+            }
+        }
+
+        fileprivate static func path(for codingPath: [any CodingKey]) -> String
+        {
+            codingPath.map { key in
+                "\(key.stringValue.utf8.count):\(key.stringValue)"
+            }.joined(separator: "|")
         }
     }
 }
@@ -309,8 +324,9 @@ where Key == DynamicCodableIdentifier<String> {
         }
 
         for key in allKeys {
-            let childPath =
-                path.isEmpty ? key.stringValue : "\(path).\(key.stringValue)"
+            let childPath = MetaCodableStrictDecoder.State.path(
+                for: codingPath + [key]
+            )
             guard allowedKeysByPath[childPath] != nil,
                 let nested = try? nestedContainer(
                     keyedBy: DynamicCodableIdentifier<String>.self,

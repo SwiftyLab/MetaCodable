@@ -20,6 +20,10 @@ private func escapedStringLiteral(_ value: String) -> String {
     }
 }
 
+package func strictDecodingPathKey(_ components: [String]) -> String {
+    components.map { "\($0.utf8.count):\($0)" }.joined(separator: "|")
+}
+
 /// Generates validation for unsupported keys at a keyed decoding container.
 package func strictDecodingValidationSyntax(
     decoder: ExprSyntax,

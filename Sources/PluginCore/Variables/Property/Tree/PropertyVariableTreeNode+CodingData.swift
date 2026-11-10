@@ -53,9 +53,10 @@ extension VariableTreeNode {
     func allowedKeysByPath(
         prefix: [String] = []
     ) -> [String: [String]] {
-        var result = [
-            prefix.joined(separator: "."): Array(allowedKeys)
-        ]
+        var result: [String: [String]] = [:]
+        if prefix.isEmpty || !children.isEmpty {
+            result[strictDecodingPathKey(prefix)] = Array(allowedKeys)
+        }
         for (key, child) in children {
             result.merge(
                 child.allowedKeysByPath(

@@ -132,6 +132,17 @@ struct StrictDecodingTests {
         }
     }
 
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictNestedGrandChild: StrictNestedChild {
+        @CodedIn("payload")
+        var leaf: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
     @Codable
     @Inherits(decodable: false, encodable: false)
     class PermissiveBase {
@@ -471,6 +482,19 @@ struct StrictDecodingTests {
         )
         #expect(decoded.base == "base")
         #expect(decoded.child == "child")
+    }
+
+    @Test
+    func strictThreeLevelClassInheritancePreservesDecoderMetadata() throws {
+        let data = Data(
+            #"{"payload":{"base":"base","child":"child","leaf":"leaf"}}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictNestedGrandChild.self, from: data
+        )
+        #expect(decoded.base == "base")
+        #expect(decoded.child == "child")
+        #expect(decoded.leaf == "leaf")
     }
 
     @Test

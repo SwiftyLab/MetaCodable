@@ -21,6 +21,8 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     var caseDecodingSharesRootContainer: Bool {
         base.caseDecodingSharesRootContainer
     }
+    /// Whether the wrapped switcher allows direct decoding cases.
+    var allowsDirectDecoding: Bool { base.allowsDirectDecoding }
 
     /// Provides node at which case associated variables are registered.
     ///

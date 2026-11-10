@@ -25,9 +25,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     /// The exact root keys used by the wrapped switcher when available.
     var rootDecodingKeys: [String]? { base.rootDecodingKeys }
     /// Adjacent case values are decoded from the content container.
-    var caseDecodingSharesRootContainer: Bool {
-        base.caseDecodingSharesRootContainer
-    }
+    var caseDecodingSharesRootContainer: Bool { false }
 
     /// Creates switcher variable with provided data.
     ///

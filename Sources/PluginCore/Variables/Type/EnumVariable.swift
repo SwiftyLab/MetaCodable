@@ -271,6 +271,14 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         let selfType: ExprSyntax = "\(name).self"
         let code: CodeBlockItemListSyntax
         if cases.contains(where: { $0.variable.decode ?? true }) {
+            let hasDirectDecodingCase =
+                switcher.allowsDirectDecoding
+                && cases.contains {
+                    $0.variable.decodingAllowedKeys.isEmpty
+                }
+            let shouldPreflightKeyedContainer =
+                switcher.usesKeyedContainer
+                || switcher.allowsDirectDecoding && !hasDirectDecodingCase
             var rootDecodingKeys =
                 switcher.rootDecodingKeys ?? codingKeys.allKeys
             if switcher.caseDecodingSharesRootContainer {
@@ -291,7 +299,9 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     switcher.caseDecodingSharesRootContainer
             )
             code = CodeBlockItemListSyntax {
-                if location.rejectUnknownKeys, switcher.usesKeyedContainer {
+                if location.rejectUnknownKeys
+                    && shouldPreflightKeyedContainer
+                {
                     strictDecodingValidationSyntax(
                         decoder: "\(location.method.arg)" as ExprSyntax,
                         allowedKeys: rootDecodingKeys

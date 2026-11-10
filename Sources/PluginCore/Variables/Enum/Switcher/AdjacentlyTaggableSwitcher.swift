@@ -242,7 +242,10 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                     in: context,
                     from: .withCoder(
                         coder, keyType: location.keyType,
-                        rejectUnknownKeys: location.rejectUnknownKeys
+                        rejectUnknownKeys: location.rejectUnknownKeys,
+                        additionalAllowedKeys:
+                            location.caseDecodingSharesRootContainer
+                            ? location.rootDecodingKeys : []
                     )
                 ).combined()
 
