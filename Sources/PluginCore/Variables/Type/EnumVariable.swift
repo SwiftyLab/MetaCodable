@@ -280,7 +280,7 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 switcher.usesKeyedContainer
                 || switcher.allowsDirectDecoding && !hasDirectDecodingCase
             let shouldConditionallyPreflightKeyedContainer =
-                switcher.allowsDirectDecoding && hasDirectDecodingCase
+                false
             var rootDecodingKeys =
                 switcher.rootDecodingKeys ?? codingKeys.allKeys
             if switcher.caseDecodingSharesRootContainer {

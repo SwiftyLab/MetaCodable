@@ -226,6 +226,13 @@ struct StrictDecodingTests {
     }
 
     @Codable(rejectUnknownKeys: true)
+    @UnTagged
+    enum StrictDelegatedUntaggedCommand {
+        case record(StrictDecodingTests.StrictRecord)
+        case number(value: Int)
+    }
+
+    @Codable(rejectUnknownKeys: true)
     enum StrictRawCommand: String {
         case ready
     }
@@ -651,6 +658,20 @@ struct StrictDecodingTests {
             json: #"{"value":1,"extra":true}"#,
             containing: ["extra"]
         )
+    }
+
+    @Test
+    func strictUntaggedEnumsAllowDelegatedStrictObjects() throws {
+        let data = Data(#"{"name":"n","count":1}"#.utf8)
+        let decoded = try JSONDecoder().decode(
+            StrictDelegatedUntaggedCommand.self, from: data
+        )
+        if case .record(let value) = decoded {
+            #expect(value.name == "n")
+            #expect(value.count == 1)
+        } else {
+            Issue.record("Expected delegated record case")
+        }
     }
 
     @Test
