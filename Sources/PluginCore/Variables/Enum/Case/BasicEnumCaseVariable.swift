@@ -116,8 +116,14 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
                 let decodingKeys = codingKeys.add(
                     keys: path.decoding, field: name, context: context
                 )
-                decodingData.register(variable: variable, keyPath: decodingKeys)
-                decodingNode.register(variable: variable, keyPath: decodingKeys)
+                decodingData.register(
+                    variable: variable, keyPath: decodingKeys,
+                    additionalKeys: variable.additionalDecodingKeys
+                )
+                decodingNode.register(
+                    variable: variable, keyPath: decodingKeys,
+                    additionalKeys: variable.additionalDecodingKeys
+                )
             }
 
             if variable.encode ?? true {
@@ -170,7 +176,10 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
         )
         let generated = decodingNode.decoding(
             with: decodingData, in: context,
-            from: .withCoder(location.coder, keyType: codingKeys.type)
+            from: .withCoder(
+                location.coder, keyType: codingKeys.type,
+                rejectUnknownKeys: location.rejectUnknownKeys
+            )
         )
         let newSyntax = CodeBlockItemListSyntax {
             for variable in variables where variable.decode ?? true {

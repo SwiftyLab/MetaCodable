@@ -20,6 +20,10 @@ where Wrapped: PropertyVariable {
     /// Represents all the additional `CodingKey`s that
     /// this variable could be encoded at.
     let additionalKeys: OrderedSet<CodingKeysMap.Key>
+    /// Additional keys accepted while decoding this variable.
+    var additionalDecodingKeys: [String] {
+        additionalKeys.map(\.description)
+    }
 
     /// Provides the code syntax for decoding this variable
     /// at the provided location.
@@ -39,11 +43,11 @@ where Wrapped: PropertyVariable {
     ) -> CodeBlockItemListSyntax {
         guard
             !additionalKeys.isEmpty,
-            case let .container(container, key, method) = location
+            case .container(let container, let key, let method) = location
         else { return base.decoding(in: context, from: location) }
         var allKeys = [key]
         let additionalKeys = additionalKeys.filter { aKey in
-            return aKey.expr.trimmedDescription != key.trimmedDescription
+            aKey.expr.trimmedDescription != key.trimmedDescription
         }
         allKeys.append(contentsOf: additionalKeys.map(\.expr))
         let keysName: ExprSyntax = "\(CodingKeysMap.Key.name(for: name))Keys"

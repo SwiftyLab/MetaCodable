@@ -68,6 +68,8 @@ where
     /// The number of variables that this variable depends
     /// on to be decoded first, before decoding this variable.
     var dependenciesCount: UInt { get }
+    /// Additional keys accepted while decoding this variable.
+    var additionalDecodingKeys: [String] { get }
     /// Checks whether this variable is dependent on the provided variable.
     ///
     /// Whether provided variable needs to be decoded first,
@@ -119,6 +121,9 @@ where Self: ComposedVariable, Self.Wrapped: ConditionalVariable {
 }
 
 extension PropertyVariable {
+    /// No additional decoding keys are accepted by default.
+    var additionalDecodingKeys: [String] { [] }
+
     /// The arguments passed to encoding condition.
     ///
     /// Passes current variable as single argument.
@@ -166,7 +171,9 @@ extension PropertyVariable {
             let type = gArgs.first?.argument.as(TypeSyntax.self)
         {
             guard let castType = TypeSyntax(type) else {
-                preconditionFailure("Unable to create TypeSyntax from '\(type.trimmedDescription)'")
+                preconditionFailure(
+                    "Unable to create TypeSyntax from '\(type.trimmedDescription)'"
+                )
             }
             dType = castType
             dMethod = "\(method)IfPresent"

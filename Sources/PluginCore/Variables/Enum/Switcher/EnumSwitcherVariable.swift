@@ -9,6 +9,10 @@ protocol EnumSwitcherVariable: Variable
 where
     CodingLocation == EnumSwitcherLocation, Generated == CodeBlockItemListSyntax
 {
+    /// Whether decoding starts from a keyed container.
+    var usesKeyedContainer: Bool { get }
+    /// The exact root keys used by the switcher when available.
+    var rootDecodingKeys: [String]? { get }
     /// Provides node at which case associated variables are registered.
     ///
     /// The returned node can be used by enum-case variables to register
@@ -64,6 +68,11 @@ where
 }
 
 extension EnumSwitcherVariable {
+    /// Tagged switchers decode from keyed containers by default.
+    var usesKeyedContainer: Bool { true }
+    /// Switchers use the type coding key map by default.
+    var rootDecodingKeys: [String]? { nil }
+
     /// Update provided variable data.
     ///
     /// Provided variable is returned as it is, without any data update.
@@ -121,4 +130,6 @@ package struct EnumSwitcherLocation {
     /// Based on type of tagging in enums the default case generation for
     /// both decoding and encoding can be customized.
     let hasDefaultCase: Bool
+    /// Whether generated decoding rejects unsupported keys.
+    let rejectUnknownKeys: Bool
 }

@@ -61,7 +61,10 @@ where
             if variable.decode ?? true {
                 let keys = codingKeys.add(
                     keys: decodingPath, field: name, context: context)
-                decodingNode.register(variable: variable, keyPath: keys)
+                decodingNode.register(
+                    variable: variable, keyPath: keys,
+                    additionalKeys: variable.additionalDecodingKeys
+                )
             }
 
             if variable.encode ?? true {
@@ -92,7 +95,10 @@ where
         guard let conformance = location.conformance else { return nil }
         let syntax = CodeBlockItemListSyntax {
             let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
-                location.method.arg, keyType: codingKeys.type
+                location.method.arg, keyType: codingKeys.type,
+                rejectUnknownKeys: location.rejectUnknownKeys,
+                deferRootUnknownKeyValidation:
+                    location.deferRootUnknownKeyValidation
             )
             decodingNode.decoding(in: context, from: nLocation).combined()
             nLocation.decoding(in: context)

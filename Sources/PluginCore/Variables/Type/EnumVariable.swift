@@ -89,7 +89,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     FunctionCallExprSyntax(callee: callee) { args }
                 } else {
                     FunctionCallExprSyntax(
-                        calledExpression: callee, leftParen: nil, rightParen: nil
+                        calledExpression: callee, leftParen: nil,
+                        rightParen: nil
                     ) {}
                 }
             return ExprSyntax(fExpr)
@@ -274,9 +275,19 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 coder: location.method.arg, container: Self.container,
                 keyType: codingKeys.type, selfType: selfType, selfValue: "_",
                 cases: cases, codeExpr: caseDecodeExpr,
-                hasDefaultCase: forceDefault
+                hasDefaultCase: forceDefault,
+                rejectUnknownKeys: location.rejectUnknownKeys
             )
             code = CodeBlockItemListSyntax {
+                if location.rejectUnknownKeys, switcher.usesKeyedContainer {
+                    let keys =
+                        switcher.rootDecodingKeys
+                        ?? codingKeys.allKeys
+                    strictDecodingValidationSyntax(
+                        decoder: "\(location.method.arg)" as ExprSyntax,
+                        allowedKeys: keys
+                    )
+                }
                 switcher.decoding(in: context, from: switcherLoc)
             }
         } else {
@@ -328,7 +339,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 coder: location.method.arg, container: Self.container,
                 keyType: codingKeys.type, selfType: selfType, selfValue: expr,
                 cases: cases, codeExpr: caseEncodeExpr,
-                hasDefaultCase: forceDefault
+                hasDefaultCase: forceDefault,
+                rejectUnknownKeys: false
             )
             code = CodeBlockItemListSyntax {
                 switcher.encoding(in: context, to: switcherLocation)
@@ -525,7 +537,7 @@ extension EnumVariable {
                 case (.bool, .bool), (.int, .int), (.double, .double),
                     (.string, .string):
                     return true
-                case let (.unknown(lhsType), .unknown(rhsType)):
+                case (.unknown(let lhsType), .unknown(let rhsType)):
                     return lhsType.trimmedDescription
                         == rhsType.trimmedDescription
                 default:

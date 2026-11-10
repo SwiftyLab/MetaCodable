@@ -19,7 +19,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
     var inherits: Inherits? {
         for attribute in decl.attributes {
             guard
-                case let .attribute(attribute) = attribute,
+                case .attribute(let attribute) = attribute,
                 let attr = Inherits(from: attribute)
             else { continue }
             return attr
@@ -129,7 +129,13 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         let conformance = TypeSyntax(stringLiteral: method.protocol)
 
         if location.conformance == nil, implementDecodable(location: location) {
-            newLocation = .init(method: method, conformance: conformance)
+            newLocation = .init(
+                method: method, conformance: conformance,
+                rejectUnknownKeys: location.rejectUnknownKeys,
+                deferRootUnknownKeyValidation:
+                    location.rejectUnknownKeys
+                    && (inherits?.decodable ?? true)
+            )
             overridden = inherits?.decodable ?? true
         } else {
             newLocation = location
@@ -139,13 +145,35 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         guard
             let generated = group.decoding(in: context, from: newLocation)
         else { return nil }
-        var code: CodeBlockItemListSyntax =
-            if overridden {
+        let registration =
+            location.rejectUnknownKeys
+            ? strictDecodingRegistrationSyntax(
+                keys: Array(group.decodingNode.allowedKeys)
+            )
+            : CodeBlockItemListSyntax {}
+        var code: CodeBlockItemListSyntax
+        if overridden, location.rejectUnknownKeys {
+            code = CodeBlockItemListSyntax {
+                registration
+                generated.code
                 "try super.\(method.name)(\(method.argLabel): \(method.arg))"
-            } else {
-                ""
+                strictDecodingValidationSyntax(
+                    decoder: "\(method.arg)" as ExprSyntax,
+                    allowedKeys: Array(group.decodingNode.allowedKeys)
+                )
             }
-        code.insert(contentsOf: generated.code, at: code.startIndex)
+        } else {
+            code =
+                if overridden {
+                    "try super.\(method.name)(\(method.argLabel): \(method.arg))"
+                } else {
+                    ""
+                }
+            code.insert(contentsOf: generated.code, at: code.startIndex)
+            if location.rejectUnknownKeys {
+                code.insert(contentsOf: registration, at: code.startIndex)
+            }
+        }
         modifiers.append(contentsOf: generated.modifiers)
         return .init(
             code: code, modifiers: modifiers,

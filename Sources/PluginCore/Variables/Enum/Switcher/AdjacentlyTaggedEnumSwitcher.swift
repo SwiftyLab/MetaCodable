@@ -20,6 +20,10 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     /// This variable is used to map the nested container
     /// for associated variables to a pre-defined name.
     let variable: CoderVariable
+    /// Whether the wrapped switcher decodes from a keyed container.
+    var usesKeyedContainer: Bool { base.usesKeyedContainer }
+    /// The exact root keys used by the wrapped switcher when available.
+    var rootDecodingKeys: [String]? { base.rootDecodingKeys }
 
     /// Creates switcher variable with provided data.
     ///

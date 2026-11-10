@@ -10,6 +10,10 @@ extension PropertyVariableTreeNode {
     struct CodingLocation: Variable {
         /// The context representing the nesting level.
         let context: Context
+        /// Whether generated decoding rejects unsupported keys.
+        let rejectUnknownKeys: Bool
+        /// Whether root validation is emitted after superclass decoding.
+        let deferRootUnknownKeyValidation: Bool
         /// The decoding/encoding progress.
         ///
         /// All the decoded/encoded variables and
@@ -21,9 +25,18 @@ extension PropertyVariableTreeNode {
         /// - Parameters:
         ///   - context: The context representing the nesting level.
         ///   - progress: The decoding/encoding progress.
-        private init(context: Context, progress: Progress) {
+        ///   - rejectUnknownKeys: Whether generated decoding rejects
+        ///     unsupported keys.
+        ///   - deferRootUnknownKeyValidation: Whether root validation is
+        ///     emitted after superclass decoding.
+        private init(
+            context: Context, progress: Progress, rejectUnknownKeys: Bool,
+            deferRootUnknownKeyValidation: Bool
+        ) {
             self.context = context
             self.progress = progress
+            self.rejectUnknownKeys = rejectUnknownKeys
+            self.deferRootUnknownKeyValidation = deferRootUnknownKeyValidation
         }
 
         /// Add provided variable to list of already decoded/encoded variable.
@@ -50,13 +63,21 @@ extension PropertyVariableTreeNode {
         /// - Parameters:
         ///   - coder: The decoder/encoder for decoding/encoding.
         ///   - keyType: The `CodingKey` type.
+        ///   - rejectUnknownKeys: Whether generated decoding rejects
+        ///     unsupported keys.
+        ///   - deferRootUnknownKeyValidation: Whether root validation is
+        ///     emitted after superclass decoding.
         ///
         /// - Returns: The new location updated with provided context.
         static func withCoder(
-            _ coder: TokenSyntax, keyType: ExprSyntax
+            _ coder: TokenSyntax, keyType: ExprSyntax,
+            rejectUnknownKeys: Bool = false,
+            deferRootUnknownKeyValidation: Bool = false
         ) -> Self {
             .init(
-                context: .coder(coder, keyType: keyType), progress: .init()
+                context: .coder(coder, keyType: keyType), progress: .init(),
+                rejectUnknownKeys: rejectUnknownKeys,
+                deferRootUnknownKeyValidation: deferRootUnknownKeyValidation
             )
         }
 
@@ -71,7 +92,9 @@ extension PropertyVariableTreeNode {
             _ container: Context.Container, key: CodingKeysMap.Key
         ) -> Self {
             .init(
-                context: .container(container, key: key), progress: progress
+                context: .container(container, key: key), progress: progress,
+                rejectUnknownKeys: rejectUnknownKeys,
+                deferRootUnknownKeyValidation: false
             )
         }
 
@@ -89,14 +112,14 @@ extension PropertyVariableTreeNode {
             in context: some MacroExpansionContext, from location: () = ()
         ) -> CodeBlockItemListSyntax {
             let pending = progress.pending.sorted { pending1, pending2 in
-                return pending2.variable.depends(on: pending1.variable)
+                pending2.variable.depends(on: pending1.variable)
             }
             return CodeBlockItemListSyntax {
                 for (lContext, variable) in pending {
                     let location = lContext.forVariable
                     let syntax = variable.decoding(in: context, from: location)
                     switch lContext {
-                    case let .container(container, key: _)
+                    case .container(let container, key: _)
                     where container.isOptional:
                         switch variable.decodingFallback {
                         case .onlyIfMissing(let fallbacks):
@@ -109,7 +132,7 @@ extension PropertyVariableTreeNode {
                             } else: {
                                 fallbacks
                             }
-                        case let .ifMissing(fallbacks, ifError: eFallbacks):
+                        case .ifMissing(let fallbacks, ifError: let eFallbacks):
                             try! IfExprSyntax(
                                 "if let \(container.name) = \(container.name)",
                                 bodyBuilder: {

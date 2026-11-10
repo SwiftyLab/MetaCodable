@@ -43,6 +43,10 @@ package final class CodingKeysMap {
     /// in generated code syntax and must be present as case
     /// in generated `CodingKey` enum declaration.
     private var usedKeys: Set<String> = []
+    /// All raw keys registered with this map.
+    var allKeys: [String] {
+        Array(data.keys)
+    }
 
     /// Creates a new case-map with provided enum name.
     ///

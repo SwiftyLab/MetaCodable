@@ -146,6 +146,11 @@ where Self: PropertyVariable, Wrapped: PropertyVariable {
     func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
         base.depends(on: variable)
     }
+
+    /// Provides additional decoding keys from the underlying variable.
+    var additionalDecodingKeys: [String] {
+        base.additionalDecodingKeys
+    }
 }
 
 extension ComposedVariable

@@ -101,7 +101,8 @@ struct AttributeExpander {
     ) -> ExtensionDeclSyntax? {
         let method = TypeCodingLocation.Method.decode()
         let location = TypeCodingLocation(
-            method: method, conformance: `protocol`
+            method: method, conformance: `protocol`,
+            rejectUnknownKeys: options.rejectUnknownKeys
         )
         guard
             let generated = variable.decoding(in: context, from: location)

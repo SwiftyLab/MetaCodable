@@ -44,6 +44,8 @@
 /// - Parameters:
 ///   - commonStrategies: An array of CodableCommonStrategy values specifying
 ///   type conversion strategies to be automatically applied to all properties of the type.
+///   - rejectUnknownKeys: Whether decoding should fail when a keyed container
+///   contains keys that are not recognized by the generated implementation.
 ///
 /// - Important: The attached declaration must be of a `struct`, `class`, `enum`
 ///   or `actor` type. [See the limitations for this macro](<doc:Limitations>).
@@ -56,5 +58,8 @@
     names: named(CodingKeys), named(init(from:))
 )
 @available(swift 5.9)
-public macro ConformDecodable(commonStrategies: [CodableCommonStrategy] = []) =
+public macro ConformDecodable(
+    commonStrategies: [CodableCommonStrategy] = [],
+    rejectUnknownKeys: Bool = false
+) =
     #externalMacro(module: "MacroPlugin", type: "ConformDecodable")

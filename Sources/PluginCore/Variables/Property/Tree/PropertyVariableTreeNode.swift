@@ -1,3 +1,4 @@
+import Foundation
 import OrderedCollections
 import SwiftSyntax
 import SwiftSyntaxBuilder
@@ -18,6 +19,8 @@ final class PropertyVariableTreeNode: Variable, VariableTreeNode {
     /// Nested registration node associated with keys.
     var children:
         OrderedDictionary<CodingKeysMap.Key, PropertyVariableTreeNode> = [:]
+    /// Keys recognized by decoding at this container level.
+    var allowedKeys: OrderedSet<String> = []
 
     /// The container for decoding variables linked to this node.
     ///
@@ -68,8 +71,33 @@ extension PropertyVariableTreeNode {
             ?? children.contains { _, node in
                 node.linkedVariables.contains { $0.decode ?? true }
             }
+        let strictValidation =
+            location.rejectUnknownKeys
+            && !location.deferRootUnknownKeyValidation
+        let directVariables = data?.variables ?? variables
+        let hasDirectDecodableVariables = directVariables.contains {
+            $0.decode ?? true
+        }
+        let allowedKeys: [String]? =
+            if strictValidation {
+                Array(data?.allowedKeys ?? self.allowedKeys)
+            } else {
+                nil
+            }
         guard !(data?.children.isEmpty ?? children.isEmpty), childrenDecodable
         else {
+            if strictValidation, !hasDirectDecodableVariables,
+                case .coder(let decoder, _) = location.context
+            {
+                return .init(
+                    containerSyntax: strictDecodingValidationSyntax(
+                        decoder: "\(decoder)" as ExprSyntax,
+                        allowedKeys: allowedKeys
+                    ),
+                    codingSyntax: decodingSyntax,
+                    conditionalSyntax: ""
+                )
+            }
             return .init(
                 containerSyntax: "", codingSyntax: decodingSyntax,
                 conditionalSyntax: ""
@@ -90,16 +118,18 @@ extension PropertyVariableTreeNode {
                     return variable.decodingFallback
                 }
             }
+
             .reduce(.ifMissing([], ifError: []), +)
             .represented(
                 context: location.context, nestedContainer: decodingContainer,
                 nestedContainerHasVariables: !self.children.lazy
                     .flatMap(\.value.variables)
-                    .filter { $0.decode ?? true }.isEmpty
+                    .filter { $0.decode ?? true }.isEmpty,
+                allowedKeys: allowedKeys
             ) { container in
                 self.decodingContainer = container.name
                 let generated = decodableChildren.map { cKey, node in
-                    return node.decoding(
+                    node.decoding(
                         with: data?.children[cKey],
                         in: context,
                         from: location.withContainer(container, key: cKey)

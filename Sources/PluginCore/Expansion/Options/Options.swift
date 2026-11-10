@@ -14,6 +14,8 @@ extension AttributeExpander {
         /// The list of `@available` attributes attached to
         /// original expanded declaration.
         let availableAttributes: [AttributeSyntax]
+        /// Whether generated decoding rejects unsupported keys.
+        let rejectUnknownKeys: Bool
 
         /// Memberwise initialization generator with provided options.
         ///
@@ -43,6 +45,20 @@ extension AttributeExpander {
                     return nil
                 }
             }
+            self.rejectUnknownKeys =
+                decl.attributes.compactMap { attribute in
+                    guard
+                        case .attribute(let attr) = attribute,
+                        let arguments = attr.arguments?
+                            .as(LabeledExprListSyntax.self),
+                        let argument = arguments.first(where: {
+                            $0.label?.text == "rejectUnknownKeys"
+                        }),
+                        let literal = argument.expression
+                            .as(BooleanLiteralExprSyntax.self)
+                    else { return nil }
+                    return literal.literal.tokenKind == .keyword(.true)
+                }.first ?? false
         }
     }
 }

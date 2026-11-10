@@ -13,6 +13,10 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     /// to its original type using type casting
     /// operators (`as?`, `as!`, or `as`).
     let base: any EnumSwitcherVariable
+    /// Whether the wrapped switcher decodes from a keyed container.
+    var usesKeyedContainer: Bool { base.usesKeyedContainer }
+    /// The exact root keys used by the wrapped switcher when available.
+    var rootDecodingKeys: [String]? { base.rootDecodingKeys }
 
     /// Provides node at which case associated variables are registered.
     ///
