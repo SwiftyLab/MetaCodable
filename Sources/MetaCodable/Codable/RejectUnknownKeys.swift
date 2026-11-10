@@ -69,6 +69,7 @@ public struct MetaCodableStrictDecoder: Decoder {
         var allowedKeysByPath: [String: Set<String>]
         var observedKeysByPath: [String: Set<String>] = [:]
         var observedContainerPaths: Set<String> = []
+        var terminalDecoderPaths: Set<String> = []
         let rootCodingPath: [String]
 
         init(
@@ -88,12 +89,16 @@ public struct MetaCodableStrictDecoder: Decoder {
             observedContainerPaths.insert(self.path(for: path))
         }
 
+        func recordTerminalDecoder(at path: [any CodingKey]) {
+            terminalDecoderPaths.insert(self.path(for: path))
+        }
+
         func hasContainerPath(_ path: String) -> Bool {
             observedContainerPaths.contains(path)
         }
 
-        func hasContainer(at path: [any CodingKey]) -> Bool {
-            hasContainerPath(self.path(for: path))
+        func hasTerminalDecoder(at path: [any CodingKey]) -> Bool {
+            terminalDecoderPaths.contains(self.path(for: path))
         }
 
         func additionalKeys(at path: [any CodingKey]) -> Set<String> {
@@ -264,9 +269,9 @@ private struct StrictKeyedDecodingContainer<Key: CodingKey>:
 
     func superDecoder(forKey key: Key) throws -> any Decoder {
         state.record(key: key, at: codingPath)
-        return MetaCodableStrictDecoder(
-            base: try base.superDecoder(forKey: key), state: state
-        )
+        let decoder = try base.superDecoder(forKey: key)
+        state.recordTerminalDecoder(at: decoder.codingPath)
+        return MetaCodableStrictDecoder(base: decoder, state: state)
     }
 }
 
@@ -311,14 +316,17 @@ public extension Decoder {
         allowedKeysByPath: [String: [String]],
         type: Any.Type
     ) throws {
-        if let strictDecoder = self as? MetaCodableStrictDecoder,
-            !strictDecoder.state.hasContainer(at: codingPath)
-        {
+        let rawContainer:
+            KeyedDecodingContainer<
+                DynamicCodableIdentifier<String>
+            >
+        do {
+            rawContainer = try container(
+                keyedBy: DynamicCodableIdentifier<String>.self
+            )
+        } catch DecodingError.typeMismatch {
             return
         }
-        let rawContainer = try container(
-            keyedBy: DynamicCodableIdentifier<String>.self
-        )
         try rawContainer.rejectUnknownKeys(
             atPath: "",
             allowedKeysByPath: allowedKeysByPath,
@@ -356,6 +364,11 @@ where Key == DynamicCodableIdentifier<String> {
         }
 
         for key in allKeys {
+            if state?.hasTerminalDecoder(
+                at: codingPath + [key]
+            ) == true {
+                continue
+            }
             let childPath =
                 state?.path(for: codingPath + [key]) ?? path
             guard

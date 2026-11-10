@@ -22,6 +22,14 @@ struct StrictDecodingTests {
         let name: String
     }
 
+    struct PermissivePayloadCoder: HelperCoder {
+        typealias Coded = PermissivePayload
+
+        func decode(from decoder: Decoder) throws -> PermissivePayload {
+            try PermissivePayload(from: decoder)
+        }
+    }
+
     @Codable(rejectUnknownKeys: true)
     struct StrictMixedDirectRecord {
         @CodedAt
@@ -224,6 +232,39 @@ struct StrictDecodingTests {
     @Codable(rejectUnknownKeys: true)
     @Inherits(decodable: true, encodable: true)
     class StrictEmptyChild: PermissiveEmptyBase {
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable
+    @Inherits(decodable: false, encodable: false)
+    class EmptyPermissiveBase {
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictEmptyHierarchyChild: EmptyPermissiveBase {
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable
+    @Inherits(decodable: false, encodable: false)
+    class PermissiveHelperBase {
+        var base: String = ""
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictHelperChild: PermissiveHelperBase {
+        @CodedBy(PermissivePayloadCoder())
+        var payload: PermissivePayload = .init(name: "")
+
         override init() {
             super.init()
         }
@@ -697,6 +738,37 @@ struct StrictDecodingTests {
         try expectDataCorrupted(
             StrictEmptyChild.self,
             json: #"{"base":"base","extra":true}"#,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
+    func strictEmptyHierarchyChildRejectsObjectKeys() throws {
+        _ = try JSONDecoder().decode(
+            StrictEmptyHierarchyChild.self,
+            from: Data(#"{}"#.utf8)
+        )
+
+        try expectDataCorrupted(
+            StrictEmptyHierarchyChild.self,
+            json: #"{"extra":true}"#,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
+    func strictHelperPayloadOwnsItsNestedKeys() throws {
+        let data = Data(
+            #"{"base":"base","payload":{"name":"name","extra":true}}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictHelperChild.self, from: data
+        )
+        #expect(decoded.payload.name == "name")
+
+        try expectDataCorrupted(
+            StrictHelperChild.self,
+            json: #"{"base":"base","payload":{"name":"name"},"extra":true}"#,
             containing: ["extra"]
         )
     }
