@@ -645,6 +645,15 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictMixedUntaggedEnumsPreserveUnknownKeyErrors() throws {
+        try expectDataCorrupted(
+            StrictMixedUntaggedCommand.self,
+            json: #"{"value":1,"extra":true}"#,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
     func strictRawValueEnumsRemainScalar() throws {
         let data = Data(#""ready""#.utf8)
         let decoded = try JSONDecoder().decode(
