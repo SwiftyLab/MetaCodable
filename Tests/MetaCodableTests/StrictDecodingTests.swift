@@ -212,6 +212,21 @@ struct StrictDecodingTests {
     }
 
     @Codable(rejectUnknownKeys: true)
+    struct StrictOptionalMixedDirectRecord {
+        @CodedAt
+        let payload: StrictDecodingTests.PermissivePayload?
+        let count: Int
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    struct StrictMixedDescendantRecord {
+        @CodedAt
+        let payload: StrictDecodingTests.PermissivePayload
+        @CodedIn("details")
+        let count: Int
+    }
+
+    @Codable(rejectUnknownKeys: true)
     struct StrictMixedNestedDirectRecord {
         @CodedAt("payload")
         let payload: StrictDecodingTests.PermissivePayload
@@ -411,6 +426,28 @@ struct StrictDecodingTests {
     class StrictOptionalDirectChildOfPermissive:
         PermissiveOptionalDirectBase
     {
+        var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
+    class StrictMixedDirectBase {
+        @CodedAt("payload")
+        var payload: StrictDecodingTests.PermissivePayload =
+            .init(name: "")
+        @CodedIn("payload")
+        var count: Int = 0
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictMixedDirectChild: StrictMixedDirectBase {
         var child: String = ""
 
         override init() {
@@ -853,6 +890,23 @@ struct StrictDecodingTests {
     }
 
     @Test
+    func strictMixedOptionalAndDescendantRecordsCompileAndDecode() throws {
+        let optional = try JSONDecoder().decode(
+            StrictOptionalMixedDirectRecord.self,
+            from: Data(#"{"name":"n","count":1}"#.utf8)
+        )
+        #expect(optional.payload?.name == "n")
+        #expect(optional.count == 1)
+
+        let descendant = try JSONDecoder().decode(
+            StrictMixedDescendantRecord.self,
+            from: Data(#"{"name":"n","details":{"count":1}}"#.utf8)
+        )
+        #expect(descendant.payload.name == "n")
+        #expect(descendant.count == 1)
+    }
+
+    @Test
     func strictMixedNestedDirectAndKeyedRecordsAllowDelegatedKeys() throws {
         let data = Data(
             #"{"payload":{"name":"n","count":1}}"#.utf8
@@ -945,6 +999,19 @@ struct StrictDecodingTests {
         )
         #expect(decoded.payload?.name == "n")
         #expect(decoded.payload?.count == 1)
+        #expect(decoded.child == "c")
+    }
+
+    @Test
+    func strictInheritedMixedDirectPayloadPreservesMetadata() throws {
+        let decoded = try JSONDecoder().decode(
+            StrictMixedDirectChild.self,
+            from: Data(
+                #"{"payload":{"name":"n","count":1},"child":"c"}"#.utf8
+            )
+        )
+        #expect(decoded.payload.name == "n")
+        #expect(decoded.count == 1)
         #expect(decoded.child == "c")
     }
 

@@ -65,14 +65,15 @@ extension PropertyVariableTreeNode {
         let skipsValidation =
             location.skipCurrentContainerValidation
             || location.skipUnknownKeyValidationPaths.contains(currentPath)
-        let hasMixedStrictValidation =
+        let hasMixedStrictDecoding =
             location.rejectUnknownKeys
-            && !location.deferUnknownKeyValidation
             && !skipsValidation
             && hasDirectDecodableVariables
             && childrenDecodable
+        let hasMixedStrictValidation =
+            hasMixedStrictDecoding && !location.deferUnknownKeyValidation
         let directLocation: CodingLocation =
-            if hasMixedStrictValidation {
+            if hasMixedStrictDecoding {
                 location.withCoder(
                     context.makeUniqueName("strictDecoder"),
                     preserveDecoderMetadata: true
@@ -81,7 +82,7 @@ extension PropertyVariableTreeNode {
                 location
             }
         let strictDecoder: TokenSyntax? =
-            if hasMixedStrictValidation,
+            if hasMixedStrictDecoding,
                 case .coder(let directDecoder, _) = directLocation.context
             {
                 directDecoder
@@ -99,7 +100,7 @@ extension PropertyVariableTreeNode {
         let allowedKeys: [String]? =
             strictValidation ? currentAllowedKeys : nil
         let deferredAllowedKeys: [String]? =
-            hasMixedStrictValidation ? currentAllowedKeys : nil
+            hasMixedStrictDecoding ? currentAllowedKeys : nil
         let wrapperSyntax: CodeBlockItemListSyntax = {
             guard let strictDecoder else { return [] }
             let decoder: ExprSyntax
@@ -132,13 +133,9 @@ extension PropertyVariableTreeNode {
             }
             .reduce(.ifMissing([], ifError: []), +)
         let mixedContainerOptional =
-            hasMixedStrictValidation
-            && (decodingFallback.isOptional
-                || directVariables.contains { $0.hasOptionalType }
-                || decodableChildren.lazy
-                    .flatMap(\.value.linkedVariables)
-                    .contains { $0.hasOptionalType })
-        let scopeMixedValidation = hasMixedStrictValidation
+            hasMixedStrictDecoding && decodingFallback.isOptional
+        let scopeMixedCoding =
+            hasMixedStrictDecoding && decodingFallback.isOptional
         let mixedValidationSyntax: CodeBlockItemListSyntax = {
             guard let strictDecoder, let deferredAllowedKeys
             else { return [] }
@@ -148,17 +145,17 @@ extension PropertyVariableTreeNode {
             return
                 "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
         }()
-        if !scopeMixedValidation, !mixedValidationSyntax.isEmpty {
+        if !hasMixedStrictValidation, !mixedValidationSyntax.isEmpty {
             directLocation.deferValidation(mixedValidationSyntax)
         }
         let mixedContainerName: TokenSyntax? =
-            hasMixedStrictValidation
+            hasMixedStrictDecoding
             ? context.makeUniqueName("strictContainer") : nil
         let mixedContainerOptionalName: TokenSyntax? =
             mixedContainerOptional
             ? context.makeUniqueName("strictContainerOptional") : nil
         let decodingSyntax = CodeBlockItemListSyntax {
-            if hasMixedStrictValidation,
+            if hasMixedStrictDecoding,
                 let strictDecoder,
                 let mixedContainerName =
                     mixedContainerOptionalName ?? mixedContainerName
@@ -204,10 +201,10 @@ extension PropertyVariableTreeNode {
 
         let generated = decodingFallback.represented(
             context:
-                hasMixedStrictValidation
+                hasMixedStrictDecoding
                 ? directLocation.context : location.context,
             nestedContainer:
-                hasMixedStrictValidation
+                hasMixedStrictDecoding
                 ? (mixedContainerOptionalName ?? mixedContainerName)
                 : (location.rejectUnknownKeys
                     && !location.deferUnknownKeyValidation
@@ -218,9 +215,9 @@ extension PropertyVariableTreeNode {
                     .flatMap(\.value.variables)
                     .filter { $0.decode ?? true }.isEmpty,
             allowedKeys: allowedKeys,
-            scopeCodingSyntax: scopeMixedValidation,
+            scopeCodingSyntax: scopeMixedCoding,
             trailingValidationSyntax:
-                scopeMixedValidation ? mixedValidationSyntax : [],
+                hasMixedStrictValidation ? mixedValidationSyntax : [],
             forceNonOptionalContainer: mixedContainerOptional,
             childContainerOptional: mixedContainerOptional,
             containerName:
@@ -229,7 +226,7 @@ extension PropertyVariableTreeNode {
         ) { container in
             self.decodingContainer = container.name
             let childContainer =
-                if hasMixedStrictValidation && mixedContainerOptional {
+                if hasMixedStrictDecoding && mixedContainerOptional {
                     PropertyVariableTreeNode.CodingLocation.Context.Container(
                         name: "\(container.name)?", isOptional: false
                     )
@@ -240,7 +237,7 @@ extension PropertyVariableTreeNode {
                 node.decoding(
                     with: data?.children[cKey],
                     in: context,
-                    from: (hasMixedStrictValidation
+                    from: (hasMixedStrictDecoding
                         ? directLocation : location).withContainer(
                             childContainer, key: cKey)
                 )
@@ -250,11 +247,17 @@ extension PropertyVariableTreeNode {
                     conditionalSyntax: ""
                 ), +
             )
+            let scopedCodingSyntax = CodeBlockItemListSyntax {
+                decodingSyntax
+                generated.containerSyntax
+            }
             return .init(
-                containerSyntax: CodeBlockItemListSyntax {
-                    generated.containerSyntax
-                },
-                codingSyntax: decodingSyntax,
+                containerSyntax:
+                    hasMixedStrictDecoding
+                    ? "" : generated.containerSyntax,
+                codingSyntax:
+                    hasMixedStrictDecoding
+                    ? scopedCodingSyntax : decodingSyntax,
                 conditionalSyntax: CodeBlockItemListSyntax {
                     generated.codingSyntax
                     generated.conditionalSyntax
