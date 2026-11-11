@@ -178,7 +178,7 @@ struct BasicPropertyVariable: DefaultPropertyVariable, DeclaredVariable {
                 )
             }
             return CodeBlockItemListSyntax {
-                if hasOptionalType {
+                if hasOptionalType || optionalToken == "?" {
                     "\(decodePrefix)\(name) = try MetaCodableStrictDecoder.decodeOptional(\(type.wrappedType).self, from: \(decoder))"
                 } else {
                     """

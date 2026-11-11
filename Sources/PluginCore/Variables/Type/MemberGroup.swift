@@ -98,7 +98,9 @@ where
                 location.method.arg, keyType: codingKeys.type,
                 rejectUnknownKeys: location.rejectUnknownKeys,
                 deferUnknownKeyValidation:
-                    location.deferUnknownKeyValidation
+                    location.deferUnknownKeyValidation,
+                preserveDecoderMetadata:
+                    location.rejectUnknownKeys
             )
             decodingNode.decoding(in: context, from: nLocation).combined()
             nLocation.decoding(in: context)

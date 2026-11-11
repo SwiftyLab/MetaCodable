@@ -348,6 +348,25 @@ struct StrictDecodingTests {
 
     @Codable(rejectUnknownKeys: true)
     @Inherits(decodable: false, encodable: false)
+    class StrictOptionalDirectBase {
+        @CodedAt
+        var payload: StrictRecord? = nil
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictOptionalDirectChild: StrictOptionalDirectBase {
+        var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: false, encodable: false)
     class StrictOptionalScalarBase {
         @CodedAt
         var value: String? = nil
@@ -790,6 +809,20 @@ struct StrictDecodingTests {
             from: Data("null".utf8)
         )
         #expect(decoded.value == nil)
+    }
+
+    @Test
+    func strictInheritedOptionalDirectPayloadPreservesMetadata() throws {
+        let data = Data(
+            #"{"name":"n","count":1,"child":"c"}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictOptionalDirectChild.self,
+            from: data
+        )
+        #expect(decoded.payload?.name == "n")
+        #expect(decoded.payload?.count == 1)
+        #expect(decoded.child == "c")
     }
 
     @Test
