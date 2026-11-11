@@ -211,6 +211,14 @@ struct StrictDecodingTests {
         let count: Int
     }
 
+    @Codable(rejectUnknownKeys: true)
+    struct StrictMixedNestedDirectRecord {
+        @CodedAt("payload")
+        let payload: StrictDecodingTests.PermissivePayload
+        @CodedIn("payload")
+        let count: Int
+    }
+
     @ConformDecodable(rejectUnknownKeys: true)
     struct StrictDecodableRecord {
         let value: String
@@ -795,6 +803,25 @@ struct StrictDecodingTests {
         try expectDataCorrupted(
             StrictMixedDirectRecord.self,
             json: #"{"name":"n","count":1,"extra":true}"#,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
+    func strictMixedNestedDirectAndKeyedRecordsAllowDelegatedKeys() throws {
+        let data = Data(
+            #"{"payload":{"name":"n","count":1}}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictMixedNestedDirectRecord.self,
+            from: data
+        )
+        #expect(decoded.payload.name == "n")
+        #expect(decoded.count == 1)
+
+        try expectDataCorrupted(
+            StrictMixedNestedDirectRecord.self,
+            json: #"{"payload":{"name":"n","count":1,"extra":true}}"#,
             containing: ["extra"]
         )
     }

@@ -80,6 +80,12 @@ extension PropertyVariableTreeNode {
             } else {
                 location
             }
+        let nestedMixedValidation: Bool =
+            hasMixedStrictValidation
+            && {
+                if case .container = location.context { return true }
+                return false
+            }()
         let strictDecoder: TokenSyntax? =
             if hasMixedStrictValidation,
                 case .coder(let directDecoder, _) = directLocation.context
@@ -101,10 +107,15 @@ extension PropertyVariableTreeNode {
         let deferredAllowedKeys: [String]? =
             hasMixedStrictValidation ? currentAllowedKeys : nil
         let wrapperSyntax: CodeBlockItemListSyntax = {
-            guard
-                let strictDecoder,
-                case .coder(let decoder, _) = location.context
-            else { return [] }
+            guard let strictDecoder else { return [] }
+            let decoder: ExprSyntax
+            switch location.context {
+            case .coder(let decoderExpression, _):
+                decoder = "\(decoderExpression)"
+            case .container(let container, let key):
+                decoder =
+                    "try \(container.name).superDecoder(forKey: \(key.expr))"
+            }
             let metadata = strictDecodingMetadataSyntax(
                 ["": deferredAllowedKeys ?? []]
             )
@@ -120,7 +131,9 @@ extension PropertyVariableTreeNode {
             )
         }
         let decodingSyntax = CodeBlockItemListSyntax {
-            wrapperSyntax
+            if !nestedMixedValidation {
+                wrapperSyntax
+            }
             for variable in directVariables
             where variable.decode ?? true {
                 if variable.dependenciesCount == 0 {
@@ -172,7 +185,9 @@ extension PropertyVariableTreeNode {
 
             .reduce(.ifMissing([], ifError: []), +)
             .represented(
-                context: location.context,
+                context:
+                    nestedMixedValidation
+                    ? directLocation.context : location.context,
                 nestedContainer:
                     location.rejectUnknownKeys
                     && !location.deferUnknownKeyValidation
@@ -182,14 +197,20 @@ extension PropertyVariableTreeNode {
                     || !self.children.lazy
                         .flatMap(\.value.variables)
                         .filter { $0.decode ?? true }.isEmpty,
-                allowedKeys: allowedKeys
+                allowedKeys: allowedKeys,
+                prefixSyntax: nestedMixedValidation ? wrapperSyntax : [],
+                containerName:
+                    nestedMixedValidation
+                    ? context.makeUniqueName("strictContainer") : nil
             ) { container in
                 self.decodingContainer = container.name
                 let generated = decodableChildren.map { cKey, node in
                     node.decoding(
                         with: data?.children[cKey],
                         in: context,
-                        from: location.withContainer(container, key: cKey)
+                        from: (nestedMixedValidation
+                            ? directLocation : location).withContainer(
+                                container, key: cKey)
                     )
                 }.reduce(
                     .init(

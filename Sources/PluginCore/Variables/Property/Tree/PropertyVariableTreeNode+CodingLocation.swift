@@ -10,6 +10,7 @@ extension PropertyVariableTreeNode {
     struct CodingLocation: Variable {
         /// The context representing the nesting level.
         let context: Context
+        let keyType: ExprSyntax
         /// Whether generated decoding rejects unsupported keys.
         let rejectUnknownKeys: Bool
         /// Whether strict validation is emitted after superclass decoding.
@@ -37,12 +38,21 @@ extension PropertyVariableTreeNode {
         /// - Parameters:
         ///   - context: The context representing the nesting level.
         ///   - progress: The decoding/encoding progress.
+        ///   - keyType: The `CodingKey` type for the current decoder.
         ///   - rejectUnknownKeys: Whether generated decoding rejects
         ///     unsupported keys.
         ///   - deferUnknownKeyValidation: Whether strict validation is
         ///     emitted after superclass decoding.
+        ///   - additionalAllowedKeys: Keys allowed in the current container.
+        ///   - additionalAllowedKeysByPath: Keys allowed at nested paths.
+        ///   - codingPath: The normalized coding path for this location.
+        ///   - skipUnknownKeyValidationPaths: Paths exempt from validation.
+        ///   - preserveDecoderMetadata: Whether decoder metadata is preserved.
+        ///   - skipCurrentContainerValidation: Whether the current container
+        ///     is exempt from validation.
         private init(
-            context: Context, progress: Progress, rejectUnknownKeys: Bool,
+            context: Context, progress: Progress, keyType: ExprSyntax,
+            rejectUnknownKeys: Bool,
             deferUnknownKeyValidation: Bool, additionalAllowedKeys: [String],
             additionalAllowedKeysByPath: [String: [String]],
             codingPath: [String],
@@ -51,6 +61,7 @@ extension PropertyVariableTreeNode {
             skipCurrentContainerValidation: Bool
         ) {
             self.context = context
+            self.keyType = keyType
             self.progress = progress
             self.rejectUnknownKeys = rejectUnknownKeys
             self.deferUnknownKeyValidation = deferUnknownKeyValidation
@@ -97,6 +108,12 @@ extension PropertyVariableTreeNode {
         ///     unsupported keys.
         ///   - deferUnknownKeyValidation: Whether strict validation is
         ///     emitted after superclass decoding.
+        ///   - additionalAllowedKeys: Keys allowed in the current container.
+        ///   - additionalAllowedKeysByPath: Keys allowed at nested paths.
+        ///   - skipUnknownKeyValidationPaths: Paths exempt from validation.
+        ///   - preserveDecoderMetadata: Whether decoder metadata is preserved.
+        ///   - skipCurrentContainerValidation: Whether the current container
+        ///     is exempt from validation.
         ///
         /// - Returns: The new location updated with provided context.
         static func withCoder(
@@ -111,6 +128,7 @@ extension PropertyVariableTreeNode {
         ) -> Self {
             .init(
                 context: .coder(coder, keyType: keyType), progress: .init(),
+                keyType: keyType,
                 rejectUnknownKeys: rejectUnknownKeys,
                 deferUnknownKeyValidation: deferUnknownKeyValidation,
                 additionalAllowedKeys: additionalAllowedKeys,
@@ -137,6 +155,7 @@ extension PropertyVariableTreeNode {
             let codingPath = codingPath + [key.description]
             return .init(
                 context: .container(container, key: key), progress: progress,
+                keyType: keyType,
                 rejectUnknownKeys: rejectUnknownKeys,
                 deferUnknownKeyValidation: deferUnknownKeyValidation,
                 additionalAllowedKeys:
@@ -157,9 +176,9 @@ extension PropertyVariableTreeNode {
             _ coder: TokenSyntax,
             preserveDecoderMetadata: Bool
         ) -> Self {
-            guard case .coder(_, let keyType) = context else { return self }
-            return .init(
+            .init(
                 context: .coder(coder, keyType: keyType), progress: progress,
+                keyType: keyType,
                 rejectUnknownKeys: rejectUnknownKeys,
                 deferUnknownKeyValidation: deferUnknownKeyValidation,
                 additionalAllowedKeys: additionalAllowedKeys,
