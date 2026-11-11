@@ -45,11 +45,11 @@ public struct MetaCodableStrictDecoder: Decoder {
         if container.decodeNil() {
             return nil
         }
-        if Value.self == Date.self || Value.self == Data.self,
-            let strictDecoder = decoder as? MetaCodableStrictDecoder
+        if Value.self == Date.self
+            || Value.self == Data.self
+            || Value.self == Decimal.self
         {
-            return try strictDecoder.base.singleValueContainer().decode(
-                Value.self)
+            return try container.decode(Value.self)
         }
         return try Value(from: decoder)
     }

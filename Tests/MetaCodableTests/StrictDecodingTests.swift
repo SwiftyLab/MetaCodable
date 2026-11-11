@@ -671,6 +671,12 @@ struct StrictDecodingTests {
     }
 
     @Codable(rejectUnknownKeys: true)
+    @UnTagged
+    enum StrictOptionalDecimalCommand {
+        case decimal(Decimal?)
+    }
+
+    @Codable(rejectUnknownKeys: true)
     @CodedAt("meta", "kind")
     @ContentAt("meta")
     enum StrictNestedAdjacentCommand {
@@ -1309,6 +1315,19 @@ struct StrictDecodingTests {
             #expect(count == 1)
         } else {
             Issue.record("Expected transactional record case")
+        }
+    }
+
+    @Test
+    func strictOptionalDecimalPayloadUsesSingleValueDecoding() throws {
+        let decoded = try JSONDecoder().decode(
+            StrictOptionalDecimalCommand.self,
+            from: Data("123.45".utf8)
+        )
+        if case .decimal(let value) = decoded {
+            #expect(value == Decimal(string: "123.45"))
+        } else {
+            Issue.record("Expected decimal case")
         }
     }
 
