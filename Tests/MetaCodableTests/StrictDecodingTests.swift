@@ -220,6 +220,24 @@ struct StrictDecodingTests {
     }
 
     @Codable(rejectUnknownKeys: true)
+    struct StrictMixedNestedDefaultRecord {
+        @Default(StrictDecodingTests.PermissivePayload(name: "fallback"))
+        @CodedAt("payload")
+        let payload: StrictDecodingTests.PermissivePayload
+        @Default(0)
+        @CodedIn("payload")
+        let count: Int
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    struct StrictMixedNestedOptionalRecord {
+        @CodedAt("payload")
+        let payload: StrictDecodingTests.PermissivePayload?
+        @CodedIn("payload")
+        let count: Int?
+    }
+
+    @Codable(rejectUnknownKeys: true)
     struct StrictOptionalDictionaryRecord {
         @CodedAt
         let payload: [String: Int]?
@@ -848,6 +866,34 @@ struct StrictDecodingTests {
 
         try expectDataCorrupted(
             StrictMixedNestedDirectRecord.self,
+            json: #"{"payload":{"name":"n","count":1,"extra":true}}"#,
+            containing: ["extra"]
+        )
+    }
+
+    @Test
+    func strictMixedNestedDefaultsAndOptionalsPreserveFallbacks() throws {
+        let defaults = try JSONDecoder().decode(
+            StrictMixedNestedDefaultRecord.self,
+            from: Data("{}".utf8)
+        )
+        #expect(defaults.payload.name == "fallback")
+        #expect(defaults.count == 0)
+
+        let nulls = try JSONDecoder().decode(
+            StrictMixedNestedOptionalRecord.self,
+            from: Data(#"{"payload":null}"#.utf8)
+        )
+        #expect(nulls.payload == nil)
+        #expect(nulls.count == nil)
+
+        try expectDataCorrupted(
+            StrictMixedNestedDefaultRecord.self,
+            json: #"{"payload":{"name":"n","count":1,"extra":true}}"#,
+            containing: ["extra"]
+        )
+        try expectDataCorrupted(
+            StrictMixedNestedOptionalRecord.self,
             json: #"{"payload":{"name":"n","count":1,"extra":true}}"#,
             containing: ["extra"]
         )
