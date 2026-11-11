@@ -219,6 +219,12 @@ struct StrictDecodingTests {
         let count: Int
     }
 
+    @Codable(rejectUnknownKeys: true)
+    struct StrictOptionalDictionaryRecord {
+        @CodedAt
+        let payload: [String: Int]?
+    }
+
     @ConformDecodable(rejectUnknownKeys: true)
     struct StrictDecodableRecord {
         let value: String
@@ -366,6 +372,27 @@ struct StrictDecodingTests {
     @Codable(rejectUnknownKeys: true)
     @Inherits(decodable: true, encodable: true)
     class StrictOptionalDirectChild: StrictOptionalDirectBase {
+        var child: String = ""
+
+        override init() {
+            super.init()
+        }
+    }
+
+    @Codable
+    @Inherits(decodable: false, encodable: false)
+    class PermissiveOptionalDirectBase {
+        @CodedAt
+        var payload: StrictRecord? = nil
+
+        init() {}
+    }
+
+    @Codable(rejectUnknownKeys: true)
+    @Inherits(decodable: true, encodable: true)
+    class StrictOptionalDirectChildOfPermissive:
+        PermissiveOptionalDirectBase
+    {
         var child: String = ""
 
         override init() {
@@ -856,6 +883,34 @@ struct StrictDecodingTests {
         #expect(decoded.payload?.name == "n")
         #expect(decoded.payload?.count == 1)
         #expect(decoded.child == "c")
+    }
+
+    @Test
+    func
+        strictInheritedOptionalDirectPayloadFromPermissiveBasePreservesMetadata()
+        throws
+    {
+        let data = Data(
+            #"{"name":"n","count":1,"child":"c"}"#.utf8
+        )
+        let decoded = try JSONDecoder().decode(
+            StrictOptionalDirectChildOfPermissive.self,
+            from: data
+        )
+        #expect(decoded.payload?.name == "n")
+        #expect(decoded.payload?.count == 1)
+        #expect(decoded.child == "c")
+    }
+
+    @Test
+    func strictOptionalDictionaryPayloadPreservesKeyDecodingStrategy() throws {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let decoded = try decoder.decode(
+            StrictOptionalDictionaryRecord.self,
+            from: Data(#"{"some_key":1}"#.utf8)
+        )
+        #expect(decoded.payload?["some_key"] == 1)
     }
 
     @Test

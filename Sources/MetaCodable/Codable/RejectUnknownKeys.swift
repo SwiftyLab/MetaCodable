@@ -1,5 +1,9 @@
 import Foundation
 
+private protocol MetaCodableDictionary {}
+
+extension Dictionary: MetaCodableDictionary {}
+
 /// A decoder wrapper that carries inherited strict-decoding key metadata.
 public struct MetaCodableStrictDecoder: Decoder {
     private let base: any Decoder
@@ -45,9 +49,12 @@ public struct MetaCodableStrictDecoder: Decoder {
         if container.decodeNil() {
             return nil
         }
-        if Value.self == Date.self
+        let isStrictDecoder = decoder is MetaCodableStrictDecoder
+        if !isStrictDecoder
+            || Value.self == Date.self
             || Value.self == Data.self
             || Value.self == Decimal.self
+            || Value.self is any MetaCodableDictionary.Type
         {
             return try container.decode(Value.self)
         }

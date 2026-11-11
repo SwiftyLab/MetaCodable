@@ -24,6 +24,9 @@ where
     /// The `CodingKeys` map containing keys
     /// and generated case names.
     let codingKeys: CodingKeysMap
+    /// Whether direct optional decoding may receive a strict superclass
+    /// decoder.
+    let preservesDecoderMetadata: Bool
 
     /// Creates a new member group from provided data.
     ///
@@ -76,6 +79,7 @@ where
         self.decodingNode = decodingNode
         self.encodingNode = encodingNode
         self.codingKeys = codingKeys
+        self.preservesDecoderMetadata = Decl.self == ClassDeclSyntax.self
     }
 
     /// Provides the syntax for decoding at the provided location.
@@ -101,6 +105,7 @@ where
                     location.deferUnknownKeyValidation,
                 preserveDecoderMetadata:
                     location.rejectUnknownKeys
+                    || preservesDecoderMetadata
             )
             decodingNode.decoding(in: context, from: nLocation).combined()
             nLocation.decoding(in: context)
