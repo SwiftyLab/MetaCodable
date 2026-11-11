@@ -50,19 +50,10 @@ extension PropertyVariableTreeNode {
         in context: some MacroExpansionContext,
         from location: CodingLocation
     ) -> Generated {
-        let varLocation = location.forVariable
-        let decodingSyntax = CodeBlockItemListSyntax {
-            for variable in data?.variables ?? variables
-            where variable.decode ?? true {
-                if variable.dependenciesCount == 0 {
-                    variable.decoding(in: context, from: varLocation)
-                    let _ = location.coded(variable)
-                } else {
-                    let _ = location.pending(variable)
-                }
-            }
+        let directVariables = data?.variables ?? variables
+        let hasDirectDecodableVariables = directVariables.contains {
+            $0.decode ?? true
         }
-
         let childrenDecodable =
             data?.children.contains { _, node in
                 node.linkedVariables.contains { $0.decode ?? true }
@@ -70,35 +61,82 @@ extension PropertyVariableTreeNode {
             ?? children.contains { _, node in
                 node.linkedVariables.contains { $0.decode ?? true }
             }
-        let directVariables = data?.variables ?? variables
-        let hasDirectDecodableVariables = directVariables.contains {
-            $0.decode ?? true
-        }
-        let strictValidation =
+        let currentPath = strictDecodingPathKey(location.codingPath)
+        let skipsValidation =
+            location.skipCurrentContainerValidation
+            || location.skipUnknownKeyValidationPaths.contains(currentPath)
+        let hasMixedStrictValidation =
             location.rejectUnknownKeys
             && !location.deferUnknownKeyValidation
-            && !location.skipCurrentContainerValidation
-            && !location.skipUnknownKeyValidationPaths.contains(
-                strictDecodingPathKey(location.codingPath)
-            )
-            && !hasDirectDecodableVariables
-        let allowedKeys: [String]? =
-            if strictValidation {
-                Array(data?.allowedKeys ?? self.allowedKeys)
-                    + location.additionalAllowedKeys
+            && !skipsValidation
+            && hasDirectDecodableVariables
+            && childrenDecodable
+        let directLocation: CodingLocation =
+            if hasMixedStrictValidation {
+                location.withCoder(
+                    context.makeUniqueName("strictDecoder"),
+                    preserveDecoderMetadata: true
+                )
+            } else {
+                location
+            }
+        let strictDecoder: TokenSyntax? =
+            if hasMixedStrictValidation,
+                case .coder(let directDecoder, _) = directLocation.context
+            {
+                directDecoder
             } else {
                 nil
             }
+        let strictValidation =
+            location.rejectUnknownKeys
+            && !location.deferUnknownKeyValidation
+            && !skipsValidation
+            && !hasDirectDecodableVariables
+        let currentAllowedKeys =
+            Array(data?.allowedKeys ?? self.allowedKeys)
+            + location.additionalAllowedKeys
+        let allowedKeys: [String]? =
+            strictValidation ? currentAllowedKeys : nil
+        let deferredAllowedKeys: [String]? =
+            hasMixedStrictValidation ? currentAllowedKeys : nil
+        let wrapperSyntax: CodeBlockItemListSyntax = {
+            guard
+                let strictDecoder,
+                case .coder(let decoder, _) = location.context
+            else { return [] }
+            let metadata = strictDecodingMetadataSyntax(
+                ["": deferredAllowedKeys ?? []]
+            )
+            return
+                "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(decoder), allowedKeysByPath: \(metadata))"
+        }()
+        let decodingSyntax = CodeBlockItemListSyntax {
+            wrapperSyntax
+            for variable in directVariables
+            where variable.decode ?? true {
+                if variable.dependenciesCount == 0 {
+                    variable.decoding(
+                        in: context, from: directLocation.forVariable
+                    )
+                    let _ = location.coded(variable)
+                } else {
+                    let _ = location.pending(variable)
+                }
+            }
+        }
         guard !(data?.children.isEmpty ?? children.isEmpty), childrenDecodable
         else {
             if strictValidation, !hasDirectDecodableVariables,
                 case .coder(let decoder, _) = location.context
             {
                 return .init(
-                    containerSyntax: strictDecodingValidationSyntax(
-                        decoder: "\(decoder)" as ExprSyntax,
-                        allowedKeys: allowedKeys
-                    ),
+                    containerSyntax: CodeBlockItemListSyntax {
+                        strictDecodingValidationSyntax(
+                            decoder: "\(decoder)" as ExprSyntax,
+                            allowedKeys: allowedKeys
+                        )
+                    },
                     codingSyntax: decodingSyntax,
                     conditionalSyntax: ""
                 )
@@ -159,6 +197,12 @@ extension PropertyVariableTreeNode {
                     conditionalSyntax: CodeBlockItemListSyntax {
                         generated.codingSyntax
                         generated.conditionalSyntax
+                        if let strictDecoder, let deferredAllowedKeys {
+                            let metadata = strictDecodingMetadataSyntax(
+                                ["": deferredAllowedKeys]
+                            )
+                            "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
+                        }
                     }
                 )
             }

@@ -766,6 +766,12 @@ struct StrictDecodingTests {
         )
         #expect(decoded.payload.name == "n")
         #expect(decoded.count == 1)
+
+        try expectDataCorrupted(
+            StrictMixedDirectRecord.self,
+            json: #"{"name":"n","count":1,"extra":true}"#,
+            containing: ["extra"]
+        )
     }
 
     @Test

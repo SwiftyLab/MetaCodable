@@ -147,6 +147,27 @@ extension PropertyVariableTreeNode {
             )
         }
 
+        /// Rebinds the current decoder while preserving strict metadata.
+        func withCoder(
+            _ coder: TokenSyntax,
+            preserveDecoderMetadata: Bool
+        ) -> Self {
+            guard case .coder(_, let keyType) = context else { return self }
+            return .init(
+                context: .coder(coder, keyType: keyType), progress: progress,
+                rejectUnknownKeys: rejectUnknownKeys,
+                deferUnknownKeyValidation: deferUnknownKeyValidation,
+                additionalAllowedKeys: additionalAllowedKeys,
+                additionalAllowedKeysByPath: additionalAllowedKeysByPath,
+                codingPath: codingPath,
+                skipUnknownKeyValidationPaths:
+                    skipUnknownKeyValidationPaths,
+                preserveDecoderMetadata: preserveDecoderMetadata,
+                skipCurrentContainerValidation:
+                    skipCurrentContainerValidation
+            )
+        }
+
         /// The decoding/encoding location for an individual variable.
         var forVariable: PropertyCodingLocation {
             switch context {
