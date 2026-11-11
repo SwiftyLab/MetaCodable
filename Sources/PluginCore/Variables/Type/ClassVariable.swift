@@ -127,7 +127,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         var modifiers: DeclModifierListSyntax = [.init(name: "required")]
         let method = location.method
         let conformance = TypeSyntax(stringLiteral: method.protocol)
-        let strictDecoder = context.makeUniqueName("strictDecoder")
+        let strictDecoder: TokenSyntax = "strictDecoder"
 
         if location.conformance == nil, implementDecodable(location: location) {
             let overriddenMethod =

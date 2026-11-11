@@ -447,10 +447,10 @@ struct CodableTests {
                         }
 
                         required init(from decoder: any Decoder) throws {
-                            let __macro_local_13strictDecoderfMu_ = MetaCodableStrictDecoder(decoder: decoder, allowedKeysByPath: ["": ["value"]])
-                            let container = try __macro_local_13strictDecoderfMu_.container(keyedBy: CodingKeys.self)
+                            let strictDecoder = MetaCodableStrictDecoder(decoder: decoder, allowedKeysByPath: ["": ["value"]])
+                            let container = try strictDecoder.container(keyedBy: CodingKeys.self)
                             self.value = try container.decode(String.self, forKey: CodingKeys.value)
-                            try super.init(from: __macro_local_13strictDecoderfMu_)
+                            try super.init(from: strictDecoder)
                         }
 
                         override func encode(to encoder: any Encoder) throws {
@@ -583,7 +583,7 @@ struct CodableTests {
                     enum Foo {
                         case foo
                     }
-                    
+
                     extension Foo: Decodable {
                         init(from decoder: any Decoder) throws {
                             let container = try decoder.container(keyedBy: DecodingKeys.self)
@@ -601,7 +601,7 @@ struct CodableTests {
                             }
                         }
                     }
-                    
+
                     extension Foo: Encodable {
                         func encode(to encoder: any Encoder) throws {
                             var container = encoder.container(keyedBy: CodingKeys.self)
@@ -611,7 +611,7 @@ struct CodableTests {
                             }
                         }
                     }
-                    
+
                     extension Foo {
                         enum CodingKeys: String, CodingKey {
                             case foo = "foo"
@@ -640,7 +640,9 @@ struct CodableTests {
         func encodingToJSON() throws {
             let original = Foo.foo
             let encoded = try JSONEncoder().encode(original)
-            let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+            let json =
+                try JSONSerialization.jsonObject(with: encoded)
+                as? [String: Any]
             #expect((json?["foo"] as? [String: Any])?.isEmpty == true)
         }
     }
