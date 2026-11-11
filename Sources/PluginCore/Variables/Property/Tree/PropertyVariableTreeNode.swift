@@ -101,6 +101,9 @@ extension PropertyVariableTreeNode {
             strictValidation ? currentAllowedKeys : nil
         let deferredAllowedKeys: [String]? =
             hasMixedStrictDecoding ? currentAllowedKeys : nil
+        let deferredDecoderStorage: TokenSyntax? =
+            location.deferUnknownKeyValidation && hasMixedStrictDecoding
+            ? context.makeUniqueName("deferredStrictDecoder") : nil
         let wrapperSyntax: CodeBlockItemListSyntax = {
             guard let strictDecoder else { return [] }
             let decoder: ExprSyntax
@@ -114,8 +117,17 @@ extension PropertyVariableTreeNode {
             let metadata = strictDecodingMetadataSyntax(
                 ["": deferredAllowedKeys ?? []]
             )
-            return
+            let declaration =
                 "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(decoder), allowedKeysByPath: \(metadata))"
+            if let deferredDecoderStorage {
+                return CodeBlockItemListSyntax {
+                    CodeBlockItemSyntax(stringLiteral: declaration)
+                    "\(deferredDecoderStorage) = \(strictDecoder)"
+                }
+            }
+            return CodeBlockItemListSyntax {
+                CodeBlockItemSyntax(stringLiteral: declaration)
+            }
         }()
         let decodableChildren = children.lazy
             .filter { data?.hasKey($0.key) ?? true }
@@ -142,6 +154,15 @@ extension PropertyVariableTreeNode {
             let metadata = strictDecodingMetadataSyntax(
                 ["": deferredAllowedKeys]
             )
+            if let deferredDecoderStorage {
+                return CodeBlockItemListSyntax {
+                    try! IfExprSyntax(
+                        "if let \(deferredDecoderStorage) = \(deferredDecoderStorage)"
+                    ) {
+                        "try \(deferredDecoderStorage).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
+                    }
+                }
+            }
             return
                 "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
         }()
@@ -265,7 +286,12 @@ extension PropertyVariableTreeNode {
             )
         }
         return .init(
-            containerSyntax: generated.containerSyntax,
+            containerSyntax: CodeBlockItemListSyntax {
+                if let deferredDecoderStorage {
+                    "var \(deferredDecoderStorage): MetaCodableStrictDecoder?"
+                }
+                generated.containerSyntax
+            },
             codingSyntax: generated.codingSyntax,
             conditionalSyntax: generated.conditionalSyntax
         )
