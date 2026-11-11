@@ -436,6 +436,7 @@ struct StrictDecodingTests {
     @Codable(rejectUnknownKeys: true)
     @Inherits(decodable: false, encodable: false)
     class StrictMixedDirectBase {
+        var base: String = ""
         @CodedAt("payload")
         var payload: StrictDecodingTests.PermissivePayload =
             .init(name: "")
@@ -1007,11 +1008,13 @@ struct StrictDecodingTests {
         let decoded = try JSONDecoder().decode(
             StrictMixedDirectChild.self,
             from: Data(
-                #"{"payload":{"name":"n","count":1},"child":"c"}"#.utf8
+                #"{"base":"b","payload":{"name":"n","count":1},"child":"c"}"#
+                    .utf8
             )
         )
         #expect(decoded.payload.name == "n")
         #expect(decoded.count == 1)
+        #expect(decoded.base == "b")
         #expect(decoded.child == "c")
     }
 

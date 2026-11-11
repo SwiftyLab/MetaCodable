@@ -166,6 +166,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
                 "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(method.arg), allowedKeysByPath: \(metadata))"
                 generated.code
                 "try super.\(method.name)(\(method.argLabel): \(strictDecoder))"
+                group.deferredDecoding(in: context)
                 if location.rejectUnknownKeys {
                     "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
                 }

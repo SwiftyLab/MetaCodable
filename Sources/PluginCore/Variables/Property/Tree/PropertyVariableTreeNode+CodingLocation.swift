@@ -220,6 +220,17 @@ extension PropertyVariableTreeNode {
         func decoding(
             in context: some MacroExpansionContext, from location: () = ()
         ) -> CodeBlockItemListSyntax {
+            decoding(
+                in: context, includeDeferredValidations: true
+            )
+        }
+
+        /// Provides pending decoding syntax with optional deferred
+        /// validation emission.
+        func decoding(
+            in context: some MacroExpansionContext,
+            includeDeferredValidations: Bool
+        ) -> CodeBlockItemListSyntax {
             let pending = progress.pending.sorted { pending1, pending2 in
                 pending2.variable.depends(on: pending1.variable)
             }
@@ -262,6 +273,17 @@ extension PropertyVariableTreeNode {
                         syntax
                     }
                 }
+                if includeDeferredValidations {
+                    for validation in progress.deferredValidations {
+                        validation
+                    }
+                }
+            }
+        }
+
+        /// Returns validations deferred by generated decoding.
+        func deferredDecoding() -> CodeBlockItemListSyntax {
+            CodeBlockItemListSyntax {
                 for validation in progress.deferredValidations {
                     validation
                 }

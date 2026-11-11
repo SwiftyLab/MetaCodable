@@ -12,6 +12,11 @@ where
     Decl: MemberGroupSyntax & GenericTypeDeclSyntax & AttributableDeclSyntax,
     Decl.MemberSyntax: VariableSyntax, Decl.MemberSyntax.Variable: NamedVariable
 {
+    /// Stores the latest decoder location for deferred class validation.
+    private final class DecodingState {
+        var location: PropertyVariableTreeNode.CodingLocation?
+    }
+
     /// The declaration members syntax type.
     typealias MemberSyntax = Decl.MemberSyntax
 
@@ -24,6 +29,7 @@ where
     /// The `CodingKeys` map containing keys
     /// and generated case names.
     let codingKeys: CodingKeysMap
+    private let decodingState: DecodingState
     /// Whether direct optional decoding may receive a strict superclass
     /// decoder.
     let preservesDecoderMetadata: Bool
@@ -80,6 +86,7 @@ where
         self.encodingNode = encodingNode
         self.codingKeys = codingKeys
         self.preservesDecoderMetadata = Decl.self == ClassDeclSyntax.self
+        self.decodingState = .init()
     }
 
     /// Provides the syntax for decoding at the provided location.
@@ -97,18 +104,23 @@ where
         from location: TypeCodingLocation
     ) -> TypeGenerated? {
         guard let conformance = location.conformance else { return nil }
+        let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
+            location.method.arg, keyType: codingKeys.type,
+            rejectUnknownKeys: location.rejectUnknownKeys,
+            deferUnknownKeyValidation:
+                location.deferUnknownKeyValidation,
+            preserveDecoderMetadata:
+                location.rejectUnknownKeys
+                || preservesDecoderMetadata
+        )
+        decodingState.location = nLocation
         let syntax = CodeBlockItemListSyntax {
-            let nLocation = PropertyVariableTreeNode.CodingLocation.withCoder(
-                location.method.arg, keyType: codingKeys.type,
-                rejectUnknownKeys: location.rejectUnknownKeys,
-                deferUnknownKeyValidation:
-                    location.deferUnknownKeyValidation,
-                preserveDecoderMetadata:
-                    location.rejectUnknownKeys
-                    || preservesDecoderMetadata
-            )
             decodingNode.decoding(in: context, from: nLocation).combined()
-            nLocation.decoding(in: context)
+            nLocation.decoding(
+                in: context,
+                includeDeferredValidations:
+                    !location.deferUnknownKeyValidation
+            )
         }
         return .init(
             code: syntax, modifiers: [],
@@ -118,6 +130,13 @@ where
             ),
             inheritanceClause: .init { .init(type: conformance) }
         )
+    }
+
+    /// Returns validations that must run after superclass decoding.
+    func deferredDecoding(
+        in context: some MacroExpansionContext
+    ) -> CodeBlockItemListSyntax {
+        decodingState.location?.deferredDecoding() ?? ""
     }
 
     /// Provides the syntax for encoding at the provided location.
