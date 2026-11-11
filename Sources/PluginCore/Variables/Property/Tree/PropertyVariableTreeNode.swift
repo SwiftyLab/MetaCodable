@@ -111,6 +111,14 @@ extension PropertyVariableTreeNode {
             return
                 "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(decoder), allowedKeysByPath: \(metadata))"
         }()
+        if let strictDecoder, let deferredAllowedKeys {
+            let metadata = strictDecodingMetadataSyntax(
+                ["": deferredAllowedKeys]
+            )
+            directLocation.deferValidation(
+                "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
+            )
+        }
         let decodingSyntax = CodeBlockItemListSyntax {
             wrapperSyntax
             for variable in directVariables
@@ -121,7 +129,7 @@ extension PropertyVariableTreeNode {
                     )
                     let _ = location.coded(variable)
                 } else {
-                    let _ = location.pending(variable)
+                    let _ = directLocation.pending(variable)
                 }
             }
         }
@@ -197,12 +205,6 @@ extension PropertyVariableTreeNode {
                     conditionalSyntax: CodeBlockItemListSyntax {
                         generated.codingSyntax
                         generated.conditionalSyntax
-                        if let strictDecoder, let deferredAllowedKeys {
-                            let metadata = strictDecodingMetadataSyntax(
-                                ["": deferredAllowedKeys]
-                            )
-                            "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
-                        }
                     }
                 )
             }

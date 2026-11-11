@@ -81,6 +81,11 @@ extension PropertyVariableTreeNode {
             progress.pending.append((context, variable))
         }
 
+        /// Defers validation until all pending variables are decoded.
+        func deferValidation(_ syntax: CodeBlockItemListSyntax) {
+            progress.deferredValidations.append(syntax)
+        }
+
         /// Creates a new location with provided context.
         ///
         /// Creates new location with the provided context as top-level context.
@@ -238,6 +243,9 @@ extension PropertyVariableTreeNode {
                         syntax
                     }
                 }
+                for validation in progress.deferredValidations {
+                    validation
+                }
             }
         }
 
@@ -271,6 +279,9 @@ extension PropertyVariableTreeNode {
             /// The decoding syntax for these variables can be created
             /// from the location instance.
             fileprivate(set) var pending: [Pending] = []
+            /// Validations emitted after all pending variables decode.
+            fileprivate(set) var deferredValidations:
+                [CodeBlockItemListSyntax] = []
         }
 
         /// Represents the context for decoding/encoding that the node needs
