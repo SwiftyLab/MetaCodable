@@ -52,7 +52,10 @@ extension TaggedEnumSwitcherVariable {
                 // container.
                 if !values.isEmpty {
                     let cLocation = EnumCaseCodingLocation(
-                        coder: coder, values: values
+                        coder: coder, values: values,
+                        rejectUnknownKeys: location.rejectUnknownKeys,
+                        additionalAllowedKeys:
+                            location.caseDecodingAdditionalAllowedKeys
                     )
                     let generated = `case`.decoding(
                         in: context, from: cLocation
@@ -137,7 +140,8 @@ extension EnumSwitcherVariable {
                 let _ = { switchable = true }()
                 let values = value.encodeExprs.map(\.syntax)
                 let cLocation = EnumCaseCodingLocation(
-                    coder: coder, values: values
+                    coder: coder, values: values,
+                    rejectUnknownKeys: false, additionalAllowedKeys: []
                 )
 
                 let generated = `case`.encoding(in: context, to: cLocation)
@@ -153,7 +157,8 @@ extension EnumSwitcherVariable {
 
                 let generatedCode = generated.code.combined()
                 SwitchCaseSyntax(label: .case(label)) {
-                    let preSyntax = preSyntax(("\(values.first!)", !generatedCode.isEmpty))
+                    let preSyntax = preSyntax(
+                        ("\(values.first!)", !generatedCode.isEmpty))
                     preSyntax
                     if !generatedCode.isEmpty {
                         generatedCode

@@ -12,6 +12,26 @@ where
     Variable: PropertyVariable,
     Variable.Initialization == RequiredInitialization
 {
+    /// Whether this enum has a keyed discriminator container.
+    var usesKeyedContainer: Bool { !keyPath.decoding.isEmpty }
+    /// The discriminator keys used at the enum root.
+    var rootDecodingKeys: [String]? { Array(decodingNode.allowedKeys) }
+    /// The discriminator keys used by internal tagging.
+    var discriminatorDecodingKeys: [String] {
+        Array(decodingNode.allowedKeys)
+    }
+    /// The discriminator path used for internal tagging.
+    var discriminatorDecodingPath: [String] { keyPath.decoding }
+    /// Internally tagged direct cases share discriminator keys.
+    var caseDecodingAdditionalAllowedKeys: [String] {
+        discriminatorDecodingKeys
+    }
+    /// Internally tagged case values share the discriminator container.
+    var caseDecodingSharesRootContainer: Bool { true }
+    /// This switcher uses an internal discriminator.
+    var isInternallyTagged: Bool { true }
+    /// Internal direct payloads share the root validation container.
+    var directPayloadSharesValidationContainer: Bool { true }
     /// The identifier variable build action type.
     ///
     /// Used to build the identifier data and pass in encoding callback.
@@ -394,7 +414,7 @@ extension InternallyTaggedEnumSwitcher {
             from location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let decoder, _):
+            case .coder(let decoder, _), .coderWithMetadata(let decoder, _):
                 "\(self.decoder) = \(decoder)"
             case .container(let container, _, _):
                 "\(self.decoder) = \(container)"
@@ -417,7 +437,7 @@ extension InternallyTaggedEnumSwitcher {
             to location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let encoder, _):
+            case .coder(let encoder, _), .coderWithMetadata(let encoder, _):
                 "let \(self.encoder) = \(encoder)"
             case .container(let container, _, _):
                 "var \(self.encoder) = \(container)"

@@ -50,7 +50,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
     - name: Spellcheck Action
-      uses: rojopolis/spellcheck-github-actions@0.60.0
+      uses: step-security/spellcheck-github-actions@158f059d02d7d87190bb83f9cdd99922317ce067 # v0.66.0
       with:
         config_path: .github/config/spellcheck.yaml
 

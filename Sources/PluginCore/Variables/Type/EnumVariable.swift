@@ -89,7 +89,8 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                     FunctionCallExprSyntax(callee: callee) { args }
                 } else {
                     FunctionCallExprSyntax(
-                        calledExpression: callee, leftParen: nil, rightParen: nil
+                        calledExpression: callee, leftParen: nil,
+                        rightParen: nil
                     ) {}
                 }
             return ExprSyntax(fExpr)
@@ -270,13 +271,73 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
         let selfType: ExprSyntax = "\(name).self"
         let code: CodeBlockItemListSyntax
         if cases.contains(where: { $0.variable.decode ?? true }) {
+            let hasDirectDecodingCase =
+                cases.contains { $0.variable.usesDirectDecoding }
+                || (switcher.allowsDirectDecoding
+                    && cases.contains {
+                        !$0.variable.usesKeyedDecoding
+                    })
+            let hasDelegatedDirectCase =
+                hasDirectDecodingCase
+                && switcher.directPayloadSharesValidationContainer
+            let hasAssociatedValues = cases.contains {
+                !$0.variable.variables.isEmpty
+            }
+            let deferRootUnknownKeyValidation =
+                hasDelegatedDirectCase
+                || (switcher.isInternallyTagged
+                    && switcher.caseDecodingSharesRootContainer
+                    && hasAssociatedValues)
+            let shouldPreflightKeyedContainer =
+                !deferRootUnknownKeyValidation
+                && (switcher.usesKeyedContainer
+                    || switcher.allowsDirectDecoding && !hasDirectDecodingCase)
+            let shouldConditionallyPreflightKeyedContainer =
+                false
+            var rootDecodingKeys =
+                switcher.rootDecodingKeys ?? codingKeys.allKeys
+            if switcher.caseDecodingSharesRootContainer {
+                for key in cases.flatMap({
+                    $0.variable.decodingAllowedKeys
+                }) where !rootDecodingKeys.contains(key) {
+                    rootDecodingKeys.append(key)
+                }
+            }
             let switcherLoc = EnumSwitcherLocation(
                 coder: location.method.arg, container: Self.container,
                 keyType: codingKeys.type, selfType: selfType, selfValue: "_",
                 cases: cases, codeExpr: caseDecodeExpr,
-                hasDefaultCase: forceDefault
+                hasDefaultCase: forceDefault,
+                rejectUnknownKeys: location.rejectUnknownKeys,
+                rootDecodingKeys: rootDecodingKeys,
+                discriminatorDecodingKeys:
+                    switcher.discriminatorDecodingKeys,
+                caseDecodingSharesRootContainer:
+                    switcher.caseDecodingSharesRootContainer,
+                caseDecodingAdditionalAllowedKeys:
+                    switcher.caseDecodingAdditionalAllowedKeys,
+                additionalAllowedKeysByPath: [:],
+                skipUnknownKeyValidationPaths: [],
+                skipRootUnknownKeyValidation:
+                    deferRootUnknownKeyValidation
             )
             code = CodeBlockItemListSyntax {
+                if location.rejectUnknownKeys {
+                    if shouldPreflightKeyedContainer {
+                        strictDecodingValidationSyntax(
+                            decoder: "\(location.method.arg)" as ExprSyntax,
+                            allowedKeys: rootDecodingKeys
+                        )
+                    } else if shouldConditionallyPreflightKeyedContainer,
+                        !rootDecodingKeys.isEmpty
+                    {
+                        strictDecodingConditionalValidationSyntax(
+                            decoder: "\(location.method.arg)" as ExprSyntax,
+                            keyType: codingKeys.type,
+                            allowedKeys: rootDecodingKeys
+                        )
+                    }
+                }
                 switcher.decoding(in: context, from: switcherLoc)
             }
         } else {
@@ -328,7 +389,15 @@ package struct EnumVariable: TypeVariable, DeclaredVariable {
                 coder: location.method.arg, container: Self.container,
                 keyType: codingKeys.type, selfType: selfType, selfValue: expr,
                 cases: cases, codeExpr: caseEncodeExpr,
-                hasDefaultCase: forceDefault
+                hasDefaultCase: forceDefault,
+                rejectUnknownKeys: false,
+                rootDecodingKeys: [],
+                discriminatorDecodingKeys: [],
+                caseDecodingSharesRootContainer: false,
+                caseDecodingAdditionalAllowedKeys: [],
+                additionalAllowedKeysByPath: [:],
+                skipUnknownKeyValidationPaths: [],
+                skipRootUnknownKeyValidation: false
             )
             code = CodeBlockItemListSyntax {
                 switcher.encoding(in: context, to: switcherLocation)
@@ -525,7 +594,7 @@ extension EnumVariable {
                 case (.bool, .bool), (.int, .int), (.double, .double),
                     (.string, .string):
                     return true
-                case let (.unknown(lhsType), .unknown(rhsType)):
+                case (.unknown(let lhsType), .unknown(let rhsType)):
                     return lhsType.trimmedDescription
                         == rhsType.trimmedDescription
                 default:

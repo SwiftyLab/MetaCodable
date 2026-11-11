@@ -19,7 +19,7 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
     var inherits: Inherits? {
         for attribute in decl.attributes {
             guard
-                case let .attribute(attribute) = attribute,
+                case .attribute(let attribute) = attribute,
                 let attr = Inherits(from: attribute)
             else { continue }
             return attr
@@ -127,9 +127,26 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         var modifiers: DeclModifierListSyntax = [.init(name: "required")]
         let method = location.method
         let conformance = TypeSyntax(stringLiteral: method.protocol)
+        let strictDecoder: TokenSyntax = "strictDecoder"
 
         if location.conformance == nil, implementDecodable(location: location) {
-            newLocation = .init(method: method, conformance: conformance)
+            let overriddenMethod =
+                if inherits?.decodable ?? true {
+                    TypeCodingLocation.Method(
+                        name: method.name, protocol: method.protocol,
+                        argLabel: method.argLabel, arg: strictDecoder,
+                        argType: method.argType
+                    )
+                } else {
+                    method
+                }
+            newLocation = .init(
+                method: overriddenMethod, conformance: conformance,
+                rejectUnknownKeys: location.rejectUnknownKeys,
+                deferUnknownKeyValidation:
+                    location.rejectUnknownKeys
+                    && (inherits?.decodable ?? true)
+            )
             overridden = inherits?.decodable ?? true
         } else {
             newLocation = location
@@ -139,13 +156,30 @@ struct ClassVariable: TypeVariable, DeclaredVariable {
         guard
             let generated = group.decoding(in: context, from: newLocation)
         else { return nil }
-        var code: CodeBlockItemListSyntax =
-            if overridden {
-                "try super.\(method.name)(\(method.argLabel): \(method.arg))"
-            } else {
-                ""
+        let metadataMap = group.decodingNode.allowedKeysByPath()
+        var code: CodeBlockItemListSyntax
+        if overridden {
+            let metadata = strictDecodingMetadataSyntax(
+                metadataMap
+            )
+            code = CodeBlockItemListSyntax {
+                "let \(strictDecoder) = MetaCodableStrictDecoder(decoder: \(method.arg), allowedKeysByPath: \(metadata))"
+                generated.code
+                "try super.\(method.name)(\(method.argLabel): \(strictDecoder))"
+                group.deferredDecoding(in: context)
+                if location.rejectUnknownKeys {
+                    "try \(strictDecoder).rejectUnknownKeys(allowedKeysByPath: \(metadata), type: Self.self)"
+                }
             }
-        code.insert(contentsOf: generated.code, at: code.startIndex)
+        } else {
+            code =
+                if overridden {
+                    "try super.\(method.name)(\(method.argLabel): \(method.arg))"
+                } else {
+                    ""
+                }
+            code.insert(contentsOf: generated.code, at: code.startIndex)
+        }
         modifiers.append(contentsOf: generated.modifiers)
         return .init(
             code: code, modifiers: modifiers,

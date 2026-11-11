@@ -19,6 +19,7 @@ Supercharge `Swift`'s `Codable` implementations with macros.
 - Allows to provide default value in case of decoding failures with ``Default(_:)``, or only in case of failures when missing value with ``Default(ifMissing:)``. Different default values can also be used for value missing and other errors respectively with ``Default(ifMissing:forErrors:)``.
 - Allows to create custom decoding/encoding strategies with ``HelperCoder`` and using them with ``CodedBy(_:)``, ``CodedBy(_:properties:)`` or others. i.e. ``LossySequenceCoder`` etc.
 - Allows applying common strategies like `ValueCoder` to all properties of a type through the ``Codable(commonStrategies:)`` parameter, reducing the need for repetitive property annotations.
+- Allows opt-in rejection of unsupported decoding keys with the `rejectUnknownKeys` parameter on ``Codable(commonStrategies:rejectUnknownKeys:)`` and ``ConformDecodable(commonStrategies:rejectUnknownKeys:)``.
 - Allows specifying different case values with ``CodedAs(_:_:)-8wdaz`` and case value/protocol type identifier type different from `String` with ``CodedAs()`` or arbitrary primitive values with ``CodedAs(_:_:)-4n3ze``.
 - Allows specifying enum-case/protocol type identifier path with ``CodedAt(_:)`` and case content path with ``ContentAt(_:_:)``.
 - Allows decoding/encoding enums that lack distinct identifiers for each case data with ``UnTagged()``.

@@ -13,6 +13,30 @@ struct AnyEnumSwitcher: EnumSwitcherVariable {
     /// to its original type using type casting
     /// operators (`as?`, `as!`, or `as`).
     let base: any EnumSwitcherVariable
+    /// Whether the wrapped switcher decodes from a keyed container.
+    var usesKeyedContainer: Bool { base.usesKeyedContainer }
+    /// The exact root keys used by the wrapped switcher when available.
+    var rootDecodingKeys: [String]? { base.rootDecodingKeys }
+    /// Discriminator keys from the wrapped switcher.
+    var discriminatorDecodingKeys: [String] {
+        base.discriminatorDecodingKeys
+    }
+    /// Additional keys accepted by direct case decoders.
+    var caseDecodingAdditionalAllowedKeys: [String] {
+        base.caseDecodingAdditionalAllowedKeys
+    }
+    /// Whether case values share the wrapped switcher's root container.
+    var caseDecodingSharesRootContainer: Bool {
+        base.caseDecodingSharesRootContainer
+    }
+    /// Whether the wrapped switcher uses an internal discriminator.
+    var isInternallyTagged: Bool { base.isInternallyTagged }
+    /// Whether direct payloads share the wrapped validation container.
+    var directPayloadSharesValidationContainer: Bool {
+        base.directPayloadSharesValidationContainer
+    }
+    /// Whether the wrapped switcher allows direct decoding cases.
+    var allowsDirectDecoding: Bool { base.allowsDirectDecoding }
 
     /// Provides node at which case associated variables are registered.
     ///

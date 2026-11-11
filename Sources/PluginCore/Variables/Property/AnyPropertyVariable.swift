@@ -40,6 +40,10 @@ where Initialization: VariableInitialization {
     ///
     /// Provides underlying variable value encode prefix.
     var encodePrefix: TokenSyntax { base.encodePrefix }
+    /// Provides additional decoding keys from the underlying variable.
+    var additionalDecodingKeys: [String] {
+        base.additionalDecodingKeys
+    }
 
     /// Whether the variable is to be decoded.
     ///

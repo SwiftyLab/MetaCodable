@@ -27,6 +27,16 @@ package enum DecodingFallback {
     /// value while second syntax will be used for all the other errors.
     case ifMissing(CodeBlockItemListSyntax, ifError: CodeBlockItemListSyntax)
 
+    /// Whether decoding uses an optional nested container.
+    var isOptional: Bool {
+        switch self {
+        case .throw:
+            false
+        case .onlyIfMissing, .ifMissing:
+            true
+        }
+    }
+
     /// Represents container for decoding/encoding properties.
     typealias Container = PropertyVariableTreeNode.CodingLocation.Context
         .Container
@@ -41,6 +51,16 @@ package enum DecodingFallback {
     ///   - nestedContainer: The nested container name to use if present.
     ///   - nestedContainerHasVariables: Whether nested container has
     ///     some variables as direct children.
+    ///   - allowedKeys: The keys recognized by the current container, or
+    ///     `nil` when strict validation is disabled.
+    ///   - scopeCodingSyntax: Whether coding syntax is scoped to the
+    ///     represented container.
+    ///   - trailingValidationSyntax: Validation emitted after decoding.
+    ///   - forceNonOptionalContainer: Whether optional fallback handling is
+    ///     suppressed for the represented container.
+    ///   - childContainerOptional: Whether child properties use an optional
+    ///     container expression.
+    ///   - containerName: An explicit represented container name.
     ///   - decoding: The nested container decoding
     ///     code block generator.
     ///
@@ -49,6 +69,12 @@ package enum DecodingFallback {
         context: PropertyVariableTreeNode.CodingLocation.Context,
         nestedContainer: TokenSyntax?,
         nestedContainerHasVariables: Bool,
+        allowedKeys: [String]?,
+        scopeCodingSyntax: Bool = false,
+        trailingValidationSyntax: CodeBlockItemListSyntax = [],
+        forceNonOptionalContainer: Bool = false,
+        childContainerOptional: Bool = false,
+        containerName: TokenSyntax? = nil,
         nestedDecoding decoding: (Container) -> Generated
     ) -> Generated {
         switch context {
@@ -57,6 +83,12 @@ package enum DecodingFallback {
                 decoder: coder, keyType: kType,
                 nestedContainer: nestedContainer,
                 nestedContainerHasVariables: nestedContainerHasVariables,
+                allowedKeys: allowedKeys,
+                scopeCodingSyntax: scopeCodingSyntax,
+                trailingValidationSyntax: trailingValidationSyntax,
+                forceNonOptionalContainer: forceNonOptionalContainer,
+                childContainerOptional: childContainerOptional,
+                containerName: containerName,
                 nestedDecoding: decoding
             )
         case .container(let container, let key):
@@ -64,6 +96,11 @@ package enum DecodingFallback {
                 decodingContainer: container, fromKey: key,
                 nestedContainer: nestedContainer,
                 nestedContainerHasVariables: nestedContainerHasVariables,
+                allowedKeys: allowedKeys,
+                scopeCodingSyntax: scopeCodingSyntax,
+                trailingValidationSyntax: trailingValidationSyntax,
+                forceNonOptionalContainer: forceNonOptionalContainer,
+                childContainerOptional: childContainerOptional,
                 nestedDecoding: decoding
             )
         }
@@ -78,6 +115,16 @@ package enum DecodingFallback {
     ///   - nestedContainer: The nested container name to use if present.
     ///   - nestedContainerHasVariables: Whether nested container has
     ///     some variables as direct children.
+    ///   - allowedKeys: The keys recognized by the current container, or
+    ///     `nil` when strict validation is disabled.
+    ///   - scopeCodingSyntax: Whether coding syntax is scoped to the
+    ///     represented container.
+    ///   - trailingValidationSyntax: Validation emitted after decoding.
+    ///   - forceNonOptionalContainer: Whether optional fallback handling is
+    ///     suppressed for the represented container.
+    ///   - childContainerOptional: Whether child properties use an optional
+    ///     container expression.
+    ///   - containerName: An explicit represented container name.
     ///   - decoding: The nested container decoding
     ///     code block generator.
     ///
@@ -87,6 +134,12 @@ package enum DecodingFallback {
         keyType type: ExprSyntax,
         nestedContainer: TokenSyntax?,
         nestedContainerHasVariables: Bool,
+        allowedKeys: [String]?,
+        scopeCodingSyntax: Bool,
+        trailingValidationSyntax: CodeBlockItemListSyntax,
+        forceNonOptionalContainer: Bool,
+        childContainerOptional: Bool,
+        containerName: TokenSyntax?,
         nestedDecoding decoding: (Container) -> Generated
     ) -> Generated {
         let isOptional: Bool
@@ -100,45 +153,77 @@ package enum DecodingFallback {
             fallbacks = []
         }
 
-        let cToken = nestedContainer ?? "container"
-        let container = Container(name: cToken, isOptional: isOptional)
+        let cToken = containerName ?? nestedContainer ?? "container"
+        let logicalOptional =
+            forceNonOptionalContainer ? false : isOptional
+        let container = Container(
+            name: cToken,
+            isOptional: childContainerOptional || logicalOptional
+        )
+        let optionalContainer = nestedContainer ?? container.name
         let generated = decoding(container)
+        let generatedCodingSyntax =
+            scopeCodingSyntax
+            ? CodeBlockItemListSyntax {} : generated.codingSyntax
+        let validation =
+            if nestedContainer == nil {
+                strictDecodingValidationSyntax(
+                    decoder: "\(decoder)" as ExprSyntax,
+                    allowedKeys: allowedKeys
+                )
+            } else {
+                CodeBlockItemListSyntax {}
+            }
         let containerSyntax = CodeBlockItemListSyntax {
             if nestedContainer == nil {
-                let `try`: TokenSyntax = isOptional ? "try?" : "try"
+                let `try`: TokenSyntax = logicalOptional ? "try?" : "try"
                 """
                 let \(container.name) = \(`try`) \(decoder).container(keyedBy: \(type))
                 """
+                if !logicalOptional {
+                    validation
+                }
             }
             generated.containerSyntax
         }
 
         let ifSyntax = generated.conditionalSyntax
         let cBinding =
-            if nestedContainerHasVariables && !ifSyntax.isEmpty {
+            if allowedKeys != nil
+                || nestedContainerHasVariables && !ifSyntax.isEmpty
+            {
                 container.name
             } else {
                 "_" as TokenSyntax
             }
 
         let conditionalSyntax = CodeBlockItemListSyntax {
-            if isOptional {
+            if logicalOptional {
                 try! IfExprSyntax(
                     """
-                    if let \(cBinding) = \(container.name)
+                    if let \(cBinding) = \(optionalContainer)
                     """
                 ) {
+                    validation
+                    if scopeCodingSyntax {
+                        generated.codingSyntax
+                    }
                     ifSyntax
+                    trailingValidationSyntax
                 } else: {
                     fallbacks
                 }
             } else {
+                if scopeCodingSyntax {
+                    generated.codingSyntax
+                }
                 ifSyntax
+                trailingValidationSyntax
             }
         }
         return .init(
             containerSyntax: containerSyntax,
-            codingSyntax: generated.codingSyntax,
+            codingSyntax: generatedCodingSyntax,
             conditionalSyntax: conditionalSyntax
         )
     }
@@ -152,6 +237,15 @@ package enum DecodingFallback {
     ///   - nestedContainer: The nested container name to use if present.
     ///   - nestedContainerHasVariables: Whether nested container has
     ///     some variables as direct children.
+    ///   - allowedKeys: The keys recognized by the current container, or
+    ///     `nil` when strict validation is disabled.
+    ///   - scopeCodingSyntax: Whether coding syntax is scoped to the
+    ///     represented container.
+    ///   - trailingValidationSyntax: Validation emitted after decoding.
+    ///   - forceNonOptionalContainer: Whether optional fallback handling is
+    ///     suppressed for the represented container.
+    ///   - childContainerOptional: Whether child properties use an optional
+    ///     container expression.
     ///   - decoding: The nested container decoding
     ///     code block generator.
     ///
@@ -161,6 +255,11 @@ package enum DecodingFallback {
         fromKey key: CodingKeysMap.Key,
         nestedContainer: TokenSyntax?,
         nestedContainerHasVariables: Bool,
+        allowedKeys: [String]?,
+        scopeCodingSyntax: Bool,
+        trailingValidationSyntax: CodeBlockItemListSyntax,
+        forceNonOptionalContainer: Bool,
+        childContainerOptional: Bool,
         nestedDecoding decoding: (Container) -> Generated
     ) -> Generated {
         let nContainer = nestedContainer ?? "\(key.raw)_\(container.name)"
@@ -172,21 +271,46 @@ package enum DecodingFallback {
             let generated = decoding(
                 .init(name: nContainer, isOptional: container.isOptional)
             )
+            let validation =
+                if nestedContainer == nil {
+                    strictDecodingValidationSyntax(
+                        decoder:
+                            "\(container.name).superDecoder(forKey: \(key.expr))"
+                            as ExprSyntax,
+                        allowedKeys: allowedKeys
+                    )
+                } else {
+                    CodeBlockItemListSyntax {}
+                }
             codingSyntax = generated.codingSyntax
             containerSyntax = CodeBlockItemListSyntax {
                 if nestedContainer == nil {
                     """
                     let \(nContainer) = try \(container.syntax).nestedContainer(keyedBy: \(key.type), forKey: \(key.expr))
                     """
+                    validation
                 }
                 generated.containerSyntax
             }
             conditionalSyntax = generated.conditionalSyntax
         case .onlyIfMissing(let fallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
+            let validation =
+                if nestedContainer == nil {
+                    strictDecodingValidationSyntax(
+                        decoder:
+                            "\(container.name).superDecoder(forKey: \(key.expr))"
+                            as ExprSyntax,
+                        allowedKeys: allowedKeys
+                    )
+                } else {
+                    CodeBlockItemListSyntax {}
+                }
             let ifSyntax = generated.conditionalSyntax
             let nContainerBinding =
-                if nestedContainerHasVariables && !ifSyntax.isEmpty {
+                if allowedKeys != nil
+                    || nestedContainerHasVariables && !ifSyntax.isEmpty
+                {
                     nContainer
                 } else {
                     "_" as TokenSyntax
@@ -207,16 +331,30 @@ package enum DecodingFallback {
                     if let \(nContainerBinding) = \(nContainer)
                     """
                 ) {
+                    validation
                     ifSyntax
                 } else: {
                     fallbacks
                 }
             }
-        case let .ifMissing(fallbacks, ifError: eFallbacks):
+        case .ifMissing(let fallbacks, ifError: let eFallbacks):
             let generated = decoding(.init(name: nContainer, isOptional: true))
+            let validation =
+                if nestedContainer == nil {
+                    strictDecodingValidationSyntax(
+                        decoder:
+                            "\(container.name).superDecoder(forKey: \(key.expr))"
+                            as ExprSyntax,
+                        allowedKeys: allowedKeys
+                    )
+                } else {
+                    CodeBlockItemListSyntax {}
+                }
             let ifSyntax = generated.conditionalSyntax
             let nContainerBinding =
-                if nestedContainerHasVariables && !ifSyntax.isEmpty {
+                if allowedKeys != nil
+                    || nestedContainerHasVariables && !ifSyntax.isEmpty
+                {
                     nContainer
                 } else {
                     "_" as TokenSyntax
@@ -248,6 +386,7 @@ package enum DecodingFallback {
                 try! IfExprSyntax(
                     "if let \(nContainerBinding) = \(nContainer)",
                     bodyBuilder: {
+                        validation
                         ifSyntax
                     },
                     elseIf: IfExprSyntax("if \(containerMissing)") {
@@ -305,7 +444,10 @@ extension DecodingFallback {
                 fallbacks.append(contentsOf: rf)
             }
             return .onlyIfMissing(fallbacks)
-        case let (.ifMissing(lf, ifError: lef), .ifMissing(rf, ifError: ref)):
+        case (
+            .ifMissing(let lf, ifError: let lef),
+            .ifMissing(let rf, ifError: let ref)
+        ):
             var fallbacks = lf
             if !hasEarlyExit(in: fallbacks) {
                 fallbacks.append(contentsOf: rf)

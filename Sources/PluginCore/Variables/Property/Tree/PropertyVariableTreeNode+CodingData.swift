@@ -18,6 +18,8 @@ extension PropertyVariableTreeNode {
         var variables: [any PropertyVariable] = []
         /// Nested registration node associated with keys.
         var children = OrderedDictionary<CodingKeysMap.Key, Self>()
+        /// Keys recognized by decoding at this container level.
+        var allowedKeys: OrderedSet<String> = []
         /// Whether the encoding container variable linked to this node
         /// should be declared as immutable.
         ///
@@ -32,6 +34,8 @@ protocol VariableTreeNode {
     var variables: [any PropertyVariable] { get set }
     /// Nested registration node associated with keys.
     var children: OrderedDictionary<CodingKeysMap.Key, Self> { get set }
+    /// Keys recognized by decoding at this container level.
+    var allowedKeys: OrderedSet<String> { get set }
     /// Whether the encoding container variable linked to this node
     /// should be declared as immutable.
     ///
@@ -45,6 +49,24 @@ protocol VariableTreeNode {
 }
 
 extension VariableTreeNode {
+    /// Returns decoding keys grouped by their container path.
+    func allowedKeysByPath(
+        prefix: [String] = []
+    ) -> [String: [String]] {
+        var result: [String: [String]] = [:]
+        if prefix.isEmpty || !children.isEmpty {
+            result[strictDecodingPathKey(prefix)] = Array(allowedKeys)
+        }
+        for (key, child) in children {
+            result.merge(
+                child.allowedKeysByPath(
+                    prefix: prefix + [key.description]
+                )
+            ) { _, new in new }
+        }
+        return result
+    }
+
     /// List of all the linked variables registered.
     ///
     /// Gets all variables at current node
@@ -63,13 +85,17 @@ extension VariableTreeNode {
     ///     additional macro metadata.
     ///   - keyPath: The `CodingKey` path where the value
     ///     will be decode/encoded.
+    ///   - additionalKeys: Additional decoding keys accepted at the
+    ///     variable's container level.
     ///   - immutableEncodeContainer: Whether the encoding container variable
     ///     direct parent of `variable` should be declared as immutable.
     mutating func register<Variable: PropertyVariable>(
         variable: Variable, keyPath: [CodingKeysMap.Key],
+        additionalKeys: [String] = [],
         immutableEncodeContainer: Bool = false
     ) {
         if keyPath.isEmpty {
+            allowedKeys.append(contentsOf: additionalKeys)
             let depIndex = variables.firstIndex { $0.depends(on: variable) }
             if let index = depIndex {
                 variables.insert(variable, at: index)
@@ -80,6 +106,10 @@ extension VariableTreeNode {
         }
 
         let key = keyPath.first!
+        allowedKeys.append(key.description)
+        if keyPath.count == 1 {
+            allowedKeys.append(contentsOf: additionalKeys)
+        }
         if children[key] == nil {
             children[key] = .init()
         }
@@ -95,6 +125,7 @@ extension VariableTreeNode {
         children[key]!.register(
             variable: variable,
             keyPath: Array(keyPath.dropFirst()),
+            additionalKeys: additionalKeys,
             immutableEncodeContainer: immutableEncodeContainer
         )
     }

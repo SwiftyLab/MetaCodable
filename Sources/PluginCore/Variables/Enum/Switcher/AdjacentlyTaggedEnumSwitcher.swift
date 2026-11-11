@@ -20,6 +20,45 @@ where Wrapped: AdjacentlyTaggableSwitcher {
     /// This variable is used to map the nested container
     /// for associated variables to a pre-defined name.
     let variable: CoderVariable
+    /// Whether the wrapped switcher decodes from a keyed container.
+    var usesKeyedContainer: Bool { base.usesKeyedContainer }
+    /// The exact root keys used by the wrapped switcher when available.
+    var rootDecodingKeys: [String]? { base.rootDecodingKeys }
+    /// Discriminator keys from the wrapped switcher.
+    var discriminatorDecodingKeys: [String] {
+        base.discriminatorDecodingKeys
+    }
+    /// Adjacent case values are decoded from the content container.
+    var caseDecodingSharesRootContainer: Bool { false }
+    /// Adjacent tagging wraps an internally tagged discriminator.
+    var isInternallyTagged: Bool { base.isInternallyTagged }
+    /// Adjacent direct payloads share validation only when content and tag
+    /// paths are nested in the same container.
+    var directPayloadSharesValidationContainer: Bool {
+        base.caseDecodingSharesRootContainer
+            || (base.discriminatorDecodingPath.count
+                > contentDecodingPath.count
+                && base.discriminatorDecodingPath.starts(
+                    with: contentDecodingPath
+                ))
+    }
+    /// Keys from a nested discriminator container accepted by direct cases.
+    var caseDecodingAdditionalAllowedKeys: [String] {
+        guard
+            base.discriminatorDecodingPath.count > contentDecodingPath.count,
+            base.discriminatorDecodingPath.starts(
+                with: contentDecodingPath
+            )
+        else { return [] }
+        let relativePath = base.discriminatorDecodingPath.dropFirst(
+            contentDecodingPath.count
+        )
+        guard let key = relativePath.first
+        else { return [] }
+        return [key]
+    }
+    /// The path used for adjacent case content.
+    let contentDecodingPath: [String]
 
     /// Creates switcher variable with provided data.
     ///
@@ -41,6 +80,7 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         let encodingKeys = codingKeys.add(
             keys: keyPath.encoding, context: context)
         self.variable = .init(decoder: contentDecoder, encoder: contentEncoder)
+        self.contentDecodingPath = keyPath.decoding
         base.registering(variable: variable, decodingKeyPath: decodingKeys)
         base.registering(variable: variable, encodingKeyPath: encodingKeys)
         self.base = base
@@ -110,7 +150,25 @@ where Wrapped: AdjacentlyTaggableSwitcher {
         in context: some MacroExpansionContext,
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
-        base.decoding(
+        var location = location
+        if base.discriminatorDecodingPath.count
+            > contentDecodingPath.count,
+            base.discriminatorDecodingPath.starts(
+                with: contentDecodingPath
+            )
+        {
+            let path = strictDecodingPathKey(contentDecodingPath)
+            let caseKeys = location.cases.flatMap {
+                $0.variable.decodingAllowedKeys
+            }
+            if !caseKeys.isEmpty {
+                location.additionalAllowedKeysByPath[path] = caseKeys
+            }
+            if location.skipRootUnknownKeyValidation {
+                location.skipUnknownKeyValidationPaths.insert(path)
+            }
+        }
+        return base.decoding(
             in: context, from: location, contentAt: variable.decoder
         )
     }
@@ -215,7 +273,7 @@ extension AdjacentlyTaggedEnumSwitcher {
             from location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let decoder, _):
+            case .coder(let decoder, _), .coderWithMetadata(let decoder, _):
                 "let \(self.decoder) = \(decoder)"
             case .container(let container, let key, _):
                 "let \(self.decoder) = try \(container).superDecoder(forKey: \(key))"
@@ -238,7 +296,7 @@ extension AdjacentlyTaggedEnumSwitcher {
             to location: PropertyCodingLocation
         ) -> CodeBlockItemListSyntax {
             switch location {
-            case .coder(let encoder, _):
+            case .coder(let encoder, _), .coderWithMetadata(let encoder, _):
                 "let \(self.encoder) = \(encoder)"
             case .container(let container, let key, _):
                 "let \(self.encoder) = \(container).superEncoder(forKey: \(key))"

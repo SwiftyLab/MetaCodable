@@ -68,6 +68,8 @@ where
     /// The number of variables that this variable depends
     /// on to be decoded first, before decoding this variable.
     var dependenciesCount: UInt { get }
+    /// Additional keys accepted while decoding this variable.
+    var additionalDecodingKeys: [String] { get }
     /// Checks whether this variable is dependent on the provided variable.
     ///
     /// Whether provided variable needs to be decoded first,
@@ -92,6 +94,9 @@ package enum PropertyCodingLocation {
     ///   - coder: The decoder/encoder for decoding/encoding.
     ///   - method: The method to use for decoding/encoding.
     case coder(_ coder: TokenSyntax, method: ExprSyntax?)
+    /// A top-level location that preserves strict decoder metadata for direct
+    /// optional decoding.
+    case coderWithMetadata(_ coder: TokenSyntax, method: ExprSyntax?)
     /// Represents decoding/encoding location at a `CodingKey`
     /// for a container.
     ///
@@ -119,6 +124,9 @@ where Self: ComposedVariable, Self.Wrapped: ConditionalVariable {
 }
 
 extension PropertyVariable {
+    /// No additional decoding keys are accepted by default.
+    var additionalDecodingKeys: [String] { [] }
+
     /// The arguments passed to encoding condition.
     ///
     /// Passes current variable as single argument.
@@ -165,7 +173,12 @@ extension PropertyVariable {
             gArgs.count == 1,
             let type = gArgs.first?.argument.as(TypeSyntax.self)
         {
-            dType = type
+            guard let castType = TypeSyntax(type) else {
+                preconditionFailure(
+                    "Unable to create TypeSyntax from '\(type.trimmedDescription)'"
+                )
+            }
+            dType = castType
             dMethod = "\(method)IfPresent"
         } else {
             dType = type

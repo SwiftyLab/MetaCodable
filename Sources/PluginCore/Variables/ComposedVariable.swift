@@ -146,6 +146,11 @@ where Self: PropertyVariable, Wrapped: PropertyVariable {
     func depends<Variable: PropertyVariable>(on variable: Variable) -> Bool {
         base.depends(on: variable)
     }
+
+    /// Provides additional decoding keys from the underlying variable.
+    var additionalDecodingKeys: [String] {
+        base.additionalDecodingKeys
+    }
 }
 
 extension ComposedVariable
@@ -180,6 +185,18 @@ where Self: EnumCaseVariable, Wrapped: EnumCaseVariable {
     ///
     /// Provides associated variables of the underlying variable value.
     var variables: [any AssociatedVariable] { base.variables }
+    /// Provides decoding keys from the underlying enum case.
+    var decodingAllowedKeys: [String] {
+        base.decodingAllowedKeys
+    }
+    /// Provides keyed-decoding requirements from the underlying enum case.
+    var usesKeyedDecoding: Bool {
+        base.usesKeyedDecoding
+    }
+    /// Provides direct-decoding capability from the underlying enum case.
+    var usesDirectDecoding: Bool {
+        base.usesDirectDecoding
+    }
 }
 
 extension ComposedVariable where Self: TypeVariable, Wrapped: TypeVariable {

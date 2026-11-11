@@ -7,6 +7,9 @@ import SwiftSyntaxMacros
 /// Only internally tagged enums can have adjacent tagging, while externally
 /// tagged enums can't have adjacent tagging.
 protocol AdjacentlyTaggableSwitcher: EnumSwitcherVariable {
+    /// The discriminator path used by the wrapped switcher.
+    var discriminatorDecodingPath: [String] { get }
+
     /// Provides the syntax for decoding at the provided location and decoder.
     ///
     /// The generated implementation decodes the identifier variable from
@@ -240,11 +243,24 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                 "var \(container): \(containerType)"
                 decodingNode.decoding(
                     in: context,
-                    from: .withCoder(coder, keyType: location.keyType)
+                    from: .withCoder(
+                        coder, keyType: location.keyType,
+                        rejectUnknownKeys: location.rejectUnknownKeys,
+                        additionalAllowedKeys:
+                            location.caseDecodingSharesRootContainer
+                            ? location.rootDecodingKeys : [],
+                        additionalAllowedKeysByPath:
+                            location.additionalAllowedKeysByPath,
+                        skipUnknownKeyValidationPaths:
+                            location.skipUnknownKeyValidationPaths,
+                        skipCurrentContainerValidation:
+                            location.skipRootUnknownKeyValidation
+                    )
                 ).combined()
 
                 if containerType.isOptionalTypeSyntax {
-                    let needsContainer = location.cases.contains { variable, _ in
+                    let needsContainer = location.cases.contains {
+                        variable, _ in
                         variable.variables.contains { $0.label != nil }
                     }
                     let topContainerOptional = decodingNode.children
@@ -259,7 +275,8 @@ extension InternallyTaggedEnumSwitcher: AdjacentlyTaggableSwitcher {
                         }
 
                     let header: SyntaxNodeString =
-                        needsContainer && topContainerOptional && !rawRepresentable
+                        needsContainer && topContainerOptional
+                            && !rawRepresentable
                         ? "if let \(container) = \(container), let \(location.container) = \(location.container)"
                         : "if let \(container) = \(container)"
                     try! IfExprSyntax(header) {

@@ -65,6 +65,20 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
     ///
     /// It generates keys for associated variables decoding/encoding.
     let codingKeys: CodingKeysMap
+    /// Keys recognized by decoding associated values at the current level.
+    var decodingAllowedKeys: [String] {
+        Array(decodingData.allowedKeys)
+    }
+    /// Whether associated values require a keyed decoding container.
+    var usesKeyedDecoding: Bool {
+        variables.contains { $0.label != nil }
+    }
+    /// Whether associated values include an unlabeled direct value.
+    var usesDirectDecoding: Bool {
+        let hasDecodedValue = variables.contains { $0.decode ?? true }
+        return hasDecodedValue && !usesKeyedDecoding
+            || decodingData.variables.contains { $0.decode ?? true }
+    }
 
     /// Creates a new enum-case variable from provided data.
     ///
@@ -116,8 +130,14 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
                 let decodingKeys = codingKeys.add(
                     keys: path.decoding, field: name, context: context
                 )
-                decodingData.register(variable: variable, keyPath: decodingKeys)
-                decodingNode.register(variable: variable, keyPath: decodingKeys)
+                decodingData.register(
+                    variable: variable, keyPath: decodingKeys,
+                    additionalKeys: variable.additionalDecodingKeys
+                )
+                decodingNode.register(
+                    variable: variable, keyPath: decodingKeys,
+                    additionalKeys: variable.additionalDecodingKeys
+                )
             }
 
             if variable.encode ?? true {
@@ -168,11 +188,35 @@ struct BasicEnumCaseVariable: EnumCaseVariable {
                 }
             }
         )
+        let directDecoder = context.makeUniqueName("strictDecoder")
+        var directAllowedKeys = location.additionalAllowedKeys
+        for key in decodingAllowedKeys
+        where !directAllowedKeys.contains(key) {
+            directAllowedKeys.append(key)
+        }
+        let usesStrictDirectDecoder =
+            location.rejectUnknownKeys
+            && usesDirectDecoding
+            && !directAllowedKeys.isEmpty
+        let coder =
+            usesStrictDirectDecoder ? directDecoder : location.coder
         let generated = decodingNode.decoding(
             with: decodingData, in: context,
-            from: .withCoder(location.coder, keyType: codingKeys.type)
+            from: .withCoder(
+                coder, keyType: codingKeys.type,
+                rejectUnknownKeys: location.rejectUnknownKeys,
+                additionalAllowedKeys: location.additionalAllowedKeys,
+                preserveDecoderMetadata: usesStrictDirectDecoder,
+                skipCurrentContainerValidation: usesDirectDecoding
+            )
         )
         let newSyntax = CodeBlockItemListSyntax {
+            if usesStrictDirectDecoder {
+                let metadata = strictDecodingMetadataSyntax(
+                    ["": directAllowedKeys]
+                )
+                "let \(directDecoder) = MetaCodableStrictDecoder(decoder: \(location.coder), allowedKeysByPath: \(metadata))"
+            }
             for variable in variables where variable.decode ?? true {
                 "let \(variable.name): \(variable.type)"
             }

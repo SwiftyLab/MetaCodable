@@ -100,6 +100,8 @@ where
             switch location {
             case .coder(let decoder, _):
                 .coder(decoder, method: method)
+            case .coderWithMetadata(let decoder, _):
+                .coderWithMetadata(decoder, method: method)
             case .container(let container, let key, _):
                 .container(container, key: key, method: method)
             }

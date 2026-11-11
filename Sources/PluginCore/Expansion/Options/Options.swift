@@ -14,6 +14,10 @@ extension AttributeExpander {
         /// The list of `@available` attributes attached to
         /// original expanded declaration.
         let availableAttributes: [AttributeSyntax]
+        /// Whether generated decoding rejects unsupported keys.
+        let rejectUnknownKeys: Bool
+        /// The invalid strict-decoding argument, if one was provided.
+        let invalidRejectUnknownKeysArgument: AttributeSyntax?
 
         /// Memberwise initialization generator with provided options.
         ///
@@ -43,6 +47,41 @@ extension AttributeExpander {
                     return nil
                 }
             }
+            let strictArguments = decl.attributes.compactMap {
+                attribute -> (AttributeSyntax, Bool?)? in
+                guard
+                    case .attribute(let attr) = attribute,
+                    let arguments = attr.arguments?
+                        .as(LabeledExprListSyntax.self),
+                    let argument = arguments.first(where: {
+                        $0.label?.text == "rejectUnknownKeys"
+                    })
+                else { return nil }
+                return (attr, Self.booleanValue(argument.expression))
+            }
+            self.rejectUnknownKeys = strictArguments.first?.1 ?? false
+            self.invalidRejectUnknownKeysArgument =
+                strictArguments.first { $0.1 == nil }?.0
+        }
+
+        /// Resolves boolean expressions supported by the macro argument.
+        private static func booleanValue(_ expression: ExprSyntax) -> Bool? {
+            if let literal = expression.as(BooleanLiteralExprSyntax.self) {
+                return literal.literal.tokenKind == .keyword(.true)
+            }
+            if let expression = expression.as(TupleExprSyntax.self),
+                expression.elements.count == 1,
+                expression.elements.first?.label == nil
+            {
+                return booleanValue(expression.elements.first!.expression)
+            }
+            if let expression = expression.as(PrefixOperatorExprSyntax.self),
+                expression.operator.text == "!",
+                let value = booleanValue(expression.expression)
+            {
+                return !value
+            }
+            return nil
         }
     }
 }

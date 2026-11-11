@@ -10,6 +10,23 @@ extension PropertyVariableTreeNode {
     struct CodingLocation: Variable {
         /// The context representing the nesting level.
         let context: Context
+        let keyType: ExprSyntax
+        /// Whether generated decoding rejects unsupported keys.
+        let rejectUnknownKeys: Bool
+        /// Whether strict validation is emitted after superclass decoding.
+        let deferUnknownKeyValidation: Bool
+        /// Additional keys accepted by the current decoding container.
+        let additionalAllowedKeys: [String]
+        /// Additional keys accepted at nested decoding container paths.
+        let additionalAllowedKeysByPath: [String: [String]]
+        /// The coding path represented by the current decoding location.
+        let codingPath: [String]
+        /// Paths whose generated validation is deferred.
+        let skipUnknownKeyValidationPaths: Set<String>
+        /// Whether direct decoding must preserve strict decoder metadata.
+        let preserveDecoderMetadata: Bool
+        /// Whether validation for the current root container is deferred.
+        let skipCurrentContainerValidation: Bool
         /// The decoding/encoding progress.
         ///
         /// All the decoded/encoded variables and
@@ -21,9 +38,41 @@ extension PropertyVariableTreeNode {
         /// - Parameters:
         ///   - context: The context representing the nesting level.
         ///   - progress: The decoding/encoding progress.
-        private init(context: Context, progress: Progress) {
+        ///   - keyType: The `CodingKey` type for the current decoder.
+        ///   - rejectUnknownKeys: Whether generated decoding rejects
+        ///     unsupported keys.
+        ///   - deferUnknownKeyValidation: Whether strict validation is
+        ///     emitted after superclass decoding.
+        ///   - additionalAllowedKeys: Keys allowed in the current container.
+        ///   - additionalAllowedKeysByPath: Keys allowed at nested paths.
+        ///   - codingPath: The normalized coding path for this location.
+        ///   - skipUnknownKeyValidationPaths: Paths exempt from validation.
+        ///   - preserveDecoderMetadata: Whether decoder metadata is preserved.
+        ///   - skipCurrentContainerValidation: Whether the current container
+        ///     is exempt from validation.
+        private init(
+            context: Context, progress: Progress, keyType: ExprSyntax,
+            rejectUnknownKeys: Bool,
+            deferUnknownKeyValidation: Bool, additionalAllowedKeys: [String],
+            additionalAllowedKeysByPath: [String: [String]],
+            codingPath: [String],
+            skipUnknownKeyValidationPaths: Set<String>,
+            preserveDecoderMetadata: Bool,
+            skipCurrentContainerValidation: Bool
+        ) {
             self.context = context
+            self.keyType = keyType
             self.progress = progress
+            self.rejectUnknownKeys = rejectUnknownKeys
+            self.deferUnknownKeyValidation = deferUnknownKeyValidation
+            self.additionalAllowedKeys = additionalAllowedKeys
+            self.additionalAllowedKeysByPath = additionalAllowedKeysByPath
+            self.codingPath = codingPath
+            self.skipUnknownKeyValidationPaths =
+                skipUnknownKeyValidationPaths
+            self.preserveDecoderMetadata = preserveDecoderMetadata
+            self.skipCurrentContainerValidation =
+                skipCurrentContainerValidation
         }
 
         /// Add provided variable to list of already decoded/encoded variable.
@@ -43,6 +92,11 @@ extension PropertyVariableTreeNode {
             progress.pending.append((context, variable))
         }
 
+        /// Defers validation until all pending variables are decoded.
+        func deferValidation(_ syntax: CodeBlockItemListSyntax) {
+            progress.deferredValidations.append(syntax)
+        }
+
         /// Creates a new location with provided context.
         ///
         /// Creates new location with the provided context as top-level context.
@@ -50,13 +104,41 @@ extension PropertyVariableTreeNode {
         /// - Parameters:
         ///   - coder: The decoder/encoder for decoding/encoding.
         ///   - keyType: The `CodingKey` type.
+        ///   - rejectUnknownKeys: Whether generated decoding rejects
+        ///     unsupported keys.
+        ///   - deferUnknownKeyValidation: Whether strict validation is
+        ///     emitted after superclass decoding.
+        ///   - additionalAllowedKeys: Keys allowed in the current container.
+        ///   - additionalAllowedKeysByPath: Keys allowed at nested paths.
+        ///   - skipUnknownKeyValidationPaths: Paths exempt from validation.
+        ///   - preserveDecoderMetadata: Whether decoder metadata is preserved.
+        ///   - skipCurrentContainerValidation: Whether the current container
+        ///     is exempt from validation.
         ///
         /// - Returns: The new location updated with provided context.
         static func withCoder(
-            _ coder: TokenSyntax, keyType: ExprSyntax
+            _ coder: TokenSyntax, keyType: ExprSyntax,
+            rejectUnknownKeys: Bool = false,
+            deferUnknownKeyValidation: Bool = false,
+            additionalAllowedKeys: [String] = [],
+            additionalAllowedKeysByPath: [String: [String]] = [:],
+            skipUnknownKeyValidationPaths: Set<String> = [],
+            preserveDecoderMetadata: Bool = false,
+            skipCurrentContainerValidation: Bool = false
         ) -> Self {
             .init(
-                context: .coder(coder, keyType: keyType), progress: .init()
+                context: .coder(coder, keyType: keyType), progress: .init(),
+                keyType: keyType,
+                rejectUnknownKeys: rejectUnknownKeys,
+                deferUnknownKeyValidation: deferUnknownKeyValidation,
+                additionalAllowedKeys: additionalAllowedKeys,
+                additionalAllowedKeysByPath: additionalAllowedKeysByPath,
+                codingPath: [],
+                skipUnknownKeyValidationPaths:
+                    skipUnknownKeyValidationPaths,
+                preserveDecoderMetadata: preserveDecoderMetadata,
+                skipCurrentContainerValidation:
+                    skipCurrentContainerValidation
             )
         }
 
@@ -70,9 +152,59 @@ extension PropertyVariableTreeNode {
         func withContainer(
             _ container: Context.Container, key: CodingKeysMap.Key
         ) -> Self {
-            .init(
-                context: .container(container, key: key), progress: progress
+            let codingPath = codingPath + [key.description]
+            return .init(
+                context: .container(container, key: key), progress: progress,
+                keyType: keyType,
+                rejectUnknownKeys: rejectUnknownKeys,
+                deferUnknownKeyValidation: deferUnknownKeyValidation,
+                additionalAllowedKeys:
+                    additionalAllowedKeysByPath[
+                        strictDecodingPathKey(codingPath)
+                    ] ?? [],
+                additionalAllowedKeysByPath: additionalAllowedKeysByPath,
+                codingPath: codingPath,
+                skipUnknownKeyValidationPaths:
+                    skipUnknownKeyValidationPaths,
+                preserveDecoderMetadata: preserveDecoderMetadata,
+                skipCurrentContainerValidation: false
             )
+        }
+
+        /// Rebinds the current decoder while preserving strict metadata.
+        func withCoder(
+            _ coder: TokenSyntax,
+            preserveDecoderMetadata: Bool
+        ) -> Self {
+            .init(
+                context: .coder(coder, keyType: keyType), progress: progress,
+                keyType: keyType,
+                rejectUnknownKeys: rejectUnknownKeys,
+                deferUnknownKeyValidation: deferUnknownKeyValidation,
+                additionalAllowedKeys: additionalAllowedKeys,
+                additionalAllowedKeysByPath: additionalAllowedKeysByPath,
+                codingPath: codingPath,
+                skipUnknownKeyValidationPaths:
+                    skipUnknownKeyValidationPaths,
+                preserveDecoderMetadata: preserveDecoderMetadata,
+                skipCurrentContainerValidation:
+                    skipCurrentContainerValidation
+            )
+        }
+
+        /// The decoding/encoding location for an individual variable.
+        var forVariable: PropertyCodingLocation {
+            switch context {
+            case .coder(let coder, keyType: _):
+                if preserveDecoderMetadata {
+                    return .coderWithMetadata(coder, method: nil)
+                }
+                return .coder(coder, method: nil)
+            case .container(let container, let key):
+                return .container(
+                    container.name, key: key.expr, method: nil
+                )
+            }
         }
 
         /// Provides the syntax for decoding at the provided location.
@@ -88,15 +220,26 @@ extension PropertyVariableTreeNode {
         func decoding(
             in context: some MacroExpansionContext, from location: () = ()
         ) -> CodeBlockItemListSyntax {
+            decoding(
+                in: context, includeDeferredValidations: true
+            )
+        }
+
+        /// Provides pending decoding syntax with optional deferred
+        /// validation emission.
+        func decoding(
+            in context: some MacroExpansionContext,
+            includeDeferredValidations: Bool
+        ) -> CodeBlockItemListSyntax {
             let pending = progress.pending.sorted { pending1, pending2 in
-                return pending2.variable.depends(on: pending1.variable)
+                pending2.variable.depends(on: pending1.variable)
             }
             return CodeBlockItemListSyntax {
                 for (lContext, variable) in pending {
                     let location = lContext.forVariable
                     let syntax = variable.decoding(in: context, from: location)
                     switch lContext {
-                    case let .container(container, key: _)
+                    case .container(let container, key: _)
                     where container.isOptional:
                         switch variable.decodingFallback {
                         case .onlyIfMissing(let fallbacks):
@@ -109,7 +252,7 @@ extension PropertyVariableTreeNode {
                             } else: {
                                 fallbacks
                             }
-                        case let .ifMissing(fallbacks, ifError: eFallbacks):
+                        case .ifMissing(let fallbacks, ifError: let eFallbacks):
                             try! IfExprSyntax(
                                 "if let \(container.name) = \(container.name)",
                                 bodyBuilder: {
@@ -129,6 +272,20 @@ extension PropertyVariableTreeNode {
                     default:
                         syntax
                     }
+                }
+                if includeDeferredValidations {
+                    for validation in progress.deferredValidations {
+                        validation
+                    }
+                }
+            }
+        }
+
+        /// Returns validations deferred by generated decoding.
+        func deferredDecoding() -> CodeBlockItemListSyntax {
+            CodeBlockItemListSyntax {
+                for validation in progress.deferredValidations {
+                    validation
                 }
             }
         }
@@ -163,6 +320,9 @@ extension PropertyVariableTreeNode {
             /// The decoding syntax for these variables can be created
             /// from the location instance.
             fileprivate(set) var pending: [Pending] = []
+            /// Validations emitted after all pending variables decode.
+            fileprivate(set) var deferredValidations:
+                [CodeBlockItemListSyntax] = []
         }
 
         /// Represents the context for decoding/encoding that the node needs

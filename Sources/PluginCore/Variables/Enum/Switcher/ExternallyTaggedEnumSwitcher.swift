@@ -19,6 +19,10 @@ package struct ExternallyTaggedEnumSwitcher: TaggedEnumSwitcherVariable {
     ///
     /// This encoder is passed to each case for encoding.
     let contentEncoder: TokenSyntax
+    /// The enum tag keys recognized by external tagging.
+    var rootDecodingKeys: [String]? { decodingKeys.allKeys }
+    /// External tags are the switcher's discriminator keys.
+    var discriminatorDecodingKeys: [String] { decodingKeys.allKeys }
 
     /// Provides node at which case associated variables are registered.
     ///

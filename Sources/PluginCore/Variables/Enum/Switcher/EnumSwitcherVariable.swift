@@ -9,6 +9,22 @@ protocol EnumSwitcherVariable: Variable
 where
     CodingLocation == EnumSwitcherLocation, Generated == CodeBlockItemListSyntax
 {
+    /// Whether decoding starts from a keyed container.
+    var usesKeyedContainer: Bool { get }
+    /// The exact root keys used by the switcher when available.
+    var rootDecodingKeys: [String]? { get }
+    /// Keys used by the switcher itself before case values are decoded.
+    var discriminatorDecodingKeys: [String] { get }
+    /// Additional keys accepted by direct case decoders.
+    var caseDecodingAdditionalAllowedKeys: [String] { get }
+    /// Whether case values are decoded in the same root container.
+    var caseDecodingSharesRootContainer: Bool { get }
+    /// Whether the switcher uses an internal discriminator.
+    var isInternallyTagged: Bool { get }
+    /// Whether direct payloads share the container being strictly validated.
+    var directPayloadSharesValidationContainer: Bool { get }
+    /// Whether some cases may decode directly from scalar or unkeyed values.
+    var allowsDirectDecoding: Bool { get }
     /// Provides node at which case associated variables are registered.
     ///
     /// The returned node can be used by enum-case variables to register
@@ -64,6 +80,23 @@ where
 }
 
 extension EnumSwitcherVariable {
+    /// Tagged switchers decode from keyed containers by default.
+    var usesKeyedContainer: Bool { true }
+    /// Switchers use the type coding key map by default.
+    var rootDecodingKeys: [String]? { nil }
+    /// Switchers have no separate discriminator keys by default.
+    var discriminatorDecodingKeys: [String] { [] }
+    /// Direct case decoders have no additional keys by default.
+    var caseDecodingAdditionalAllowedKeys: [String] { [] }
+    /// Case values are nested unless a switcher opts into sharing the root.
+    var caseDecodingSharesRootContainer: Bool { false }
+    /// Switchers are not internally tagged by default.
+    var isInternallyTagged: Bool { false }
+    /// Direct payloads do not share an envelope container by default.
+    var directPayloadSharesValidationContainer: Bool { false }
+    /// Switchers do not mix direct and keyed representations by default.
+    var allowsDirectDecoding: Bool { false }
+
     /// Update provided variable data.
     ///
     /// Provided variable is returned as it is, without any data update.
@@ -121,4 +154,20 @@ package struct EnumSwitcherLocation {
     /// Based on type of tagging in enums the default case generation for
     /// both decoding and encoding can be customized.
     let hasDefaultCase: Bool
+    /// Whether generated decoding rejects unsupported keys.
+    let rejectUnknownKeys: Bool
+    /// Keys accepted at the enum root container.
+    let rootDecodingKeys: [String]
+    /// Keys accepted by the discriminator/case switcher itself.
+    let discriminatorDecodingKeys: [String]
+    /// Whether associated case values share the enum root container.
+    let caseDecodingSharesRootContainer: Bool
+    /// Additional keys accepted by direct case decoders.
+    var caseDecodingAdditionalAllowedKeys: [String]
+    /// Additional keys accepted at nested decoding container paths.
+    var additionalAllowedKeysByPath: [String: [String]]
+    /// Paths whose generated validation is deferred.
+    var skipUnknownKeyValidationPaths: Set<String>
+    /// Whether root switcher validation is deferred for delegated cases.
+    let skipRootUnknownKeyValidation: Bool
 }

@@ -64,9 +64,9 @@ where Wrapped: DefaultPropertyVariable {
         /// and used to generate assisted decoding/encoding syntax.
         var helperExpr: ExprSyntax {
             switch self {
-            case let .helper(expr):
+            case .helper(let expr):
                 return expr
-            case let .helperAction(action, parameters):
+            case .helperAction(let action, let parameters):
                 let args = LabeledExprListSyntax {
                     for param in parameters {
                         LabeledExprSyntax(expression: param.asArg)
@@ -107,9 +107,9 @@ where Wrapped: DefaultPropertyVariable {
             /// helper action to create the helper expression syntax.
             var asArg: ExprSyntax {
                 switch self {
-                case let .argument(expr):
+                case .argument(let expr):
                     expr
-                case let .property(comps):
+                case .property(let comps):
                     "self\(comps)"
                 }
             }
@@ -169,7 +169,8 @@ where Wrapped: DefaultPropertyVariable {
     ) -> CodeBlockItemListSyntax {
         let (_, defMethod) = codingTypeMethod(forMethod: "decode")
         switch location {
-        case .coder(let decoder, let passedMethod):
+        case .coder(let decoder, let passedMethod),
+            .coderWithMetadata(let decoder, let passedMethod):
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
@@ -208,7 +209,8 @@ where Wrapped: DefaultPropertyVariable {
     ) -> CodeBlockItemListSyntax {
         let (_, defMethod) = codingTypeMethod(forMethod: "encode")
         switch location {
-        case .coder(let encoder, let passedMethod):
+        case .coder(let encoder, let passedMethod),
+            .coderWithMetadata(let encoder, let passedMethod):
             let method = passedMethod ?? defMethod
             return CodeBlockItemListSyntax {
                 """
@@ -257,7 +259,7 @@ where Wrapped: DefaultPropertyVariable {
         switch options {
         case .helper:
             return base.depends(on: variable)
-        case let .helperAction(_, parameters):
+        case .helperAction(_, let parameters):
             return parameters.firstIndex { parameter in
                 switch parameter {
                 case .property(let components):

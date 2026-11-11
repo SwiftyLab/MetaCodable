@@ -5,6 +5,18 @@ import SwiftSyntaxMacros
 ///
 /// Tries decoding associated variables for each case until success.
 struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
+    /// Untagged cases may use scalar, unkeyed, or keyed representations.
+    var usesKeyedContainer: Bool { false }
+    /// Untagged cases do not have a single root schema.
+    var rootDecodingKeys: [String]? { nil }
+    /// Untagged case values share their direct decoder.
+    var caseDecodingSharesRootContainer: Bool { true }
+    /// Untagged enums have no discriminator keys.
+    var discriminatorDecodingKeys: [String] { [] }
+    /// Untagged enums may mix direct and keyed cases.
+    var allowsDirectDecoding: Bool { true }
+    /// Untagged payloads are decoded directly from the validated root.
+    var directPayloadSharesValidationContainer: Bool { true }
     /// The node at which variables are registered.
     ///
     /// Associated variables for all cases are registered with the path
@@ -94,8 +106,17 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         from location: EnumSwitcherLocation
     ) -> CodeBlockItemListSyntax {
         var cases = location.cases
-        let result = decodingSyntax(for: &cases, from: location, in: context)
+        let strictError =
+            location.rejectUnknownKeys
+            ? context.makeUniqueName("strictDecodingError") : nil
+        let result = decodingSyntax(
+            for: &cases, from: location, in: context,
+            strictError: strictError
+        )
         return CodeBlockItemListSyntax {
+            if let strictError {
+                "var \(strictError): DecodingError?"
+            }
             if result.usesError {
                 """
                 let context = DecodingError.Context(
@@ -103,6 +124,11 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
                     debugDescription: "Couldn't decode any case."
                 )
                 """
+                if let strictError {
+                    try! IfExprSyntax("if let \(strictError)") {
+                        "throw \(strictError)"
+                    }
+                }
                 "let \(error) =  DecodingError.typeMismatch(Self.self, context)"
             }
             result.syntax
@@ -123,27 +149,75 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
     private func decodingSyntax(
         for cases: inout [EnumVariable.Case],
         from location: EnumSwitcherLocation,
-        in context: some MacroExpansionContext
+        in context: some MacroExpansionContext,
+        strictError: TokenSyntax?
     ) -> (usesError: Bool, syntax: CodeBlockItemListSyntax) {
-        guard !cases.isEmpty else { return (true, "throw \(error)") }
+        guard !cases.isEmpty else {
+            if let strictError {
+                return (
+                    true,
+                    CodeBlockItemListSyntax {
+                        try! IfExprSyntax("if let \(strictError)") {
+                            "throw \(strictError)"
+                        }
+                        "throw \(error)"
+                    }
+                )
+            }
+            return (true, "throw \(error)")
+        }
 
         let `case` = cases.removeFirst()
-        let coder = location.coder
-        let cLocation = EnumCaseCodingLocation(coder: coder, values: [])
+        let attempt = context.makeUniqueName("strictAttempt")
+        let attemptDecoder = context.makeUniqueName("strictAttemptDecoder")
+        let coder =
+            location.rejectUnknownKeys ? attemptDecoder : location.coder
+        let cLocation = EnumCaseCodingLocation(
+            coder: coder, values: [],
+            rejectUnknownKeys: location.rejectUnknownKeys,
+            additionalAllowedKeys:
+                `case`.variable.decodingAllowedKeys
+        )
         let generated = `case`.variable.decoding(in: context, from: cLocation)
-        let nResult = decodingSyntax(for: &cases, from: location, in: context)
+        let nResult = decodingSyntax(
+            for: &cases, from: location, in: context,
+            strictError: strictError
+        )
         let catchClauses = CatchClauseListSyntax {
-            CatchClauseSyntax {
-                nResult.syntax
+            if let strictError {
+                CatchClauseSyntax {
+                    try! IfExprSyntax(
+                        "if let decodingError = error as? DecodingError, case .dataCorrupted = decodingError"
+                    ) {
+                        "\(strictError) = decodingError"
+                    }
+                    if location.rejectUnknownKeys {
+                        "\(attempt).rollback()"
+                    }
+                    nResult.syntax
+                }
+            } else {
+                CatchClauseSyntax {
+                    if location.rejectUnknownKeys {
+                        "\(attempt).rollback()"
+                    }
+                    nResult.syntax
+                }
             }
         }
 
         let eCase = `case`.variable
         let tVisitor = ThrowingSyntaxVisitor(viewMode: .sourceAccurate)
         let doBlock = CodeBlockItemListSyntax {
+            if location.rejectUnknownKeys {
+                generated.code.containerSyntax
+            }
             generated.code.codingSyntax
             generated.code.conditionalSyntax
             location.codeExpr(eCase.name, eCase.variables)
+            if location.rejectUnknownKeys {
+                "\(attempt).commit()"
+            }
             "return"
         }
 
@@ -156,7 +230,13 @@ struct UnTaggedEnumSwitcher: EnumSwitcherVariable {
         eVisitor.walk(doBlock)
 
         let syntax = CodeBlockItemListSyntax {
-            generated.code.containerSyntax
+            if !location.rejectUnknownKeys {
+                generated.code.containerSyntax
+            }
+            if location.rejectUnknownKeys {
+                "let \(attempt) = MetaCodableStrictDecoder.beginAttempt(for: \(location.coder))"
+                "let \(attemptDecoder) = \(attempt).decoder"
+            }
             if tVisitor.throws {
                 DoStmtSyntax(catchClauses: catchClauses) {
                     doBlock

@@ -1,3 +1,10 @@
+## Unreleased
+
+### 🚀 Features
+
+* added opt-in strict decoding that rejects unsupported keys with
+  `rejectUnknownKeys` on `Codable` and `ConformDecodable`
+
 ## [1.6.2](https://github.com/SwiftyLab/MetaCodable/compare/v1.6.1...v1.6.2) (2026-10-23)
 
 
@@ -215,4 +222,3 @@
 ### 💄 Styles
 
 * add development with vscode support ([323a94a](https://github.com/SwiftyLab/MetaCodable/commit/323a94a3a1e824a2b93c1aecb51d47a90c0ec3e3))
-
